@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Title>Bonsai - ML LinearSystems</Title>
+    <Description>A package for the Bonsai visual programming language.</Description>
+    <PackageTags>Bonsai Rx Bonsai.ML.LinearSystems</PackageTags>
+    <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+  </ItemGroup>
+
+</Project>
