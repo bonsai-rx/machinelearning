@@ -7,3 +7,6 @@ obj
 *.exe
 *.dll
 *.layout
+.bonsai
+.venv
+*.bak

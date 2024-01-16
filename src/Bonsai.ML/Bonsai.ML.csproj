@@ -4,12 +4,16 @@
     <Title>Bonsai - ML</Title>
     <Description>Bonsai Library containing reactive infrastructure for machine learning.</Description>
     <PackageTags>Bonsai Rx ML Machine Learning</PackageTags>
-    <TargetFrameworks>net462;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <VersionPrefix>0.1.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bonsai.Core" Version="2.8.0" />
+    <PackageReference Include="Bonsai.Core" Version="2.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj" />
   </ItemGroup>
 
 </Project>

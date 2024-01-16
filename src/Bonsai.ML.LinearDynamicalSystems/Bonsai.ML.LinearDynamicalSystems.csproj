@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Bonsai.ML.LinearDynamicalSystems</Title>
+    <Description>A Bonsai package for implementing the Kalman Filter using python.</Description>
+    <Authors />
+    <Copyright>Copyright ©  2023</Copyright>
+    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+    <PackageTags>Bonsai Rx ML KalmanFilter LinearDynamicalSystems</PackageTags>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <Features>strict</Features>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.8.1" />
+    <PackageReference Include="pythonnet" Version="3.0.3" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+    <PackageReference Include="YamlDotNet" Version="13.7.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="main.py" />
+    <EmbeddedResource Include="LoadModel.bonsai" />
+    <EmbeddedResource Include="Bonsai.ML.LinearDynamicalSystems.svg" />
+  </ItemGroup>
+</Project>
