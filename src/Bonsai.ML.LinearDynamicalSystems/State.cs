@@ -22,7 +22,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// </summary>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         [YamlDotNet.Serialization.YamlMemberAttribute(Alias="x")]
-        [System.ComponentModel.DescriptionAttribute("State vector")]
+        [System.ComponentModel.DescriptionAttribute("Mean vector")]
         public System.Collections.Generic.List<System.Collections.Generic.List<double>> X
         {
             get
@@ -97,7 +97,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         public override string ToString()
         {
             string output = "";
-            foreach (var prop in typeof(Prediction).GetProperties())
+            foreach (var prop in typeof(State).GetProperties())
             {
                 // Get the YamlMemberAttribute of the property
                 var yamlAttr = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<YamlDotNet.Serialization.YamlMemberAttribute>(prop);

@@ -16,5 +16,30 @@ namespace Bonsai.ML.LinearDynamicalSystems
                 return System.Reactive.Linq.Observable.Select(source, value => serializer.Serialize(value)); 
             });
         }
+
+        public System.IObservable<string> Process(System.IObservable<Model> source)
+        {
+            return Process<Model>(source);
+        }
+
+        public System.IObservable<string> Process(System.IObservable<Observation2D> source)
+        {
+            return Process<Observation2D>(source);
+        }
+
+        public System.IObservable<string> Process(System.IObservable<State> source)
+        {
+            return Process<State>(source);
+        }
+
+        public System.IObservable<string> Process(System.IObservable<StateInference> source)
+        {
+            return Process<StateInference>(source);
+        }
+
+        public System.IObservable<string> Process(System.IObservable<Ellipse> source)
+        {
+            return Process<Ellipse>(source);
+        }
     }
 }

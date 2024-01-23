@@ -4,12 +4,12 @@ namespace Bonsai.ML.LinearDynamicalSystems
     using static PythonHelper;
 
     /// <summary>
-    /// Observation of data used by Kalman Filter python class (point(x, y))
+    /// Observation2D of data used by Kalman Filter python class (point(x, y))
     /// </summary>
-    [System.ComponentModel.DescriptionAttribute("Observation of data used by Kalman Filter python class (point(x, y))")]
+    [System.ComponentModel.DescriptionAttribute("Observation2D of data used by Kalman Filter python class (point(x, y))")]
     [Bonsai.CombinatorAttribute()]
     [Bonsai.WorkflowElementCategoryAttribute(Bonsai.ElementCategory.Source)]
-    public class Observation
+    public class Observation2D
     {
 
         private double _x;
@@ -50,16 +50,16 @@ namespace Bonsai.ML.LinearDynamicalSystems
             }
         }
     
-        public System.IObservable<Observation> Process()
+        public System.IObservable<Observation2D> Process()
         {
     		return System.Reactive.Linq.Observable.Defer(() => System.Reactive.Linq.Observable.Return(
-    			new Observation {
+    			new Observation2D {
     				X = _x,
     				Y = _y
     			}));
         }
     
-        public System.IObservable<Observation> Process<TSource>(System.IObservable<TSource> source)
+        public System.IObservable<Observation2D> Process<TSource>(System.IObservable<TSource> source)
         {
     		if (typeof(TSource) == typeof(Python.Runtime.PyObject))
     		{
@@ -72,7 +72,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     					var xPyObj = GetPythonAttribute<double>(pyObject, "x");
     					var yPyObj = GetPythonAttribute<double>(pyObject, "y");
 					
-    					return new Observation {
+    					return new Observation2D {
     						X = xPyObj,
     						Y = yPyObj
     					};
@@ -82,7 +82,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     		else
     		{
     			return System.Reactive.Linq.Observable.Select(source, x =>
-    				new Observation {
+    				new Observation2D {
     					X = _x,
     					Y = _y
     				});
@@ -92,7 +92,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         public override string ToString()
         {
             string output = "";
-            foreach (var prop in typeof(Observation).GetProperties())
+            foreach (var prop in typeof(Observation2D).GetProperties())
             {
                 // Get the YamlMemberAttribute of the property
                 var yamlAttr = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<YamlDotNet.Serialization.YamlMemberAttribute>(prop);
