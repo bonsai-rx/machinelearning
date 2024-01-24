@@ -15,7 +15,7 @@ DEFAULT_PARAMS = {
     "fps" : 60
 }
 
-class KalmanFilter(OnlineKalmanFilter):
+class KalmanFilter2D(OnlineKalmanFilter):
 
     def __init__(self,
                     pos_x0: float,
@@ -99,7 +99,7 @@ class KalmanFilter(OnlineKalmanFilter):
     
 if __name__ == "__main__":
 
-    model = KalmanFilter(**DEFAULT_PARAMS)
+    model = KalmanFilter2D(**DEFAULT_PARAMS)
     x, y = 100, 100
     model.predict()
     model.update(x, y)

@@ -32,9 +32,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
             return Process<State>(source);
         }
 
-        public System.IObservable<string> Process(System.IObservable<StateInference> source)
+        public System.IObservable<string> Process(System.IObservable<StateEstimate> source)
         {
-            return Process<StateInference>(source);
+            return Process<StateEstimate>(source);
         }
 
         public System.IObservable<string> Process(System.IObservable<Ellipse> source)

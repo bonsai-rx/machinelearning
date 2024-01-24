@@ -8,7 +8,7 @@
   <Workflow>
     <Nodes>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="ModelName" />
+        <Property Name="Value" DisplayName="ModelName" Category="Subject" />
       </Expression>
       <Expression xsi:type="WorkflowInput">
         <Name>Source1</Name>
@@ -19,7 +19,17 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Fps" />
+        <Property Name="Fps" Category="ModelParams" />
+        <Property Name="Pos_x0" Category="ModelParams" />
+        <Property Name="Pos_y0" Category="ModelParams" />
+        <Property Name="Vel_x0" Category="ModelParams" />
+        <Property Name="Vel_y0" Category="ModelParams" />
+        <Property Name="Acc_x0" Category="ModelParams" />
+        <Property Name="Acc_y0" Category="ModelParams" />
+        <Property Name="Sigma_a" Category="ModelParams" />
+        <Property Name="Sigma_x" Category="ModelParams" />
+        <Property Name="Sigma_y" Category="ModelParams" />
+        <Property Name="Sqrt_diag_V0_value" Category="ModelParams" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:Model">
@@ -40,34 +50,42 @@
         <Combinator xsi:type="rx:Zip" />
       </Expression>
       <Expression xsi:type="Format">
-        <Format>{0} = Model({1})</Format>
+        <Format>{0} = KalmanFilter2D({1})</Format>
         <Selector>it.Item1, it.Item2</Selector>
       </Expression>
-      <Expression xsi:type="rx:SelectMany">
-        <Name>InstantiateModel</Name>
-        <Workflow>
-          <Nodes>
-            <Expression xsi:type="WorkflowInput">
-              <Name>Source1</Name>
-            </Expression>
-            <Expression xsi:type="InputMapping">
-              <PropertyMappings>
-                <Property Name="Script" Selector="it" />
-              </PropertyMappings>
-            </Expression>
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="py:Exec">
-                <py:Script>model = Model(pos_x0=0,pos_y0=0,vel_x0=0,vel_y0=0,acc_x0=0,acc_y0=0,sigma_a=10000,sigma_x=100,sigma_y=100,sqrt_diag_V0_value=0.001,fps=60)</py:Script>
-              </Combinator>
-            </Expression>
-            <Expression xsi:type="WorkflowOutput" />
-          </Nodes>
-          <Edges>
-            <Edge From="0" To="1" Label="Source1" />
-            <Edge From="1" To="2" Label="Source1" />
-            <Edge From="2" To="3" Label="Source1" />
-          </Edges>
-        </Workflow>
+      <Expression xsi:type="InputMapping">
+        <PropertyMappings>
+          <Property Name="Script" Selector="it" />
+        </PropertyMappings>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>LDSModule</Name>
+      </Expression>
+      <Expression xsi:type="PropertyMapping">
+        <PropertyMappings>
+          <Property Name="Module" />
+        </PropertyMappings>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:Exec">
+          <py:Script>model = KalmanFilter2D(pos_x0=0,pos_y0=0,vel_x0=0,vel_y0=0,acc_x0=0,acc_y0=0,sigma_a=10000,sigma_x=100,sigma_y=100,sqrt_diag_V0_value=0.001,fps=60)</py:Script>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="InputMapping">
+        <PropertyMappings>
+          <Property Name="VariableName" Selector="it.Item2" />
+        </PropertyMappings>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>LDSModule</Name>
+      </Expression>
+      <Expression xsi:type="PropertyMapping">
+        <PropertyMappings>
+          <Property Name="Module" />
+        </PropertyMappings>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="py:Get">
@@ -96,13 +114,21 @@
       <Edge From="1" To="2" Label="Source2" />
       <Edge From="1" To="4" Label="Source1" />
       <Edge From="2" To="5" Label="Source1" />
+      <Edge From="2" To="11" Label="Source2" />
       <Edge From="3" To="4" Label="Source2" />
       <Edge From="4" To="5" Label="Source2" />
       <Edge From="5" To="6" Label="Source1" />
       <Edge From="6" To="7" Label="Source1" />
-      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="7" To="10" Label="Source1" />
       <Edge From="8" To="9" Label="Source1" />
-      <Edge From="9" To="10" Label="Source1" />
+      <Edge From="9" To="10" Label="Source2" />
+      <Edge From="10" To="11" Label="Source1" />
+      <Edge From="11" To="12" Label="Source1" />
+      <Edge From="12" To="15" Label="Source1" />
+      <Edge From="13" To="14" Label="Source1" />
+      <Edge From="14" To="15" Label="Source2" />
+      <Edge From="15" To="16" Label="Source1" />
+      <Edge From="16" To="17" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
