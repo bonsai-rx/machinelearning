@@ -10,3 +10,5 @@ obj
 .bonsai
 .venv
 *.bak
+.bak
+.config
