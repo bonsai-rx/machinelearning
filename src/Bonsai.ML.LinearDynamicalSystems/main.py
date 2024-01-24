@@ -91,12 +91,6 @@ class KalmanFilter2D(OnlineKalmanFilter):
 
         return super().update(y=np.array([x, y]))
     
-    def calculate_ellipse(self):
-        cov_pos = self.P[0:6:3,0:6:3]
-        self.el_w = 2 * np.sqrt(cov_pos[0,0])
-        self.el_h = 2 * np.sqrt(cov_pos[1,1])
-        self.el_a = 0.5 * np.arctan2(2 * cov_pos[0,1], cov_pos[0,0] - cov_pos[1,1])
-    
 if __name__ == "__main__":
 
     model = KalmanFilter2D(**DEFAULT_PARAMS)
