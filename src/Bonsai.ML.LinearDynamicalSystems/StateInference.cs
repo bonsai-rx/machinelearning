@@ -3,7 +3,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     using System;
     using static PythonHelper;
 
-    public class StateWithUncertainty
+    public class EstimateWithUncertainty
     {
         private double _x_state;
 
@@ -86,7 +86,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             }
         }
 
-        public StateWithUncertainty(double x_state, double y_state, double x_uncertainty, double y_uncertainty)
+        public EstimateWithUncertainty(double x_state, double y_state, double x_uncertainty, double y_uncertainty)
         {
             X_state = x_state;
             Y_state = y_state;
@@ -102,11 +102,11 @@ namespace Bonsai.ML.LinearDynamicalSystems
     public partial class StateEstimate
     {
     
-        private StateWithUncertainty _position;
+        private EstimateWithUncertainty _position;
     
-        private StateWithUncertainty _velocity;
+        private EstimateWithUncertainty _velocity;
     
-        private StateWithUncertainty _acceleration;
+        private EstimateWithUncertainty _acceleration;
     
         /// <summary>
         /// inferred position
@@ -114,7 +114,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         [YamlDotNet.Serialization.YamlMemberAttribute(Alias="position")]
         [System.ComponentModel.DescriptionAttribute("inferred position")]
-        public StateWithUncertainty Position
+        public EstimateWithUncertainty Position
         {
             get
             {
@@ -132,7 +132,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         [YamlDotNet.Serialization.YamlMemberAttribute(Alias="velocity")]
         [System.ComponentModel.DescriptionAttribute("inferred velocity")]
-        public StateWithUncertainty Velocity
+        public EstimateWithUncertainty Velocity
         {
             get
             {
@@ -150,7 +150,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         [System.Xml.Serialization.XmlIgnoreAttribute()]
         [YamlDotNet.Serialization.YamlMemberAttribute(Alias="acceleration")]
         [System.ComponentModel.DescriptionAttribute("inferred acceleration")]
-        public StateWithUncertainty Acceleration
+        public EstimateWithUncertainty Acceleration
         {
             get
             {
@@ -180,21 +180,21 @@ namespace Bonsai.ML.LinearDynamicalSystems
         {
             return System.Reactive.Linq.Observable.Select(source, state => 
             {
-                StateWithUncertainty position = new StateWithUncertainty(
+                EstimateWithUncertainty position = new EstimateWithUncertainty(
                     state.X[0][0],
                     state.X[3][0],
                     SigmaFromVariance(state.P[0][0]),
                     SigmaFromVariance(state.P[3][3])
                 );
 
-                StateWithUncertainty velocity = new StateWithUncertainty(
+                EstimateWithUncertainty velocity = new EstimateWithUncertainty(
                     state.X[1][0],
                     state.X[4][0],
                     SigmaFromVariance(state.P[1][1]),
                     SigmaFromVariance(state.P[4][4])
                 );
 
-                StateWithUncertainty acceleration = new StateWithUncertainty(
+                EstimateWithUncertainty acceleration = new EstimateWithUncertainty(
                     state.X[2][0],
                     state.X[5][0],
                     SigmaFromVariance(state.P[2][2]),

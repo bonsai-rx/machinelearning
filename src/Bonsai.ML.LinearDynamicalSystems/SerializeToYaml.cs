@@ -37,6 +37,11 @@ namespace Bonsai.ML.LinearDynamicalSystems
             return Process<StateEstimate>(source);
         }
 
+        public System.IObservable<string> Process(System.IObservable<EstimateWithUncertainty> source)
+        {
+            return Process<EstimateWithUncertainty>(source);
+        }
+
         public System.IObservable<string> Process(System.IObservable<Ellipse> source)
         {
             return Process<Ellipse>(source);
