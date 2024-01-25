@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Visualizers\Bonsai.ML.Visualizers.csproj" />
   </ItemGroup>
 
 </Project>
