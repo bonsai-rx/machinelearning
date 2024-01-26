@@ -1,3 +1,8 @@
+using System;
+using System.ComponentModel;
+using System.Reactive.Linq;
+using YamlDotNet.Serialization;
+
 namespace Bonsai.ML.LinearDynamicalSystems
 {
     /// <summary>
@@ -5,41 +10,41 @@ namespace Bonsai.ML.LinearDynamicalSystems
     /// </summary>
     [Combinator()]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    [System.ComponentModel.Description("Serializes a sequence of data model objects into YAML strings.")]
+    [Description("Serializes a sequence of data model objects into YAML strings.")]
     public class SerializeToYaml
     {
-        private System.IObservable<string> Process<T>(System.IObservable<T> source)
+        private IObservable<string> Process<T>(IObservable<T> source)
         {
-            return System.Reactive.Linq.Observable.Defer(() =>
+            return Observable.Defer(() =>
             {
-                var serializer = new YamlDotNet.Serialization.SerializerBuilder().Build();
-                return System.Reactive.Linq.Observable.Select(source, value => serializer.Serialize(value)); 
+                var serializer = new SerializerBuilder().Build();
+                return Observable.Select(source, value => serializer.Serialize(value)); 
             });
         }
 
-        public System.IObservable<string> Process(System.IObservable<Model> source)
+        public IObservable<string> Process(IObservable<KFKModelParameters> source)
         {
-            return Process<Model>(source);
+            return Process<KFKModelParameters>(source);
         }
 
-        public System.IObservable<string> Process(System.IObservable<Observation2D> source)
+        public IObservable<string> Process(IObservable<Observation2D> source)
         {
             return Process<Observation2D>(source);
         }
 
-        public System.IObservable<string> Process(System.IObservable<State> source)
+        public IObservable<string> Process(IObservable<State> source)
         {
             return Process<State>(source);
         }
 
-        public System.IObservable<string> Process(System.IObservable<StateEstimate> source)
+        public IObservable<string> Process(IObservable<Kinematics> source)
         {
-            return Process<StateEstimate>(source);
+            return Process<Kinematics>(source);
         }
 
-        public System.IObservable<string> Process(System.IObservable<EstimateWithUncertainty> source)
+        public IObservable<string> Process(IObservable<KinematicComponent> source)
         {
-            return Process<EstimateWithUncertainty>(source);
+            return Process<KinematicComponent>(source);
         }
     }
 }

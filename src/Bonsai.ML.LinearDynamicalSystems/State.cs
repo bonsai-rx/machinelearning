@@ -1,3 +1,13 @@
+using System.ComponentModel;
+using YamlDotNet.Serialization;
+using System;
+using System.Reactive.Linq;
+using Python.Runtime;
+using System.Reflection;
+using System.Xml.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Bonsai.ML.LinearDynamicalSystems
 {
 
@@ -6,24 +16,24 @@ namespace Bonsai.ML.LinearDynamicalSystems
     /// <summary>
     /// Prediction of a Kalman Filter python class (state vector and covariance matrix)
     /// </summary>
-    [System.ComponentModel.DescriptionAttribute("State of a Kalman Filter python class (mean and covariance matrices)")]
-    [Bonsai.CombinatorAttribute()]
-    [Bonsai.WorkflowElementCategoryAttribute(Bonsai.ElementCategory.Source)]
+    [Description("State of a Kalman Filter python class (mean and covariance matrices)")]
+    [Combinator()]
+    [WorkflowElementCategory(ElementCategory.Source)]
     public class State
     {
 
-        private System.Collections.Generic.List<System.Collections.Generic.List<double>> _x = new System.Collections.Generic.List<System.Collections.Generic.List<double>>();
+        private List<List<double>> _x = new List<List<double>>();
     
-        private System.Collections.Generic.List<System.Collections.Generic.List<double>> _p = new System.Collections.Generic.List<System.Collections.Generic.List<double>>();
+        private List<List<double>> _p = new List<List<double>>();
 
 
         /// <summary>
         /// State vector
         /// </summary>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="x")]
-        [System.ComponentModel.DescriptionAttribute("Mean vector")]
-        public System.Collections.Generic.List<System.Collections.Generic.List<double>> X
+        [XmlIgnore()]
+        [YamlMember(Alias="x")]
+        [Description("Mean vector")]
+        public List<List<double>> X
         {
             get
             {
@@ -38,10 +48,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// Covariance matrix
         /// </summary>
-        [System.Xml.Serialization.XmlIgnoreAttribute()]
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="P")]
-        [System.ComponentModel.DescriptionAttribute("Covariance matrix")]
-        public System.Collections.Generic.List<System.Collections.Generic.List<double>> P
+        [XmlIgnore()]
+        [YamlMember(Alias="P")]
+        [Description("Covariance matrix")]
+        public List<List<double>> P
         {
             get
             {
@@ -53,29 +63,29 @@ namespace Bonsai.ML.LinearDynamicalSystems
             }
         }
     
-        public System.IObservable<State> Process()
+        public IObservable<State> Process()
         {
-    		return System.Reactive.Linq.Observable.Defer(() => System.Reactive.Linq.Observable.Return(
+    		return Observable.Defer(() => Observable.Return(
     			new State {
     				X = _x,
     				P = _p
     			}));
         }
     
-        public System.IObservable<State> Process<TSource>(System.IObservable<TSource> source)
+        public IObservable<State> Process<TSource>(IObservable<TSource> source)
         {
-    		if (typeof(TSource) == typeof(Python.Runtime.PyObject))
+    		if (typeof(TSource) == typeof(PyObject))
     		{
-    			return System.Reactive.Linq.Observable.Select(source, x =>
+    			return Observable.Select(source, x =>
     			{
-    				using(Python.Runtime.Py.GIL())
+    				using(Py.GIL())
     				{
     					dynamic input = x;
-    					Python.Runtime.PyObject pyObject = (Python.Runtime.PyObject)input;
-    					var xPyList = (System.Collections.Generic.List<object>)GetPythonAttribute(pyObject, "x");
-    					var xPyObj = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(System.Linq.Enumerable.Cast<System.Collections.Generic.List<object>>(xPyList), subList0 => System.Linq.Enumerable.ToList(System.Linq.Enumerable.OfType<double>(subList0))));
-    					var PPyList = (System.Collections.Generic.List<object>)GetPythonAttribute(pyObject, "P");
-    					var PPyObj = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Select(System.Linq.Enumerable.Cast<System.Collections.Generic.List<object>>(PPyList), subList0 => System.Linq.Enumerable.ToList(System.Linq.Enumerable.OfType<double>(subList0))));
+    					PyObject pyObject = (PyObject)input;
+    					var xPyList = (List<object>)GetPythonAttribute(pyObject, "x");
+    					var xPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(xPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
+    					var PPyList = (List<object>)GetPythonAttribute(pyObject, "P");
+    					var PPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(PPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
 					
     					return new State {
     						X = xPyObj,
@@ -86,7 +96,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     		}
     		else
     		{
-    			return System.Reactive.Linq.Observable.Select(source, x =>
+    			return Observable.Select(source, x =>
     				new State {
     					X = _x,
     					P = _p
@@ -100,7 +110,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             foreach (var prop in typeof(State).GetProperties())
             {
                 // Get the YamlMemberAttribute of the property
-                var yamlAttr = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<YamlDotNet.Serialization.YamlMemberAttribute>(prop);
+                var yamlAttr = CustomAttributeExtensions.GetCustomAttribute<YamlMemberAttribute>(prop);
                 var yamlAlias = yamlAttr != null && !string.IsNullOrWhiteSpace(yamlAttr.Alias) ? yamlAttr.Alias : char.ToLower(prop.Name[0]) + prop.Name.Substring(1);
                 var value = prop.GetValue(this, null);
                 if (value is double && double.IsNaN((double)value))

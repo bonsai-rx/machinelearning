@@ -1,3 +1,11 @@
+using Bonsai;
+using System.ComponentModel;
+using YamlDotNet.Serialization;
+using System;
+using System.Reactive.Linq;
+using Python.Runtime;
+using System.Reflection;
+
 namespace Bonsai.ML.LinearDynamicalSystems
 {
 
@@ -6,9 +14,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
     /// <summary>
     /// Observation2D of data used by Kalman Filter python class (point(x, y))
     /// </summary>
-    [System.ComponentModel.DescriptionAttribute("Observation2D of data used by Kalman Filter python class (point(x, y))")]
-    [Bonsai.CombinatorAttribute()]
-    [Bonsai.WorkflowElementCategoryAttribute(Bonsai.ElementCategory.Source)]
+    [Description("Observation2D of data used by a Kalman Filter model (point(x, y))")]
+    [Combinator()]
+    [WorkflowElementCategory(ElementCategory.Source)]
     public class Observation2D
     {
 
@@ -19,8 +27,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// x coordinate
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="x")]
-        [System.ComponentModel.DescriptionAttribute("x coordinate")]
+        [YamlMember(Alias="x")]
+        [Description("x coordinate")]
         public double X
         {
             get
@@ -36,8 +44,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// y coordinate
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="y")]
-        [System.ComponentModel.DescriptionAttribute("y coordinate")]
+        [YamlMember(Alias="y")]
+        [Description("y coordinate")]
         public double Y
         {
             get
@@ -50,25 +58,25 @@ namespace Bonsai.ML.LinearDynamicalSystems
             }
         }
     
-        public System.IObservable<Observation2D> Process()
+        public IObservable<Observation2D> Process()
         {
-    		return System.Reactive.Linq.Observable.Defer(() => System.Reactive.Linq.Observable.Return(
+    		return Observable.Defer(() => Observable.Return(
     			new Observation2D {
     				X = _x,
     				Y = _y
     			}));
         }
     
-        public System.IObservable<Observation2D> Process<TSource>(System.IObservable<TSource> source)
+        public IObservable<Observation2D> Process<TSource>(IObservable<TSource> source)
         {
-    		if (typeof(TSource) == typeof(Python.Runtime.PyObject))
+    		if (typeof(TSource) == typeof(PyObject))
     		{
-    			return System.Reactive.Linq.Observable.Select(source, x =>
+    			return Observable.Select(source, x =>
     			{
-    				using(Python.Runtime.Py.GIL())
+    				using(Py.GIL())
     				{
     					dynamic input = x;
-    					Python.Runtime.PyObject pyObject = (Python.Runtime.PyObject)input;
+    					PyObject pyObject = (PyObject)input;
     					var xPyObj = GetPythonAttribute<double>(pyObject, "x");
     					var yPyObj = GetPythonAttribute<double>(pyObject, "y");
 					
@@ -81,7 +89,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     		}
     		else
     		{
-    			return System.Reactive.Linq.Observable.Select(source, x =>
+    			return Observable.Select(source, x =>
     				new Observation2D {
     					X = _x,
     					Y = _y
@@ -95,7 +103,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             foreach (var prop in typeof(Observation2D).GetProperties())
             {
                 // Get the YamlMemberAttribute of the property
-                var yamlAttr = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<YamlDotNet.Serialization.YamlMemberAttribute>(prop);
+                var yamlAttr = CustomAttributeExtensions.GetCustomAttribute<YamlMemberAttribute>(prop);
                 var yamlAlias = yamlAttr != null && !string.IsNullOrWhiteSpace(yamlAttr.Alias) ? yamlAttr.Alias : char.ToLower(prop.Name[0]) + prop.Name.Substring(1);
                 var value = prop.GetValue(this, null);
                 if (value is double && double.IsNaN((double)value))

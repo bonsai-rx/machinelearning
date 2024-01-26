@@ -1,15 +1,22 @@
+using System.ComponentModel;
+using YamlDotNet.Serialization;
+using System;
+using System.Reactive.Linq;
+using Python.Runtime;
+using System.Reflection;
+
 namespace Bonsai.ML.LinearDynamicalSystems
 {
 
     using static PythonHelper;
 
     /// <summary>
-    /// Model parameters for a Kalman Filter python class
+    /// KFKModelParameters parameters for a Kalman Filter python class
     /// </summary>
-    [System.ComponentModel.DescriptionAttribute("Model parameters for a Kalman Filter python class")]
-    [Bonsai.CombinatorAttribute()]
-    [Bonsai.WorkflowElementCategoryAttribute(Bonsai.ElementCategory.Source)]
-    public class Model
+    [Description("Model parameters for a Kalman Filter Kinematics (KFK) model")]
+    [Combinator()]
+    [WorkflowElementCategory(ElementCategory.Source)]
+    public class KFKModelParameters
     {
 
         private double _pos_x0;
@@ -37,8 +44,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// x position at time 0
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="pos_x0")]
-        [System.ComponentModel.DescriptionAttribute("x position at time 0")]
+        [YamlMember(Alias="pos_x0")]
+        [Description("x position at time 0")]
         public double Pos_x0
         {
             get
@@ -54,8 +61,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// y position at time 0
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="pos_y0")]
-        [System.ComponentModel.DescriptionAttribute("y position at time 0")]
+        [YamlMember(Alias="pos_y0")]
+        [Description("y position at time 0")]
         public double Pos_y0
         {
             get
@@ -71,8 +78,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// x velocity at time 0
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="vel_x0")]
-        [System.ComponentModel.DescriptionAttribute("x velocity at time 0")]
+        [YamlMember(Alias="vel_x0")]
+        [Description("x velocity at time 0")]
         public double Vel_x0
         {
             get
@@ -88,8 +95,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// y velocity at time 0
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="vel_y0")]
-        [System.ComponentModel.DescriptionAttribute("y velocity at time 0")]
+        [YamlMember(Alias="vel_y0")]
+        [Description("y velocity at time 0")]
         public double Vel_y0
         {
             get
@@ -105,8 +112,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// x acceleration at time 0
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="acc_x0")]
-        [System.ComponentModel.DescriptionAttribute("x acceleration at time 0")]
+        [YamlMember(Alias="acc_x0")]
+        [Description("x acceleration at time 0")]
         public double Acc_x0
         {
             get
@@ -122,8 +129,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// x velocity at time 0
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="acc_y0")]
-        [System.ComponentModel.DescriptionAttribute("x velocity at time 0")]
+        [YamlMember(Alias="acc_y0")]
+        [Description("x velocity at time 0")]
         public double Acc_y0
         {
             get
@@ -139,8 +146,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// covariance of a
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="sigma_a")]
-        [System.ComponentModel.DescriptionAttribute("covariance of a")]
+        [YamlMember(Alias="sigma_a")]
+        [Description("covariance of a")]
         public double Sigma_a
         {
             get
@@ -156,8 +163,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// covariance of x
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="sigma_x")]
-        [System.ComponentModel.DescriptionAttribute("covariance of x")]
+        [YamlMember(Alias="sigma_x")]
+        [Description("covariance of x")]
         public double Sigma_x
         {
             get
@@ -173,8 +180,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// covariance of y
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="sigma_y")]
-        [System.ComponentModel.DescriptionAttribute("covariance of y")]
+        [YamlMember(Alias="sigma_y")]
+        [Description("covariance of y")]
         public double Sigma_y
         {
             get
@@ -190,8 +197,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// v0
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="sqrt_diag_V0_value")]
-        [System.ComponentModel.DescriptionAttribute("v0")]
+        [YamlMember(Alias="sqrt_diag_V0_value")]
+        [Description("v0")]
         public double Sqrt_diag_V0_value
         {
             get
@@ -207,8 +214,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// frames per second
         /// </summary>
-        [YamlDotNet.Serialization.YamlMemberAttribute(Alias="fps")]
-        [System.ComponentModel.DescriptionAttribute("frames per second")]
+        [YamlMember(Alias="fps")]
+        [Description("frames per second")]
         public int Fps
         {
             get
@@ -221,10 +228,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
             }
         }
 
-        public System.IObservable<Model> Process()
+        public IObservable<KFKModelParameters> Process()
         {
-    		return System.Reactive.Linq.Observable.Defer(() => System.Reactive.Linq.Observable.Return(
-    			new Model {
+    		return Observable.Defer(() => Observable.Return(
+    			new KFKModelParameters {
     				Pos_x0 = _pos_x0,
     				Pos_y0 = _pos_y0,
     				Vel_x0 = _vel_x0,
@@ -239,16 +246,16 @@ namespace Bonsai.ML.LinearDynamicalSystems
     			}));
         }
     
-        public System.IObservable<Model> Process<TSource>(System.IObservable<TSource> source)
+        public IObservable<KFKModelParameters> Process<TSource>(IObservable<TSource> source)
         {
-    		if (typeof(TSource) == typeof(Python.Runtime.PyObject))
+    		if (typeof(TSource) == typeof(PyObject))
     		{
-    			return System.Reactive.Linq.Observable.Select(source, x =>
+    			return Observable.Select(source, x =>
     			{
-    				using(Python.Runtime.Py.GIL())
+    				using(Py.GIL())
     				{
     					dynamic input = x;
-    					Python.Runtime.PyObject pyObject = (Python.Runtime.PyObject)input;
+    					PyObject pyObject = (PyObject)input;
     					var pos_x0PyObj = GetPythonAttribute<double>(pyObject, "pos_x0");
     					var pos_y0PyObj = GetPythonAttribute<double>(pyObject, "pos_y0");
     					var vel_x0PyObj = GetPythonAttribute<double>(pyObject, "vel_x0");
@@ -261,7 +268,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     					var sqrt_diag_V0_valuePyObj = GetPythonAttribute<double>(pyObject, "sqrt_diag_V0_value");
     					var fpsPyObj = GetPythonAttribute<int>(pyObject, "fps");
 					
-    					return new Model {
+    					return new KFKModelParameters {
     						Pos_x0 = pos_x0PyObj,
     						Pos_y0 = pos_y0PyObj,
     						Vel_x0 = vel_x0PyObj,
@@ -279,8 +286,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
     		}
     		else
     		{
-    			return System.Reactive.Linq.Observable.Select(source, x =>
-    				new Model {
+    			return Observable.Select(source, x =>
+    				new KFKModelParameters {
     					Pos_x0 = _pos_x0,
     					Pos_y0 = _pos_y0,
     					Vel_x0 = _vel_x0,
@@ -299,9 +306,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
         public override string ToString()
         {
     		string output = "";
-    		foreach (var prop in typeof(Model).GetProperties())
+    		foreach (var prop in typeof(KFKModelParameters).GetProperties())
     		{
-    			var yamlAttr = System.Reflection.CustomAttributeExtensions.GetCustomAttribute<YamlDotNet.Serialization.YamlMemberAttribute>(prop);
+    			var yamlAttr = CustomAttributeExtensions.GetCustomAttribute<YamlMemberAttribute>(prop);
     			var yamlAlias = yamlAttr != null && !string.IsNullOrWhiteSpace(yamlAttr.Alias) ? yamlAttr.Alias : char.ToLower(prop.Name[0]) + prop.Name.Substring(1);
     			var value = prop.GetValue(this, null);
     			if (value is double && double.IsNaN((double)value))
