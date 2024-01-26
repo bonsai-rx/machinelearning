@@ -1,0 +1,34 @@
+.workflow {
+  border: 1px solid #e3e3e3;
+  padding: 1px;
+}
+
+.workflow > p > img {
+  padding-top: 12px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.codeHeader {
+  box-sizing: content-box;
+  background-color: #f2f2f2;
+  color: #171717;
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #e3e3e3;
+  border-bottom: 0;
+  margin-top: 16px;
+  min-height: 30px;
+}
+
+.codeHeader > .language {
+  padding: 2px 16px;
+  flex-grow: 1;
+  line-height: 26px;
+}
+
+.wrap-right > p > img,
+.wrap-right > p > a > img {
+  max-width: 50%;
+  float: inline-end;
+}
