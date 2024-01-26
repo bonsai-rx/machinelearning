@@ -11,12 +11,12 @@ namespace Bonsai.ML.LinearDynamicalSystems
     using static PythonHelper;
 
     /// <summary>
-    /// KFKModelParameters parameters for a Kalman Filter python class
+    /// Model parameters for a Kalman Filter Kinematics python class
     /// </summary>
     [Description("Model parameters for a Kalman Filter Kinematics (KFK) model")]
     [Combinator()]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class KFKModelParameters
+    public class KalmanFilterKinematicsModel
     {
 
         private double _pos_x0;
@@ -228,10 +228,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
             }
         }
 
-        public IObservable<KFKModelParameters> Process()
+        public IObservable<KalmanFilterKinematicsModel> Process()
         {
     		return Observable.Defer(() => Observable.Return(
-    			new KFKModelParameters {
+    			new KalmanFilterKinematicsModel {
     				Pos_x0 = _pos_x0,
     				Pos_y0 = _pos_y0,
     				Vel_x0 = _vel_x0,
@@ -246,7 +246,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     			}));
         }
     
-        public IObservable<KFKModelParameters> Process<TSource>(IObservable<TSource> source)
+        public IObservable<KalmanFilterKinematicsModel> Process<TSource>(IObservable<TSource> source)
         {
     		if (typeof(TSource) == typeof(PyObject))
     		{
@@ -268,7 +268,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     					var sqrt_diag_V0_valuePyObj = GetPythonAttribute<double>(pyObject, "sqrt_diag_V0_value");
     					var fpsPyObj = GetPythonAttribute<int>(pyObject, "fps");
 					
-    					return new KFKModelParameters {
+    					return new KalmanFilterKinematicsModel {
     						Pos_x0 = pos_x0PyObj,
     						Pos_y0 = pos_y0PyObj,
     						Vel_x0 = vel_x0PyObj,
@@ -287,7 +287,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     		else
     		{
     			return Observable.Select(source, x =>
-    				new KFKModelParameters {
+    				new KalmanFilterKinematicsModel {
     					Pos_x0 = _pos_x0,
     					Pos_y0 = _pos_y0,
     					Vel_x0 = _vel_x0,
@@ -306,7 +306,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         public override string ToString()
         {
     		string output = "";
-    		foreach (var prop in typeof(KFKModelParameters).GetProperties())
+    		foreach (var prop in typeof(KalmanFilterKinematicsModel).GetProperties())
     		{
     			var yamlAttr = CustomAttributeExtensions.GetCustomAttribute<YamlMemberAttribute>(prop);
     			var yamlAlias = yamlAttr != null && !string.IsNullOrWhiteSpace(yamlAttr.Alias) ? yamlAttr.Alias : char.ToLower(prop.Name[0]) + prop.Name.Substring(1);
