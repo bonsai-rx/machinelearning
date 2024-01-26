@@ -6,12 +6,12 @@ using System.Windows.Forms;
 using Bonsai.ML.Visualizers;
 using Bonsai.ML.LinearDynamicalSystems;
 
-[assembly: TypeVisualizer(typeof(StateEstimateVisualizer), Target = typeof(StateEstimate))]
+[assembly: TypeVisualizer(typeof(KinematicsVisualizer), Target = typeof(Kinematics))]
 
 namespace Bonsai.ML.Visualizers
 {
-    // [TypeVisualizer(typeof(StateEstimateVisualizer), Target = typeof(StateEstimate))]
-    public class StateEstimateVisualizer : DialogTypeVisualizer
+    // [TypeVisualizer(typeof(KinematicsVisualizer), Target = typeof(StateEstimate))]
+    public class KinematicsVisualizer : DialogTypeVisualizer
     {
         GraphControl graph = null;
 

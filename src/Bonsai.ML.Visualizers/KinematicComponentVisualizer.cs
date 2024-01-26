@@ -10,26 +10,25 @@ using System.Drawing;
 using OxyPlot.WindowsForms;
 using OxyPlot.Axes;
 
-[assembly: TypeVisualizer(typeof(EstimateWithUncertaintyVisualizerOxyPlot), Target = typeof(EstimateWithUncertainty))]
+[assembly: TypeVisualizer(typeof(KinematicComponentVisualizer), Target = typeof(KinematicComponent))]
 
 namespace Bonsai.ML.Visualizers
 {
-    // [TypeVisualizer(visualizer: typeof(EstimateWithUncertaintyVisualizerOxyPlot), TargetTypeName = "Bonsai.ML.LinearDynamicalSystems.EstimateWithUncertainty")]
-    public class EstimateWithUncertaintyVisualizerOxyPlot : DialogTypeVisualizer
+    public class KinematicComponentVisualizer : DialogTypeVisualizer
     {
 
-        public EstimateWithUncertaintyVisualizerOxyPlot ()
+        public KinematicComponentVisualizer ()
         {
             Capacity = 10;
             Size = new Size(320, 240);
         }
 
-        private EstimateTypes estimateType = EstimateTypes.X;
+        private Component stateComponent = Component.X;
 
-        public EstimateTypes EstimateType 
+        public Component StateComponent
         {
-            get => estimateType;
-            set => estimateType = value;
+            get => stateComponent;
+            set => stateComponent = value;
         }
 
         public Size Size { get; set; }
@@ -46,10 +45,10 @@ namespace Bonsai.ML.Visualizers
 
         PlotView View;
         PlotModel Model;
-        LineSeries Estimate;
-        AreaSeries Uncertainty;
-        ComboBox EstimateProperty;
-        Label estimateLabel;
+        LineSeries Mean;
+        AreaSeries Variance;
+        ComboBox ComponentProperty;
+        Label ComponentLabel;
 
         public override void Load(IServiceProvider provider)
         {
@@ -61,15 +60,15 @@ namespace Bonsai.ML.Visualizers
 
             Model = new PlotModel();
 
-            Estimate = new LineSeries
+            Mean = new LineSeries
             {
-                Title = "Estimate",
+                Title = "Mean",
                 Color = OxyColors.Blue
             };
 
-            Uncertainty = new AreaSeries
+            Variance = new AreaSeries
             {
-                Title = "Uncertainty",
+                Title = "Variance",
                 Color = OxyColors.LightBlue,
                 Fill = OxyColor.FromArgb(100, 173, 216, 230) // Light Blue with some transparency
             };
@@ -91,25 +90,27 @@ namespace Bonsai.ML.Visualizers
                 Title = "Estimate"
             });
 
-            Model.Series.Add(Uncertainty);
-            Model.Series.Add(Estimate);
-
-            // Model.Axes[0].Minimum = 0;
-            // Model.Axes[0].Maximum = 10;
+            Model.Series.Add(Mean);
+            Model.Series.Add(Variance);
 
             View.Model = Model;
 
-            estimateLabel = new Label();
-            estimateLabel.Text = "Estimate:";
-            estimateLabel.AutoSize = true;
-            estimateLabel.Location = new Point(-140, 10);
-            estimateLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            ComponentLabel = new Label
+            {
+                Text = "State component:",
+                AutoSize = true,
+                Location = new Point(-140, 10),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right
+            };
 
-            EstimateProperty = new ComboBox();
-            EstimateProperty.Location = new Point(-5, 5);
-            EstimateProperty.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            EstimateProperty.DataSource = Enum.GetValues(typeof(EstimateTypes));
-            EstimateProperty.SelectedIndexChanged += EstimateTypesChanged;
+            ComponentProperty = new ComboBox
+            {
+                Location = new Point(-5, 5),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                DataSource = Enum.GetValues(typeof(Component))
+            };
+
+            ComponentProperty.SelectedIndexChanged += ComponentChanged;
 
             // graph.GraphPane.YAxis.Scale.MaxAuto = true;
             // graph.GraphPane.YAxis.Scale.MinAuto = true;
@@ -123,18 +124,18 @@ namespace Bonsai.ML.Visualizers
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             if (visualizerService != null)
             {
-                visualizerService.AddControl(EstimateProperty);
-                visualizerService.AddControl(estimateLabel);
+                visualizerService.AddControl(ComponentProperty);
+                visualizerService.AddControl(ComponentLabel);
                 visualizerService.AddControl(View);
 
-                EstimateProperty.BringToFront();
-                estimateLabel.BringToFront();
+                ComponentProperty.BringToFront();
+                ComponentLabel.BringToFront();
             }
         }
 
         public override void Show(object value)
         {
-            EstimateWithUncertainty estimateWithUncertainty = (EstimateWithUncertainty)value;
+            KinematicComponent kinematicComponent = (KinematicComponent)value;
 
             if (!_startTime.HasValue)
             {
@@ -142,18 +143,18 @@ namespace Bonsai.ML.Visualizers
                 _startTime = DateTime.Now;
             }
 
-            double estimate;
-            double uncertainty;
+            double mean;
+            double variance;
 
-            if (estimateType == EstimateTypes.X)
+            if (stateComponent == Component.X)
             {
-                estimate = estimateWithUncertainty.X_state;
-                uncertainty = estimateWithUncertainty.X_uncertainty;
+                mean = kinematicComponent.X_mean;
+                variance = kinematicComponent.X_variance;
             }
             else
             {
-                estimate = estimateWithUncertainty.Y_state;
-                uncertainty = estimateWithUncertainty.Y_uncertainty;
+                mean = kinematicComponent.Y_mean;
+                variance = kinematicComponent.Y_variance;
             }
 
             var time = (DateTime.Now - _startTime.Value).TotalSeconds;
@@ -162,9 +163,9 @@ namespace Bonsai.ML.Visualizers
             // Console.WriteLine($"dt: {dt}");
             // Console.WriteLine($"time: {time}");
 
-            Estimate.Points.Add(new DataPoint(time, estimate));
-            Uncertainty.Points.Add(new DataPoint(time, estimate + uncertainty));
-            Uncertainty.Points2.Add(new DataPoint(time, estimate - uncertainty));
+            Mean.Points.Add(new DataPoint(time, mean));
+            Variance.Points.Add(new DataPoint(time, mean + variance));
+            Variance.Points2.Add(new DataPoint(time, mean - variance));
 
             var max_time = Math.Ceiling(time);
             var min_time = max_time - Capacity;
@@ -192,20 +193,20 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
-        public enum EstimateTypes
+        public enum Component
         {
             X = 0,
             Y = 1
         }
 
-        private void EstimateTypesChanged(object sender, EventArgs e)
+        private void ComponentChanged(object sender, EventArgs e)
         {
-            string selectedItem = EstimateProperty.SelectedItem.ToString();
-            EstimateType = (EstimateTypes)Enum.Parse(typeof(EstimateTypes), selectedItem);
+            string selectedItem = ComponentProperty.SelectedItem.ToString();
+            StateComponent = (Component)Enum.Parse(typeof(Component), selectedItem);
             _startTime = null;
-            Estimate.Points.Clear();
-            Uncertainty.Points.Clear();
-            Uncertainty.Points2.Clear();
+            Mean.Points.Clear();
+            Variance.Points.Clear();
+            Variance.Points2.Clear();
             Model.Axes[0].Minimum = 0;
             Model.Axes[0].Maximum = Capacity;
             Model.InvalidatePlot(true);
