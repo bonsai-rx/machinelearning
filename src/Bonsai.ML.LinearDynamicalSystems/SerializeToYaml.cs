@@ -22,9 +22,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
             });
         }
 
-        public IObservable<string> Process(IObservable<KFKModelParameters> source)
+        public IObservable<string> Process(IObservable<KalmanFilterKinematicsModel> source)
         {
-            return Process<KFKModelParameters>(source);
+            return Process<KalmanFilterKinematicsModel>(source);
         }
 
         public IObservable<string> Process(IObservable<Observation2D> source)
