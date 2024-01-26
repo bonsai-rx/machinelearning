@@ -4,12 +4,9 @@ using OxyPlot;
 using OxyPlot.Series;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.Design.Visualizers;
 using Bonsai.ML.Visualizers;
 using Bonsai.ML.LinearDynamicalSystems;
 using System.Drawing;
-using System.Linq;
-using System.Collections.Generic;
 using OxyPlot.WindowsForms;
 using OxyPlot.Axes;
 
@@ -24,6 +21,7 @@ namespace Bonsai.ML.Visualizers
         public EstimateWithUncertaintyVisualizerOxyPlot ()
         {
             Capacity = 10;
+            Size = new Size(320, 240);
         }
 
         private EstimateTypes estimateType = EstimateTypes.X;
@@ -33,6 +31,8 @@ namespace Bonsai.ML.Visualizers
             get => estimateType;
             set => estimateType = value;
         }
+
+        public Size Size { get; set; }
 
         public int Capacity { get; set; }
 
@@ -48,12 +48,14 @@ namespace Bonsai.ML.Visualizers
         PlotModel Model;
         LineSeries Estimate;
         AreaSeries Uncertainty;
+        ComboBox EstimateProperty;
+        Label estimateLabel;
 
         public override void Load(IServiceProvider provider)
         {
             View = new PlotView
             {
-                Size = new Size(320, 240),
+                Size = Size,
                 Dock = DockStyle.Fill,
             };
 
@@ -80,8 +82,8 @@ namespace Bonsai.ML.Visualizers
                 MinorGridlineStyle = LineStyle.Dot,
                 MinimumMajorStep = 1,
                 MinimumMinorStep = 0.5,
-                Minimum = _startTime.HasValue & Convert.ToDouble(_startTime.Value) > Capacity ? Convert.ToDouble(_startTime.Value) - Capacity : 0,
-                Maximum = _startTime.HasValue & Convert.ToDouble(_startTime.Value) > Capacity ? Convert.ToDouble(_startTime.Value) : Capacity
+                Minimum = _startTime.HasValue ? Convert.ToDouble(_startTime.Value) - Capacity : 0,
+                Maximum = _startTime.HasValue ? Convert.ToDouble(_startTime.Value) : Capacity
             });
 
             Model.Axes.Add(new LinearAxis {
@@ -97,6 +99,18 @@ namespace Bonsai.ML.Visualizers
 
             View.Model = Model;
 
+            estimateLabel = new Label();
+            estimateLabel.Text = "Estimate:";
+            estimateLabel.AutoSize = true;
+            estimateLabel.Location = new Point(-140, 10);
+            estimateLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+
+            EstimateProperty = new ComboBox();
+            EstimateProperty.Location = new Point(-5, 5);
+            EstimateProperty.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            EstimateProperty.DataSource = Enum.GetValues(typeof(EstimateTypes));
+            EstimateProperty.SelectedIndexChanged += EstimateTypesChanged;
+
             // graph.GraphPane.YAxis.Scale.MaxAuto = true;
             // graph.GraphPane.YAxis.Scale.MinAuto = true;
 
@@ -109,7 +123,12 @@ namespace Bonsai.ML.Visualizers
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             if (visualizerService != null)
             {
+                visualizerService.AddControl(EstimateProperty);
+                visualizerService.AddControl(estimateLabel);
                 visualizerService.AddControl(View);
+
+                EstimateProperty.BringToFront();
+                estimateLabel.BringToFront();
             }
         }
 
@@ -141,7 +160,7 @@ namespace Bonsai.ML.Visualizers
             // var time = DateTimeAxis.ToDouble(dt);
 
             // Console.WriteLine($"dt: {dt}");
-            Console.WriteLine($"time: {time}");
+            // Console.WriteLine($"time: {time}");
 
             Estimate.Points.Add(new DataPoint(time, estimate));
             Uncertainty.Points.Add(new DataPoint(time, estimate + uncertainty));
@@ -150,10 +169,10 @@ namespace Bonsai.ML.Visualizers
             var max_time = Math.Ceiling(time);
             var min_time = max_time - Capacity;
 
-            Console.WriteLine($"max_time: {max_time}");
-            Console.WriteLine($"min_time: {min_time}");
+            // Console.WriteLine($"max_time: {max_time}");
+            // Console.WriteLine($"min_time: {min_time}");
 
-            if (Estimate.Points.Count > Capacity)
+            if (min_time > 0)
             {
                 // Model.Axes[0].Minimum = Estimate.Points[Estimate.Points.Count - Capacity].X;
                 // Model.Axes[0].Maximum = (Math.Ceiling(time * 100) / 100) + 0.01;
@@ -177,6 +196,19 @@ namespace Bonsai.ML.Visualizers
         {
             X = 0,
             Y = 1
+        }
+
+        private void EstimateTypesChanged(object sender, EventArgs e)
+        {
+            string selectedItem = EstimateProperty.SelectedItem.ToString();
+            EstimateType = (EstimateTypes)Enum.Parse(typeof(EstimateTypes), selectedItem);
+            _startTime = null;
+            Estimate.Points.Clear();
+            Uncertainty.Points.Clear();
+            Uncertainty.Points2.Clear();
+            Model.Axes[0].Minimum = 0;
+            Model.Axes[0].Maximum = Capacity;
+            Model.InvalidatePlot(true);
         }
     }
 }
