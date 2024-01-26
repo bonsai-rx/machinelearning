@@ -50,7 +50,7 @@
         <Combinator xsi:type="rx:Zip" />
       </Expression>
       <Expression xsi:type="Format">
-        <Format>{0} = KalmanFilter2D({1})</Format>
+        <Format>{0} = KalmanFilterKinematics({1})</Format>
         <Selector>it.Item1, it.Item2</Selector>
       </Expression>
       <Expression xsi:type="InputMapping">
@@ -68,7 +68,7 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="py:Exec">
-          <py:Script>model = KalmanFilter2D(pos_x0=0,pos_y0=0,vel_x0=0,vel_y0=0,acc_x0=0,acc_y0=0,sigma_a=10000,sigma_x=100,sigma_y=100,sqrt_diag_V0_value=0.001,fps=60)</py:Script>
+          <py:Script>model = KalmanFilterKinematics(pos_x0=0,pos_y0=0,vel_x0=0,vel_y0=0,acc_x0=0,acc_y0=0,sigma_a=10000,sigma_x=100,sigma_y=100,sqrt_diag_V0_value=0.001,fps=60)</py:Script>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">

@@ -1,46 +1,60 @@
+using System.ComponentModel;
+using YamlDotNet.Serialization;
+using System;
+using System.Reactive.Linq;
+using Python.Runtime;
+using System.Reflection;
+using Bonsai.Expressions;
+using System.Xml.Serialization;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Linq;
+using System.IO;
+using YamlDotNet.Core;
+
 namespace Bonsai.ML.LinearDynamicalSystems
 {
     /// <summary>
     /// Deserializes a sequence of YAML strings into data model objects.
     /// </summary>
-    [System.ComponentModel.DefaultPropertyAttribute("Type")]
-    [Bonsai.WorkflowElementCategoryAttribute(Bonsai.ElementCategory.Transform)]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(Bonsai.Expressions.TypeMapping<Model>))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(Bonsai.Expressions.TypeMapping<Observation2D>))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(Bonsai.Expressions.TypeMapping<State>))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(Bonsai.Expressions.TypeMapping<StateEstimate>))]
-    [System.Xml.Serialization.XmlIncludeAttribute(typeof(Bonsai.Expressions.TypeMapping<EstimateWithUncertainty>))]
-    [System.ComponentModel.DescriptionAttribute("Deserializes a sequence of YAML strings into data model objects.")]
-    public partial class DeserializeFromYaml : Bonsai.Expressions.SingleArgumentExpressionBuilder
+    [DefaultProperty("Type")]
+    [WorkflowElementCategory(ElementCategory.Transform)]
+    [XmlInclude(typeof(TypeMapping<KFKModelParameters>))]
+    [XmlInclude(typeof(TypeMapping<Observation2D>))]
+    [XmlInclude(typeof(TypeMapping<State>))]
+    [XmlInclude(typeof(TypeMapping<Kinematics>))]
+    [XmlInclude(typeof(TypeMapping<KinematicComponent>))]
+    [Description("Deserializes a sequence of YAML strings into data model objects.")]
+    public partial class DeserializeFromYaml : SingleArgumentExpressionBuilder
     {
     
         public DeserializeFromYaml()
         {
-            Type = new Bonsai.Expressions.TypeMapping<Model>();
+            Type = new TypeMapping<KFKModelParameters>();
         }
 
-        public Bonsai.Expressions.TypeMapping Type { get; set; }
+        public TypeMapping Type { get; set; }
 
-        public override System.Linq.Expressions.Expression Build(System.Collections.Generic.IEnumerable<System.Linq.Expressions.Expression> arguments)
+        public override Expression Build(IEnumerable<Expression> arguments)
         {
-            var typeMapping = (Bonsai.Expressions.TypeMapping)Type;
+            TypeMapping typeMapping = Type;
             var returnType = typeMapping.GetType().GetGenericArguments()[0];
-            return System.Linq.Expressions.Expression.Call(
+            return Expression.Call(
                 typeof(DeserializeFromYaml),
                 "Process",
-                new System.Type[] { returnType },
-                System.Linq.Enumerable.Single(arguments));
+                new Type[] { returnType },
+                Enumerable.Single(arguments));
         }
 
-        private static System.IObservable<T> Process<T>(System.IObservable<string> source)
+        private static IObservable<T> Process<T>(IObservable<string> source)
         {
-            return System.Reactive.Linq.Observable.Defer(() =>
+            return Observable.Defer(() =>
             {
-                var serializer = new YamlDotNet.Serialization.DeserializerBuilder().Build();
-                return System.Reactive.Linq.Observable.Select(source, value =>
+                var serializer = new DeserializerBuilder().Build();
+                return Observable.Select(source, value =>
                 {
-                    var reader = new System.IO.StringReader(value);
-                    var parser = new YamlDotNet.Core.MergingParser(new YamlDotNet.Core.Parser(reader));
+                    var reader = new StringReader(value);
+                    var parser = new MergingParser(new Parser(reader));
                     return serializer.Deserialize<T>(parser);
                 });
             });
