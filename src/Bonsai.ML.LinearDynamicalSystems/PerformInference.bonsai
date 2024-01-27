@@ -123,7 +123,7 @@
         <Combinator xsi:type="p1:State" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:StateInference" />
+        <Combinator xsi:type="p1:KinematicsFromState" />
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
     </Nodes>
