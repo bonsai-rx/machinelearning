@@ -1,5 +1,8 @@
 using System;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Collections.Generic;
+using System.Reflection;
 using OxyPlot;
 using OxyPlot.Series;
 using Bonsai;
@@ -23,13 +26,8 @@ namespace Bonsai.ML.Visualizers
             Size = new Size(320, 240);
         }
 
-        private Component stateComponent = Component.X;
-
-        public Component StateComponent
-        {
-            get => stateComponent;
-            set => stateComponent = value;
-        }
+        private PropertyInfo stateComponentProperty;
+        private string stateComponentName;
 
         public Size Size { get; set; }
 
@@ -47,8 +45,8 @@ namespace Bonsai.ML.Visualizers
         PlotModel Model;
         LineSeries Mean;
         AreaSeries Variance;
-        ComboBox ComponentProperty;
-        Label ComponentLabel;
+        ComboBox StateComponentComboBox;
+        Label StateComponentLabel;
 
         public override void Load(IServiceProvider provider)
         {
@@ -95,7 +93,7 @@ namespace Bonsai.ML.Visualizers
 
             View.Model = Model;
 
-            ComponentLabel = new Label
+            StateComponentLabel = new Label
             {
                 Text = "State component:",
                 AutoSize = true,
@@ -103,59 +101,54 @@ namespace Bonsai.ML.Visualizers
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
 
-            ComponentProperty = new ComboBox
+            StateComponentComboBox = new ComboBox
             {
                 Location = new Point(-5, 5),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                DataSource = Enum.GetValues(typeof(Component))
+                DataSource = StateComponentsCollection()
             };
 
-            ComponentProperty.SelectedIndexChanged += ComponentChanged;
-
-            // graph.GraphPane.YAxis.Scale.MaxAuto = true;
-            // graph.GraphPane.YAxis.Scale.MinAuto = true;
-
-            // graph.GraphPane.XAxis.Scale.Min = -1;
-            // graph.GraphPane.XAxis.Scale.Max = 1;
-
-            // graph.GraphPane.YAxis.Scale.Min = -1;
-            // graph.GraphPane.YAxis.Scale.Max = 1;
+            StateComponentComboBox.SelectedIndexChanged += ComponentChanged;
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             if (visualizerService != null)
             {
-                visualizerService.AddControl(ComponentProperty);
-                visualizerService.AddControl(ComponentLabel);
+                visualizerService.AddControl(StateComponentComboBox);
+                visualizerService.AddControl(StateComponentLabel);
                 visualizerService.AddControl(View);
 
-                ComponentProperty.BringToFront();
-                ComponentLabel.BringToFront();
+                StateComponentComboBox.BringToFront();
+                StateComponentLabel.BringToFront();
             }
+        }
+
+        public TypeConverter.StandardValuesCollection StateComponentsCollection()
+        {
+            List<string> stateComponents = new List<string>();
+
+            foreach (PropertyInfo property in typeof(KinematicComponent).GetProperties())
+            {
+                if (property.PropertyType == typeof(StateComponent))
+                {
+                    stateComponents.Add(property.Name);
+                }
+            }
+
+            return new TypeConverter.StandardValuesCollection(stateComponents);
         }
 
         public override void Show(object value)
         {
-            KinematicComponent kinematicComponent = (KinematicComponent)value;
-
             if (!_startTime.HasValue)
             {
                 // Initialize startTime when the first data point arrives
                 _startTime = DateTime.Now;
             }
 
-            double mean;
-            double variance;
-
-            if (stateComponent == Component.X)
-            {
-                mean = kinematicComponent.X_mean;
-                variance = kinematicComponent.X_variance;
-            }
-            else
-            {
-                mean = kinematicComponent.Y_mean;
-                variance = kinematicComponent.Y_variance;
-            }
+            KinematicComponent kinematicComponent = (KinematicComponent)value;
+            StateComponent stateComponent = (StateComponent)stateComponentProperty.GetValue(kinematicComponent);
+            double mean = stateComponent.Mean;
+            double variance = stateComponent.Variance;
 
             var time = (DateTime.Now - _startTime.Value).TotalSeconds;
             // var time = DateTimeAxis.ToDouble(dt);
@@ -193,23 +186,21 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
-        public enum Component
-        {
-            X = 0,
-            Y = 1
-        }
-
         private void ComponentChanged(object sender, EventArgs e)
         {
-            string selectedItem = ComponentProperty.SelectedItem.ToString();
-            StateComponent = (Component)Enum.Parse(typeof(Component), selectedItem);
-            _startTime = null;
-            Mean.Points.Clear();
-            Variance.Points.Clear();
-            Variance.Points2.Clear();
-            Model.Axes[0].Minimum = 0;
-            Model.Axes[0].Maximum = Capacity;
-            Model.InvalidatePlot(true);
+            var selectedName = StateComponentComboBox.SelectedItem.ToString();
+            if (selectedName != stateComponentName)
+            {
+                stateComponentName = selectedName;
+                stateComponentProperty = typeof(KinematicComponent).GetProperty(stateComponentName);
+                _startTime = null;
+                Mean.Points.Clear();
+                Variance.Points.Clear();
+                Variance.Points2.Clear();
+                Model.Axes[0].Minimum = 0;
+                Model.Axes[0].Maximum = Capacity;
+                Model.InvalidatePlot(true);
+            }
         }
     }
 }
