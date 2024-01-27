@@ -22,6 +22,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     [XmlInclude(typeof(TypeMapping<KalmanFilterKinematicsModel>))]
     [XmlInclude(typeof(TypeMapping<Observation2D>))]
     [XmlInclude(typeof(TypeMapping<State>))]
+    [XmlInclude(typeof(TypeMapping<StateComponent>))]
     [XmlInclude(typeof(TypeMapping<Kinematics>))]
     [XmlInclude(typeof(TypeMapping<KinematicComponent>))]
     [Description("Deserializes a sequence of YAML strings into data model objects.")]

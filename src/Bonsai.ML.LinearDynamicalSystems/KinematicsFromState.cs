@@ -10,102 +10,79 @@ using System.Linq;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
-
     /// <summary>
     /// State components of a Kalman Filter Kinematics model
     /// </summary>
     [Description("State component of a Kalman Filter Kinematics model")]  
     public class KinematicComponent
     {
-        private double _x_mean;
+        private StateComponent _x;
 
-        private double _y_mean;
+        private StateComponent _y;
 
-        private double _x_variance;
-
-        private double _y_variance;
-
+        private double _covariance;
 
         /// <summary>
-        /// x mean
+        /// x state component
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="x_mean")]
-        [Description("X mean")]
-        public double X_mean
+        [YamlMember(Alias="x_state_component")]
+        [Description("X state component")]
+        public StateComponent X
         {
             get
             {
-                return _x_mean;
+                return _x;
             }
             set
             {
-                _x_mean = value;
+                _x = value;
             }
         }
 
         /// <summary>
-        /// y mean
+        /// y state component
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="y_mean")]
-        [Description("Y mean")]
-        public double Y_mean
+        [YamlMember(Alias="y_state_component")]
+        [Description("Y state component")]
+        public StateComponent Y
         {
             get
             {
-                return _y_mean;
+                return _y;
             }
             set
             {
-                _y_mean = value;
+                _y = value;
             }
         }
 
         /// <summary>
-        /// x variance
+        /// covariance between state components
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="x_variance")]
-        [Description("x variance")]
-        public double X_variance
+        [YamlMember(Alias="covariance")]
+        [Description("covariance between state components")]
+        public double Covariance
         {
             get
             {
-                return _x_variance;
+                return _covariance;
             }
             set
             {
-                _x_variance = value;
-            }
-        }
-
-        /// <summary>
-        /// y variance
-        /// </summary>
-        [XmlIgnore()]
-        [YamlMember(Alias="y_variance")]
-        [Description("y variance")]
-        public double Y_variance
-        {
-            get
-            {
-                return _y_variance;
-            }
-            set
-            {
-                _y_variance = value;
+                _covariance = value;
             }
         }
     }
 
     /// <summary>
-    /// Kinematic variables of position, velocity, and acceleration
+    /// Kinematics of position, velocity, and acceleration
     /// </summary>
-    [Description("Kinematic variables of position, velocity, and acceleration")]    
+    [Description("Kinematics of position, velocity, and acceleration")]    
     public class Kinematics
     {
-    
         private KinematicComponent _position;
     
         private KinematicComponent _velocity;
@@ -175,34 +152,26 @@ namespace Bonsai.ML.LinearDynamicalSystems
     [WorkflowElementCategory(ElementCategory.Source)]
     public class KinematicsFromState
     {
-        private double Sigma(double variance)
-        {
-            return 2 * Math.Sqrt(variance);
-        }
-
         public IObservable<Kinematics> Process(IObservable<State> source)
         {
             return Observable.Select(source, state => 
             {
                 KinematicComponent position = new KinematicComponent{
-                    X_mean = state.X[0][0],
-                    Y_mean = state.X[3][0],
-                    X_variance = Sigma(state.P[0][0]),
-                    Y_variance = Sigma(state.P[3][3])
+                    X = new StateComponent(state.X, state.P, 0),
+                    Y = new StateComponent(state.X, state.P, 3),
+                    Covariance = state.P[0][3]
                 };
 
                 KinematicComponent velocity = new KinematicComponent{
-                    X_mean = state.X[1][0],
-                    Y_mean = state.X[4][0],
-                    X_variance = Sigma(state.P[1][1]),
-                    Y_variance = Sigma(state.P[4][4])
+                    X = new StateComponent(state.X, state.P, 1),
+                    Y = new StateComponent(state.X, state.P, 4),
+                    Covariance = state.P[1][4]
                 };
 
                 KinematicComponent acceleration = new KinematicComponent{
-                    X_mean = state.X[2][0],
-                    Y_mean = state.X[5][0],
-                    X_variance = Sigma(state.P[2][2]),
-                    Y_variance = Sigma(state.P[5][5])
+                    X = new StateComponent(state.X, state.P, 2),
+                    Y = new StateComponent(state.X, state.P, 5),
+                    Covariance = state.P[2][5]
                 };
                 
                 return new Kinematics {
