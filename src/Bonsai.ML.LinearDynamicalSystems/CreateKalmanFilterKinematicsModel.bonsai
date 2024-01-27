@@ -32,18 +32,18 @@
         <Property Name="Sqrt_diag_V0_value" Category="ModelParams" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:Model">
+        <Combinator xsi:type="p1:KalmanFilterKinematicsModel">
           <p1:Pos_x0>0</p1:Pos_x0>
           <p1:Pos_y0>0</p1:Pos_y0>
           <p1:Vel_x0>0</p1:Vel_x0>
           <p1:Vel_y0>0</p1:Vel_y0>
           <p1:Acc_x0>0</p1:Acc_x0>
           <p1:Acc_y0>0</p1:Acc_y0>
-          <p1:Sigma_a>10000</p1:Sigma_a>
-          <p1:Sigma_x>100</p1:Sigma_x>
-          <p1:Sigma_y>100</p1:Sigma_y>
-          <p1:Sqrt_diag_V0_value>0.001</p1:Sqrt_diag_V0_value>
-          <p1:Fps>60</p1:Fps>
+          <p1:Sigma_a>0</p1:Sigma_a>
+          <p1:Sigma_x>0</p1:Sigma_x>
+          <p1:Sigma_y>0</p1:Sigma_y>
+          <p1:Sqrt_diag_V0_value>0</p1:Sqrt_diag_V0_value>
+          <p1:Fps>0</p1:Fps>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
@@ -93,7 +93,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:Model">
+        <Combinator xsi:type="p1:KalmanFilterKinematicsModel">
           <p1:Pos_x0>0</p1:Pos_x0>
           <p1:Pos_y0>0</p1:Pos_y0>
           <p1:Vel_x0>0</p1:Vel_x0>
