@@ -5,6 +5,7 @@ using System;
 using System.Reactive.Linq;
 using Python.Runtime;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
@@ -23,6 +24,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         private double _x;
     
         private double _y;
+        private string xString = "";
+        private string yString = "";
 
         /// <summary>
         /// x coordinate
@@ -38,6 +41,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _x = value;
+                xString = double.IsNaN(_x) ? "None" : _x.ToString();
             }
         }
     
@@ -55,6 +59,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _y = value;
+                yString = double.IsNaN(_y) ? "None" : _y.ToString();
             }
         }
     
@@ -99,30 +104,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
 
         public override string ToString()
         {
-            string output = "";
-            foreach (var prop in typeof(Observation2D).GetProperties())
-            {
-                // Get the YamlMemberAttribute of the property
-                var yamlAttr = CustomAttributeExtensions.GetCustomAttribute<YamlMemberAttribute>(prop);
-                var yamlAlias = yamlAttr != null && !string.IsNullOrWhiteSpace(yamlAttr.Alias) ? yamlAttr.Alias : char.ToLower(prop.Name[0]) + prop.Name.Substring(1);
-                var value = prop.GetValue(this, null);
-                if (value is double && double.IsNaN((double)value))
-                {
-                    output += yamlAlias + "=None,";
-                }
-                else
-                {
-                    output += yamlAlias + "=" + value + ",";
-                }
-            }
-            try
-            {
-                return output.TrimEnd(','); // Remove the trailing comma
-            }
-            catch
-            {
-                return "";
-            }
+
+            return $"x={xString},y={yString}";
         }
     }
 

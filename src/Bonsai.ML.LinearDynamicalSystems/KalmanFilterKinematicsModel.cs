@@ -40,6 +40,17 @@ namespace Bonsai.ML.LinearDynamicalSystems
         private double _sqrt_diag_V0_value;
     
         private int _fps;
+        private string pos_x0String;
+        private string pos_y0String;
+        private string vel_x0String;
+        private string vel_y0String;
+        private string acc_x0String;
+        private string acc_y0String;
+        private string sigma_aString;
+        private string sigma_xString;
+        private string sigma_yString;
+        private string sqrt_diag_V0_valueString;
+        private string fpsString;
 
         /// <summary>
         /// x position at time 0
@@ -55,6 +66,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _pos_x0 = value;
+                pos_x0String = double.IsNaN(_pos_x0) ? "None" : _pos_x0.ToString();
             }
         }
     
@@ -72,6 +84,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _pos_y0 = value;
+                pos_y0String = double.IsNaN(_pos_y0) ? "None" : _pos_y0.ToString();
             }
         }
     
@@ -89,6 +102,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _vel_x0 = value;
+                vel_x0String = double.IsNaN(_vel_x0) ? "None" : _vel_x0.ToString();
             }
         }
     
@@ -106,6 +120,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _vel_y0 = value;
+                vel_y0String = double.IsNaN(_vel_y0) ? "None" : _vel_y0.ToString();
             }
         }
     
@@ -123,6 +138,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _acc_x0 = value;
+                acc_x0String = double.IsNaN(_acc_x0) ? "None" : _acc_x0.ToString();
             }
         }
     
@@ -140,6 +156,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _acc_y0 = value;
+                acc_y0String = double.IsNaN(_acc_y0) ? "None" : _acc_y0.ToString();
             }
         }
     
@@ -157,6 +174,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _sigma_a = value;
+                sigma_aString = double.IsNaN(_sigma_a) ? "None" : _sigma_a.ToString();
             }
         }
     
@@ -174,6 +192,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _sigma_x = value;
+                sigma_xString = double.IsNaN(_sigma_x) ? "None" : _sigma_x.ToString();
             }
         }
     
@@ -191,6 +210,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _sigma_y = value;
+                sigma_yString = double.IsNaN(_sigma_y) ? "None" : _sigma_y.ToString();
             }
         }
     
@@ -208,6 +228,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _sqrt_diag_V0_value = value;
+                sqrt_diag_V0_valueString = double.IsNaN(_sqrt_diag_V0_value) ? "None" : _sqrt_diag_V0_value.ToString();
             }
         }
     
@@ -225,6 +246,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             set
             {
                 _fps = value;
+                fpsString = _fps.ToString();
             }
         }
 
@@ -305,30 +327,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
     
         public override string ToString()
         {
-    		string output = "";
-    		foreach (var prop in typeof(KalmanFilterKinematicsModel).GetProperties())
-    		{
-    			var yamlAttr = CustomAttributeExtensions.GetCustomAttribute<YamlMemberAttribute>(prop);
-    			var yamlAlias = yamlAttr != null && !string.IsNullOrWhiteSpace(yamlAttr.Alias) ? yamlAttr.Alias : char.ToLower(prop.Name[0]) + prop.Name.Substring(1);
-    			var value = prop.GetValue(this, null);
-    			if (value is double && double.IsNaN((double)value))
-    			{
-    				output += yamlAlias + "=None,";
-    			}
-    			else
-    			{
-    				output += yamlAlias + "=" + value + ",";
-    			}
-    		}
-    		try
-    		{
-    			return output.TrimEnd(',');
-    		}
-    		catch
-    		{
-    			return "";
-    		}
 
+            return $"pos_x0={pos_x0String},pos_y0={pos_y0String},vel_x0={vel_x0String},vel_y0={vel_y0String},acc_x0={acc_x0String},acc_y0={acc_y0String},sigma_a={sigma_aString},sigma_x={sigma_xString},sigma_y={sigma_yString},sqrt_diag_V0_value={sqrt_diag_V0_valueString},fps={fpsString}";
         }
     }
 
