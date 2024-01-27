@@ -105,7 +105,7 @@ namespace Bonsai.ML.Visualizers
             {
                 Location = new Point(-5, 5),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                DataSource = StateComponentsCollection()
+                DataSource = GetStateComponents()
             };
 
             StateComponentComboBox.SelectedIndexChanged += ComponentChanged;
@@ -122,7 +122,7 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
-        public TypeConverter.StandardValuesCollection StateComponentsCollection()
+        private List<string> GetStateComponents()
         {
             List<string> stateComponents = new List<string>();
 
@@ -134,14 +134,13 @@ namespace Bonsai.ML.Visualizers
                 }
             }
 
-            return new TypeConverter.StandardValuesCollection(stateComponents);
+            return stateComponents;
         }
 
         public override void Show(object value)
         {
             if (!_startTime.HasValue)
             {
-                // Initialize startTime when the first data point arrives
                 _startTime = DateTime.Now;
             }
 
@@ -151,10 +150,6 @@ namespace Bonsai.ML.Visualizers
             double variance = stateComponent.Variance;
 
             var time = (DateTime.Now - _startTime.Value).TotalSeconds;
-            // var time = DateTimeAxis.ToDouble(dt);
-
-            // Console.WriteLine($"dt: {dt}");
-            // Console.WriteLine($"time: {time}");
 
             Mean.Points.Add(new DataPoint(time, mean));
             Variance.Points.Add(new DataPoint(time, mean + variance));
@@ -163,13 +158,8 @@ namespace Bonsai.ML.Visualizers
             var max_time = Math.Ceiling(time);
             var min_time = max_time - Capacity;
 
-            // Console.WriteLine($"max_time: {max_time}");
-            // Console.WriteLine($"min_time: {min_time}");
-
             if (min_time > 0)
             {
-                // Model.Axes[0].Minimum = Estimate.Points[Estimate.Points.Count - Capacity].X;
-                // Model.Axes[0].Maximum = (Math.Ceiling(time * 100) / 100) + 0.01;
                 Model.Axes[0].Minimum = min_time;
                 Model.Axes[0].Maximum = max_time;
             }
