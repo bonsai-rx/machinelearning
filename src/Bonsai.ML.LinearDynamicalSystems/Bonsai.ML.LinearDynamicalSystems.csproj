@@ -22,4 +22,7 @@
     <EmbeddedResource Include="*.bonsai" />
     <EmbeddedResource Include="Bonsai.ML.LinearDynamicalSystems.svg" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+  </ItemGroup>
 </Project>
