@@ -30,10 +30,20 @@ namespace Bonsai.ML.Visualizers
         private string stateComponentName;
 
         private int stateComponentSelectedIndex = 0;
+
+        /// <summary>
+        /// The selected index of the state component to be visualized
+        /// </summary>
         public int StateComponentSelectedIndex { get => stateComponentSelectedIndex; set => stateComponentSelectedIndex = value; }
 
+        /// <summary>
+        /// Size of the window when loaded
+        /// </summary>
         public Size Size { get; set; }
 
+        /// <summary>
+        /// Capacity or length of time shown along the x axis of the plot during automatic updating
+        /// </summary>
         public int Capacity { get; set; }
 
         DateTime? _startTime;
@@ -119,6 +129,9 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
+        /// <summary>
+        /// Gets the names of the state components defined in the kinematic component class
+        /// </summary>
         private List<string> GetStateComponents()
         {
             List<string> stateComponents = new List<string>();
@@ -173,6 +186,9 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
+        /// <summary>
+        /// Initializes the index of the selected state component dropdown box
+        /// </summary>
         private void InitializeSelection(object sender, EventArgs e)
         {
             StateComponentComboBox.SelectedIndex = stateComponentSelectedIndex;
@@ -180,6 +196,9 @@ namespace Bonsai.ML.Visualizers
             StateComponentComboBox.SelectedIndexChanged += ComponentChanged;
         }
 
+        /// <summary>
+        /// Callback function to update the visualizer when the selected component has changed
+        /// </summary>
         private void ComponentChanged(object sender, EventArgs e)
         {
             var selectedName = StateComponentComboBox.SelectedItem.ToString();
