@@ -2,8 +2,6 @@ using System.ComponentModel;
 using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
-using Python.Runtime;
-using System.Reflection;
 using Bonsai.Expressions;
 using System.Xml.Serialization;
 using System.Collections.Generic;

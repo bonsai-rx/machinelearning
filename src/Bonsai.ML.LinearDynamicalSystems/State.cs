@@ -3,7 +3,6 @@ using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
 using Python.Runtime;
-using System.Reflection;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +59,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
             }
         }
 
+        /// <summary>
+        /// Extracts a single state compenent from the full state
+        /// </summary>
         public StateComponent(List<List<double>> X, List<List<double>> P, int i) 
         {
             Mean = X[i][0];
@@ -121,46 +123,27 @@ namespace Bonsai.ML.LinearDynamicalSystems
                 _p = value;
             }
         }
-    
-        public IObservable<State> Process()
+
+        /// <summary>
+        /// Grabs the state of a Kalman Filter from a type of PyObject
+        /// /// </summary>    
+        public IObservable<State> Process(IObservable<PyObject> source)
         {
-    		return Observable.Defer(() => Observable.Return(
-    			new State {
-    				X = _x,
-    				P = _p
-    			}));
-        }
-    
-        public IObservable<State> Process<TSource>(IObservable<TSource> source)
-        {
-    		if (typeof(TSource) == typeof(PyObject))
-    		{
-    			return Observable.Select(source, x =>
-    			{
-    				using(Py.GIL())
-    				{
-    					dynamic input = x;
-    					PyObject pyObject = (PyObject)input;
-    					var xPyList = (List<object>)GetPythonAttribute(pyObject, "x");
-    					var xPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(xPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
-    					var PPyList = (List<object>)GetPythonAttribute(pyObject, "P");
-    					var PPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(PPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
-					
-    					return new State {
-    						X = xPyObj,
-    						P = PPyObj
-    					};
-    				}
-    			});
-    		}
-    		else
-    		{
-    			return Observable.Select(source, x =>
-    				new State {
-    					X = _x,
-    					P = _p
-    				});
-    		}
+            return Observable.Select(source, pyObject =>
+            {
+                using (Py.GIL())
+                {
+                    var xPyList = (List<object>)GetPythonAttribute(pyObject, "x");
+                    var xPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(xPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
+                    var PPyList = (List<object>)GetPythonAttribute(pyObject, "P");
+                    var PPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(PPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
+                
+                    return new State {
+                        X = xPyObj,
+                        P = PPyObj
+                    };
+                }
+            });
         }
     }
 }

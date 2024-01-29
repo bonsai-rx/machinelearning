@@ -2,7 +2,7 @@ using Python.Runtime;
 using System;
 using System.Collections.Generic;
 
-namespace Bonsai.ML.LinearDynamicalSystems
+namespace Bonsai.ML
 {
     public class PythonHelper
     {
@@ -38,7 +38,6 @@ namespace Bonsai.ML.LinearDynamicalSystems
 
         public static object ConvertPythonObjectToCSharp(PyObject pyObject)
         {
-            // Handle basic types (int, float, string)
             if (PyInt.IsIntType(pyObject))
             {
                 return pyObject.As<int>();
@@ -52,7 +51,6 @@ namespace Bonsai.ML.LinearDynamicalSystems
                 return pyObject.As<string>();
             }
 
-            // Handle list to List<object>
             else if (PyList.IsListType(pyObject))
             {
                 var pyList = new PyList(pyObject);
@@ -62,7 +60,6 @@ namespace Bonsai.ML.LinearDynamicalSystems
                 return resultList;
             }
 
-            // Handle dictionary to Dictionary<object, object>
             else if (PyDict.IsDictType(pyObject))
             {
                 var pyDict = new PyDict(pyObject);
@@ -75,14 +72,11 @@ namespace Bonsai.ML.LinearDynamicalSystems
                 return resultDict;
             }
 
-            // Handle NumPy array to List<object>
             else if (IsNumPyArray(pyObject))
             {
                 return ConvertNumPyArrayToList(pyObject);
             }
 
-            // Other types
-            // You can add more conversions or return the PyObject directly
             throw new InvalidOperationException($"Unable to convert python data type to C#. Allowed data types include: integer, float, string, list, dictionary, and numpy arrays");
         }
 
@@ -97,7 +91,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             var shape = npArray.shape;
             long dimensions = shape.Length();
 
-            if (dimensions == 0) // Scalar
+            if (dimensions == 0)             
             {
                 return new List<object>(ConvertPythonObjectToCSharp(npArray));
             }
@@ -105,14 +99,14 @@ namespace Bonsai.ML.LinearDynamicalSystems
             int length = shape[0];
             var resultList = new List<object>(length);
 
-            if (dimensions == 1) // 1D Array
+            if (dimensions == 1)
             {
                 for (int i = 0; i < length; i++)
                 {
                     resultList.Add(ConvertPythonObjectToCSharp(npArray[i]));
                 }
             }
-            else // Multi-dimensional array
+            else
             {
                 for (int i = 0; i < length; i++)
                 {

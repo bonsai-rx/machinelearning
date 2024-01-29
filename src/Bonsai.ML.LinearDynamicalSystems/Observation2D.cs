@@ -1,11 +1,8 @@
-using Bonsai;
 using System.ComponentModel;
 using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
 using Python.Runtime;
-using System.Reflection;
-using System.Collections.Generic;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
@@ -62,7 +59,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
                 yString = double.IsNaN(_y) ? "None" : _y.ToString();
             }
         }
-    
+
+        /// <summary>
+        /// Generates a 2D observation
+        /// </summary>    
         public IObservable<Observation2D> Process()
         {
     		return Observable.Defer(() => Observable.Return(
@@ -72,34 +72,16 @@ namespace Bonsai.ML.LinearDynamicalSystems
     			}));
         }
     
+        /// <summary>
+        /// Generates a 2D observation on each input
+        /// </summary>
         public IObservable<Observation2D> Process<TSource>(IObservable<TSource> source)
         {
-    		if (typeof(TSource) == typeof(PyObject))
-    		{
-    			return Observable.Select(source, x =>
-    			{
-    				using(Py.GIL())
-    				{
-    					dynamic input = x;
-    					PyObject pyObject = (PyObject)input;
-    					var xPyObj = GetPythonAttribute<double>(pyObject, "x");
-    					var yPyObj = GetPythonAttribute<double>(pyObject, "y");
-					
-    					return new Observation2D {
-    						X = xPyObj,
-    						Y = yPyObj
-    					};
-    				}
-    			});
-    		}
-    		else
-    		{
-    			return Observable.Select(source, x =>
-    				new Observation2D {
-    					X = _x,
-    					Y = _y
-    				});
-    		}
+            return Observable.Select(source, x =>
+                new Observation2D {
+                    X = _x,
+                    Y = _y
+                });
         }
 
         public override string ToString()
