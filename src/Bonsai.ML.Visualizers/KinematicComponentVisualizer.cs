@@ -208,11 +208,19 @@ namespace Bonsai.ML.Visualizers
                 stateComponentName = selectedName;
                 stateComponentProperty = typeof(KinematicComponent).GetProperty(stateComponentName);
                 _startTime = null;
+
                 Mean.Points.Clear();
                 Variance.Points.Clear();
                 Variance.Points2.Clear();
+
+                foreach (var axis in Model.Axes)
+                {
+                    axis.Reset();
+                }
+
                 Model.Axes[0].Minimum = 0;
                 Model.Axes[0].Maximum = Capacity;
+
                 Model.InvalidatePlot(true);
             }
         }
