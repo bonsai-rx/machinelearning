@@ -29,15 +29,12 @@ namespace Bonsai.ML.Visualizers
         private PropertyInfo stateComponentProperty;
         private string stateComponentName;
 
+        private int stateComponentSelectedIndex = 0;
+        public int StateComponentSelectedIndex { get => stateComponentSelectedIndex; set => stateComponentSelectedIndex = value; }
+
         public Size Size { get; set; }
 
         public int Capacity { get; set; }
-
-        public double Min { get; set; }
-
-        public double Max { get; set; }
-
-        public bool AutoScale { get; set; }
 
         DateTime? _startTime;
 
@@ -68,7 +65,7 @@ namespace Bonsai.ML.Visualizers
             {
                 Title = "Variance",
                 Color = OxyColors.LightBlue,
-                Fill = OxyColor.FromArgb(100, 173, 216, 230) // Light Blue with some transparency
+                Fill = OxyColor.FromArgb(100, 173, 216, 230)
             };
 
             Model.Axes.Add(new LinearAxis {
@@ -108,7 +105,7 @@ namespace Bonsai.ML.Visualizers
                 DataSource = GetStateComponents()
             };
 
-            StateComponentComboBox.SelectedIndexChanged += ComponentChanged;
+            StateComponentComboBox.SelectedIndexChanged += InitializeSelection;
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             if (visualizerService != null)
@@ -176,11 +173,19 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
+        private void InitializeSelection(object sender, EventArgs e)
+        {
+            StateComponentComboBox.SelectedIndex = stateComponentSelectedIndex;
+            StateComponentComboBox.SelectedIndexChanged -= InitializeSelection;
+            StateComponentComboBox.SelectedIndexChanged += ComponentChanged;
+        }
+
         private void ComponentChanged(object sender, EventArgs e)
         {
             var selectedName = StateComponentComboBox.SelectedItem.ToString();
             if (selectedName != stateComponentName)
             {
+                stateComponentSelectedIndex = StateComponentComboBox.SelectedIndex;
                 stateComponentName = selectedName;
                 stateComponentProperty = typeof(KinematicComponent).GetProperty(stateComponentName);
                 _startTime = null;
