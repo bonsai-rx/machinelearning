@@ -31,7 +31,7 @@ cd LinearDynamicalSystems
 python -m venv .venv
 ```
 
-3. Create a bonsai environment. When prompted, enter yes to run the powershell setup script.  
+3. Create a bonsai environment. When prompted, enter yes to run the powershell setup script.
 
 ```cmd
 dotnet new bonsaienv -o .bonsai
@@ -68,7 +68,7 @@ import lds
 If no errors appear when `import lds` is called in python, your python environment is ready. Exit python with the following command and move onto the next step:
 
 ```python
-exit() # exit the python IDE
+exit()
 ```
 
 ### Bonsai Environment Setup Guide
@@ -116,12 +116,12 @@ cd LinearDynamicalSystems
 python3 -m venv .venv
 ```
 
-3. Create a bonsai environment. 
+3. Create a bonsai environment.
 
 *Note*: this step uses the [bonsai linux environment template tool](https://github.com/ncguilbeault/bonsai-linux-environment-template) for easy creation of linux environments
 
 ```cmd
-dotnet new bonsaienvl -o .bonsai # if using Linux environment creation tool
+dotnet new bonsaienvl -o .bonsai
 ```
 
 When prompted, enter yes to run the powershell setup script.
@@ -150,13 +150,13 @@ python
 
 4. Check that you can correctly import the package:
 
-```cmd
+```python
 import lds
 ```
 
 If no errors appear when `import lds` is called in python, your python environment is ready. Exit python with the following command and move onto the next step:
 
-```cmd
+```python
 exit()
 ```
 
@@ -165,7 +165,6 @@ exit()
 1. Activate the bonsai environment and launch bonsai:
 
 ```cmd
-# if using Linux environment creation tool
 source .bonsai/activate
 bonsai
 ```

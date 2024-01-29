@@ -55,6 +55,7 @@
     "globalMetadata": {
       "_appName": "Bonsai.ML",
       "_appTitle": "Bonsai.ML",
+      "_appLogoPath": "images/logo.svg",
       "_enableNewTab": true,
       "_enableSearch": true,
       "pdf": false,

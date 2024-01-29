@@ -2,7 +2,7 @@
 
 Below is a getting started tutorial for how to use the Bonsai.ML.LinearDynamicalSystems package.
 
-If you followed the installation guide and opted for using virtual environments, follow the [activating environments in Windows](#activating-environments---windows) or [activating environments in Linux](#activating-environments---linux) instructions below. If you opted out of using virtual environments during installation, feel free to skip this section and head directly to the section on [Implementing in Bonsai](#implementing-in-bonsai).
+If you followed the installation guide and opted for using virtual environments, follow the [activating environments in Windows](#activating-environments---windows) or [activating environments in Linux](#activating-environments---linux) instructions below. If you opted out of using virtual environments during installation, feel free to skip this section and head directly to the section on [Implementing the KFK Model in Bonsai](#implementing-the-kfk-model-in-bonsai).
 
 ### Activating environments - Windows
 
@@ -30,27 +30,27 @@ source .venv/bin/activate
 mono .bonsai/Bonsai.exe
 ```
 
-### Implementing in Bonsai
+### Implementing the KFK Model in Bonsai
 
-Below is a simplified Bonsai workflow that implements the core logic of the `Bonsai.ML.LinearDynamicalSystems` package.
+Below is a simplified Bonsai workflow that implements the core logic of the `Bonsai.ML.LinearDynamicalSystems` package to run the Kalman Filter Kinematics (KFK) Model for inferring kinematics from observations of behavioral tracking data.
 
 :::workflow
-![LDS Implementation](./workflows/LinearDynamicalSystems.bonsai)
+![KFK Model Implementation](~/workflows/KFKModelImplementation.bonsai)
 :::
 
 The core logic can be broken down as follows. 
 
-A python runtime is initialized and passed to a `BehaviorSubject` called `PythonEngine`. Bonsai's `PythonRuntime` node should automatically detect the virtual environment that was used to launch Bonsai.
+A `CreateRuntime` node is used to initialize a python runtime engine, which gets passed to a `BehaviorSubject` called `PythonEngine`. Bonsai's `CreateRuntime` node should automatically detect the python virtual environment that was used to launch the Bonsai application, otherwise the path to the virtual environment can be specified in the `CreateRuntime` node by setting the `PythonHome` property.
 
 Next, the `PythonEngine` node is passed to a `LoadLDSModule` node which will load the python-bonsai interface to the lds_python package.
 
-Once the LDS module has been initialized, the `CreateKFKModel` node can be used to instantiate the Kalman Filter Kinematics model. Here, you can specify the initialization parameters to the model and alsp provide a `ModelName` parameter that can be used to reference the model instance in other parts of the Bonsai workflow.
+Once the LDS module has been initialized, it gets passed to the `CreateKalmanFilterKinematicsModel` node, which instantiates a python instance of the model. Here, you can specify the initialization parameters of the model and provide a `ModelName` parameter that gets used to reference the model in other parts of the Bonsai workflow.
 
 Next, you would take some tracking data (for example, the centroid of an animal or a 2D point), and pass that to a `CreateObservation2D` node which will package the data into a data format that the model can use.
 
 The `Observation` is then passed to a `PerformInference` node, which will use the specified model (given by the ModelName) to infer the state of model and output the inferred behavioural kinematics.
 
-To use this framework in your workflows, you simply have to pass your kinematic data of interest into a subject with the name `Point` and you will start performing inference.
+Then, all you have to do is pass your behavior data of interest into the `BehaviorData` subject and the model will start performing inference.
 
 ### Further Examples
 
