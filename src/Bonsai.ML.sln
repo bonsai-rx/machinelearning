@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.LinearDynamicalSystems", "Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj", "{A8D3EA9C-0D26-4264-81AA-17EE9D854BDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Visualizers", "Bonsai.ML.Visualizers\Bonsai.ML.Visualizers.csproj", "{23926B72-40C1-4533-8DE8-E64FE5F015A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{E93576CA-18C0-44C7-B124-CC48FAF95F7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E93576CA-18C0-44C7-B124-CC48FAF95F7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E93576CA-18C0-44C7-B124-CC48FAF95F7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8D3EA9C-0D26-4264-81AA-17EE9D854BDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8D3EA9C-0D26-4264-81AA-17EE9D854BDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8D3EA9C-0D26-4264-81AA-17EE9D854BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8D3EA9C-0D26-4264-81AA-17EE9D854BDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23926B72-40C1-4533-8DE8-E64FE5F015A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23926B72-40C1-4533-8DE8-E64FE5F015A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23926B72-40C1-4533-8DE8-E64FE5F015A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23926B72-40C1-4533-8DE8-E64FE5F015A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
