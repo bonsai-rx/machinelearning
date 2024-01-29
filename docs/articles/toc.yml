@@ -1,4 +1,6 @@
 - name: Introduction
   href: introduction.md
+- name: Installation Guide
+  href: installation-guide.md
 - name: Getting Started
   href: getting-started.md

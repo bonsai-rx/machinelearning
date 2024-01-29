@@ -1,10 +1,13 @@
 ---
 _layout: landing
 ---
+# Bonsai.ML
 
-# This is the **HOMEPAGE**.
+Welcome to the Bonsai.ML documentation website.
 
-Refer to [Markdown](http://daringfireball.net/projects/markdown/) for how to write markdown files.
+For usage and other documentation, head to [Docs](./articles/introduction.html)
+
+For technical reference, head to [API](./api/Bonsai.ML.LinearDynamicalSystems.html)
 
 ## Quick Start Notes:
 
