@@ -29,15 +29,22 @@ namespace Bonsai.ML.Visualizers
         private PropertyInfo stateComponentProperty;
         private string stateComponentName;
 
+        private int stateComponentSelectedIndex = 0;
+
+        /// <summary>
+        /// The selected index of the state component to be visualized
+        /// </summary>
+        public int StateComponentSelectedIndex { get => stateComponentSelectedIndex; set => stateComponentSelectedIndex = value; }
+
+        /// <summary>
+        /// Size of the window when loaded
+        /// </summary>
         public Size Size { get; set; }
 
+        /// <summary>
+        /// Capacity or length of time shown along the x axis of the plot during automatic updating
+        /// </summary>
         public int Capacity { get; set; }
-
-        public double Min { get; set; }
-
-        public double Max { get; set; }
-
-        public bool AutoScale { get; set; }
 
         DateTime? _startTime;
 
@@ -68,7 +75,7 @@ namespace Bonsai.ML.Visualizers
             {
                 Title = "Variance",
                 Color = OxyColors.LightBlue,
-                Fill = OxyColor.FromArgb(100, 173, 216, 230) // Light Blue with some transparency
+                Fill = OxyColor.FromArgb(100, 173, 216, 230)
             };
 
             Model.Axes.Add(new LinearAxis {
@@ -108,7 +115,7 @@ namespace Bonsai.ML.Visualizers
                 DataSource = GetStateComponents()
             };
 
-            StateComponentComboBox.SelectedIndexChanged += ComponentChanged;
+            StateComponentComboBox.SelectedIndexChanged += InitializeSelection;
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             if (visualizerService != null)
@@ -122,6 +129,9 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
+        /// <summary>
+        /// Gets the names of the state components defined in the kinematic component class
+        /// </summary>
         private List<string> GetStateComponents()
         {
             List<string> stateComponents = new List<string>();
@@ -176,19 +186,41 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
+        /// <summary>
+        /// Initializes the index of the selected state component dropdown box
+        /// </summary>
+        private void InitializeSelection(object sender, EventArgs e)
+        {
+            StateComponentComboBox.SelectedIndex = stateComponentSelectedIndex;
+            StateComponentComboBox.SelectedIndexChanged -= InitializeSelection;
+            StateComponentComboBox.SelectedIndexChanged += ComponentChanged;
+        }
+
+        /// <summary>
+        /// Callback function to update the visualizer when the selected component has changed
+        /// </summary>
         private void ComponentChanged(object sender, EventArgs e)
         {
             var selectedName = StateComponentComboBox.SelectedItem.ToString();
             if (selectedName != stateComponentName)
             {
+                stateComponentSelectedIndex = StateComponentComboBox.SelectedIndex;
                 stateComponentName = selectedName;
                 stateComponentProperty = typeof(KinematicComponent).GetProperty(stateComponentName);
                 _startTime = null;
+
                 Mean.Points.Clear();
                 Variance.Points.Clear();
                 Variance.Points2.Clear();
+
+                foreach (var axis in Model.Axes)
+                {
+                    axis.Reset();
+                }
+
                 Model.Axes[0].Minimum = 0;
                 Model.Axes[0].Maximum = Capacity;
+
                 Model.InvalidatePlot(true);
             }
         }

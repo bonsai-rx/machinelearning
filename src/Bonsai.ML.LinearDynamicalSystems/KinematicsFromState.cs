@@ -2,11 +2,7 @@ using System.ComponentModel;
 using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
-using Python.Runtime;
-using System.Reflection;
 using System.Xml.Serialization;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
@@ -152,6 +148,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
     [WorkflowElementCategory(ElementCategory.Source)]
     public class KinematicsFromState
     {
+
+        /// <summary>
+        /// Converts the full state of a Kalman filter (mean vector and covariance matrix) into a Kinematics object representing position, velocity, and acceleration
+        /// </summary>
         public IObservable<Kinematics> Process(IObservable<State> source)
         {
             return Observable.Select(source, state => 
