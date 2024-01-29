@@ -8,37 +8,31 @@ namespace Bonsai.ML
     {
         public static object GetPythonAttribute(PyObject pyObject, string attributeName)
         {
-            using (Py.GIL())
+            if (pyObject.HasAttr(attributeName))
             {
-                if (pyObject.HasAttr(attributeName))
+                using (var attr = pyObject.GetAttr(attributeName))
                 {
-                    using (var attr = pyObject.GetAttr(attributeName))
-                    {
-                        return ConvertPythonObjectToCSharp(attr);
-                    }
+                    return ConvertPythonObjectToCSharp(attr);
                 }
-                else
-                {
-                    throw new InvalidOperationException($"Attribute {attributeName} not found in Python object.");
-                }
+            }
+            else
+            {
+                throw new InvalidOperationException($"Attribute {attributeName} not found in Python object.");
             }
         }
 
         public static T GetPythonAttribute<T>(PyObject pyObject, string attributeName)
         {
-            using (Py.GIL())
+            if (pyObject.HasAttr(attributeName))
             {
-                if (pyObject.HasAttr(attributeName))
+                using (var attr = pyObject.GetAttr(attributeName))
                 {
-                    using (var attr = pyObject.GetAttr(attributeName))
-                    {
-                        return (T)attr.AsManagedObject(typeof(T));
-                    }
+                    return (T)attr.AsManagedObject(typeof(T));
                 }
-                else
-                {
-                    throw new InvalidOperationException($"Attribute {attributeName} not found in Python object.");
-                }
+            }
+            else
+            {
+                throw new InvalidOperationException($"Attribute {attributeName} not found in Python object.");
             }
         }
 

@@ -131,15 +131,18 @@ namespace Bonsai.ML.LinearDynamicalSystems
         {
             return Observable.Select(source, pyObject =>
             {
-                var xPyList = (List<object>)GetPythonAttribute(pyObject, "x");
-                var xPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(xPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
-                var PPyList = (List<object>)GetPythonAttribute(pyObject, "P");
-                var PPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(PPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
-            
-                return new State {
-                    X = xPyObj,
-                    P = PPyObj
-                };
+                using (Py.GIL())
+                {
+                    var xPyList = (List<object>)GetPythonAttribute(pyObject, "x");
+                    var xPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(xPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
+                    var PPyList = (List<object>)GetPythonAttribute(pyObject, "P");
+                    var PPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(PPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
+                
+                    return new State {
+                        X = xPyObj,
+                        P = PPyObj
+                    };
+                }
             });
         }
     }
