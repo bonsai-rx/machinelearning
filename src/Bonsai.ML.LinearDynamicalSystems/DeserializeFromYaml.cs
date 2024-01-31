@@ -17,19 +17,19 @@ namespace Bonsai.ML.LinearDynamicalSystems
     /// </summary>
     [DefaultProperty("Type")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    [XmlInclude(typeof(TypeMapping<KalmanFilterKinematicsModel>))]
-    [XmlInclude(typeof(TypeMapping<Observation2D>))]
+    [XmlInclude(typeof(TypeMapping<Kinematics.ModelParameters>))]
+    [XmlInclude(typeof(TypeMapping<Kinematics.Observation2D>))]
     [XmlInclude(typeof(TypeMapping<State>))]
     [XmlInclude(typeof(TypeMapping<StateComponent>))]
-    [XmlInclude(typeof(TypeMapping<Kinematics>))]
-    [XmlInclude(typeof(TypeMapping<KinematicComponent>))]
+    [XmlInclude(typeof(TypeMapping<Kinematics.Kinematics>))]
+    [XmlInclude(typeof(TypeMapping<Kinematics.KinematicComponent>))]
     [Description("Deserializes a sequence of YAML strings into data model objects.")]
     public partial class DeserializeFromYaml : SingleArgumentExpressionBuilder
     {
     
         public DeserializeFromYaml()
         {
-            Type = new TypeMapping<KalmanFilterKinematicsModel>();
+            Type = new TypeMapping<Kinematics.ModelParameters>();
         }
 
         public TypeMapping Type { get; set; }
