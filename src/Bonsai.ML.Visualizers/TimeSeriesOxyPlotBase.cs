@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace Bonsai.ML.Visualizers
 {
-    public class StateComponentOxyPlotBase : UserControl
+    public class TimeSeriesOxyPlotBase : UserControl
     {
         private PlotView view;
         private PlotModel model;
@@ -33,7 +33,7 @@ namespace Bonsai.ML.Visualizers
         public DateTime? StartTime {get;set;}
         public int Capacity { get; set; }
 
-        public StateComponentOxyPlotBase(string _lineSeriesName, string _areaSeriesName, IEnumerable _dataSource, int _selectedIndex)
+        public TimeSeriesOxyPlotBase(string _lineSeriesName, string _areaSeriesName, IEnumerable _dataSource, int _selectedIndex)
         {
             lineSeriesName = _lineSeriesName;
             areaSeriesName = _areaSeriesName;

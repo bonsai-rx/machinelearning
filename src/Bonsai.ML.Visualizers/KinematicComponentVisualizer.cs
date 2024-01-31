@@ -6,6 +6,7 @@ using Bonsai;
 using Bonsai.Design;
 using Bonsai.ML.Visualizers;
 using Bonsai.ML.LinearDynamicalSystems;
+using Bonsai.ML.LinearDynamicalSystems.Kinematics;
 using System.Drawing;
 
 [assembly: TypeVisualizer(typeof(KinematicComponentVisualizer), Target = typeof(KinematicComponent))]
@@ -42,14 +43,14 @@ namespace Bonsai.ML.Visualizers
 
         DateTime? _startTime;
 
-        StateComponentOxyPlotBase Plot;
+        TimeSeriesOxyPlotBase Plot;
 
         public override void Load(IServiceProvider provider)
         {
             var stateComponents = GetStateComponents();
             stateComponentProperty = typeof(KinematicComponent).GetProperty(stateComponents[selectedIndex]);
 
-            Plot = new StateComponentOxyPlotBase(
+            Plot = new TimeSeriesOxyPlotBase(
                 _lineSeriesName: "Mean",
                 _areaSeriesName: "Variance",
                 _dataSource: stateComponents,
