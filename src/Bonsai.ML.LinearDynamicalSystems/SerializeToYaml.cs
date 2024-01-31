@@ -22,14 +22,14 @@ namespace Bonsai.ML.LinearDynamicalSystems
             });
         }
 
-        public IObservable<string> Process(IObservable<KalmanFilterKinematicsModel> source)
+        public IObservable<string> Process(IObservable<Kinematics.ModelParameters> source)
         {
-            return Process<KalmanFilterKinematicsModel>(source);
+            return Process<Kinematics.ModelParameters>(source);
         }
 
-        public IObservable<string> Process(IObservable<Observation2D> source)
+        public IObservable<string> Process(IObservable<Kinematics.Observation2D> source)
         {
-            return Process<Observation2D>(source);
+            return Process<Kinematics.Observation2D>(source);
         }
 
         public IObservable<string> Process(IObservable<State> source)
@@ -42,14 +42,14 @@ namespace Bonsai.ML.LinearDynamicalSystems
             return Process<StateComponent>(source);
         }
 
-        public IObservable<string> Process(IObservable<Kinematics> source)
+        public IObservable<string> Process(IObservable<Kinematics.Kinematics> source)
         {
-            return Process<Kinematics>(source);
+            return Process<Kinematics.Kinematics>(source);
         }
 
-        public IObservable<string> Process(IObservable<KinematicComponent> source)
+        public IObservable<string> Process(IObservable<Kinematics.KinematicComponent> source)
         {
-            return Process<KinematicComponent>(source);
+            return Process<Kinematics.KinematicComponent>(source);
         }
     }
 }

@@ -19,7 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="*.py" />
-    <EmbeddedResource Include="*.bonsai" />
+    <EmbeddedResource Include="**\*.bonsai" />
     <EmbeddedResource Include="Bonsai.ML.LinearDynamicalSystems.svg" />
   </ItemGroup>
   <ItemGroup>

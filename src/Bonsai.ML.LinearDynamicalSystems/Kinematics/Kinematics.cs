@@ -4,79 +4,14 @@ using System;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 
-namespace Bonsai.ML.LinearDynamicalSystems
+namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
-    /// <summary>
-    /// State components of a Kalman Filter Kinematics model
-    /// </summary>
-    [Description("State component of a Kalman Filter Kinematics model")]  
-    public class KinematicComponent
-    {
-        private StateComponent _x;
-
-        private StateComponent _y;
-
-        private double _covariance;
-
-        /// <summary>
-        /// x state component
-        /// </summary>
-        [XmlIgnore()]
-        [YamlMember(Alias="x_state_component")]
-        [Description("X state component")]
-        public StateComponent X
-        {
-            get
-            {
-                return _x;
-            }
-            set
-            {
-                _x = value;
-            }
-        }
-
-        /// <summary>
-        /// y state component
-        /// </summary>
-        [XmlIgnore()]
-        [YamlMember(Alias="y_state_component")]
-        [Description("Y state component")]
-        public StateComponent Y
-        {
-            get
-            {
-                return _y;
-            }
-            set
-            {
-                _y = value;
-            }
-        }
-
-        /// <summary>
-        /// covariance between state components
-        /// </summary>
-        [XmlIgnore()]
-        [YamlMember(Alias="covariance")]
-        [Description("covariance between state components")]
-        public double Covariance
-        {
-            get
-            {
-                return _covariance;
-            }
-            set
-            {
-                _covariance = value;
-            }
-        }
-    }
-
     /// <summary>
     /// Kinematics of position, velocity, and acceleration
     /// </summary>
-    [Description("Kinematics of position, velocity, and acceleration")]    
+    [Description("Kinematics of position, velocity, and acceleration")]
+    [Combinator()]
+    [WorkflowElementCategory(ElementCategory.Transform)]
     public class Kinematics
     {
         private KinematicComponent _position;
@@ -97,7 +32,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             {
                 return _position;
             }
-            set
+            private set
             {
                 _position = value;
             }
@@ -115,7 +50,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             {
                 return _velocity;
             }
-            set
+            private set
             {
                 _velocity = value;
             }
@@ -133,23 +68,13 @@ namespace Bonsai.ML.LinearDynamicalSystems
             {
                 return _acceleration;
             }
-            set
+            private set
             {
                 _acceleration = value;
             }
         }
-    }
 
-    /// <summary>
-    /// Kinematic components grabbed from the state of a Kalman Filter model
-    /// </summary>
-    [Description("Kinematic components grabbed from the state of a Kalman Filter model")]    
-    [Combinator()]
-    [WorkflowElementCategory(ElementCategory.Source)]
-    public class KinematicsFromState
-    {
-
-        /// <summary>
+                /// <summary>
         /// Converts the full state of a Kalman filter (mean vector and covariance matrix) into a Kinematics object representing position, velocity, and acceleration
         /// </summary>
         public IObservable<Kinematics> Process(IObservable<State> source)
