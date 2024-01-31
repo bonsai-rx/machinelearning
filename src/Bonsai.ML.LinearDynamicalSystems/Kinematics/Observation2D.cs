@@ -4,7 +4,7 @@ using System;
 using System.Reactive.Linq;
 using Python.Runtime;
 
-namespace Bonsai.ML.LinearDynamicalSystems
+namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
 
     using static PythonHelper;

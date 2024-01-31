@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WorkflowBuilder Version="2.8.1"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
+                 xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems.Kinematics;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns="https://bonsai-rx.org/2018/workflow">
@@ -32,7 +32,7 @@
         <Property Name="Sqrt_diag_V0_value" Category="ModelParams" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:KalmanFilterKinematicsModel">
+        <Combinator xsi:type="p1:ModelParameters">
           <p1:Pos_x0>0</p1:Pos_x0>
           <p1:Pos_y0>0</p1:Pos_y0>
           <p1:Vel_x0>0</p1:Vel_x0>
@@ -93,7 +93,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:KalmanFilterKinematicsModel">
+        <Combinator xsi:type="p1:ModelParameters">
           <p1:Pos_x0>0</p1:Pos_x0>
           <p1:Pos_y0>0</p1:Pos_y0>
           <p1:Vel_x0>0</p1:Vel_x0>

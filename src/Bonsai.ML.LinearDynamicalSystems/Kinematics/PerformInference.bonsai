@@ -4,6 +4,7 @@
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
+                 xmlns:p2="clr-namespace:Bonsai.ML.LinearDynamicalSystems.Kinematics;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -125,7 +126,7 @@
         <Combinator xsi:type="p1:State" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:KinematicsFromState" />
+        <Combinator xsi:type="p2:Kinematics" />
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
     </Nodes>

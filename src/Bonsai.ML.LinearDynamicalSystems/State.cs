@@ -13,73 +13,11 @@ namespace Bonsai.ML.LinearDynamicalSystems
     using static PythonHelper;
 
     /// <summary>
-    /// State component of a Kalman Filter
-    /// </summary>
-    [Description("State component of a Kalman Filter")]  
-    public class StateComponent
-    {
-
-        private double _mean;
-
-        private double _variance;
-
-        /// <summary>
-        /// mean
-        /// </summary>
-        [XmlIgnore()]
-        [YamlMember(Alias="mean")]
-        [Description("mean")]
-        public double Mean
-        {
-            get
-            {
-                return _mean;
-            }
-            set
-            {
-                _mean = value;
-            }
-        }
-
-        /// <summary>
-        /// variance
-        /// </summary>
-        [XmlIgnore()]
-        [YamlMember(Alias="variance")]
-        [Description("variance")]
-        public double Variance
-        {
-            get
-            {
-                return _variance;
-            }
-            set
-            {
-                _variance = value;
-            }
-        }
-
-        /// <summary>
-        /// Extracts a single state compenent from the full state
-        /// </summary>
-        public StateComponent(List<List<double>> X, List<List<double>> P, int i) 
-        {
-            Mean = X[i][0];
-            Variance = Sigma(P[i][i]);
-        }
-
-        private double Sigma(double variance)
-        {
-            return 2 * Math.Sqrt(variance);
-        }
-    }
-
-    /// <summary>
     /// State of a Kalman Filter (mean vector and covariance matrix)
     /// </summary>
     [Description("State of a Kalman Filter (mean vector and covariance matrix)")]
     [Combinator()]
-    [WorkflowElementCategory(ElementCategory.Source)]
+    [WorkflowElementCategory(ElementCategory.Transform)]
     public class State
     {
 
@@ -126,7 +64,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
 
         /// <summary>
         /// Grabs the state of a Kalman Filter from a type of PyObject
-        /// /// </summary>    
+        /// /// </summary>
         public IObservable<State> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>

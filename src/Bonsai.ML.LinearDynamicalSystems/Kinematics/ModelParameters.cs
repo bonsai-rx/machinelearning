@@ -4,7 +4,7 @@ using System;
 using System.Reactive.Linq;
 using Python.Runtime;
 
-namespace Bonsai.ML.LinearDynamicalSystems
+namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
 
     using static PythonHelper;
@@ -15,7 +15,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     [Description("Model parameters for a Kalman Filter Kinematics (KFK) model")]
     [Combinator()]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class KalmanFilterKinematicsModel
+    public class ModelParameters
     {
 
         private double _pos_x0;
@@ -252,10 +252,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// Generates parameters for a Kalman Filter Kinematics Model
         /// </summary>
-        public IObservable<KalmanFilterKinematicsModel> Process()
+        public IObservable<ModelParameters> Process()
         {
     		return Observable.Defer(() => Observable.Return(
-    			new KalmanFilterKinematicsModel {
+    			new ModelParameters {
     				Pos_x0 = _pos_x0,
     				Pos_y0 = _pos_y0,
     				Vel_x0 = _vel_x0,
@@ -273,7 +273,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// Gets the model parameters from a PyObject of a Kalman Filter Kinematics Model
         /// </summary>
-        public IObservable<KalmanFilterKinematicsModel> Process(IObservable<PyObject> source)
+        public IObservable<ModelParameters> Process(IObservable<PyObject> source)
         {
     		return Observable.Select(source, pyObject =>
     		{
@@ -291,7 +291,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
                     var sqrt_diag_V0_valuePyObj = GetPythonAttribute<double>(pyObject, "sqrt_diag_V0_value");
                     var fpsPyObj = GetPythonAttribute<int>(pyObject, "fps");
 
-                    return new KalmanFilterKinematicsModel {
+                    return new ModelParameters {
                         Pos_x0 = pos_x0PyObj,
                         Pos_y0 = pos_y0PyObj,
                         Vel_x0 = vel_x0PyObj,
@@ -311,10 +311,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// Generates parameters for a Kalman Filter Kinematics Model on each input
         /// </summary>
-        public IObservable<KalmanFilterKinematicsModel> Process<TSource>(IObservable<TSource> source)
+        public IObservable<ModelParameters> Process<TSource>(IObservable<TSource> source)
         {
             return Observable.Select(source, x =>
-                new KalmanFilterKinematicsModel {
+                new ModelParameters {
                     Pos_x0 = _pos_x0,
                     Pos_y0 = _pos_y0,
                     Vel_x0 = _vel_x0,
