@@ -102,7 +102,6 @@ namespace Bonsai.ML.Visualizers
             comboBox = new ComboBox
             {
                 Location = new Point(0, 5),
-                AutoSize = true,
                 DataSource = dataSource,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right
             };
