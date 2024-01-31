@@ -15,7 +15,9 @@
         <Property Name="Value" DisplayName="ModelName" Category="Subject" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="StringProperty" />
+        <Combinator xsi:type="StringProperty">
+          <Value>model</Value>
+        </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="rx:WithLatestFrom" />
