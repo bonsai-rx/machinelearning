@@ -23,6 +23,16 @@
           "_site/**",
           "filter.yml"
         ]
+      },
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ],
+        "src": "../examples",
+        "dest": "examples"
       }
     ],
     "resource": [
@@ -33,6 +43,16 @@
           "images/**",
           "workflows/**"
         ]
+      },
+      {
+        "files": [
+          "**/*.{bonsai,svg}"
+        ],
+        "exclude": [
+          "_site/**"
+        ],
+        "src": "../examples",
+        "dest": "examples"
       }
     ],
     "output": "_site",

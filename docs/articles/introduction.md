@@ -1,33 +1,10 @@
 # Introduction
 
-The Bonsai.ML project is a collection of Bonsai packages for implementing machine learning algorithms in Bonsai. The latest LinearDynamicalSystems package is designed for analyzing kinematic data. It uses the LDS Python package to perform inference of kinematics using the Kalman Filter on real-time movement and trajectory data collected in Bonsai.
+The Bonsai.ML project is a collection of Bonsai packages for implementing machine learning algorithms in Bonsai. Below you will find the list of packages available within the Bonsai.ML collection.
 
-For installation instructions, head to [Installation Guide](installation-guide.html)
+* Bonsai.ML - provides core functionality across all Bonsai.ML packages.
+* [Bonsai.ML.LinearDynamicalSystems](lds-overview.md) - interfaces with the [lds_python](https://github.com/joacorapela/lds_python) package and supports the use of Kalman Filter models to infer kinematic data. Requires additional installation steps (see [here](lds-overview.md)).
+* Bonsai.ML.Visualizers - provides a set of visualizers for dynamic graphing/plotting.
 
-### Overview
-
-The LinearDynamicalSystems package provides an interface to interact with a python installation of the lds_python package. Below is a general guideline for how to use this package to performing online inference of behavioural tracking data, making use of both online behavioural tracking tools (Bonsai) and linear dynamical systems modelling (Python).
-
-### General workflow
-
-The following represents a general workflow for how you would use the LinearDynamicalSystems package. It starts with instantiate the model and subsequently use the model to make predictions about the state of a variable given observations of data.
-
-```mermaid
-
-flowchart LR
-
-    A(["Create Python Runtime"])
-    B(["Load LDS Module"])
-    C(["Instantiate KFK Model"])
-    D(["Create Observation"])
-    E(["Perform Inference"])
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-
-```
-
-For more information on how to implement these workflows, see [Getting Started](getting-started.html)
+*Note* Bonsai.ML packages are installed through Bonsai's integrated package manager and are typically available for use immediately. However, certain packages may require additional steps for installation. See the dedicated package section for specific guides and documentation.
 

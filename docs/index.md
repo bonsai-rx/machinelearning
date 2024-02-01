@@ -3,12 +3,10 @@ _layout: landing
 ---
 # Bonsai.ML
 
-Welcome to the Bonsai.ML documentation website.
+Welcome to the Bonsai.ML website.
 
-For usage and other documentation, head to [Docs](./articles/introduction.html)
+For documention on installation, getting started and more, head to [Docs](articles/introduction.md)
 
-For technical reference, head to [API](./api/Bonsai.ML.LinearDynamicalSystems.html)
+For detailed technical reference, head to [API](api/Bonsai.ML.yml)
 
-## Quick Start Notes:
-
-1. Add images to the *images* folder if the file is referencing an image.
+For examples of how Bonsai.ML can be used, head to [Examples](../examples/README.md)
