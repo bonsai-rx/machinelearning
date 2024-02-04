@@ -51,4 +51,4 @@ Then, all you have to do is pass your behavior data of interest into the `Behavi
 
 ### Further Examples
 
-For examples and demonstrations for how this works, see the [Bonsai - Machine Learning Examples](../../examples/README.md) section.
+For examples and demonstrations for how this works, see the [Bonsai - Machine Learning Examples](../../../examples/README.md) section.

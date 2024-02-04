@@ -8,6 +8,7 @@ To get started, you must install the following tools:
 - [dotnet-sdk (v8)](https://dotnet.microsoft.com/en-us/download)
 - [Git](https://git-scm.com/downloads)
 - [Bonsai-Rx Templates tool](https://www.nuget.org/packages/Bonsai.Templates)
+- [Microsoft Visual C++ Redistributable](https://aka.ms/vs/16/release/vc_redist.x64.exe)
 
 ### Creating Virtual Environments
 

@@ -5,10 +5,10 @@
   - name: Bonsai.ML.LinearDynamicalSystems
     items:
     - name: Overview
-      href: lds-overview.md
+      href: LinearDynamicalSystems/lds-overview.md
     - name: Installing on Windows
-      href: lds-installation-guide-windows.md
+      href: LinearDynamicalSystems/lds-installation-guide-windows.md
     - name: Installing on Linux
-      href: lds-installation-guide-linux.md
+      href: LinearDynamicalSystems/lds-installation-guide-linux.md
     - name: Getting Started
-      href: lds-getting-started.md
+      href: LinearDynamicalSystems/lds-getting-started.md
