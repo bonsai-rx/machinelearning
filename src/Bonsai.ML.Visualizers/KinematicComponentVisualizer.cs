@@ -58,9 +58,9 @@ namespace Bonsai.ML.Visualizers
             )
             {
                 Size = Size,
-                StartTime = DateTime.Now,
                 Capacity = Capacity,
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                StartTime = DateTime.Now
             };
 
             Plot.ResetSeries();
@@ -79,6 +79,8 @@ namespace Bonsai.ML.Visualizers
             if (!_startTime.HasValue)
             {
                 _startTime = DateTime.Now;
+                Plot.StartTime = _startTime.Value;
+                Plot.ResetSeries();
             }
 
             KinematicComponent kinematicComponent = (KinematicComponent)value;
@@ -86,7 +88,7 @@ namespace Bonsai.ML.Visualizers
             double mean = stateComponent.Mean;
             double variance = stateComponent.Variance;
 
-            var time = (DateTime.Now - _startTime.Value).TotalSeconds;
+            var time = DateTime.Now;
 
             Plot.AddToLineSeries(
                 time: time,
@@ -99,12 +101,13 @@ namespace Bonsai.ML.Visualizers
                 variance: variance
             );
 
-            var maxTime = Math.Ceiling(time);
-            var minTime = maxTime - Capacity;
+            // var maxTime = Math.Ceiling(time);
+            // var minTime = time.AddSeconds(-Capacity);
+            // var minTime = time - _startTime;
 
-            if (minTime > 0)
+            if (time - _startTime.Value > TimeSpan.FromSeconds(Capacity))
             {
-                Plot.SetAxes(minTime: minTime, maxTime: maxTime);
+                Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
             }
 
             Plot.Update();
@@ -143,16 +146,12 @@ namespace Bonsai.ML.Visualizers
         private void ComponentChanged(object sender, EventArgs e)
         {
             var comboBox = Plot.ComboBox;
-            if (comboBox.SelectedIndex != selectedIndex)
-            {
-                selectedIndex = comboBox.SelectedIndex;
-                var selectedName = comboBox.SelectedItem.ToString();
-                stateComponentProperty = typeof(KinematicComponent).GetProperty(selectedName);
-                _startTime = null;
+            selectedIndex = comboBox.SelectedIndex;
+            var selectedName = comboBox.SelectedItem.ToString();
+            stateComponentProperty = typeof(KinematicComponent).GetProperty(selectedName);
+            _startTime = null;
 
-                Plot.ResetSeries();
-                Plot.Update();
-            }
+            Plot.ResetSeries();
         }
     }
 }
