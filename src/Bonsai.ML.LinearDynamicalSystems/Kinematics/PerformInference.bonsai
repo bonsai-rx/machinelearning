@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WorkflowBuilder Version="2.8.1"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
-                 xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns:p2="clr-namespace:Bonsai.ML.LinearDynamicalSystems.Kinematics;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
@@ -12,11 +12,11 @@
         <Name>Source1</Name>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="ModelName" Category="Subject" />
+        <Property Name="Name" DisplayName="ModelName" Category="Reference" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="StringProperty">
-          <Value>model</Value>
+        <Combinator xsi:type="p1:CreateModelNameReference">
+          <p1:Name>model</p1:Name>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
@@ -126,7 +126,7 @@
         <Combinator xsi:type="p1:State" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p2:Kinematics" />
+        <Combinator xsi:type="p2:KinematicState" />
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
     </Nodes>

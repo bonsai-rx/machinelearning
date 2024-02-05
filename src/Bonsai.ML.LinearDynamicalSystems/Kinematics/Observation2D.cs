@@ -7,8 +7,6 @@ using Python.Runtime;
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
 
-    using static PythonHelper;
-
     /// <summary>
     /// Observation2D of data used by Kalman Filter python class (point(x, y))
     /// </summary>

@@ -30,7 +30,7 @@ namespace Bonsai.ML.Visualizers
 
         private IEnumerable dataSource;
 
-        public DateTime? StartTime {get;set;}
+        public DateTime StartTime {get;set;}
         public int Capacity { get; set; }
 
         public TimeSeriesOxyPlotBase(string _lineSeriesName, string _areaSeriesName, IEnumerable _dataSource, int _selectedIndex)
@@ -68,14 +68,15 @@ namespace Bonsai.ML.Visualizers
                 Fill = OxyColor.FromArgb(100, 173, 216, 230)
             };
 
-            xAxis = new LinearAxis {
+            xAxis = new DateTimeAxis {
                 Position = AxisPosition.Bottom,
                 Title = "Time",
-                StringFormat = "0",
+                StringFormat = "HH:mm:ss",
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Dot,
-                MinimumMajorStep = 1,
-                MinimumMinorStep = 0.5,
+                MinorIntervalType = DateTimeIntervalType.Auto,
+                IntervalType = DateTimeIntervalType.Auto,
+                FontSize = 9
             };
 
             yAxis = new LinearAxis {
@@ -103,10 +104,12 @@ namespace Bonsai.ML.Visualizers
             {
                 Location = new Point(0, 5),
                 DataSource = dataSource,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BindingContext = BindingContext
             };
 
-            comboBox.SelectedIndexChanged += ComboBoxDataSourceInitialized;
+            comboBox.SelectedIndexChanged += ComboBoxSelectedIndexChanged;
+            comboBox.SelectedIndex = selectedIndex;
 
             Controls.Add(label);
             Controls.Add(comboBox);
@@ -118,33 +121,30 @@ namespace Bonsai.ML.Visualizers
             AutoScaleDimensions = new SizeF(6F, 13F);
         }
 
-        private void ComboBoxDataSourceInitialized(object sender, EventArgs e)
-        {
-            comboBox.SelectedIndex = selectedIndex;
-            comboBox.SelectedIndexChanged -= ComboBoxDataSourceInitialized;
-            comboBox.SelectedIndexChanged += ComboBoxSelectedIndexChanged;
-        }
-
         private void ComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            ComboBoxValueChanged?.Invoke(this, e);
+            if (comboBox.SelectedIndex != selectedIndex)
+            {
+                selectedIndex = comboBox.SelectedIndex;
+                ComboBoxValueChanged?.Invoke(this, e);
+            }
         }
 
-        public void AddToLineSeries(double time, double mean)
+        public void AddToLineSeries(DateTime time, double mean)
         {
-            lineSeries.Points.Add(new DataPoint(time, mean));
+            lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time), mean));
         }
 
-        public void AddToAreaSeries(double time, double mean, double variance)
+        public void AddToAreaSeries(DateTime time, double mean, double variance)
         {
-            areaSeries.Points.Add(new DataPoint(time, mean + variance));
-            areaSeries.Points2.Add(new DataPoint(time, mean - variance));
+            areaSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time), mean + variance));
+            areaSeries.Points2.Add(new DataPoint(DateTimeAxis.ToDouble(time), mean - variance));
         }
 
-        public void SetAxes(double minTime, double maxTime)
+        public void SetAxes(DateTime minTime, DateTime maxTime)
         {
-            xAxis.Minimum = minTime;
-            xAxis.Maximum = maxTime;
+            xAxis.Minimum = DateTimeAxis.ToDouble(minTime);
+            xAxis.Maximum = DateTimeAxis.ToDouble(maxTime);
         }
 
         public void Update()
@@ -161,8 +161,8 @@ namespace Bonsai.ML.Visualizers
             xAxis.Reset();
             yAxis.Reset();
 
-            xAxis.Minimum = 0;
-            xAxis.Maximum = Capacity;
+            xAxis.Minimum = DateTimeAxis.ToDouble(StartTime);
+            xAxis.Maximum = DateTimeAxis.ToDouble(StartTime.AddSeconds(Capacity));
         }
     }
 }

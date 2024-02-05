@@ -7,12 +7,12 @@ using System.Xml.Serialization;
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
     /// <summary>
-    /// Kinematics of position, velocity, and acceleration
+    /// State of a Kalman filter model representing kinematics of position, velocity, and acceleration
     /// </summary>
-    [Description("Kinematics of position, velocity, and acceleration")]
+    [Description("State of a Kalman filter model representing kinematics of position, velocity, and acceleration")]
     [Combinator()]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class Kinematics
+    public class KinematicState
     {
         private KinematicComponent _position;
     
@@ -75,9 +75,9 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
 
                 /// <summary>
-        /// Converts the full state of a Kalman filter (mean vector and covariance matrix) into a Kinematics object representing position, velocity, and acceleration
+        /// Converts the full state of a Kalman filter (mean vector and covariance matrix) into a KinematicState object representing position, velocity, and acceleration
         /// </summary>
-        public IObservable<Kinematics> Process(IObservable<State> source)
+        public IObservable<KinematicState> Process(IObservable<State> source)
         {
             return Observable.Select(source, state => 
             {
@@ -99,7 +99,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
                     Covariance = state.P[2][5]
                 };
                 
-                return new Kinematics {
+                return new KinematicState {
                         Position = position,
                         Velocity = velocity,
                         Acceleration = acceleration
