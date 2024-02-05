@@ -42,9 +42,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
             return Process<StateComponent>(source);
         }
 
-        public IObservable<string> Process(IObservable<Kinematics.Kinematics> source)
+        public IObservable<string> Process(IObservable<Kinematics.KinematicState> source)
         {
-            return Process<Kinematics.Kinematics>(source);
+            return Process<Kinematics.KinematicState>(source);
         }
 
         public IObservable<string> Process(IObservable<Kinematics.KinematicComponent> source)
