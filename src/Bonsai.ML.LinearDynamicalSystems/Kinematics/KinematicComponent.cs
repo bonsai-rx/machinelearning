@@ -1,12 +1,10 @@
 using System.ComponentModel;
 using YamlDotNet.Serialization;
-using System;
-using System.Reactive.Linq;
 using System.Xml.Serialization;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
-        /// <summary>
+    /// <summary>
     /// State components of a Kalman Filter Kinematics model
     /// </summary>
     [Description("State component of a Kalman Filter Kinematics model")]  

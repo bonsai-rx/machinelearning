@@ -1,22 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WorkflowBuilder Version="2.8.1"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems.Kinematics;assembly=Bonsai.ML.LinearDynamicalSystems"
+                 xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
+                 xmlns:p2="clr-namespace:Bonsai.ML.LinearDynamicalSystems.Kinematics;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="ModelName" Category="Subject" />
+        <Property Name="Name" DisplayName="ModelName" Category="Reference" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:CreateModelNameReference">
+          <p1:Name>model</p1:Name>
+        </Combinator>
       </Expression>
       <Expression xsi:type="WorkflowInput">
         <Name>Source1</Name>
-      </Expression>
-      <Expression xsi:type="Combinator">
-        <Combinator xsi:type="StringProperty">
-          <Value>model</Value>
-        </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
         <Property Name="Fps" Category="ModelParams" />
@@ -32,18 +33,18 @@
         <Property Name="Sqrt_diag_V0_value" Category="ModelParams" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:ModelParameters">
-          <p1:Pos_x0>0</p1:Pos_x0>
-          <p1:Pos_y0>0</p1:Pos_y0>
-          <p1:Vel_x0>0</p1:Vel_x0>
-          <p1:Vel_y0>0</p1:Vel_y0>
-          <p1:Acc_x0>0</p1:Acc_x0>
-          <p1:Acc_y0>0</p1:Acc_y0>
-          <p1:Sigma_a>10000</p1:Sigma_a>
-          <p1:Sigma_x>100</p1:Sigma_x>
-          <p1:Sigma_y>100</p1:Sigma_y>
-          <p1:Sqrt_diag_V0_value>0.001</p1:Sqrt_diag_V0_value>
-          <p1:Fps>60</p1:Fps>
+        <Combinator xsi:type="p2:ModelParameters">
+          <p2:Pos_x0>0</p2:Pos_x0>
+          <p2:Pos_y0>0</p2:Pos_y0>
+          <p2:Vel_x0>0</p2:Vel_x0>
+          <p2:Vel_y0>0</p2:Vel_y0>
+          <p2:Acc_x0>0</p2:Acc_x0>
+          <p2:Acc_y0>0</p2:Acc_y0>
+          <p2:Sigma_a>10000</p2:Sigma_a>
+          <p2:Sigma_x>100</p2:Sigma_x>
+          <p2:Sigma_y>100</p2:Sigma_y>
+          <p2:Sqrt_diag_V0_value>0.001</p2:Sqrt_diag_V0_value>
+          <p2:Fps>60</p2:Fps>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
@@ -93,28 +94,27 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:ModelParameters">
-          <p1:Pos_x0>0</p1:Pos_x0>
-          <p1:Pos_y0>0</p1:Pos_y0>
-          <p1:Vel_x0>0</p1:Vel_x0>
-          <p1:Vel_y0>0</p1:Vel_y0>
-          <p1:Acc_x0>0</p1:Acc_x0>
-          <p1:Acc_y0>0</p1:Acc_y0>
-          <p1:Sigma_a>0</p1:Sigma_a>
-          <p1:Sigma_x>0</p1:Sigma_x>
-          <p1:Sigma_y>0</p1:Sigma_y>
-          <p1:Sqrt_diag_V0_value>0</p1:Sqrt_diag_V0_value>
-          <p1:Fps>0</p1:Fps>
+        <Combinator xsi:type="p2:ModelParameters">
+          <p2:Pos_x0>0</p2:Pos_x0>
+          <p2:Pos_y0>0</p2:Pos_y0>
+          <p2:Vel_x0>0</p2:Vel_x0>
+          <p2:Vel_y0>0</p2:Vel_y0>
+          <p2:Acc_x0>0</p2:Acc_x0>
+          <p2:Acc_y0>0</p2:Acc_y0>
+          <p2:Sigma_a>0</p2:Sigma_a>
+          <p2:Sigma_x>0</p2:Sigma_x>
+          <p2:Sigma_y>0</p2:Sigma_y>
+          <p2:Sqrt_diag_V0_value>0</p2:Sqrt_diag_V0_value>
+          <p2:Fps>0</p2:Fps>
         </Combinator>
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
     </Nodes>
     <Edges>
-      <Edge From="0" To="2" Label="Source1" />
-      <Edge From="1" To="2" Label="Source2" />
-      <Edge From="1" To="4" Label="Source1" />
-      <Edge From="2" To="5" Label="Source1" />
-      <Edge From="2" To="11" Label="Source2" />
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="1" To="5" Label="Source1" />
+      <Edge From="1" To="11" Label="Source2" />
+      <Edge From="2" To="4" Label="Source1" />
       <Edge From="3" To="4" Label="Source2" />
       <Edge From="4" To="5" Label="Source2" />
       <Edge From="5" To="6" Label="Source1" />

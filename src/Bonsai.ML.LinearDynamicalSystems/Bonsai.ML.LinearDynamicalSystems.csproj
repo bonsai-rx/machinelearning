@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Title>Bonsai.ML.LinearDynamicalSystems</Title>
     <Description>A Bonsai package for implementing the Kalman Filter using python.</Description>
-    <Authors />
+    <Author>Nicholas Guilbeault</Author>
     <Copyright>Copyright ©  2023</Copyright>
     <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
     <PackageTags>Bonsai Rx ML KalmanFilter LinearDynamicalSystems</PackageTags>
