@@ -27,11 +27,30 @@ source .venv/bin/activate
 mono .bonsai/Bonsai.exe
 ```
 
+### General workflow
+
+The workflow starts with creating a python runtime, followed by loading the [lds_python](https://github.com/joacorapela/lds_python) module. After this, you can instantiate the model and pass it observations of data to perform inference.
+
+```mermaid
+
+flowchart LR
+
+    A(["Create Python Runtime"])
+    B(["Load LDS Module"])
+    C(["Instantiate Model"])
+    D(["Observe Data"])
+    E(["Perform Inference"])
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+
+```
+
 ### Implementing in Bonsai
 
-Below is a simplified Bonsai workflow that implements the core logic of the Kalman Filter Kinematics (KFK) Model for inferring kinematics from observations of behavioral data.
-
-The core logic can be broken down as follows. 
+Below is a simplified Bonsai workflow that implements the core logic of the package.
 
 :::workflow
 ![Model Implementation](~/workflows/KFKModelImplementation.bonsai)

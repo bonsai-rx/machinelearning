@@ -1,12 +1,11 @@
 # Installation Guide - Linux
 
-Installing the package on Linux requires a few additional steps compred to Windows (see [here](https://github.com/orgs/bonsai-rx/discussions/1101)).
+Installing the package on Linux requires a few additional steps compred to Windows (see [here](https://github.com/orgs/bonsai-rx/discussions/1101) for more information).
 
 ### Dependencies
 
 To get started, you must install the following tools:
 
-- [Bonsai Linux Installation](https://github.com/orgs/bonsai-rx/discussions/1101)
 - [Python (v3.10.12)](https://www.python.org/downloads/)
 - [dotnet-sdk (v8)](https://dotnet.microsoft.com/en-us/download)
 - [Git](https://git-scm.com/downloads)
