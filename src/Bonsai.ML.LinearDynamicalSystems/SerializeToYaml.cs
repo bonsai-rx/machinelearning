@@ -22,9 +22,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
             });
         }
 
-        public IObservable<string> Process(IObservable<Kinematics.ModelParameters> source)
+        public IObservable<string> Process(IObservable<Kinematics.KFModelParameters> source)
         {
-            return Process<Kinematics.ModelParameters>(source);
+            return Process<Kinematics.KFModelParameters>(source);
         }
 
         public IObservable<string> Process(IObservable<Kinematics.Observation2D> source)

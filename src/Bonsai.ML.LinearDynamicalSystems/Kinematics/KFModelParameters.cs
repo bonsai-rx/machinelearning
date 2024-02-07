@@ -15,7 +15,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
     [Description("Model parameters for a Kalman Filter Kinematics (KFK) model")]
     [Combinator()]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class ModelParameters
+    public class KFModelParameters
     {
 
         private double _pos_x0;
@@ -252,10 +252,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// Generates parameters for a Kalman Filter Kinematics Model
         /// </summary>
-        public IObservable<ModelParameters> Process()
+        public IObservable<KFModelParameters> Process()
         {
     		return Observable.Defer(() => Observable.Return(
-    			new ModelParameters {
+    			new KFModelParameters {
     				Pos_x0 = _pos_x0,
     				Pos_y0 = _pos_y0,
     				Vel_x0 = _vel_x0,
@@ -273,7 +273,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// Gets the model parameters from a PyObject of a Kalman Filter Kinematics Model
         /// </summary>
-        public IObservable<ModelParameters> Process(IObservable<PyObject> source)
+        public IObservable<KFModelParameters> Process(IObservable<PyObject> source)
         {
     		return Observable.Select(source, pyObject =>
     		{
@@ -291,7 +291,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
                     var sqrt_diag_V0_valuePyObj = GetPythonAttribute<double>(pyObject, "sqrt_diag_V0_value");
                     var fpsPyObj = GetPythonAttribute<int>(pyObject, "fps");
 
-                    return new ModelParameters {
+                    return new KFModelParameters {
                         Pos_x0 = pos_x0PyObj,
                         Pos_y0 = pos_y0PyObj,
                         Vel_x0 = vel_x0PyObj,
@@ -311,10 +311,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// Generates parameters for a Kalman Filter Kinematics Model on each input
         /// </summary>
-        public IObservable<ModelParameters> Process<TSource>(IObservable<TSource> source)
+        public IObservable<KFModelParameters> Process<TSource>(IObservable<TSource> source)
         {
             return Observable.Select(source, x =>
-                new ModelParameters {
+                new KFModelParameters {
                     Pos_x0 = _pos_x0,
                     Pos_y0 = _pos_y0,
                     Vel_x0 = _vel_x0,
