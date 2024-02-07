@@ -33,7 +33,7 @@
         <Property Name="Sqrt_diag_V0_value" Category="ModelParams" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p2:ModelParameters">
+        <Combinator xsi:type="p2:KFModelParameters">
           <p2:Pos_x0>0</p2:Pos_x0>
           <p2:Pos_y0>0</p2:Pos_y0>
           <p2:Vel_x0>0</p2:Vel_x0>
@@ -94,7 +94,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p2:ModelParameters">
+        <Combinator xsi:type="p2:KFModelParameters">
           <p2:Pos_x0>0</p2:Pos_x0>
           <p2:Pos_y0>0</p2:Pos_y0>
           <p2:Vel_x0>0</p2:Vel_x0>
