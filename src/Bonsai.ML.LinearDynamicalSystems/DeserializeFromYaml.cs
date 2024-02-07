@@ -17,7 +17,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     /// </summary>
     [DefaultProperty("Type")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    [XmlInclude(typeof(TypeMapping<Kinematics.ModelParameters>))]
+    [XmlInclude(typeof(TypeMapping<Kinematics.KFModelParameters>))]
     [XmlInclude(typeof(TypeMapping<Kinematics.Observation2D>))]
     [XmlInclude(typeof(TypeMapping<State>))]
     [XmlInclude(typeof(TypeMapping<StateComponent>))]
@@ -29,7 +29,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     
         public DeserializeFromYaml()
         {
-            Type = new TypeMapping<Kinematics.ModelParameters>();
+            Type = new TypeMapping<Kinematics.KFModelParameters>();
         }
 
         public TypeMapping Type { get; set; }
