@@ -53,20 +53,20 @@ flowchart LR
 Below is a simplified Bonsai workflow that implements the core logic of the package.
 
 :::workflow
-![Model Implementation](~/workflows/KFKModelImplementation.bonsai)
+![Model Implementation](~/workflows/KFModelImplementation.bonsai)
 :::
 
 A `CreateRuntime` node is used to initialize a python runtime engine, which gets passed to a `BehaviorSubject` called `PythonEngine`. Bonsai's `CreateRuntime` node should automatically detect the python virtual environment that was used to launch the Bonsai application, otherwise the path to the virtual environment can be specified in the `CreateRuntime` node by setting the `PythonHome` property.
 
 Next, the `PythonEngine` node is passed to a `LoadLDSModule` node which will load the lds_python package into the python environment.
 
-Once the LDS module has been initialized, the `CreateKalmanFilterKinematicsModel` node instantiates a python instance of the Kalman Filter Kinematics model. Here, you can specify the initialization parameters of the model and provide a `ModelName` parameter that gets used to reference the model in other parts of the Bonsai workflow.
+Once the LDS module has been initialized, the `CreateKFModel` node instantiates a python instance of the Kalman Filter Kinematics model. Here, you can specify the initialization parameters of the model and provide a `ModelName` parameter that gets used to reference the model in other parts of the Bonsai workflow.
 
 Next, you would take some tracking data (for example, the centroid of an animal or a 2D point), and pass that to a `CreateObservation2D` node which will package the data into a data format that the model can use.
 
-The `Observation` is then passed to a `PerformInference` node, which will use the specified model (given by the ModelName) to infer the state of model and output the inferred behavioural kinematics.
+The `Observation` is then passed to a `PerformInference` node, which will use the specified model (given by the `ModelName` property) to infer the state and output the inferred kinematics.
 
-Then, all you have to do is pass your behavior data of interest into the `BehaviorData` subject and the model will start performing inference.
+The only thing left to do is pass your behavior data into the `BehaviorData` subject. To do this, simply connect the output of your 2D data to a `Subject` named `BehaviorData` and the model will start converting this data into observations which it can then us to perform inference.
 
 ### Further Examples
 
