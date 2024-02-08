@@ -249,6 +249,15 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
             }
         }
 
+        public KFModelParameters ()
+        {
+            Sigma_a = 10000;
+            Sigma_x = 100;
+            Sigma_y = 100;
+            Sqrt_diag_V0_value = 0.001;
+            Fps = 60;
+        }
+
         /// <summary>
         /// Generates parameters for a Kalman Filter Kinematics Model
         /// </summary>
