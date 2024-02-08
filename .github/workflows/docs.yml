@@ -30,15 +30,22 @@ jobs:
 
       - name: Build Documentation
         run: dotnet docfx docs/docfx.json
+
+      - name: Move Build Output
+        run: Move-Item docs\_site ..\docfx_site
           
       - name: Checkout gh-pages
         uses: actions/checkout@v2
         with:
           ref: gh-pages
           path: gh-pages
+
+      - name: Move Documentation to gh-pages
+        run: Move-Item ..\docfx_site\* gh-pages\ -Force
+
       - name: Publish to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_site
+          publish_dir: ./gh-pages
           force_orphan: true
