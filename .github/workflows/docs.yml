@@ -36,13 +36,10 @@ jobs:
       - name: Build Documentation
         run: dotnet docfx docs/docfx.json
 
-      - name: Move Build Output
-        run: Move-Item docs\_site ..\docfx_site
-
       - name: Publish to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          publish_dir: docs/_site
           publish_branch: gh-pages
           force_orphan: true
