@@ -38,8 +38,8 @@ flowchart LR
 
     A(["Create Python Runtime"])
     B(["Load LDS Module"])
-    C(["Instantiate Model"])
-    D(["Observe Data"])
+    C(["Create KF Model"])
+    D(["Generate Observations"])
     E(["Perform Inference"])
 
     A --> B
@@ -48,6 +48,8 @@ flowchart LR
     D --> E
 
 ```
+
+*Note* due to the way bonsai interacts with Python, it is necessary for the first 2 steps to complete before instantiating the model. It is important to know that the initialization of the python runtime, loading the module, and creating the model takes time to complete, and that only once the model has been created can inference be performed.
 
 ### Implementing in Bonsai
 
@@ -68,6 +70,10 @@ Next, you would take some tracking data (for example, the centroid of an animal 
 The `Observation` is then passed to a `PerformInference` node, which will use the specified model (given by the `ModelName` property) to infer the state and output the inferred kinematics.
 
 The only thing left to do is pass your behavior data into the `BehaviorData` subject. To do this, simply connect the output of your 2D data to a `Subject` named `BehaviorData` and the model will start converting this data into observations which it can then us to perform inference.
+
+### Setting model parameters
+
+The `CreateKFModel` node contains a number of properties which can be useful to determine the model dynamics. 
 
 ### Further Examples
 
