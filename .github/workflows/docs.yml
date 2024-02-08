@@ -28,7 +28,7 @@ jobs:
           ref: ng-docs-dev
       
       - name: Restore NuGet Packages
-        run: msbuild -t:restore docs\src\Bonsai.ML.sln
+        run: msbuild -t:restore src\Bonsai.ML.sln
 
       - name: Setup DocFX
         run: dotnet tool restore
@@ -38,19 +38,11 @@ jobs:
 
       - name: Move Build Output
         run: Move-Item docs\_site ..\docfx_site
-          
-      - name: Checkout gh-pages
-        uses: actions/checkout@v2
-        with:
-          ref: gh-pages
-          path: gh-pages
-
-      - name: Move Documentation to gh-pages
-        run: Move-Item ..\docfx_site\* gh-pages\ -Force
 
       - name: Publish to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./gh-pages
+          publish_dir: ./public
+          publish_branch: gh-pages
           force_orphan: true
