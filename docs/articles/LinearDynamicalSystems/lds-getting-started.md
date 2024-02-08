@@ -18,6 +18,7 @@ If you used the Linux environment creation tool, you can activate you bonsai env
 ```cmd
 source .venv/bin/activate
 source .bonsai/activate
+bonsai
 ```
 
 If you did not use the linux environment template but you plan on using linux, you can simply activate the python environment and then run the bonsai application in the folder using `mono`.
