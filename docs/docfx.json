@@ -46,7 +46,7 @@
       },
       {
         "files": [
-          "**/*.{bonsai,svg}"
+          "**/*.{bonsai,svg,gif}"
         ],
         "exclude": [
           "_site/**"
