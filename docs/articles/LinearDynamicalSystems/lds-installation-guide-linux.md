@@ -1,6 +1,10 @@
 # Installation Guide - Linux
 
-Installing the package on Linux requires a few additional steps compred to Windows (see [here](https://github.com/orgs/bonsai-rx/discussions/1101) for more information).
+This guide is meant for users to install the package from scratch. *Note* to use this package to run the examples, you must install the necessary Bonsai packages through the Bonsai package manager. Alternatively, you can follow along with the [Examples](../../../examples/README.md) installation guide to learn how to bootstrap the Bonsai and python environments directly from the repo provided.
+
+## Note on Installing Bonsai on Linux
+
+Bonsai on Linux is not as straightforward as installing on Windows and is still being actively tested and optimized. If you wish to use Bonsai on Linux, be sure to read the [Linux Installation Guide](https://github.com/orgs/bonsai-rx/discussions/1101) for important information regarding how to install underlying Bonsai dependencies such as OpenGL, OpenAL, OpenCV, etc., for use in Bonsai workflows.
 
 ### Dependencies
 
@@ -11,6 +15,8 @@ To get started, you must install the following tools:
 - [Git](https://git-scm.com/downloads)
 - [Powershell on Linux](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.4)
 - [Bonsai-Rx Linux Environment Template](https://github.com/ncguilbeault/bonsai-linux-environment-template)
+
+*Note* be sure to check the python version and dotnet-sdk version to make sure you have the correct version of the tool installed, otherwise the steps in this guide may not work.
 
 ### Creating Virtual Environments
 

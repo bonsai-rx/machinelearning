@@ -1,5 +1,7 @@
 # Installation Guide - Windows
 
+This guide is meant for users to install the package from scratch. *Note* to use this package to run the examples, you must install the additional Bonsai packages required or follow the [Examples](../../../examples/README.md) guide to bootstrap the specific bonsai and python environments.
+
 ### Dependencies
 
 To get started, you must install the following tools:
@@ -9,6 +11,8 @@ To get started, you must install the following tools:
 - [Git](https://git-scm.com/downloads)
 - [Bonsai-Rx Templates tool](https://www.nuget.org/packages/Bonsai.Templates)
 - [Microsoft Visual C++ Redistributable](https://aka.ms/vs/16/release/vc_redist.x64.exe)
+
+*Note* be sure to check the python version and dotnet-sdk version to make sure you have the correct version of the tool installed, otherwise the steps in this guide may not work.
 
 ### Creating Virtual Environments
 

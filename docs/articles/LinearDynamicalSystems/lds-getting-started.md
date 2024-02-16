@@ -1,6 +1,6 @@
 # Getting Started
 
-Depending on your operating system, follow the [activating environments in Windows](#activating-environments---windows) or [activating environments in Linux](#activating-environments---linux) instructions below.
+This guide shows you how to use the environments created in the previous installation steps to run the package. Depending on your operating system, follow the [activating environments in Windows](#activating-environments---windows) or [activating environments in Linux](#activating-environments---linux) instructions below. *Note* these environments are not configured to run the example workflows. To run the examples, you must install the necessary packages or follow the [Examples](../../../examples/README.md) getting started guide to bootstrap the environments directly from the repo provided.
 
 ### Activating environments - Windows
 
@@ -77,4 +77,4 @@ The `CreateKFModel` node contains a number of properties which can be useful to 
 
 ### Further Examples
 
-For examples and demonstrations for how this works, see the [Bonsai - Machine Learning Examples](../../../examples/README.md) section.
+For further examples and demonstrations for how this package works, see the [Bonsai - Machine Learning Examples](../../../examples/README.md) section.
