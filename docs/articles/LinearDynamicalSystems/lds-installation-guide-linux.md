@@ -2,9 +2,9 @@
 
 This guide is meant for users to install the package from scratch. *Note* to use this package to run the examples, you must install the necessary Bonsai packages through the Bonsai package manager. Alternatively, you can follow along with the [Examples](../../../examples/README.md) installation guide to learn how to bootstrap the Bonsai and python environments directly from the repo provided.
 
-## Note on Installing Bonsai on Linux
+## Notes on Installing Bonsai on Linux (Ubuntu)
 
-Bonsai on Linux is not as straightforward as installing on Windows and is still being actively tested and optimized. If you wish to use Bonsai on Linux, be sure to read the [Linux Installation Guide](https://github.com/orgs/bonsai-rx/discussions/1101) for important information regarding how to install underlying Bonsai dependencies such as OpenGL, OpenAL, OpenCV, etc., for use in Bonsai workflows.
+Bonsai on Linux is not as straightforward as installing on Windows and is still being actively tested and optimized. Currently, Bonsai support has only been tested on Ubuntu 22.04. If you wish to try Bonsai on Linux, be sure to read the [Linux Installation Guide](https://github.com/orgs/bonsai-rx/discussions/1101) for important information regarding how to install underlying Bonsai packge dependencies, such as OpenGL, OpenAL, OpenCV, etc., for use in Bonsai workflows.
 
 ### Dependencies
 
