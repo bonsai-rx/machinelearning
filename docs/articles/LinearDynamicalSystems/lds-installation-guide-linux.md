@@ -30,6 +30,8 @@ cd LinearDynamicalSystems
 
 2. Create a python virtual environment.
 
+*Note* this step uses the virtual env package from python to create a virtual environment. If you run into an error during this step, you may have to install the python virtual env package with `sudo apt install python3.10-venv`.
+
 ```cmd
 python3 -m venv .venv
 ```
