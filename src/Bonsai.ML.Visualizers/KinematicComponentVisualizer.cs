@@ -16,15 +16,22 @@ namespace Bonsai.ML.Visualizers
     public class KinematicComponentVisualizer : DialogTypeVisualizer
     {
 
+        private PropertyInfo stateComponentProperty;
+
+        private int selectedIndex = 0;
+
+        private DateTime? _startTime;
+
+        private TimeSeriesOxyPlotBase Plot;
+
+        /// <summary>
+        /// Constructs a KinematicComponentVisualizer object.
+        /// </summary>
         public KinematicComponentVisualizer ()
         {
             Capacity = 10;
             Size = new Size(320, 240);
         }
-
-        private PropertyInfo stateComponentProperty;
-
-        private int selectedIndex = 0;
 
         /// <summary>
         /// The selected index of the state component to be visualized
@@ -41,20 +48,16 @@ namespace Bonsai.ML.Visualizers
         /// </summary>
         public int Capacity { get; set; }
 
-        DateTime? _startTime;
-
-        TimeSeriesOxyPlotBase Plot;
-
         public override void Load(IServiceProvider provider)
         {
             var stateComponents = GetStateComponents();
             stateComponentProperty = typeof(KinematicComponent).GetProperty(stateComponents[selectedIndex]);
 
             Plot = new TimeSeriesOxyPlotBase(
-                _lineSeriesName: "Mean",
-                _areaSeriesName: "Variance",
-                _dataSource: stateComponents,
-                _selectedIndex: selectedIndex
+                lineSeriesName: "Mean",
+                areaSeriesName: "Variance",
+                dataSource: stateComponents,
+                selectedIndex: selectedIndex
             )
             {
                 Size = Size,
@@ -101,16 +104,12 @@ namespace Bonsai.ML.Visualizers
                 variance: variance
             );
 
-            // var maxTime = Math.Ceiling(time);
-            // var minTime = time.AddSeconds(-Capacity);
-            // var minTime = time - _startTime;
-
             if (time - _startTime.Value > TimeSpan.FromSeconds(Capacity))
             {
                 Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
             }
 
-            Plot.Update();
+            Plot.UpdatePlot();
         }
 
         /// <summary>
