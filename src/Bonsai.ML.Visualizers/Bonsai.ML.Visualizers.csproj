@@ -2,14 +2,10 @@
   <PropertyGroup>
     <Title>Bonsai.ML.Visualizers</Title>
     <Description>A package for the Bonsai visual programming language.</Description>
-    <Authors />
-    <Copyright>Copyright ©  2024</Copyright>
-    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
-    <PackageTags>Bonsai Rx Bonsai.ML.Visualizers</PackageTags>
+    <PackageTags>Bonsai Rx ML Machine Learning Visualizers</PackageTags>
     <TargetFrameworks>net472</TargetFrameworks>
-    <Features>strict</Features>
-    <Version>0.1.0</Version>
     <UseWindowsForms>true</UseWindowsForms>
+    <Version>0.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.8.1" />
