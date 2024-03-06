@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.8.1" />
-    <PackageReference Include="Bonsai.Design.Visualizers" Version="2.8.0" />
+    <PackageReference Include="Bonsai.Design" Version="2.8.0" />
     <PackageReference Include="OxyPlot.Core" Version="2.1.2" />
     <PackageReference Include="OxyPlot.WindowsForms" Version="2.1.2" />
   </ItemGroup>
