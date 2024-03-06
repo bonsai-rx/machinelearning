@@ -4,13 +4,10 @@ using System;
 using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
-using System.Collections.Generic;
-using System.Linq;
+using Bonsai.ML.LinearDynamicalSystems.Python;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
-
-    using static PythonHelper;
 
     /// <summary>
     /// State of a Kalman Filter (mean vector and covariance matrix)
@@ -21,9 +18,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
     public class State
     {
 
-        private List<List<double>> _x = new List<List<double>>();
+        private double[,] _x;
     
-        private List<List<double>> _p = new List<List<double>>();
+        private double[,] _p;
 
 
         /// <summary>
@@ -32,7 +29,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         [XmlIgnore()]
         [YamlMember(Alias="x")]
         [Description("Mean vector")]
-        public List<List<double>> X
+        public double[,] X
         {
             get
             {
@@ -50,7 +47,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         [XmlIgnore()]
         [YamlMember(Alias="P")]
         [Description("Covariance matrix")]
-        public List<List<double>> P
+        public double[,] P
         {
             get
             {
@@ -69,18 +66,13 @@ namespace Bonsai.ML.LinearDynamicalSystems
         {
             return Observable.Select(source, pyObject =>
             {
-                using (Py.GIL())
-                {
-                    var xPyList = (List<object>)GetPythonAttribute(pyObject, "x");
-                    var xPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(xPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
-                    var PPyList = (List<object>)GetPythonAttribute(pyObject, "P");
-                    var PPyObj = Enumerable.ToList(Enumerable.Select(Enumerable.Cast<List<object>>(PPyList), subList0 => Enumerable.ToList(Enumerable.OfType<double>(subList0))));
-                
-                    return new State {
-                        X = xPyObj,
-                        P = PPyObj
-                    };
-                }
+                var xPyObj = (double[,])PythonHelper.GetPythonAttribute(pyObject, "x");
+                var PPyObj = (double[,])PythonHelper.GetPythonAttribute(pyObject, "P");
+
+                return new State {
+                    X = xPyObj,
+                    P = PPyObj
+                };
             });
         }
     }
