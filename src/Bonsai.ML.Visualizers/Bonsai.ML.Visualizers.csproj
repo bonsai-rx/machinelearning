@@ -6,7 +6,7 @@
     <Copyright>Copyright ©  2024</Copyright>
     <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
     <PackageTags>Bonsai Rx Bonsai.ML.Visualizers</PackageTags>
-    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472</TargetFrameworks>
     <Features>strict</Features>
     <Version>0.1.0</Version>
     <UseWindowsForms>true</UseWindowsForms>
@@ -16,7 +16,6 @@
     <PackageReference Include="Bonsai.Design.Visualizers" Version="2.8.0" />
     <PackageReference Include="OxyPlot.Core" Version="2.1.2" />
     <PackageReference Include="OxyPlot.WindowsForms" Version="2.1.2" />
-    <PackageReference Include="System.Windows.Forms" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj" />

@@ -12,9 +12,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.8.1" />
-    <PackageReference Include="NG.Bonsai.Scripting.Python" Version="0.1.0-build240209-01" />
-    <PackageReference Include="pythonnet" Version="3.0.3" />
-    <PackageReference Include="System.Linq" Version="4.3.0" />
+    <PackageReference Include="Bonsai.Scripting.Python" Version="0.2.1" />
     <PackageReference Include="YamlDotNet" Version="13.7.1" />
   </ItemGroup>
   <ItemGroup>
