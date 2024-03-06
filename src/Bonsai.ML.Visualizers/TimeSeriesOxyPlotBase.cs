@@ -16,29 +16,43 @@ namespace Bonsai.ML.Visualizers
         private ComboBox comboBox;
         private Label label;
 
-        private string lineSeriesName;
-        private string areaSeriesName;
-
-        private int selectedIndex;
+        private string _lineSeriesName;
+        private string _areaSeriesName;
+        private int _selectedIndex;
+        private IEnumerable _dataSource;
 
         private LineSeries lineSeries;
         private AreaSeries areaSeries;
         private Axis xAxis;
         private Axis yAxis;
 
+        /// <summary>
+        /// Event handler which can be used to hook into events generated when the combobox values have changed.
+        /// </summary>
         public event EventHandler ComboBoxValueChanged;
 
-        private IEnumerable dataSource;
-
+        /// <summary>
+        /// DateTime value that determines the starting time of the data values.
+        /// </summary>
         public DateTime StartTime {get;set;}
+
+        /// <summary>
+        /// Integer value that determines how many data points should be shown along the x axis.
+        /// </summary>
         public int Capacity { get; set; }
 
-        public TimeSeriesOxyPlotBase(string _lineSeriesName, string _areaSeriesName, IEnumerable _dataSource, int _selectedIndex)
+        /// <summary>
+        /// Constructor of the TimeSeriesOxyPlotBase class.
+        /// Requires a line series name and an area series name.
+        /// Data source is optional, since pasing it to the constructor will populate the combobox and leave it empty otherwise.
+        /// The selected index is only needed when the data source is provided.
+        /// </summary>
+        public TimeSeriesOxyPlotBase(string lineSeriesName, string areaSeriesName, IEnumerable dataSource = null, int selectedIndex = 0)
         {
-            lineSeriesName = _lineSeriesName;
-            areaSeriesName = _areaSeriesName;
-            dataSource = _dataSource;
-            selectedIndex = _selectedIndex;
+            _lineSeriesName = lineSeriesName;
+            _areaSeriesName = areaSeriesName;
+            _dataSource = dataSource;
+            _selectedIndex = selectedIndex;
             Initialize();
         }
 
@@ -58,12 +72,12 @@ namespace Bonsai.ML.Visualizers
             model = new PlotModel();
 
             lineSeries = new LineSeries {
-                Title = lineSeriesName,
+                Title = _lineSeriesName,
                 Color = OxyColors.Blue
             };
 
             areaSeries = new AreaSeries {
-                Title = areaSeriesName,
+                Title = _areaSeriesName,
                 Color = OxyColors.LightBlue,
                 Fill = OxyColor.FromArgb(100, 173, 216, 230)
             };
@@ -81,7 +95,7 @@ namespace Bonsai.ML.Visualizers
 
             yAxis = new LinearAxis {
                 Position = AxisPosition.Left,
-                Title = "Value"
+                Title = "Value",
             };
 
             model.Axes.Add(xAxis);
@@ -91,41 +105,44 @@ namespace Bonsai.ML.Visualizers
             model.Series.Add(areaSeries);
 
             view.Model = model;
-
-            label = new Label
-            {
-                Text = "State component:",
-                AutoSize = true,
-                Location = new Point(-200, 8),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
-            };
-
-            comboBox = new ComboBox
-            {
-                Location = new Point(0, 5),
-                DataSource = dataSource,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                BindingContext = BindingContext
-            };
-
-            comboBox.SelectedIndexChanged += ComboBoxSelectedIndexChanged;
-            comboBox.SelectedIndex = selectedIndex;
-
-            Controls.Add(label);
-            Controls.Add(comboBox);
             Controls.Add(view);
 
-            comboBox.BringToFront();
-            label.BringToFront();
+            if (_dataSource != null)
+            {
+                label = new Label
+                {
+                    Text = "State component:",
+                    AutoSize = true,
+                    Location = new Point(-200, 8),
+                    Anchor = AnchorStyles.Top | AnchorStyles.Right
+                };
+
+                comboBox = new ComboBox
+                {
+                    Location = new Point(0, 5),
+                    DataSource = _dataSource,
+                    Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                    BindingContext = BindingContext
+                };
+
+                Controls.Add(comboBox);
+                Controls.Add(label);
+
+                comboBox.SelectedIndexChanged += ComboBoxSelectedIndexChanged;
+                comboBox.SelectedIndex = _selectedIndex;
+
+                comboBox.BringToFront();
+                label.BringToFront();
+            }
 
             AutoScaleDimensions = new SizeF(6F, 13F);
         }
 
         private void ComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox.SelectedIndex != selectedIndex)
+            if (comboBox.SelectedIndex != _selectedIndex)
             {
-                selectedIndex = comboBox.SelectedIndex;
+                _selectedIndex = comboBox.SelectedIndex;
                 ComboBoxValueChanged?.Invoke(this, e);
             }
         }
@@ -147,7 +164,7 @@ namespace Bonsai.ML.Visualizers
             xAxis.Maximum = DateTimeAxis.ToDouble(maxTime);
         }
 
-        public void Update()
+        public void UpdatePlot()
         {
             model.InvalidatePlot(true);
         }
@@ -161,8 +178,8 @@ namespace Bonsai.ML.Visualizers
             xAxis.Reset();
             yAxis.Reset();
 
-            xAxis.Minimum = DateTimeAxis.ToDouble(StartTime);
-            xAxis.Maximum = DateTimeAxis.ToDouble(StartTime.AddSeconds(Capacity));
+            xAxis.Minimum = DateTimeAxis.ToDouble(StartTime.AddSeconds(-Capacity));
+            xAxis.Maximum = DateTimeAxis.ToDouble(StartTime);
         }
     }
 }
