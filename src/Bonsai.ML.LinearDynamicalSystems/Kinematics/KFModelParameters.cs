@@ -3,6 +3,7 @@ using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
 using Python.Runtime;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
@@ -286,34 +287,31 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         {
     		return Observable.Select(source, pyObject =>
     		{
-                using (Py.GIL())
-                {
-                    var pos_x0PyObj = GetPythonAttribute<double>(pyObject, "pos_x0");
-                    var pos_y0PyObj = GetPythonAttribute<double>(pyObject, "pos_y0");
-                    var vel_x0PyObj = GetPythonAttribute<double>(pyObject, "vel_x0");
-                    var vel_y0PyObj = GetPythonAttribute<double>(pyObject, "vel_y0");
-                    var acc_x0PyObj = GetPythonAttribute<double>(pyObject, "acc_x0");
-                    var acc_y0PyObj = GetPythonAttribute<double>(pyObject, "acc_y0");
-                    var sigma_aPyObj = GetPythonAttribute<double>(pyObject, "sigma_a");
-                    var sigma_xPyObj = GetPythonAttribute<double>(pyObject, "sigma_x");
-                    var sigma_yPyObj = GetPythonAttribute<double>(pyObject, "sigma_y");
-                    var sqrt_diag_V0_valuePyObj = GetPythonAttribute<double>(pyObject, "sqrt_diag_V0_value");
-                    var fpsPyObj = GetPythonAttribute<int>(pyObject, "fps");
+                var pos_x0PyObj = GetPythonAttribute<double>(pyObject, "pos_x0");
+                var pos_y0PyObj = GetPythonAttribute<double>(pyObject, "pos_y0");
+                var vel_x0PyObj = GetPythonAttribute<double>(pyObject, "vel_x0");
+                var vel_y0PyObj = GetPythonAttribute<double>(pyObject, "vel_y0");
+                var acc_x0PyObj = GetPythonAttribute<double>(pyObject, "acc_x0");
+                var acc_y0PyObj = GetPythonAttribute<double>(pyObject, "acc_y0");
+                var sigma_aPyObj = GetPythonAttribute<double>(pyObject, "sigma_a");
+                var sigma_xPyObj = GetPythonAttribute<double>(pyObject, "sigma_x");
+                var sigma_yPyObj = GetPythonAttribute<double>(pyObject, "sigma_y");
+                var sqrt_diag_V0_valuePyObj = GetPythonAttribute<double>(pyObject, "sqrt_diag_V0_value");
+                var fpsPyObj = GetPythonAttribute<int>(pyObject, "fps");
 
-                    return new KFModelParameters {
-                        Pos_x0 = pos_x0PyObj,
-                        Pos_y0 = pos_y0PyObj,
-                        Vel_x0 = vel_x0PyObj,
-                        Vel_y0 = vel_y0PyObj,
-                        Acc_x0 = acc_x0PyObj,
-                        Acc_y0 = acc_y0PyObj,
-                        Sigma_a = sigma_aPyObj,
-                        Sigma_x = sigma_xPyObj,
-                        Sigma_y = sigma_yPyObj,
-                        Sqrt_diag_V0_value = sqrt_diag_V0_valuePyObj,
-                        Fps = fpsPyObj
-                    };
-                }
+                return new KFModelParameters {
+                    Pos_x0 = pos_x0PyObj,
+                    Pos_y0 = pos_y0PyObj,
+                    Vel_x0 = vel_x0PyObj,
+                    Vel_y0 = vel_y0PyObj,
+                    Acc_x0 = acc_x0PyObj,
+                    Acc_y0 = acc_y0PyObj,
+                    Sigma_a = sigma_aPyObj,
+                    Sigma_x = sigma_xPyObj,
+                    Sigma_y = sigma_yPyObj,
+                    Sqrt_diag_V0_value = sqrt_diag_V0_valuePyObj,
+                    Fps = fpsPyObj
+                };
             });
         }
     

@@ -56,10 +56,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// <summary>
         /// Extracts a single state compenent from the full state
         /// </summary>
-        public StateComponent(List<List<double>> X, List<List<double>> P, int i) 
+        public StateComponent(double[,] X, double[,] P, int i) 
         {
-            Mean = X[i][0];
-            Variance = Sigma(P[i][i]);
+            Mean = X[i,0];
+            Variance = Sigma(P[i,i]);
         }
 
         private double Sigma(double variance)

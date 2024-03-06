@@ -8,12 +8,13 @@ using Bonsai.ML.Visualizers;
 using Bonsai.ML.LinearDynamicalSystems;
 using Bonsai.ML.LinearDynamicalSystems.Kinematics;
 using System.Drawing;
+using System.Reactive;
 
 [assembly: TypeVisualizer(typeof(KinematicComponentVisualizer), Target = typeof(KinematicComponent))]
 
 namespace Bonsai.ML.Visualizers
 {
-    public class KinematicComponentVisualizer : DialogTypeVisualizer
+    public class KinematicComponentVisualizer : BufferedVisualizer
     {
 
         private PropertyInfo stateComponentProperty;
@@ -79,9 +80,13 @@ namespace Bonsai.ML.Visualizers
 
         public override void Show(object value)
         {
+        }
+
+        protected override void Show(DateTime time, object value)
+        {
             if (!_startTime.HasValue)
             {
-                _startTime = DateTime.Now;
+                _startTime = time;
                 Plot.StartTime = _startTime.Value;
                 Plot.ResetSeries();
             }
@@ -90,8 +95,6 @@ namespace Bonsai.ML.Visualizers
             StateComponent stateComponent = (StateComponent)stateComponentProperty.GetValue(kinematicComponent);
             double mean = stateComponent.Mean;
             double variance = stateComponent.Variance;
-
-            var time = DateTime.Now;
 
             Plot.AddToLineSeries(
                 time: time,
@@ -104,12 +107,17 @@ namespace Bonsai.ML.Visualizers
                 variance: variance
             );
 
-            if (time - _startTime.Value > TimeSpan.FromSeconds(Capacity))
-            {
-                Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
-            }
+            Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
 
-            Plot.UpdatePlot();
+        }
+
+        protected override void ShowBuffer(IList<Timestamped<object>> values)
+        {
+            base.ShowBuffer(values);
+            if (values.Count > 0)
+            {
+                Plot.UpdatePlot();
+            }
         }
 
         /// <summary>

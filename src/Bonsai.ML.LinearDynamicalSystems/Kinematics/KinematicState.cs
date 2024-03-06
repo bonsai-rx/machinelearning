@@ -84,19 +84,19 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
                 KinematicComponent position = new KinematicComponent{
                     X = new StateComponent(state.X, state.P, 0),
                     Y = new StateComponent(state.X, state.P, 3),
-                    Covariance = state.P[0][3]
+                    Covariance = state.P[0,3]
                 };
 
                 KinematicComponent velocity = new KinematicComponent{
                     X = new StateComponent(state.X, state.P, 1),
                     Y = new StateComponent(state.X, state.P, 4),
-                    Covariance = state.P[1][4]
+                    Covariance = state.P[1,4]
                 };
 
                 KinematicComponent acceleration = new KinematicComponent{
                     X = new StateComponent(state.X, state.P, 2),
                     Y = new StateComponent(state.X, state.P, 5),
-                    Covariance = state.P[2][5]
+                    Covariance = state.P[2,5]
                 };
                 
                 return new KinematicState {

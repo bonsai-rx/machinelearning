@@ -95,7 +95,7 @@ namespace Bonsai.ML.Visualizers
 
             yAxis = new LinearAxis {
                 Position = AxisPosition.Left,
-                Title = "Value"
+                Title = "Value",
             };
 
             model.Axes.Add(xAxis);
@@ -178,9 +178,6 @@ namespace Bonsai.ML.Visualizers
 
             xAxis.Reset();
             yAxis.Reset();
-
-            // xAxis.Minimum = DateTimeAxis.ToDouble(StartTime);
-            // xAxis.Maximum = DateTimeAxis.ToDouble(StartTime.AddSeconds(Capacity));
 
             xAxis.Minimum = DateTimeAxis.ToDouble(StartTime.AddSeconds(-Capacity));
             xAxis.Maximum = DateTimeAxis.ToDouble(StartTime);
