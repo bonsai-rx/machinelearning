@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
-    internal class NumpyHelper
+    static class NumpyHelper
     {
         public class NumpyArrayInterface
         {
@@ -99,15 +99,11 @@ namespace Bonsai.ML.LinearDynamicalSystems
 
         private static PyObject deepcopy;
 
-        private static readonly Lazy<NumpyHelper> _instance = new Lazy<NumpyHelper>(() => new NumpyHelper());
+        private static readonly Lazy<PyObject> np = new Lazy<PyObject>(InitializeNumpy);
 
-        public static NumpyHelper Instance => _instance.Value;
+        private static readonly Dictionary<Type, PyObject> np_dtypes = new Dictionary<Type, PyObject>();
 
-        public static PyObject np;
-
-        private static Dictionary<Type, PyObject> np_dtypes = new Dictionary<Type, PyObject>();
-
-        public static Dictionary<string, Type> csharp_dtypes = new Dictionary<string, Type>(){
+        private static readonly Dictionary<string, Type> csharp_dtypes = new Dictionary<string, Type>(){
             { "uint8",      typeof(byte)    },
             { "uint16",     typeof(ushort)  },
             { "uint32",     typeof(uint)    },
@@ -119,14 +115,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
             { "float64",    typeof(double)  },
         };
 
-        private NumpyHelper()
+        public static PyObject InitializeNumpy()
         {
-            InitializeNumpy();
-        }
-
-        private void InitializeNumpy()
-        {
-            np = Py.Import("numpy");
+            var np = Py.Import("numpy");
             np_dtypes.Add(typeof(byte), np.GetAttr("uint8"));
             np_dtypes.Add(typeof(ushort), np.GetAttr("uint16"));
             np_dtypes.Add(typeof(uint), np.GetAttr("uint32"));
@@ -138,11 +129,12 @@ namespace Bonsai.ML.LinearDynamicalSystems
             np_dtypes.Add(typeof(double), np.GetAttr("float64"));
             var copy = Py.Import("copy");
             deepcopy = copy.GetAttr("deepcopy");
+            return np;
         }
 
         public static bool IsNumPyArray(PyObject obj)
         {
-            dynamic numpy = np;
+            dynamic numpy = np.Value;
             return numpy.ndarray.__instancecheck__(obj);
         }
 
