@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Python.Runtime;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,9 +8,9 @@ using System.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace Bonsai.ML.LinearDynamicalSystems.Python
+namespace Bonsai.ML.LinearDynamicalSystems
 {
-    public class NumpyHelper
+    internal class NumpyHelper
     {
         public class NumpyArrayInterface
         {
@@ -26,7 +26,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
 
                 var typestr = meta["typestr"].As<string>();
                 var dtype = typestr.Substring(1);
-                switch(dtype)
+                switch (dtype)
                 {
                     case "b1":
                         DataType = typeof(bool);
@@ -60,7 +60,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
                         break;
                     default:
                         throw new Exception($"Type '{dtype}' not supported");
-                } 
+                }
                 Shape = obj.GetAttr("shape").As<long[]>();
                 NBytes = obj.GetAttr("nbytes").As<int>();
             }
@@ -81,11 +81,11 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
             var info = new NumpyArrayInterface(array);
 
             PyObject arr = array;
-            if(!info.IsCStyleContiguous)
+            if (!info.IsCStyleContiguous)
             {
                 arr = deepcopy.Invoke(array);
             }
-           
+
             byte[] data = new byte[info.NBytes];
             Marshal.Copy(info.Address, data, 0, info.NBytes);
             if (info.DataType == typeof(byte) && info.Shape.Length == 1)
@@ -150,7 +150,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
         {
             PyObject dtype;
             np_dtypes.TryGetValue(type, out dtype);
-            if(dtype == null)
+            if (dtype == null)
             {
                 throw new Exception($"type '{type}' not supported.");
             }
@@ -161,7 +161,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
         {
             Type type;
             csharp_dtypes.TryGetValue(str, out type);
-            if(type == null)
+            if (type == null)
             {
                 throw new Exception($"type '{type}' not supported.");
             }
@@ -174,7 +174,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
             {
                 return true;
             }
-            
+
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
                 var dtypes = new List<string>
@@ -223,7 +223,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
                 }
                 else
                 {
-                    object value =  array.GetValue(indices);
+                    object value = array.GetValue(indices);
                     sb.Append(value.ToString());
                 }
             }
@@ -285,14 +285,14 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
                     dimensions.Add(currentArray.Count);
                     if (currentArray.Count > 0)
                     {
-                        if ((currentArray.Any(item => !(item is JArray)) && currentArray.Any(item => item is JArray)) || (currentArray.All(item => item is JArray) && currentArray.Any(item => ((JArray)item).Count != ((JArray)currentArray.First()).Count)))
+                        if (currentArray.Any(item => !(item is JArray)) && currentArray.Any(item => item is JArray) || currentArray.All(item => item is JArray) && currentArray.Any(item => ((JArray)item).Count != ((JArray)currentArray.First()).Count))
                         {
                             throw new Exception("Error parsing input string.");
                         }
 
                         if (!(currentArray.First() is JArray) && !currentArray.All(item => double.TryParse(item.ToString(), out _)))
                         {
-                            throw new Exception("Error parsing non numeric types.");                        
+                            throw new Exception("Error parsing non numeric types.");
                         }
                     }
 

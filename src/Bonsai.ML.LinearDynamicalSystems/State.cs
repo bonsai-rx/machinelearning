@@ -4,7 +4,6 @@ using System;
 using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
-using Bonsai.ML.LinearDynamicalSystems.Python;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {

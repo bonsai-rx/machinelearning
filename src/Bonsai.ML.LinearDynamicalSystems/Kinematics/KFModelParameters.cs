@@ -3,7 +3,6 @@ using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
 using Python.Runtime;
-using Bonsai.ML.LinearDynamicalSystems.Python;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {

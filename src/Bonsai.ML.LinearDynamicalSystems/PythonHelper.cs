@@ -1,10 +1,10 @@
-using Python.Runtime;
+﻿using Python.Runtime;
 using System;
 using System.Collections.Generic;
 
-namespace Bonsai.ML.LinearDynamicalSystems.Python
+namespace Bonsai.ML.LinearDynamicalSystems
 {
-    public class PythonHelper
+    static class PythonHelper
     {
         public static object GetPythonAttribute(PyObject pyObject, string attributeName)
         {
@@ -60,8 +60,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
                 return resultDict;
             }
 
-            NumpyHelper numpyHelper = NumpyHelper.Instance;
-            
             if (NumpyHelper.IsNumPyArray(pyObject))
             {
                 return NumpyHelper.PyObjectToArray(pyObject);
