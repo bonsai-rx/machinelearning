@@ -1,0 +1,3 @@
+[submodule "examples"]
+	path = docs/examples
+	url = https://github.com/bonsai-rx/machinelearning-examples.git
