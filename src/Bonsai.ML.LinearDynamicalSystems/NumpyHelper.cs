@@ -79,13 +79,6 @@ namespace Bonsai.ML.LinearDynamicalSystems
         public static Array PyObjectToArray(PyObject array)
         {
             var info = new NumpyArrayInterface(array);
-
-            PyObject arr = array;
-            if (!info.IsCStyleContiguous)
-            {
-                arr = deepcopy.Invoke(array);
-            }
-
             byte[] data = new byte[info.NBytes];
             Marshal.Copy(info.Address, data, 0, info.NBytes);
             if (info.DataType == typeof(byte) && info.Shape.Length == 1)
