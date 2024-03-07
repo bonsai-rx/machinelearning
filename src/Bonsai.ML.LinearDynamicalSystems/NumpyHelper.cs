@@ -92,11 +92,12 @@ namespace Bonsai.ML.LinearDynamicalSystems
 
         private static PyObject deepcopy;
 
-        private static readonly Lazy<PyObject> np = new Lazy<PyObject>(InitializeNumpy);
+        private static readonly Lazy<PyObject> np = new(InitializeNumpy);
 
-        private static readonly Dictionary<Type, PyObject> np_dtypes = new Dictionary<Type, PyObject>();
+        private static readonly Dictionary<Type, PyObject> np_dtypes = new();
 
-        private static readonly Dictionary<string, Type> csharp_dtypes = new Dictionary<string, Type>(){
+        private static readonly Dictionary<string, Type> csharp_dtypes = new()
+        {
             { "uint8",      typeof(byte)    },
             { "uint16",     typeof(ushort)  },
             { "uint32",     typeof(uint)    },

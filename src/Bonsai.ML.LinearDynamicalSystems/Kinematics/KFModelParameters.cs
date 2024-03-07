@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
@@ -284,17 +284,17 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         {
     		return Observable.Select(source, pyObject =>
     		{
-                var pos_x0PyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "pos_x0");
-                var pos_y0PyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "pos_y0");
-                var vel_x0PyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "vel_x0");
-                var vel_y0PyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "vel_y0");
-                var acc_x0PyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "acc_x0");
-                var acc_y0PyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "acc_y0");
-                var sigma_aPyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "sigma_a");
-                var sigma_xPyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "sigma_x");
-                var sigma_yPyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "sigma_y");
-                var sqrt_diag_V0_valuePyObj = PythonHelper.GetPythonAttribute<double>(pyObject, "sqrt_diag_V0_value");
-                var fpsPyObj = PythonHelper.GetPythonAttribute<int>(pyObject, "fps");
+                var pos_x0PyObj = pyObject.GetAttr<double>("pos_x0");
+                var pos_y0PyObj = pyObject.GetAttr<double>("pos_y0");
+                var vel_x0PyObj = pyObject.GetAttr<double>("vel_x0");
+                var vel_y0PyObj = pyObject.GetAttr<double>("vel_y0");
+                var acc_x0PyObj = pyObject.GetAttr<double>("acc_x0");
+                var acc_y0PyObj = pyObject.GetAttr<double>("acc_y0");
+                var sigma_aPyObj = pyObject.GetAttr<double>("sigma_a");
+                var sigma_xPyObj = pyObject.GetAttr<double>("sigma_x");
+                var sigma_yPyObj = pyObject.GetAttr<double>("sigma_y");
+                var sqrt_diag_V0_valuePyObj = pyObject.GetAttr<double>("sqrt_diag_V0_value");
+                var fpsPyObj = pyObject.GetAttr<int>("fps");
 
                 return new KFModelParameters {
                     Pos_x0 = pos_x0PyObj,

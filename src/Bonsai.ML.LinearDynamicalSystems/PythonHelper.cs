@@ -6,23 +6,19 @@ namespace Bonsai.ML.LinearDynamicalSystems
 {
     static class PythonHelper
     {
-        public static object GetPythonAttribute(PyObject pyObject, string attributeName)
+        public static object GetArrayAttribute(this PyObject pyObject, string attributeName)
         {
-            using (var attr = pyObject.GetAttr(attributeName))
-            {
-                return ConvertPythonObjectToCSharp(attr);
-            }
+            using var attr = pyObject.GetAttr(attributeName);
+            return ConvertPythonObjectToCSharp(attr);
         }
 
-        public static T GetPythonAttribute<T>(PyObject pyObject, string attributeName)
+        public static T GetAttr<T>(this PyObject pyObject, string attributeName)
         {
-            using (var attr = pyObject.GetAttr(attributeName))
-            {
-                return (T)attr.AsManagedObject(typeof(T));
-            }
+            using var attr = pyObject.GetAttr(attributeName);
+            return attr.As<T>();
         }
 
-        public static object ConvertPythonObjectToCSharp(PyObject pyObject)
+        static object ConvertPythonObjectToCSharp(PyObject pyObject)
         {
             if (PyInt.IsIntType(pyObject))
             {

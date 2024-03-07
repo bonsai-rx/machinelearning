@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
@@ -65,8 +65,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         {
             return Observable.Select(source, pyObject =>
             {
-                var xPyObj = (double[,])PythonHelper.GetPythonAttribute(pyObject, "x");
-                var PPyObj = (double[,])PythonHelper.GetPythonAttribute(pyObject, "P");
+                var xPyObj = (double[,])pyObject.GetArrayAttribute("x");
+                var PPyObj = (double[,])pyObject.GetArrayAttribute("P");
 
                 return new State {
                     X = xPyObj,
