@@ -28,16 +28,18 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
             {
                 return pyObject.As<int>();
             }
-            else if (PyFloat.IsFloatType(pyObject))
+
+            if (PyFloat.IsFloatType(pyObject))
             {
                 return pyObject.As<double>();
             }
-            else if (PyString.IsStringType(pyObject))
+
+            if (PyString.IsStringType(pyObject))
             {
                 return pyObject.As<string>();
             }
 
-            else if (PyList.IsListType(pyObject))
+            if (PyList.IsListType(pyObject))
             {
                 var pyList = new PyList(pyObject);
                 var resultList = new List<object>();
@@ -46,7 +48,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
                 return resultList;
             }
 
-            else if (PyDict.IsDictType(pyObject))
+            if (PyDict.IsDictType(pyObject))
             {
                 var pyDict = new PyDict(pyObject);
                 var resultDict = new Dictionary<object, object>();
@@ -58,9 +60,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
                 return resultDict;
             }
 
-            else if (NumpyHelper.IsNumPyArray(pyObject))
+            NumpyHelper numpyHelper = NumpyHelper.Instance;
+            
+            if (NumpyHelper.IsNumPyArray(pyObject))
             {
-                NumpyHelper numpyHelper = NumpyHelper.Instance;
                 return NumpyHelper.PyObjectToArray(pyObject);
             }
 

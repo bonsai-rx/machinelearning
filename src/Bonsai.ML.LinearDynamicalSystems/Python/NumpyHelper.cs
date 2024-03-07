@@ -103,7 +103,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
 
         public static NumpyHelper Instance => _instance.Value;
 
-        public static dynamic np;
+        public static PyObject np;
 
         private static Dictionary<Type, PyObject> np_dtypes = new Dictionary<Type, PyObject>();
 
@@ -142,7 +142,8 @@ namespace Bonsai.ML.LinearDynamicalSystems.Python
 
         public static bool IsNumPyArray(PyObject obj)
         {
-            return np.ndarray.__instancecheck__(obj);
+            dynamic numpy = np;
+            return numpy.ndarray.__instancecheck__(obj);
         }
 
         public static PyObject GetNumpyDataType(Type type)
