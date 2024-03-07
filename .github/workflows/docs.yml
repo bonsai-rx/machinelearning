@@ -2,9 +2,6 @@
 name: Build docs
 
 on:
-  push:
-    branches:
-      - ng-docs-dev
   workflow_dispatch:
 
 jobs:
@@ -13,6 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         name: Checkout
+        with:
+          submodules: recursive
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3.2.0
@@ -21,12 +20,6 @@ jobs:
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
-
-      - name: Checkout docs
-        uses: actions/checkout@v2
-        with:
-          ref: ng-docs-dev
-          submodules: recursive
       
       - name: Restore NuGet Packages
         run: msbuild -t:restore src\Bonsai.ML.sln
@@ -36,9 +29,6 @@ jobs:
 
       - name: Build Documentation
         run: dotnet docfx docs/docfx.json
-
-      - name: Create .nojekyll File
-        run: New-Item -Path docs/_site/.nojekyll -ItemType "file"
 
       - name: Publish to github pages
         uses: peaceiris/actions-gh-pages@v3
