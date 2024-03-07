@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
-using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
@@ -26,7 +26,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// Mean vector - n x 1 dimensional matrix where n is number of features
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="x")]
+        [JsonProperty("x")]
         [Description("Mean vector")]
         public double[,] X
         {
@@ -44,7 +44,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// Covariance matrix - n x n dimensional matrix where n is number of features
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="P")]
+        [JsonProperty("P")]
         [Description("Covariance matrix")]
         public double[,] P
         {

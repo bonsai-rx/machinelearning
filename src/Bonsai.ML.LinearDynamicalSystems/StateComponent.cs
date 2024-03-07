@@ -1,7 +1,7 @@
-using System.ComponentModel;
-using YamlDotNet.Serialization;
+﻿using System.ComponentModel;
 using System;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
@@ -20,7 +20,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// mean
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="mean")]
+        [JsonProperty("mean")]
         [Description("mean")]
         public double Mean
         {
@@ -38,7 +38,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// variance
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="variance")]
+        [JsonProperty("variance")]
         [Description("variance")]
         public double Variance
         {

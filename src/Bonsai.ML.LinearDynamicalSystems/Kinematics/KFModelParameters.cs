@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
-using YamlDotNet.Serialization;
 using System;
 using System.Reactive.Linq;
 using Python.Runtime;
+using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
@@ -52,7 +52,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// x position at time 0
         /// </summary>
-        [YamlMember(Alias="pos_x0")]
+        [JsonProperty("pos_x0")]
         [Description("x position at time 0")]
         public double Pos_x0
         {
@@ -70,7 +70,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// y position at time 0
         /// </summary>
-        [YamlMember(Alias="pos_y0")]
+        [JsonProperty("pos_y0")]
         [Description("y position at time 0")]
         public double Pos_y0
         {
@@ -88,7 +88,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// x velocity at time 0
         /// </summary>
-        [YamlMember(Alias="vel_x0")]
+        [JsonProperty("vel_x0")]
         [Description("x velocity at time 0")]
         public double Vel_x0
         {
@@ -106,7 +106,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// y velocity at time 0
         /// </summary>
-        [YamlMember(Alias="vel_y0")]
+        [JsonProperty("vel_y0")]
         [Description("y velocity at time 0")]
         public double Vel_y0
         {
@@ -124,7 +124,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// x acceleration at time 0
         /// </summary>
-        [YamlMember(Alias="acc_x0")]
+        [JsonProperty("acc_x0")]
         [Description("x acceleration at time 0")]
         public double Acc_x0
         {
@@ -142,7 +142,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// x velocity at time 0
         /// </summary>
-        [YamlMember(Alias="acc_y0")]
+        [JsonProperty("acc_y0")]
         [Description("x velocity at time 0")]
         public double Acc_y0
         {
@@ -160,7 +160,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// covariance of a
         /// </summary>
-        [YamlMember(Alias="sigma_a")]
+        [JsonProperty("sigma_a")]
         [Description("covariance of a")]
         public double Sigma_a
         {
@@ -178,7 +178,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// covariance of x
         /// </summary>
-        [YamlMember(Alias="sigma_x")]
+        [JsonProperty("sigma_x")]
         [Description("covariance of x")]
         public double Sigma_x
         {
@@ -196,7 +196,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// covariance of y
         /// </summary>
-        [YamlMember(Alias="sigma_y")]
+        [JsonProperty("sigma_y")]
         [Description("covariance of y")]
         public double Sigma_y
         {
@@ -214,7 +214,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// v0
         /// </summary>
-        [YamlMember(Alias="sqrt_diag_V0_value")]
+        [JsonProperty("sqrt_diag_V0_value")]
         [Description("v0")]
         public double Sqrt_diag_V0_value
         {
@@ -232,7 +232,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// frames per second
         /// </summary>
-        [YamlMember(Alias="fps")]
+        [JsonProperty("fps")]
         [Description("frames per second")]
         public int Fps
         {

@@ -1,25 +1,21 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
-using YamlDotNet.Serialization;
+using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
     /// <summary>
-    /// Serializes a sequence of data model objects into YAML strings.
+    /// Serializes a sequence of data model objects into JSON strings.
     /// </summary>
     [Combinator()]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    [Description("Serializes a sequence of data model objects into YAML strings.")]
-    public class SerializeToYaml
+    [Description("Serializes a sequence of data model objects into JSON strings.")]
+    public class SerializeToJson
     {
         private IObservable<string> Process<T>(IObservable<T> source)
         {
-            return Observable.Defer(() =>
-            {
-                var serializer = new SerializerBuilder().Build();
-                return Observable.Select(source, value => serializer.Serialize(value)); 
-            });
+            return source.Select(value => JsonConvert.SerializeObject(value));
         }
 
         public IObservable<string> Process(IObservable<Kinematics.KFModelParameters> source)

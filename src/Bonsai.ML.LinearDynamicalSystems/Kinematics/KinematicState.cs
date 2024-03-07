@@ -1,8 +1,8 @@
-using System.ComponentModel;
-using YamlDotNet.Serialization;
+﻿using System.ComponentModel;
 using System;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
@@ -24,7 +24,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// position kinematic component
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="position")]
+        [JsonProperty("position")]
         [Description("position kinematic component")]
         public KinematicComponent Position
         {
@@ -42,7 +42,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// velocity kinematic components
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="velocity")]
+        [JsonProperty("velocity")]
         [Description("velocity kinematic components")]
         public KinematicComponent Velocity
         {
@@ -60,7 +60,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// acceleration kinematic components
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="acceleration")]
+        [JsonProperty("acceleration")]
         [Description("acceleration kinematic components")]
         public KinematicComponent Acceleration
         {

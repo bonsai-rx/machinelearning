@@ -1,8 +1,7 @@
-using System.ComponentModel;
-using YamlDotNet.Serialization;
+﻿using System.ComponentModel;
 using System;
 using System.Reactive.Linq;
-using Python.Runtime;
+using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
@@ -25,7 +24,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// x coordinate
         /// </summary>
-        [YamlMember(Alias="x")]
+        [JsonProperty("x")]
         [Description("x coordinate")]
         public double X
         {
@@ -43,7 +42,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// <summary>
         /// y coordinate
         /// </summary>
-        [YamlMember(Alias="y")]
+        [JsonProperty("y")]
         [Description("y coordinate")]
         public double Y
         {

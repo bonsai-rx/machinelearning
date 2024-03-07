@@ -1,6 +1,6 @@
-using System.ComponentModel;
-using YamlDotNet.Serialization;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
@@ -20,7 +20,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// x state component
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="x_state_component")]
+        [JsonProperty("x_state_component")]
         [Description("X state component")]
         public StateComponent X
         {
@@ -38,7 +38,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// y state component
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="y_state_component")]
+        [JsonProperty("y_state_component")]
         [Description("Y state component")]
         public StateComponent Y
         {
@@ -56,7 +56,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         /// covariance between state components
         /// </summary>
         [XmlIgnore()]
-        [YamlMember(Alias="covariance")]
+        [JsonProperty("covariance")]
         [Description("covariance between state components")]
         public double Covariance
         {
