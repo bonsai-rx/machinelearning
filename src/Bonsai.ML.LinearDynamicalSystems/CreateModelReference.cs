@@ -10,7 +10,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
     [Description("Name of a Bonsai.ML model")]
     [Combinator()]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class CreateModelNameReference : INamedElement
+    public class CreateModelReference : INamedElement
     {
 
         /// <summary>
@@ -19,11 +19,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
         [Description("Name of the model")]
         public string Name { get ; set; }
 
-        public IObservable<string> Process()
+        public IObservable<ModelReference> Process()
         {
-    		return Observable.Defer(() => Observable.Return(
-    			Name
-            ));
+    		return Observable.Defer(() => Observable.Return(new ModelReference(Name)));
         }
     }
 }
