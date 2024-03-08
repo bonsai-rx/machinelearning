@@ -81,9 +81,9 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
                 });
         }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
-
             return $"x={xString},y={yString}";
         }
     }

@@ -2,6 +2,7 @@
 using System;
 using System.Reactive.Linq;
 using Bonsai.Expressions;
+using Bonsai.ML.LinearDynamicalSystems.Kinematics;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -13,24 +14,32 @@ namespace Bonsai.ML.LinearDynamicalSystems
     /// <summary>
     /// Deserializes a sequence of JSON strings into data model objects.
     /// </summary>
-    [DefaultProperty("Type")]
+    [DefaultProperty(nameof(Type))]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    [XmlInclude(typeof(TypeMapping<Kinematics.KFModelParameters>))]
-    [XmlInclude(typeof(TypeMapping<Kinematics.Observation2D>))]
+    [XmlInclude(typeof(TypeMapping<KFModelParameters>))]
+    [XmlInclude(typeof(TypeMapping<Observation2D>))]
     [XmlInclude(typeof(TypeMapping<State>))]
     [XmlInclude(typeof(TypeMapping<StateComponent>))]
-    [XmlInclude(typeof(TypeMapping<Kinematics.KinematicState>))]
-    [XmlInclude(typeof(TypeMapping<Kinematics.KinematicComponent>))]
+    [XmlInclude(typeof(TypeMapping<KinematicState>))]
+    [XmlInclude(typeof(TypeMapping<KinematicComponent>))]
     [Description("Deserializes a sequence of JSON strings into data model objects.")]
     public partial class DeserializeFromJson : SingleArgumentExpressionBuilder
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DeserializeFromJson"/> class.
+        /// </summary>
         public DeserializeFromJson()
         {
-            Type = new TypeMapping<Kinematics.KFModelParameters>();
+            Type = new TypeMapping<KFModelParameters>();
         }
 
+        /// <summary>
+        /// Gets or sets the type of the object to deserialize.
+        /// </summary>
+        [Description("The type of the object to deserialize.")]
         public TypeMapping Type { get; set; }
 
+        /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
             TypeMapping typeMapping = Type;

@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
@@ -9,11 +9,15 @@ namespace Bonsai.ML.LinearDynamicalSystems
     public class ModelReference
     {
         /// <summary>
-        /// The name of the model
+        /// Gets or sets the name of the referenced model.
         /// </summary>
-        [Description("Name of the model")]
         public string Name { get ; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModelReference"/> class
+        /// with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the referenced model.</param>
         public ModelReference(string name)
         {
             Name = name;
