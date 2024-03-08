@@ -10,9 +10,9 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
     /// <summary>
     /// Model parameters for a Kalman Filter Kinematics python class
     /// </summary>
-    [Description("Model parameters for a Kalman Filter Kinematics (KFK) model")]
-    [Combinator()]
+    [Combinator]
     [WorkflowElementCategory(ElementCategory.Source)]
+    [Description("Model parameters for a Kalman Filter Kinematics (KFK) model")]
     public class KFModelParameters
     {
 
@@ -247,6 +247,9 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KFModelParameters"/> class.
+        /// </summary>
         public KFModelParameters ()
         {
             Sigma_a = 10000;
@@ -332,10 +335,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
                     Fps = _fps
                 });
         }
-    
+
+        /// <inheritdoc/>
         public override string ToString()
         {
-
             return $"pos_x0={pos_x0String},pos_y0={pos_y0String},vel_x0={vel_x0String},vel_y0={vel_y0String},acc_x0={acc_x0String},acc_y0={acc_y0String},sigma_a={sigma_aString},sigma_x={sigma_xString},sigma_y={sigma_yString},sqrt_diag_V0_value={sqrt_diag_V0_valueString},fps={fpsString}";
         }
     }
