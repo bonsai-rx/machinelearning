@@ -1,6 +1,6 @@
 # Installation Guide - Windows
 
-This guide is meant for users to install the package from scratch. *Note* to run the examples, users must install the additional Bonsai packages required to run each [Example](../../../examples/README.md). Some familiarity with the command line or powershell terminal is necessary. This guide has only been tested on Windows 10 and 11, so earlier versions of Windows may or may not work.
+This guide is meant for users to install the package from scratch. *Note* to run the examples, users must install the additional Bonsai packages required to run each [Example](~/examples/README.md). Some familiarity with the command line or powershell terminal is necessary. This guide has only been tested on Windows 10 and 11, so earlier versions of Windows may or may not work.
 
 ### Dependencies
 

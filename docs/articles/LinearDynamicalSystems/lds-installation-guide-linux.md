@@ -1,6 +1,6 @@
 # Installation Guide - Linux
 
-This guide is meant for users to install the package from scratch. *Note* to use this package to run the examples, you must install the additional Bonsai packages required to run each [Example](../../../examples/README.md). Some familiarity with the terminal is necessary.
+This guide is meant for users to install the package from scratch. *Note* to use this package to run the examples, you must install the additional Bonsai packages required to run each [Example](~/examples/README.md). Some familiarity with the terminal is necessary.
 
 ## Notes on Installing Bonsai on Linux (Ubuntu)
 
