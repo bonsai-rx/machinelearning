@@ -1,12 +1,15 @@
----
-_layout: landing
----
-# Bonsai.ML
+# Introduction
 
-Welcome to the Bonsai.ML website.
+The Bonsai.ML project is a collection of packages with reactive infrastructure for adding machine learning algorithms in Bonsai. Below you will find the list of packages (and the included subpackages) currently available within the Bonsai.ML collection.
 
-For documention on installation, getting started and more, head to [Docs](articles/introduction.md)
+* Bonsai.ML - provides core functionality across all Bonsai.ML packages.
+* [Bonsai.ML.LinearDynamicalSystems](./articles/LinearDynamicalSystems/lds-overview.md) - package for performing inference of linear dynamical systems. Interfaces with the [lds_python](https://github.com/joacorapela/lds_python) package. Requires additional installation steps (see [here](./articles/LinearDynamicalSystems/lds-overview.md)).
+  - *Bonsai.ML.LinearDynamicalSystems.Kinematics* - subpackage included in the LinearDynamicalSystems package which supports using the Kalman Filter to infer kinematic data.
+* Bonsai.ML.Visualizers - provides a set of visualizers for dynamic graphing/plotting.
 
-For detailed technical reference, head to [API](api/Bonsai.ML.yml)
+> [!NOTE]
+> Bonsai.ML packages are installed through Bonsai's integrated package manager and are typically available for use immediately. However, certain packages may require additional steps for installation. See the dedicated package section for specific guides and documentation.
 
-For examples of how Bonsai.ML can be used, head to [Examples](../examples/README.md)
+## Acknowledgments
+
+Development of this package was supported by funding from the Biotechnology and Biological Sciences Research Council [grant number BB/W019132/1].

@@ -70,23 +70,22 @@
     "template": [
       "default",
       "modern",
+      "bonsai/template",
       "template"
     ],
     "globalMetadata": {
-      "_appName": "Bonsai.ML",
+      "_appName": "Bonsai - ML",
       "_appTitle": "Bonsai.ML",
-      "_appLogoPath": "images/logo.svg",
       "_enableNewTab": true,
       "_enableSearch": true,
       "pdf": false,
-      "_appFooter": "<span>&copy; 2024 Bonsai Foundation and Contributors</span> - <span>Licensed under <a href=\"https://creativecommons.org/licenses/by-sa/4.0/\">CC BY-SA 4.0</a>.</span> - <span>Made with <a href=\"https://dotnet.github.io/docfx\">docfx</a></span>",
+      "_appFooter": "&copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href=\"https://dotnet.github.io/docfx\">docfx</a>",
       "_gitContribute": {
         "repo": "https://github.com/bonsai-rx/machinelearning",
         "branch": "main",
         "apiSpecFolder": "apidoc"
       }
     },
-    "postProcessors": [ "ExtractSearchIndex" ],
     "markdownEngineName": "markdig",
     "markdownEngineProperties": {
       "markdigExtensions": [

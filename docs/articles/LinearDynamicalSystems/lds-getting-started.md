@@ -1,6 +1,9 @@
 # Getting Started
 
-This guide shows you how to use the environments created in the previous installation steps to run the package. Depending on your operating system, follow the [activating environments in Windows](#activating-environments---windows) or [activating environments in Linux](#activating-environments---linux) instructions below. *Note* these environments are not configured to run the example workflows. To run the examples, you must install the necessary packages or follow the [Examples](../../../examples/README.md) getting started guide to bootstrap the environments directly from the repo provided.
+This guide shows you how to use the environments created in the previous installation steps to run the package. Depending on your operating system, follow the [activating environments in Windows](#activating-environments---windows) or [activating environments in Linux](#activating-environments---linux) instructions below.
+
+> [!WARNING]
+> These environments are not configured to run the example workflows. To run the examples, you must install the necessary packages or follow the [Examples](~/examples/README.md) getting started guide to bootstrap the environments directly from the repo provided.
 
 ### Activating environments - Windows
 
@@ -13,7 +16,10 @@ Activate the python environment and launch the Bonsai.exe inside the bonsai envi
 
 ### Activating environments - Linux
 
-If you used the Linux environment creation tool, you can activate you bonsai environment the same as you would activate your python virtual environment. You can have both the python and the bonsai environments activated at the same time. *Note* that the order of activating the environments matters so you must activate the python environment first and then the bonsai environment second.
+If you used the Linux environment creation tool, you can activate you bonsai environment the same as you would activate your python virtual environment. You can have both the python and the bonsai environments activated at the same time.
+
+> [!WARNING]
+> The order of activating the environments matters so you must activate the python environment first and the bonsai environment second.
 
 ```cmd
 source .venv/bin/activate
@@ -49,7 +55,8 @@ flowchart LR
 
 ```
 
-*Note* due to the way bonsai interacts with Python, it is necessary for the first 2 steps to complete before instantiating the model. It is important to know that the initialization of the python runtime, loading the module, and creating the model takes time to complete, and that only once the model has been created can inference be performed.
+> [!NOTE]
+> Due to the way Bonsai.ML interacts with Python, it is necessary for the first two steps to complete before instantiating the model. It is important to know that the initialization of the Python runtime, loading the module, and creating the model takes time to complete, and that only once the model has been created can inference be performed.
 
 ### Implementing in Bonsai
 
@@ -77,4 +84,4 @@ The `CreateKFModel` node contains a number of properties which can be useful to 
 
 ### Further Examples
 
-For further examples and demonstrations for how this package works, see the [Bonsai - Machine Learning Examples](../../../examples/README.md) section.
+For further examples and demonstrations for how this package works, see the [Bonsai - Machine Learning Examples](~/examples/README.md) section.
