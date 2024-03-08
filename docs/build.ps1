@@ -4,6 +4,7 @@ foreach ($environment in $exampleEnvironments)
 {
     # bootstrap environment
     $galleryPath = Join-Path $environment.FullName "Gallery"
+    New-Item -Path $galleryPath -Force -ItemType Directory | Out-Null
     Get-ChildItem -Path "..\src\bin\Release" -Filter *.nupkg | Copy-Item -Destination $galleryPath
     . (Join-Path $environment.FullName "Setup.ps1")
 
