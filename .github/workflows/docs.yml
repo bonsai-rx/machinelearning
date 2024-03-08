@@ -8,30 +8,38 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-        name: Checkout
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
         with:
-          submodules: recursive
+          submodules: true
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3.2.0
+        uses: actions/setup-dotnet@v4.0.0
         with:
           dotnet-version: 7.x
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-      
+        uses: microsoft/setup-msbuild@v2
+        
       - name: Restore NuGet Packages
-        run: msbuild -t:restore src\Bonsai.ML.sln
+        run: msbuild -t:restore src/Bonsai.ML.sln
 
+      - name: Build Solution
+        run: msbuild src/Bonsai.ML.sln /p:Configuration=Release
+        
       - name: Setup DocFX
         run: dotnet tool restore
 
+      - name: Setup Bonsai
+        working-directory: .bonsai
+        run: ./Setup.ps1
+        
       - name: Build Documentation
-        run: dotnet docfx docs/docfx.json
+        working-directory: docs
+        run: ./build.ps1
 
       - name: Publish to github pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v3.9.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/_site
