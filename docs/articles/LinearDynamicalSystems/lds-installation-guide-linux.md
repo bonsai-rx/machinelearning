@@ -60,7 +60,7 @@ source .venv/bin/activate
 2. Install the lds_python package
 
 ```cmd
-pip install lds_python@git+https://github.com/joacorapela/lds_python@168d4c05bb4b014998c7d3a2a57d143244a44bdd
+pip install lds_python@git+https://github.com/joacorapela/lds_python@4233363320e021f77f9b3e124846ec2e49c0e741
 ```
 
 If you encounter errors during installation of the lds_python package, you will have to diagnose the issue and install the correct packge dependencies manually.
