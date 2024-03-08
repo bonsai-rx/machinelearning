@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Reflection;
@@ -14,6 +14,9 @@ using System.Reactive;
 
 namespace Bonsai.ML.Visualizers
 {
+    /// <summary>
+    /// Provides a type visualizer to display the state components of a Kalman Filter kinematics model.
+    /// </summary>
     public class KinematicComponentVisualizer : BufferedVisualizer
     {
 
@@ -26,15 +29,6 @@ namespace Bonsai.ML.Visualizers
         private TimeSeriesOxyPlotBase Plot;
 
         /// <summary>
-        /// Constructs a KinematicComponentVisualizer object.
-        /// </summary>
-        public KinematicComponentVisualizer ()
-        {
-            Capacity = 10;
-            Size = new Size(320, 240);
-        }
-
-        /// <summary>
         /// The selected index of the state component to be visualized
         /// </summary>
         public int SelectedIndex { get => selectedIndex; set => selectedIndex = value; }
@@ -42,13 +36,14 @@ namespace Bonsai.ML.Visualizers
         /// <summary>
         /// Size of the window when loaded
         /// </summary>
-        public Size Size { get; set; }
+        public Size Size { get; set; } = new Size(320, 240);
 
         /// <summary>
         /// Capacity or length of time shown along the x axis of the plot during automatic updating
         /// </summary>
-        public int Capacity { get; set; }
+        public int Capacity { get; set; } = 10;
 
+        /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
             var stateComponents = GetStateComponents();
@@ -78,10 +73,12 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
+        /// <inheritdoc/>
         public override void Show(object value)
         {
         }
 
+        /// <inheritdoc/>
         protected override void Show(DateTime time, object value)
         {
             if (!_startTime.HasValue)
@@ -111,6 +108,7 @@ namespace Bonsai.ML.Visualizers
 
         }
 
+        /// <inheritdoc/>
         protected override void ShowBuffer(IList<Timestamped<object>> values)
         {
             base.ShowBuffer(values);
@@ -138,6 +136,7 @@ namespace Bonsai.ML.Visualizers
             return stateComponents;
         }
 
+        /// <inheritdoc/>
         public override void Unload()
         {
             _startTime = null;

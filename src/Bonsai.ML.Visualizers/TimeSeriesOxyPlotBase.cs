@@ -1,4 +1,4 @@
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace Bonsai.ML.Visualizers
 {
-    public class TimeSeriesOxyPlotBase : UserControl
+    internal class TimeSeriesOxyPlotBase : UserControl
     {
         private PlotView view;
         private PlotModel model;

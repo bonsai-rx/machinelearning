@@ -1,24 +1,30 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System;
 using System.Reactive.Linq;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
     /// <summary>
-    /// Provides a Bonsai.ML model with a name that can be referenced
+    /// Represents an operator that creates a reference for a named model.
     /// </summary>
-    [Description("Name of a Bonsai.ML model")]
-    [Combinator()]
+    [Combinator]
+    [Description("Creates a reference for a named model.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class CreateModelReference : INamedElement
     {
-
         /// <summary>
-        /// The name of the model
+        /// Gets or sets the name of the model to reference.
         /// </summary>
-        [Description("Name of the model")]
+        [Description("The name of the model to reference.")]
         public string Name { get ; set; }
 
+        /// <summary>
+        /// Generates an observable sequence that contains the model reference object.
+        /// </summary>
+        /// <returns>
+        /// A sequence containing a single instance of the <see cref="ModelReference"/>
+        /// class.
+        /// </returns>
         public IObservable<ModelReference> Process()
         {
     		return Observable.Defer(() => Observable.Return(new ModelReference(Name)));
