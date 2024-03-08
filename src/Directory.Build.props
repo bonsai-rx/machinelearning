@@ -9,6 +9,7 @@
     <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
     <PackageProjectUrl>https://bonsai-rx.org/machinelearning</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bonsai-rx/machinelearning.git</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
@@ -20,5 +21,6 @@
   <ItemGroup>
     <Content Include="..\..\LICENSE" PackagePath="/" />
     <Content Include="..\..\icon.png" PackagePath="/" />
+    <None Include="..\..\README.md" Pack="True" PackagePath="/" />
   </ItemGroup>
 </Project>
