@@ -70,12 +70,12 @@
     "template": [
       "default",
       "modern",
+      "bonsai/template",
       "template"
     ],
     "globalMetadata": {
       "_appName": "Bonsai.ML",
       "_appTitle": "Bonsai.ML",
-      "_appLogoPath": "images/logo.svg",
       "_enableNewTab": true,
       "_enableSearch": true,
       "pdf": false,
@@ -86,7 +86,6 @@
         "apiSpecFolder": "apidoc"
       }
     },
-    "postProcessors": [ "ExtractSearchIndex" ],
     "markdownEngineName": "markdig",
     "markdownEngineProperties": {
       "markdigExtensions": [
