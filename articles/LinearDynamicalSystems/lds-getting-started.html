@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Getting Started | Bonsai.ML </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Getting Started | Bonsai.ML ">
+      
+      
+      <link rel="icon" href="../../favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/bonsai-rx/machinelearning/blob/main/docs/articles/LinearDynamicalSystems/lds-getting-started.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../logo.svg" alt="Bonsai - ML">
+            Bonsai - ML
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="getting-started">Getting Started</h1>
+
+<p>This guide shows you how to use the environments created in the previous installation steps to run the package. Depending on your operating system, follow the <a href="#activating-environments---windows">activating environments in Windows</a> or <a href="#activating-environments---linux">activating environments in Linux</a> instructions below.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>These environments are not configured to run the example workflows. To run the examples, you must install the necessary packages or follow the <a href="../../examples/README.html">Examples</a> getting started guide to bootstrap the environments directly from the repo provided.</p>
+</div>
+<h3 id="activating-environments---windows">Activating environments - Windows</h3>
+<p>Activate the python environment and launch the Bonsai.exe inside the bonsai environment folder using the following:</p>
+<pre><code class="lang-cmd">.venv\Scripts\activate
+.bonsai\Bonsai.exe
+</code></pre>
+<h3 id="activating-environments---linux">Activating environments - Linux</h3>
+<p>If you used the Linux environment creation tool, you can activate you bonsai environment the same as you would activate your python virtual environment. You can have both the python and the bonsai environments activated at the same time.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>The order of activating the environments matters so you must activate the python environment first and the bonsai environment second.</p>
+</div>
+<pre><code class="lang-cmd">source .venv/bin/activate
+source .bonsai/activate
+bonsai
+</code></pre>
+<p>If you did not use the linux environment template but you plan on using linux, you can simply activate the python environment and then run the bonsai application in the folder using <code>mono</code>.</p>
+<pre><code class="lang-cmd">source .venv/bin/activate
+mono .bonsai/Bonsai.exe
+</code></pre>
+<h3 id="general-workflow">General workflow</h3>
+<p>The workflow starts with creating a python runtime, followed by loading the <a href="https://github.com/joacorapela/lds_python">lds_python</a> module. After this, you can instantiate the model and pass it observations of data to perform inference.</p>
+<pre><code class="lang-mermaid">
+flowchart LR
+
+    A([&quot;Create Python Runtime&quot;])
+    B([&quot;Load LDS Module&quot;])
+    C([&quot;Create KF Model&quot;])
+    D([&quot;Generate Observations&quot;])
+    E([&quot;Perform Inference&quot;])
+
+    A --&gt; B
+    B --&gt; C
+    C --&gt; D
+    D --&gt; E
+
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Due to the way Bonsai.ML interacts with Python, it is necessary for the first two steps to complete before instantiating the model. It is important to know that the initialization of the Python runtime, loading the module, and creating the model takes time to complete, and that only once the model has been created can inference be performed.</p>
+</div>
+<h3 id="implementing-in-bonsai">Implementing in Bonsai</h3>
+<p>Below is a simplified Bonsai workflow that implements the core logic of the package.</p>
+<div class="workflow"><p><img src="../../workflows/KFModelImplementation.bonsai" alt="Model Implementation"></p>
+</div>
+<p>A <code>CreateRuntime</code> node is used to initialize a python runtime engine, which gets passed to a <code>BehaviorSubject</code> called <code>PythonEngine</code>. Bonsai's <code>CreateRuntime</code> node should automatically detect the python virtual environment that was used to launch the Bonsai application, otherwise the path to the virtual environment can be specified in the <code>CreateRuntime</code> node by setting the <code>PythonHome</code> property.</p>
+<p>Next, the <code>PythonEngine</code> node is passed to a <code>LoadLDSModule</code> node which will load the lds_python package into the python environment.</p>
+<p>Once the LDS module has been initialized, the <code>CreateKFModel</code> node instantiates a python instance of the Kalman Filter Kinematics model. Here, you can specify the initialization parameters of the model and provide a <code>ModelName</code> parameter that gets used to reference the model in other parts of the Bonsai workflow.</p>
+<p>Next, you would take some tracking data (for example, the centroid of an animal or a 2D point), and pass that to a <code>CreateObservation2D</code> node which will package the data into a data format that the model can use.</p>
+<p>The <code>Observation</code> is then passed to a <code>PerformInference</code> node, which will use the specified model (given by the <code>ModelName</code> property) to infer the state and output the inferred kinematics.</p>
+<p>The only thing left to do is pass your behavior data into the <code>BehaviorData</code> subject. To do this, simply connect the output of your 2D data to a <code>Subject</code> named <code>BehaviorData</code> and the model will start converting this data into observations which it can then us to perform inference.</p>
+<h3 id="setting-model-parameters">Setting model parameters</h3>
+<p>The <code>CreateKFModel</code> node contains a number of properties which can be useful to determine the model dynamics.</p>
+<h3 id="further-examples">Further Examples</h3>
+<p>For further examples and demonstrations for how this package works, see the <a href="../../examples/README.html">Bonsai - Machine Learning Examples</a> section.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/bonsai-rx/machinelearning/blob/main/docs/articles/LinearDynamicalSystems/lds-getting-started.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          &copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href="https://dotnet.github.io/docfx">docfx</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
