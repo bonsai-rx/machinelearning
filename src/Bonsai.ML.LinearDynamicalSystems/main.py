@@ -83,7 +83,7 @@ class KalmanFilterLinearRegression(TimeVaryingOnlineKalmanFilter):
                     ) -> None:
 
         if mn is None:
-            self.mn = np.array([0.0, 0.0])
+            self.mn = np.array([[0.0], [0.0]])
         else:
             self.mn = np.array(mn)
 
@@ -102,10 +102,20 @@ class KalmanFilterLinearRegression(TimeVaryingOnlineKalmanFilter):
         self.x, self.P = super().predict(x = self.x, P = self.P, B = self.B, Q = self.Q)
 
     def update(self, x, y):
-        self.x, self.P = super().update(y = y, x = self.x, P = self.P, Z = np.array([1, x]), R = self.R)
+        self.x, self.P = super().update(y = np.array([y]), x = self.x, P = self.P, Z = np.array([x, 1]).reshape((1, -1)), R = self.R)
     
-    def pdf(self, x1 = 0, x2 = 1, xsteps = 100, y1 = 0, y2 = 1, ysteps = 100):
-        rv = multivariate_normal(self.x, self.P)
-        x, y = np.mgrid[x1:x2:np.abs(x2-x1)/xsteps, y1:y2:np.abs(y2-y1)/ysteps]
-        pos = np.dstack((x, y))
-        self.pdf = rv.pdf(pos)
+    def pdf(self, x0 = 0, x1 = 1, xsteps = 100, y0 = 0, y1 = 1, ysteps = 100):
+
+        self.x0 = x0
+        self.x1 = x1
+        self.xsteps = xsteps
+        self.y0 = y0
+        self.y1 = y1
+        self.ysteps = ysteps
+
+        rv = multivariate_normal(self.x.flatten(), self.P)
+        self.xpos = np.linspace(x0, x1, xsteps)
+        self.ypos = np.linspace(y0, y1, ysteps)
+        xx, yy = np.meshgrid(self.xpos, self.ypos)
+        pos = np.dstack((xx, yy))
+        self.pdf_values = rv.pdf(pos)

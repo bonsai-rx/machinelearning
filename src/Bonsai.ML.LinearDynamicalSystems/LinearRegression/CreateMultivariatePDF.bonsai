@@ -4,6 +4,7 @@
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:p2="clr-namespace:Bonsai.ML.LinearDynamicalSystems.LinearRegression;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -25,57 +26,32 @@
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="rx:WithLatestFrom" />
       </Expression>
-      <Expression xsi:type="rx:Sink">
-        <Name>Predict</Name>
-        <Workflow>
-          <Nodes>
-            <Expression xsi:type="WorkflowInput">
-              <Name>Source1</Name>
-            </Expression>
-            <Expression xsi:type="Format">
-              <Format>{0}.predict()</Format>
-              <Selector>it.Item2</Selector>
-            </Expression>
-            <Expression xsi:type="InputMapping">
-              <PropertyMappings>
-                <Property Name="Script" Selector="it" />
-              </PropertyMappings>
-            </Expression>
-            <Expression xsi:type="SubscribeSubject">
-              <Name>LDSModule</Name>
-            </Expression>
-            <Expression xsi:type="PropertyMapping">
-              <PropertyMappings>
-                <Property Name="Module" />
-              </PropertyMappings>
-            </Expression>
-            <Expression xsi:type="Combinator">
-              <Combinator xsi:type="py:Exec">
-                <py:Script>model.predict()</py:Script>
-              </Combinator>
-            </Expression>
-            <Expression xsi:type="WorkflowOutput" />
-          </Nodes>
-          <Edges>
-            <Edge From="0" To="1" Label="Source1" />
-            <Edge From="1" To="2" Label="Source1" />
-            <Edge From="2" To="5" Label="Source1" />
-            <Edge From="3" To="4" Label="Source1" />
-            <Edge From="4" To="5" Label="Source2" />
-            <Edge From="5" To="6" Label="Source1" />
-          </Edges>
-        </Workflow>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Item2</Selector>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p2:GridParameters">
+          <p2:X0>-1</p2:X0>
+          <p2:X1>1</p2:X1>
+          <p2:Xsteps>100</p2:Xsteps>
+          <p2:Y0>-1</p2:Y0>
+          <p2:Y1>1</p2:Y1>
+          <p2:Ysteps>100</p2:Ysteps>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:WithLatestFrom" />
       </Expression>
       <Expression xsi:type="rx:Sink">
-        <Name>Update</Name>
+        <Name>PDF</Name>
         <Workflow>
           <Nodes>
             <Expression xsi:type="WorkflowInput">
               <Name>Source1</Name>
             </Expression>
             <Expression xsi:type="Format">
-              <Format>{0}.update({1})</Format>
-              <Selector>it.Item2, it.Item1</Selector>
+              <Format>{0}.pdf({1})</Format>
+              <Selector>it.Item1, it.Item2</Selector>
             </Expression>
             <Expression xsi:type="InputMapping">
               <PropertyMappings>
@@ -92,7 +68,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="py:Exec">
-                <py:Script>model.update(x=0,y=0)</py:Script>
+                <py:Script>model.pdf(x0=-1,x1=1,xsteps=100,y0=-1,y1=1,ysteps=100)</py:Script>
               </Combinator>
             </Expression>
             <Expression xsi:type="WorkflowOutput" />
@@ -109,7 +85,7 @@
       </Expression>
       <Expression xsi:type="InputMapping">
         <PropertyMappings>
-          <Property Name="VariableName" Selector="it.Item2" />
+          <Property Name="VariableName" Selector="it.Item1" />
         </PropertyMappings>
       </Expression>
       <Expression xsi:type="SubscribeSubject">
@@ -126,7 +102,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:State" />
+        <Combinator xsi:type="p2:MultivariatePDF" />
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
     </Nodes>
@@ -137,13 +113,15 @@
       <Edge From="3" To="4" Label="Source1" />
       <Edge From="4" To="5" Label="Source2" />
       <Edge From="5" To="6" Label="Source1" />
-      <Edge From="6" To="7" Label="Source1" />
-      <Edge From="7" To="8" Label="Source1" />
-      <Edge From="8" To="11" Label="Source1" />
+      <Edge From="6" To="8" Label="Source1" />
+      <Edge From="7" To="8" Label="Source2" />
+      <Edge From="8" To="9" Label="Source1" />
       <Edge From="9" To="10" Label="Source1" />
-      <Edge From="10" To="11" Label="Source2" />
+      <Edge From="10" To="13" Label="Source1" />
       <Edge From="11" To="12" Label="Source1" />
-      <Edge From="12" To="13" Label="Source1" />
+      <Edge From="12" To="13" Label="Source2" />
+      <Edge From="13" To="14" Label="Source1" />
+      <Edge From="14" To="15" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

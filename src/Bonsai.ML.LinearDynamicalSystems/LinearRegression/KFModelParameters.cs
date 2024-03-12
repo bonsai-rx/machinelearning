@@ -3,8 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Reactive.Linq;
 using Python.Runtime;
-using System.Collections.Generic;
-using System.Linq;
+using System.Xml.Serialization;
 
 namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
 {
@@ -67,6 +66,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// <summary>
         /// mean of the prior
         /// </summary>
+        [XmlIgnore]
         [JsonProperty("mn")]
         [Description("mean of the prior")]
         public double[,] Mn
@@ -112,11 +112,8 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         {
     		return Observable.Select(source, pyObject =>
     		{
-                // var likelihood_precision_coefPyObj = GetPythonAttribute<double>(pyObject, "likelihood_precision_coef");
                 var likelihood_precision_coefPyObj = pyObject.GetAttr<double>("likelihood_precision_coef");
-                // var prior_precision_coefPyObj = GetPythonAttribute<double>(pyObject, "prior_precision_coef");
                 var prior_precision_coefPyObj = pyObject.GetAttr<double>("prior_precision_coef");
-                // var mnPyObj = (double[])GetPythonAttribute(pyObject, "mn");
                 var mnPyObj = (double[,])pyObject.GetArrayAttribute("mn");
 
                 return new KFModelParameters {
