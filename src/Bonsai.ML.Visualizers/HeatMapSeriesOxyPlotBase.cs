@@ -6,7 +6,6 @@ using System.Drawing;
 using System;
 using OxyPlot.Axes;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace Bonsai.ML.Visualizers
 {
@@ -17,23 +16,40 @@ namespace Bonsai.ML.Visualizers
         private HeatMapSeries heatMapSeries;
         private LinearColorAxis colorAxis;
 
-        private ComboBox comboBox;
-        private Label label;
+        private ToolStripComboBox paletteComboBox;
+        private ToolStripLabel paletteLabel;
+        private int _paletteSelectedIndex;
+        private OxyPalette palette;
+
+        private ToolStripComboBox renderMethodComboBox;
+        private ToolStripLabel renderMethodLabel;
+        private int _renderMethodSelectedIndex;
+        private HeatMapRenderMethod renderMethod = HeatMapRenderMethod.Bitmap;
+
+        private StatusStrip statusStrip;
 
         private int _numColors = 100;
-
-        private int _selectedIndex;
-
-        private OxyPalette palette;
 
         /// <summary>
         /// Event handler which can be used to hook into events generated when the combobox values have changed.
         /// </summary>
-        public event EventHandler ComboBoxValueChanged;
+        public event EventHandler PaletteComboBoxValueChanged;
 
-        public ComboBox ComboBox
+        public ToolStripComboBox PaletteComboBox
         {
-            get => comboBox;
+            get => paletteComboBox;
+        }
+
+        public event EventHandler RenderMethodComboBoxValueChanged;
+
+        public ToolStripComboBox RenderMethodComboBox
+        {
+            get => renderMethodComboBox;
+        }
+
+        public StatusStrip StatusStrip
+        {
+            get => statusStrip;
         }
 
         /// <summary>
@@ -42,9 +58,10 @@ namespace Bonsai.ML.Visualizers
         /// Data source is optional, since pasing it to the constructor will populate the combobox and leave it empty otherwise.
         /// The selected index is only needed when the data source is provided.
         /// </summary>
-        public HeatMapSeriesOxyPlotBase(int selectedIndex, int numColors = 100)
+        public HeatMapSeriesOxyPlotBase(int paletteSelectedIndex, int renderMethodSelectedIndex, int numColors = 100)
         {
-            _selectedIndex = selectedIndex;
+            _paletteSelectedIndex = paletteSelectedIndex;
+            _renderMethodSelectedIndex = renderMethodSelectedIndex;
             _numColors = numColors;
             // palette = OxyPalettes.Rainbow(_numColors);
             Initialize();
@@ -66,8 +83,8 @@ namespace Bonsai.ML.Visualizers
                 Y0 = 0,
                 Y1 = 100,
                 Interpolate = true,
-                RenderMethod = HeatMapRenderMethod.Bitmap,
-                CoordinateDefinition = HeatMapCoordinateDefinition.Center
+                RenderMethod = renderMethod,
+                CoordinateDefinition = HeatMapCoordinateDefinition.Edge
             };
 
             colorAxis = new LinearColorAxis {
@@ -80,55 +97,119 @@ namespace Bonsai.ML.Visualizers
             view.Model = model;
             Controls.Add(view);
 
-            label = new Label
+            InitilizeColorPalette();
+            InitilizeRenderMethod();
+
+            statusStrip = new StatusStrip
             {
-                Text = "Color palette:",
-                AutoSize = true,
-                Location = new Point(-200, 8),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
+                Visible = false
             };
 
-            comboBox = new ComboBox
-            {
-                Location = new Point(0, 5),
-                DataSource = Enum.GetValues(typeof(ColorPalettes)),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                BindingContext = BindingContext
-            };
+            statusStrip.Items.AddRange(new ToolStripItem[] {
+                paletteLabel,
+                paletteComboBox,
+                renderMethodLabel,
+                renderMethodComboBox
+            });
 
-            Controls.Add(comboBox);
-            Controls.Add(label);
-
-            comboBox.SelectedIndexChanged += ComboBoxSelectedIndexChanged;
-            comboBox.SelectedIndex = _selectedIndex;
-            UpdateColorPalette();
-
-            comboBox.BringToFront();
-            label.BringToFront();
-
+            Controls.Add(statusStrip);
+            view.MouseClick += new MouseEventHandler(onMouseClick);
             AutoScaleDimensions = new SizeF(6F, 13F);
         }
 
-        private void ComboBoxSelectedIndexChanged(object sender, EventArgs e)
+        private void InitilizeColorPalette()
         {
-            if (comboBox.SelectedIndex != _selectedIndex)
+            paletteLabel = new ToolStripLabel
             {
-                _selectedIndex = comboBox.SelectedIndex;
+                Text = "Color palette:",
+                AutoSize = true
+            };
+
+            paletteComboBox = new ToolStripComboBox()
+            {
+                Name = "palette",
+                AutoSize = true,
+            };
+
+            foreach (var value in Enum.GetValues(typeof(ColorPalettes)))
+            {
+                paletteComboBox.Items.Add(value);
+            }
+
+            paletteComboBox.SelectedIndexChanged += PaletteComboBoxSelectedIndexChanged;
+            paletteComboBox.SelectedIndex = _paletteSelectedIndex;
+            UpdateColorPalette();
+        }
+
+        private void PaletteComboBoxSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (paletteComboBox.SelectedIndex != _paletteSelectedIndex)
+            {
+                _paletteSelectedIndex = paletteComboBox.SelectedIndex;
                 UpdateColorPalette();
-                ComboBoxValueChanged?.Invoke(this, e);
+                PaletteComboBoxValueChanged?.Invoke(this, e);
                 UpdatePlot();
             }
         }
 
         private void UpdateColorPalette()
         {
-            var selectedPalette = (ColorPalettes)comboBox.Items[_selectedIndex];
+            var selectedPalette = (ColorPalettes)paletteComboBox.Items[_paletteSelectedIndex];
             paletteLookup.TryGetValue(selectedPalette, out Func<int, OxyPalette> paletteMethod);
             palette = paletteMethod(_numColors);
             colorAxis.Palette = palette;
         }
 
-        public void UpdateHeatMapSeries(double x0, double x1, int xsteps, double y0, double y1, int ysteps, double[,] data)
+        private void InitilizeRenderMethod()
+        {
+            renderMethodLabel = new ToolStripLabel
+            {
+                Text = "Render method:",
+                AutoSize = true
+            };
+
+            renderMethodComboBox = new ToolStripComboBox()
+            {
+                Name = "renderMethod",
+                AutoSize = true,
+            };
+
+            foreach (var value in Enum.GetValues(typeof(HeatMapRenderMethod)))
+            {
+                renderMethodComboBox.Items.Add(value);
+            }
+
+            renderMethodComboBox.SelectedIndexChanged += renderMethodComboBoxSelectedIndexChanged;
+            renderMethodComboBox.SelectedIndex = _renderMethodSelectedIndex;
+            UpdateRenderMethod();
+        }
+
+        private void renderMethodComboBoxSelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (renderMethodComboBox.SelectedIndex != _renderMethodSelectedIndex)
+            {
+                _renderMethodSelectedIndex = renderMethodComboBox.SelectedIndex;
+                UpdateRenderMethod();
+                RenderMethodComboBoxValueChanged?.Invoke(this, e);
+                UpdatePlot();
+            }
+        }
+
+        private void UpdateRenderMethod()
+        {
+            renderMethod = (HeatMapRenderMethod)renderMethodComboBox.Items[_renderMethodSelectedIndex];
+            heatMapSeries.RenderMethod = renderMethod;
+        }
+
+        private void onMouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                statusStrip.Visible = !statusStrip.Visible;
+            }
+        }
+
+        public void UpdateHeatMapSeries(double x0, double x1, double y0, double y1, double[,] data)
         {
             heatMapSeries.X0 = x0;
             heatMapSeries.X1 = x1;
@@ -159,23 +240,5 @@ namespace Bonsai.ML.Visualizers
             { ColorPalettes.Jet, (numColors) => OxyPalettes.Jet(numColors) },
             { ColorPalettes.Rainbow, (numColors) => OxyPalettes.Rainbow(numColors) },
         };
-    }
-
-    internal enum ColorPalettes
-    {
-        Cividis,
-        Inferno,
-        Viridis,
-        Magma,
-        Plasma,
-        BlackWhiteRed,
-        BlueWhiteRed,
-        Cool,
-        Gray,
-        Hot,
-        Hue,
-        HueDistinct,
-        Jet,
-        Rainbow
     }
 }

@@ -21,17 +21,23 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
 
         private double _prior_precision_coef;
     
-        private double[,] _mn = null;
+        private int _n_features;
+
+        private double[,] _x = null;
+        private double[,] _p = null;
     
         private string _likelihood_precision_coefString;
         private string _prior_precision_coefString;
-        private string _mnString;
+        private string _n_featuresString;
+        private string _xString;
+        private string _pString;
 
         /// <summary>
         /// likelihood precision coefficient
         /// </summary>
         [JsonProperty("likelihood_precision_coef")]
         [Description("likelihood precision coefficient")]
+        [Category("Parameters")]
         public double LikelihoodPrecisionCoef
         {
             get
@@ -50,6 +56,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// </summary>
         [JsonProperty("prior_precision_coef")]
         [Description("prior precision coefficient")]
+        [Category("Parameters")]
         public double PriorPrecisionCoef
         {
             get
@@ -64,25 +71,61 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         }
     
         /// <summary>
-        /// mean of the prior
+        /// number of features
         /// </summary>
-        [XmlIgnore]
-        [JsonProperty("mn")]
-        [Description("mean of the prior")]
-        public double[,] Mn
+        [JsonProperty("n_features")]
+        [Description("number of features")]
+        [Category("Parameters")]
+        public int NumFeatures
         {
             get
             {
-                return _mn;
+                return _n_features;
             }
             set
             {
-                _mn = value;
-                if (_mn == null || _mn.Length == 0) _mnString = "None";
-                else
-                {
-                    _mnString = NumpyHelper.NumpyParser.ParseArray(_mn);
-                }
+                _n_features = value;
+                _n_featuresString = _n_features.ToString();
+            }
+        }
+
+        /// <summary>
+        /// matrix representing the mean of the state
+        /// </summary>
+        [XmlIgnore]
+        [JsonProperty("x")]
+        [Description("matrix representing the mean of the state")]
+        [Category("ModelState")]
+        public double[,] X
+        {
+            get
+            {
+                return _x;
+            }
+            set
+            {
+                _x = value;
+                _xString = _x == null ? "None" : NumpyHelper.NumpyParser.ParseArray(_x);
+            }
+        }
+
+        /// <summary>
+        /// matrix representing the covariance of the state
+        /// </summary>
+        [XmlIgnore]
+        [JsonProperty("P")]
+        [Description("matrix representing the covariance of the state")]
+        [Category("ModelState")]
+        public double[,] P
+        {
+            get
+            {
+                return _p;
+            }
+            set
+            {
+                _p = value;
+                _pString = _p == null ? "None" : NumpyHelper.NumpyParser.ParseArray(_p);
             }
         }
     
@@ -101,7 +144,9 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
     			new KFModelParameters {
     				LikelihoodPrecisionCoef = _likelihood_precision_coef,
                     PriorPrecisionCoef = _prior_precision_coef,
-                    Mn = _mn
+                    NumFeatures = _n_features,
+                    X = _x,
+                    P = _p
     			}));
         }
 
@@ -114,12 +159,14 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
     		{
                 var likelihood_precision_coefPyObj = pyObject.GetAttr<double>("likelihood_precision_coef");
                 var prior_precision_coefPyObj = pyObject.GetAttr<double>("prior_precision_coef");
-                var mnPyObj = (double[,])pyObject.GetArrayAttribute("mn");
+                var n_featuresPyObj = pyObject.GetAttr<int>("n_features");
 
                 return new KFModelParameters {
                     LikelihoodPrecisionCoef = likelihood_precision_coefPyObj,
                     PriorPrecisionCoef = _prior_precision_coef,
-                    Mn = mnPyObj
+                    NumFeatures = n_featuresPyObj,
+                    X = _x,
+                    P = _p
                 };
             });
         }
@@ -133,14 +180,16 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
                 new KFModelParameters {
     				LikelihoodPrecisionCoef = _likelihood_precision_coef,
                     PriorPrecisionCoef = _prior_precision_coef,
-                    Mn = _mn
+                    NumFeatures = _n_features,
+                    X = _x,
+                    P = _p
                 });
         }
     
         public override string ToString()
         {
 
-            return $"likelihood_precision_coef={_likelihood_precision_coefString},prior_precision_coef={_prior_precision_coefString},mn={_mnString}";
+            return $"likelihood_precision_coef={_likelihood_precision_coefString},prior_precision_coef={_prior_precision_coefString},n_features={_n_featuresString},x={_xString},P={_pString}";
         }
     }
 

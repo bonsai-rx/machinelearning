@@ -79,18 +79,27 @@ class KalmanFilterLinearRegression(TimeVaryingOnlineKalmanFilter):
     def __init__(self,
                     likelihood_precision_coef: float,
                     prior_precision_coef: float,
-                    mn: list[float],
+                    n_features: int,
+                    x: list[list[float]] = None,
+                    P: list[list[float]] = None,
                     ) -> None:
-
-        if mn is None:
-            self.mn = np.array([[0.0], [0.0]])
-        else:
-            self.mn = np.array(mn)
 
         self.likelihood_precision_coef = likelihood_precision_coef
         self.prior_precision_coef = prior_precision_coef
-        self.x = self.mn
-        self.P = np.eye(len(self.x)) * 1.0 / self.prior_precision_coef
+        self.n_features = n_features
+
+        if x is None:
+            x = np.zeros((self.n_features,1), dtype=np.double)
+        else:
+            x = np.array(x)
+        
+        if P is None:
+            P = 1.0 / self.prior_precision_coef * np.eye(len(x))
+        else:
+            P = np.array(P)
+
+        self.x = x
+        self.P = P
 
         self.B = np.eye(N=len(self.x))
         self.Q = np.zeros(shape=((len(self.x), len(self.x))))
@@ -102,7 +111,11 @@ class KalmanFilterLinearRegression(TimeVaryingOnlineKalmanFilter):
         self.x, self.P = super().predict(x = self.x, P = self.P, B = self.B, Q = self.Q)
 
     def update(self, x, y):
-        self.x, self.P = super().update(y = np.array([y]), x = self.x, P = self.P, Z = np.array([x, 1]).reshape((1, -1)), R = self.R)
+        if not isinstance(x, list):
+            x = [x]
+        self.x, self.P = super().update(y = np.array(y, dtype=np.float64), x = self.x, P = self.P, Z = np.array(x).reshape((1, -1)), R = self.R)
+        if self.x.ndim == 1:
+            self.x = self.x[:, np.newaxis]
     
     def pdf(self, x0 = 0, x1 = 1, xsteps = 100, y0 = 0, y1 = 1, ysteps = 100):
 
@@ -112,10 +125,10 @@ class KalmanFilterLinearRegression(TimeVaryingOnlineKalmanFilter):
         self.y0 = y0
         self.y1 = y1
         self.ysteps = ysteps
-
+        
         rv = multivariate_normal(self.x.flatten(), self.P)
-        self.xpos = np.linspace(x0, x1, xsteps)
-        self.ypos = np.linspace(y0, y1, ysteps)
-        xx, yy = np.meshgrid(self.xpos, self.ypos)
+        xpos = np.linspace(x0, x1, xsteps)
+        ypos = np.linspace(y0, y1, ysteps)
+        xx, yy = np.meshgrid(xpos, ypos)
         pos = np.dstack((xx, yy))
         self.pdf_values = rv.pdf(pos)

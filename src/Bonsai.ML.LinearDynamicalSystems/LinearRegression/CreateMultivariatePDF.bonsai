@@ -29,6 +29,14 @@
       <Expression xsi:type="MemberSelector">
         <Selector>Item2</Selector>
       </Expression>
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="X0" Category="GridParameters" />
+        <Property Name="X1" Category="GridParameters" />
+        <Property Name="Xsteps" Category="GridParameters" />
+        <Property Name="Y0" Category="GridParameters" />
+        <Property Name="Y1" Category="GridParameters" />
+        <Property Name="Ysteps" Category="GridParameters" />
+      </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:GridParameters">
           <p2:X0>-1</p2:X0>
@@ -113,15 +121,16 @@
       <Edge From="3" To="4" Label="Source1" />
       <Edge From="4" To="5" Label="Source2" />
       <Edge From="5" To="6" Label="Source1" />
-      <Edge From="6" To="8" Label="Source1" />
-      <Edge From="7" To="8" Label="Source2" />
-      <Edge From="8" To="9" Label="Source1" />
+      <Edge From="6" To="9" Label="Source1" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="8" To="9" Label="Source2" />
       <Edge From="9" To="10" Label="Source1" />
-      <Edge From="10" To="13" Label="Source1" />
-      <Edge From="11" To="12" Label="Source1" />
-      <Edge From="12" To="13" Label="Source2" />
-      <Edge From="13" To="14" Label="Source1" />
+      <Edge From="10" To="11" Label="Source1" />
+      <Edge From="11" To="14" Label="Source1" />
+      <Edge From="12" To="13" Label="Source1" />
+      <Edge From="13" To="14" Label="Source2" />
       <Edge From="14" To="15" Label="Source1" />
+      <Edge From="15" To="16" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>

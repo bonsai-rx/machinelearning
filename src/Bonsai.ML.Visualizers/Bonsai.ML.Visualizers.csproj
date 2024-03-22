@@ -5,7 +5,7 @@
     <PackageTags>Bonsai Rx ML Machine Learning Visualizers</PackageTags>
     <TargetFrameworks>net472</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.8.1" />
