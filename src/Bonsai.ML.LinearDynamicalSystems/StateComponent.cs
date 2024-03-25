@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System;
 using System.Xml.Serialization;
+using System.Reactive.Linq;
 using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems
@@ -53,7 +54,14 @@ namespace Bonsai.ML.LinearDynamicalSystems
         }
 
         /// <summary>
-        /// Extracts a single state compenent from the full state
+        /// Base constructor of a state component
+        /// </summary>
+        public StateComponent() 
+        {
+        }
+
+        /// <summary>
+        /// Constructs a state compenent from the full state and covariance matrices given an index
         /// </summary>
         public StateComponent(double[,] X, double[,] P, int i) 
         {
@@ -64,6 +72,32 @@ namespace Bonsai.ML.LinearDynamicalSystems
         private double Sigma(double variance)
         {
             return 2 * Math.Sqrt(variance);
+        }
+
+        /// <summary>
+        /// Generates a state component
+        /// </summary>
+        public IObservable<StateComponent> Process()
+        {
+    		return Observable.Defer(() => Observable.Return(
+    			new StateComponent {
+                    Mean = _mean,
+                    Variance = _variance
+    			}));
+        }
+
+        /// <summary>
+        /// Generates a state component
+        /// </summary>
+        public IObservable<StateComponent> Process<TSource>(IObservable<TSource> source)
+        {
+            return Observable.Select(source, pyObject =>
+            {
+                return new StateComponent {
+                    Mean = _mean,
+                    Variance = _variance
+                };
+            });
         }
     }
 }

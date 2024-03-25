@@ -5,6 +5,7 @@ The Bonsai.ML project is a collection of packages with reactive infrastructure f
 * Bonsai.ML - provides core functionality across all Bonsai.ML packages.
 * Bonsai.ML.LinearDynamicalSystems - package for performing inference of linear dynamical systems. Interfaces with the [lds_python](https://github.com/joacorapela/lds_python) package.
   - *Bonsai.ML.LinearDynamicalSystems.Kinematics* - subpackage included in the LinearDynamicalSystems package which supports using the Kalman Filter to infer kinematic data.
+  - *Bonsai.ML.LinearDynamicalSystems.LinearRegression* - subpackage included in the LinearDynamicalSystems package which supports using the Kalman Filter to perform Bayesian linear regression.
 * Bonsai.ML.Visualizers - provides a set of visualizers for dynamic graphing/plotting.
 
 > [!NOTE]

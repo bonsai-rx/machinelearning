@@ -13,8 +13,8 @@ namespace Bonsai.ML.Visualizers
     {
         private PlotView view;
         private PlotModel model;
-        private ComboBox comboBox;
-        private Label label;
+        private ToolStripComboBox comboBox;
+        private ToolStripLabel label;
 
         private string _lineSeriesName;
         private string _areaSeriesName;
@@ -25,6 +25,8 @@ namespace Bonsai.ML.Visualizers
         private AreaSeries areaSeries;
         private Axis xAxis;
         private Axis yAxis;
+
+        private StatusStrip statusStrip;
 
         /// <summary>
         /// Event handler which can be used to hook into events generated when the combobox values have changed.
@@ -41,6 +43,16 @@ namespace Bonsai.ML.Visualizers
         /// </summary>
         public int Capacity { get; set; }
 
+        public ToolStripComboBox ComboBox
+        {
+            get => comboBox;
+        }
+
+        public StatusStrip StatusStrip
+        {
+            get => statusStrip;
+        }
+
         /// <summary>
         /// Constructor of the TimeSeriesOxyPlotBase class.
         /// Requires a line series name and an area series name.
@@ -54,11 +66,6 @@ namespace Bonsai.ML.Visualizers
             _dataSource = dataSource;
             _selectedIndex = selectedIndex;
             Initialize();
-        }
-
-        public ComboBox ComboBox
-        {
-            get => comboBox;
         }
 
         private void Initialize()
@@ -107,35 +114,57 @@ namespace Bonsai.ML.Visualizers
             view.Model = model;
             Controls.Add(view);
 
+            statusStrip = new StatusStrip
+            {
+                Visible = false
+            };
+
             if (_dataSource != null)
             {
-                label = new Label
-                {
-                    Text = "State component:",
-                    AutoSize = true,
-                    Location = new Point(-200, 8),
-                    Anchor = AnchorStyles.Top | AnchorStyles.Right
-                };
+                InitializeComboBox(_dataSource);
 
-                comboBox = new ComboBox
-                {
-                    Location = new Point(0, 5),
-                    DataSource = _dataSource,
-                    Anchor = AnchorStyles.Top | AnchorStyles.Right,
-                    BindingContext = BindingContext
-                };
+                statusStrip.Items.AddRange(new ToolStripItem[] {
+                    label,
+                    comboBox,
+                });
 
-                Controls.Add(comboBox);
-                Controls.Add(label);
-
-                comboBox.SelectedIndexChanged += ComboBoxSelectedIndexChanged;
-                comboBox.SelectedIndex = _selectedIndex;
-
-                comboBox.BringToFront();
-                label.BringToFront();
+                view.MouseClick += new MouseEventHandler(onMouseClick);
             }
 
+            Controls.Add(statusStrip);
+
             AutoScaleDimensions = new SizeF(6F, 13F);
+        }
+
+        private void onMouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                statusStrip.Visible = !statusStrip.Visible;
+            }
+        }
+
+        private void InitializeComboBox(IEnumerable dataSource)
+        {
+            label = new ToolStripLabel
+            {
+                Text = "State component:",
+                AutoSize = true,
+            };
+
+            comboBox = new ToolStripComboBox()
+            {
+                Name = "stateComponent",
+                AutoSize = true,
+            };
+
+            foreach (var value in dataSource)
+            {
+                comboBox.Items.Add(value);
+            }
+            
+            comboBox.SelectedIndexChanged += ComboBoxSelectedIndexChanged;
+            comboBox.SelectedIndex = _selectedIndex;
         }
 
         private void ComboBoxSelectedIndexChanged(object sender, EventArgs e)
