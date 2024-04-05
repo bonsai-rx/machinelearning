@@ -14,7 +14,7 @@
       <Expression xsi:type="ExternalizedMapping">
         <Property Name="LikelihoodPrecisionCoef" Category="Parameters" />
         <Property Name="PriorPrecisionCoef" Category="Parameters" />
-        <Property Name="N_features" Category="Parameters" />
+        <Property Name="NumFeatures" Category="Parameters" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
         <Property Name="X" Category="ModelState" />
@@ -24,7 +24,7 @@
         <Combinator xsi:type="p1:KFModelParameters">
           <p1:LikelihoodPrecisionCoef>25</p1:LikelihoodPrecisionCoef>
           <p1:PriorPrecisionCoef>2</p1:PriorPrecisionCoef>
-          <p1:N_features>2</p1:N_features>
+          <p1:NumFeatures>2</p1:NumFeatures>
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
