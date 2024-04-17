@@ -8,7 +8,9 @@ namespace Bonsai.ML.LinearDynamicalSystems
     /// <summary>
     /// State component of a Kalman Filter
     /// </summary>
-    [Description("State component of a Kalman Filter")]  
+    [Description("State component of a Kalman Filter")]
+    [Combinator()]
+    [WorkflowElementCategory(ElementCategory.Transform)]
     public class StateComponent
     {
 
