@@ -7,6 +7,7 @@ using Bonsai.ML.Visualizers;
 using Bonsai.ML.LinearDynamicalSystems;
 using System.Drawing;
 using System.Reactive;
+using OxyPlot.Series;
 
 [assembly: TypeVisualizer(typeof(StateComponentVisualizer), Target = typeof(StateComponent))]
 
@@ -22,31 +23,37 @@ namespace Bonsai.ML.Visualizers
 
         private TimeSeriesOxyPlotBase Plot;
 
-        /// <summary>
-        /// Size of the window when loaded
-        /// </summary>
-        public Size Size { get; set; } = new Size(320, 240);
+        private LineSeries lineSeries;
+
+        private AreaSeries areaSeries;
 
         /// <summary>
         /// Capacity or length of time shown along the x axis of the plot during automatic updating
         /// </summary>
         public int Capacity { get; set; } = 10;
 
+        /// <summary>
+        /// Buffer the data beyond the capacity.
+        /// </summary>
+        public bool BufferData { get; set; } = true;
+
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Plot = new TimeSeriesOxyPlotBase(
-                lineSeriesName: "Mean",
-                areaSeriesName: "Variance"
-            )
+            Plot = new TimeSeriesOxyPlotBase()
             {
-                Size = Size,
                 Capacity = Capacity,
                 Dock = DockStyle.Fill,
-                StartTime = DateTime.Now
+                StartTime = DateTime.Now,
+                BufferData = BufferData
             };
 
-            Plot.ResetSeries();
+            lineSeries = Plot.AddNewLineSeries("Mean");
+            areaSeries = Plot.AddNewAreaSeries("Variance");
+
+            Plot.ResetLineSeries(lineSeries);
+            Plot.ResetAreaSeries(areaSeries);
+            Plot.ResetAxes();
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             if (visualizerService != null)
@@ -67,7 +74,7 @@ namespace Bonsai.ML.Visualizers
             {
                 _startTime = time;
                 Plot.StartTime = _startTime.Value;
-                Plot.ResetSeries();
+                Plot.ResetAxes();
             }
 
             StateComponent stateComponent = (StateComponent)value;
@@ -75,14 +82,16 @@ namespace Bonsai.ML.Visualizers
             double variance = stateComponent.Variance;
 
             Plot.AddToLineSeries(
+                lineSeries: lineSeries,
                 time: time,
-                mean: mean
+                value: mean
             );
 
             Plot.AddToAreaSeries(
+                areaSeries: areaSeries,
                 time: time,
-                mean: mean,
-                variance: variance
+                value1: mean + variance,
+                value2: mean - variance
             );
 
             Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
