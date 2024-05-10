@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.8.1"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
+                 xmlns:io="clr-namespace:Bonsai.IO;assembly=Bonsai.System"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="PythonHome" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:CreateRuntime">
+          <py:PythonHome>.venv</py:PythonHome>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:GetRuntime" />
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:LoadLDSModule.bonsai" />
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="ImagesCsv" />
+        <Property Name="ResponsesCsv" />
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LoadData</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="FileName" DisplayName="ImagesCsv" Category="PathToDataset" />
+            </Expression>
+            <Expression xsi:type="io:CsvReader">
+              <io:FileName>ReceptiveFieldSimpleCell/images.csv</io:FileName>
+              <io:ListSeparator />
+              <io:ScanPattern />
+              <io:SkipRows>1</io:SkipRows>
+            </Expression>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="FileName" DisplayName="ResponsesCsv" Category="PathToDataset" />
+            </Expression>
+            <Expression xsi:type="io:CsvReader">
+              <io:FileName>ReceptiveFieldSimpleCell/responses.csv</io:FileName>
+              <io:ListSeparator />
+              <io:ScanPattern />
+              <io:SkipRows>2</io:SkipRows>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="Format">
+              <Format>x=[{0},1.0],y={1}</Format>
+              <Selector>it.Item1,it.Item2</Selector>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="4" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source2" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="rx:ReplaySubject">
+        <Name>Observation</Name>
+        <rx:BufferSize xsi:nil="true" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:GetRuntime" />
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:LinearRegression.CreateKFModel.bonsai">
+        <LikelihoodPrecisionCoef>0.1</LikelihoodPrecisionCoef>
+        <PriorPrecisionCoef>2</PriorPrecisionCoef>
+        <NumFeatures>145</NumFeatures>
+        <Name>model</Name>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>ModelParameters</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>Observation</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>ModelParameters</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:SubscribeWhen" />
+      </Expression>
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="Count" DisplayName="NSamples" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Take">
+          <rx:Count>2</rx:Count>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:LinearRegression.PerformInference.bonsai">
+        <Name>model</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:TakeLast">
+          <rx:Count>1</rx:Count>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:SerializeToJson" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="io:WriteAllText">
+          <io:Path>bonsai-receptivefield.json</io:Path>
+          <io:Overwrite>true</io:Overwrite>
+          <io:Append>false</io:Append>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="WorkflowOutput" />
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="8" To="9" Label="Source1" />
+      <Edge From="10" To="12" Label="Source1" />
+      <Edge From="11" To="12" Label="Source2" />
+      <Edge From="12" To="14" Label="Source1" />
+      <Edge From="13" To="14" Label="Source2" />
+      <Edge From="14" To="15" Label="Source1" />
+      <Edge From="15" To="16" Label="Source1" />
+      <Edge From="16" To="17" Label="Source1" />
+      <Edge From="17" To="18" Label="Source1" />
+      <Edge From="18" To="19" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>
