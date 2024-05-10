@@ -146,6 +146,9 @@
       <Expression xsi:type="scr:ExpressionTransform">
         <scr:Expression>it.ToString() == "True"</scr:Expression>
       </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:DistinctUntilChanged" />
+      </Expression>
       <Expression xsi:type="rx:Condition">
         <Name>IsRunningOptimization?</Name>
         <Workflow>
@@ -201,6 +204,7 @@
       <Edge From="33" To="34" Label="Source1" />
       <Edge From="34" To="35" Label="Source1" />
       <Edge From="35" To="36" Label="Source1" />
+      <Edge From="36" To="37" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
