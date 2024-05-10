@@ -74,36 +74,39 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
             }
         }
 
-                /// <summary>
+        /// <summary>
+        /// constructor for a new KinematicState object
+        /// </summary>
+        public KinematicState Construct(State state)
+        {
+            Position = new KinematicComponent{
+                X = new StateComponent(state.X, state.P, 0),
+                Y = new StateComponent(state.X, state.P, 3),
+                Covariance = state.P[0,3]
+            };
+
+            Velocity = new KinematicComponent{
+                X = new StateComponent(state.X, state.P, 1),
+                Y = new StateComponent(state.X, state.P, 4),
+                Covariance = state.P[1,4]
+            };
+
+            Acceleration = new KinematicComponent{
+                X = new StateComponent(state.X, state.P, 2),
+                Y = new StateComponent(state.X, state.P, 5),
+                Covariance = state.P[2,5]
+            };
+            return this;
+        }
+
+        /// <summary>
         /// Converts the full state of a Kalman filter (mean vector and covariance matrix) into a KinematicState object representing position, velocity, and acceleration
         /// </summary>
         public IObservable<KinematicState> Process(IObservable<State> source)
         {
             return Observable.Select(source, state => 
             {
-                KinematicComponent position = new KinematicComponent{
-                    X = new StateComponent(state.X, state.P, 0),
-                    Y = new StateComponent(state.X, state.P, 3),
-                    Covariance = state.P[0,3]
-                };
-
-                KinematicComponent velocity = new KinematicComponent{
-                    X = new StateComponent(state.X, state.P, 1),
-                    Y = new StateComponent(state.X, state.P, 4),
-                    Covariance = state.P[1,4]
-                };
-
-                KinematicComponent acceleration = new KinematicComponent{
-                    X = new StateComponent(state.X, state.P, 2),
-                    Y = new StateComponent(state.X, state.P, 5),
-                    Covariance = state.P[2,5]
-                };
-                
-                return new KinematicState {
-                        Position = position,
-                        Velocity = velocity,
-                        Acceleration = acceleration
-                    };
+                return new KinematicState().Construct(state);
             });
         }
     }
