@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+        with:
+          submodules: true
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+        
+      - name: Restore NuGet Packages
+        run: msbuild -t:restore src/Bonsai.ML.sln
+
+      - name: Build Solution
+        run: msbuild src/Bonsai.ML.sln /p:Configuration=Release
