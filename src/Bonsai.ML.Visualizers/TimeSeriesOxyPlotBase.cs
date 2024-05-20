@@ -36,22 +36,16 @@ namespace Bonsai.ML.Visualizers
         /// <summary>
         /// DateTime value that determines the starting time of the data values.
         /// </summary>
-        public DateTime StartTime {get;set;}
+        public DateTime StartTime { get; set; }
 
         /// <summary>
         /// Integer value that determines how many data points should be shown along the x axis.
         /// </summary>
         public int Capacity { get; set; }
 
-        public ToolStripComboBox ComboBox
-        {
-            get => comboBox;
-        }
+        public ToolStripComboBox ComboBox => comboBox;
 
-        public StatusStrip StatusStrip
-        {
-            get => statusStrip;
-        }
+        public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
         /// Constructor of the TimeSeriesOxyPlotBase class.

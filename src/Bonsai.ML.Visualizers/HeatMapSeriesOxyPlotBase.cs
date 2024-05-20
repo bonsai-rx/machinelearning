@@ -41,10 +41,7 @@ namespace Bonsai.ML.Visualizers
 
         public ToolStripComboBox RenderMethodComboBox => renderMethodComboBox;
 
-        public StatusStrip StatusStrip
-        {
-            get => statusStrip;
-        }
+        public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
         /// Constructor of the TimeSeriesOxyPlotBase class.
