@@ -35,17 +35,11 @@ namespace Bonsai.ML.Visualizers
         /// </summary>
         public event EventHandler PaletteComboBoxValueChanged;
 
-        public ToolStripComboBox PaletteComboBox
-        {
-            get => paletteComboBox;
-        }
+        public ToolStripComboBox PaletteComboBox => paletteComboBox;
 
         public event EventHandler RenderMethodComboBoxValueChanged;
 
-        public ToolStripComboBox RenderMethodComboBox
-        {
-            get => renderMethodComboBox;
-        }
+        public ToolStripComboBox RenderMethodComboBox => renderMethodComboBox;
 
         public StatusStrip StatusStrip
         {
@@ -63,7 +57,6 @@ namespace Bonsai.ML.Visualizers
             _paletteSelectedIndex = paletteSelectedIndex;
             _renderMethodSelectedIndex = renderMethodSelectedIndex;
             _numColors = numColors;
-            // palette = OxyPalettes.Rainbow(_numColors);
             Initialize();
         }
 
@@ -71,7 +64,6 @@ namespace Bonsai.ML.Visualizers
         {
             view = new PlotView
             {
-                Size = Size,
                 Dock = DockStyle.Fill,
             };
 
@@ -97,8 +89,8 @@ namespace Bonsai.ML.Visualizers
             view.Model = model;
             Controls.Add(view);
 
-            InitilizeColorPalette();
-            InitilizeRenderMethod();
+            InitializeColorPalette();
+            InitializeRenderMethod();
 
             statusStrip = new StatusStrip
             {
@@ -117,7 +109,7 @@ namespace Bonsai.ML.Visualizers
             AutoScaleDimensions = new SizeF(6F, 13F);
         }
 
-        private void InitilizeColorPalette()
+        private void InitializeColorPalette()
         {
             paletteLabel = new ToolStripLabel
             {
@@ -131,7 +123,7 @@ namespace Bonsai.ML.Visualizers
                 AutoSize = true,
             };
 
-            foreach (var value in Enum.GetValues(typeof(ColorPalettes)))
+            foreach (var value in Enum.GetValues(typeof(ColorPalette)))
             {
                 paletteComboBox.Items.Add(value);
             }
@@ -154,13 +146,13 @@ namespace Bonsai.ML.Visualizers
 
         private void UpdateColorPalette()
         {
-            var selectedPalette = (ColorPalettes)paletteComboBox.Items[_paletteSelectedIndex];
+            var selectedPalette = (ColorPalette)paletteComboBox.Items[_paletteSelectedIndex];
             paletteLookup.TryGetValue(selectedPalette, out Func<int, OxyPalette> paletteMethod);
             palette = paletteMethod(_numColors);
             colorAxis.Palette = palette;
         }
 
-        private void InitilizeRenderMethod()
+        private void InitializeRenderMethod()
         {
             renderMethodLabel = new ToolStripLabel
             {
@@ -223,22 +215,22 @@ namespace Bonsai.ML.Visualizers
             model.InvalidatePlot(true);
         }
 
-        private static readonly Dictionary<ColorPalettes, Func<int, OxyPalette>> paletteLookup = new Dictionary<ColorPalettes, Func<int, OxyPalette>>
+        private static readonly Dictionary<ColorPalette, Func<int, OxyPalette>> paletteLookup = new Dictionary<ColorPalette, Func<int, OxyPalette>>
         {
-            { ColorPalettes.Cividis, (numColors) => OxyPalettes.Cividis(numColors) },
-            { ColorPalettes.Inferno, (numColors) => OxyPalettes.Inferno(numColors) },
-            { ColorPalettes.Viridis, (numColors) => OxyPalettes.Viridis(numColors) },
-            { ColorPalettes.Magma, (numColors) => OxyPalettes.Magma(numColors) },
-            { ColorPalettes.Plasma, (numColors) => OxyPalettes.Plasma(numColors) },
-            { ColorPalettes.BlackWhiteRed, (numColors) => OxyPalettes.BlackWhiteRed(numColors) },
-            { ColorPalettes.BlueWhiteRed, (numColors) => OxyPalettes.BlueWhiteRed(numColors) },
-            { ColorPalettes.Cool, (numColors) => OxyPalettes.Cool(numColors) },
-            { ColorPalettes.Gray, (numColors) => OxyPalettes.Gray(numColors) },
-            { ColorPalettes.Hot, (numColors) => OxyPalettes.Hot(numColors) },
-            { ColorPalettes.Hue, (numColors) => OxyPalettes.Hue(numColors) },
-            { ColorPalettes.HueDistinct, (numColors) => OxyPalettes.HueDistinct(numColors) },
-            { ColorPalettes.Jet, (numColors) => OxyPalettes.Jet(numColors) },
-            { ColorPalettes.Rainbow, (numColors) => OxyPalettes.Rainbow(numColors) },
+            { ColorPalette.Cividis, (numColors) => OxyPalettes.Cividis(numColors) },
+            { ColorPalette.Inferno, (numColors) => OxyPalettes.Inferno(numColors) },
+            { ColorPalette.Viridis, (numColors) => OxyPalettes.Viridis(numColors) },
+            { ColorPalette.Magma, (numColors) => OxyPalettes.Magma(numColors) },
+            { ColorPalette.Plasma, (numColors) => OxyPalettes.Plasma(numColors) },
+            { ColorPalette.BlackWhiteRed, (numColors) => OxyPalettes.BlackWhiteRed(numColors) },
+            { ColorPalette.BlueWhiteRed, (numColors) => OxyPalettes.BlueWhiteRed(numColors) },
+            { ColorPalette.Cool, (numColors) => OxyPalettes.Cool(numColors) },
+            { ColorPalette.Gray, (numColors) => OxyPalettes.Gray(numColors) },
+            { ColorPalette.Hot, (numColors) => OxyPalettes.Hot(numColors) },
+            { ColorPalette.Hue, (numColors) => OxyPalettes.Hue(numColors) },
+            { ColorPalette.HueDistinct, (numColors) => OxyPalettes.HueDistinct(numColors) },
+            { ColorPalette.Jet, (numColors) => OxyPalettes.Jet(numColors) },
+            { ColorPalette.Rainbow, (numColors) => OxyPalettes.Rainbow(numColors) },
         };
     }
 }

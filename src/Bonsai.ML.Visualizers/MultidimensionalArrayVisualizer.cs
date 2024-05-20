@@ -23,29 +23,23 @@ namespace Bonsai.ML.Visualizers
     /// </summary>
     public class MultidimensionalArrayVisualizer : DialogTypeVisualizer
     {
-
-        private int paletteSelectedIndex = 0;
-        private int renderMethodSelectedIndex = 0;
+        /// <summary>
+        /// Gets or sets the selected index of the color palette to use.
+        /// </summary>
+        public int PaletteSelectedIndex { get; set; }
 
         /// <summary>
-        /// Size of the window when loaded
+        /// Gets or sets the selected index of the render method to use.
         /// </summary>
-        public Size Size { get; set; } = new Size(320, 240);
-
-        /// <summary>
-        /// The selected index of the color palette to use
-        /// </summary>
-        public int PaletteSelectedIndex { get => paletteSelectedIndex; set => paletteSelectedIndex = value; }
-        public int RenderMethodSelectedIndex { get => renderMethodSelectedIndex; set => renderMethodSelectedIndex = value; }
+        public int RenderMethodSelectedIndex { get; set; }
 
         private HeatMapSeriesOxyPlotBase Plot;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Plot = new HeatMapSeriesOxyPlotBase(paletteSelectedIndex, renderMethodSelectedIndex)
+            Plot = new HeatMapSeriesOxyPlotBase(PaletteSelectedIndex, RenderMethodSelectedIndex)
             {
-                Size = Size,
                 Dock = DockStyle.Fill,
             };
 
@@ -85,18 +79,14 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
-        /// <summary>
-        /// Callback function to update the selected index when the selected combobox index has changed
-        /// </summary>
         private void PaletteIndexChanged(object sender, EventArgs e)
         {
-            var comboBox = Plot.PaletteComboBox;
-            paletteSelectedIndex = comboBox.SelectedIndex;
+            PaletteSelectedIndex = Plot.PaletteComboBox.SelectedIndex;
         }
+        
         private void RenderMethodIndexChanged(object sender, EventArgs e)
         {
-            var comboBox = Plot.RenderMethodComboBox;
-            renderMethodSelectedIndex = comboBox.SelectedIndex;
+            RenderMethodSelectedIndex = Plot.RenderMethodComboBox.SelectedIndex;
         }
     }
 }
