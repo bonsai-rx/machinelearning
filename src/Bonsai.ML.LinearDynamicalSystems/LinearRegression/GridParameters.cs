@@ -8,10 +8,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
 {
 
     /// <summary>
-    /// 2D grid parameters used for calculating the PDF of a multivariate distribution
+    /// Represents an operator that creates the 2D grid parameters used for calculating the PDF of a multivariate distribution.
     /// </summary>
-    [Description("2D grid parameters used for calculating the PDF of a multivariate distribution")]
-    [Combinator()]
+    [Combinator]
+    [Description("Creates the 2D grid parameters used for calculating the PDF of a multivariate distribution.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class GridParameters
     {
@@ -33,10 +33,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         private string _ystepsString;
 
         /// <summary>
-        /// Lower bound of the x axis
+        /// Gets or sets the lower bound of the X axis.
         /// </summary>
         [JsonProperty("x0")]
-        [Description("Lower bound of the x axis")]
+        [Description("The lower bound of the X axis")]
         public double X0
         {
             get
@@ -52,10 +52,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         }
     
         /// <summary>
-        /// Upper bound of the x axis
+        /// Gets or sets the upper bound of the X axis.
         /// </summary>
         [JsonProperty("x1")]
-        [Description("Upper bound of the x axis")]
+        [Description("The upper bound of the X axis")]
         public double X1
         {
             get
@@ -70,11 +70,11 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         }
         
         /// <summary>
-        /// Number of steps along the x axis
+        /// Gets or sets the number of steps along the X axis.
         /// </summary>
         [JsonProperty("xsteps")]
-        [Description("Number of steps along the x axis")]
-        public int Xsteps
+        [Description("The number of steps along the X axis")]
+        public int XSteps
         {
             get
             {
@@ -88,10 +88,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         }
 
         /// <summary>
-        /// Lower bound of the y axis
+        /// Gets or sets the lower bound of the Y axis.
         /// </summary>
         [JsonProperty("y0")]
-        [Description("Lower bound of the y axis")]
+        [Description("The lower bound of the Y axis")]
         public double Y0
         {
             get
@@ -106,10 +106,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         }
     
         /// <summary>
-        /// Upper bound of the y axis
+        /// Gets or sets the upper bound of the Y axis.
         /// </summary>
         [JsonProperty("y1")]
-        [Description("Upper bound of the y axis")]
+        [Description("The upper bound of the Y axis")]
         public double Y1
         {
             get
@@ -124,11 +124,11 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         }
         
         /// <summary>
-        /// Number of steps along the y axis
+        /// Gets or sets the number of steps along the Y axis.
         /// </summary>
         [JsonProperty("ysteps")]
-        [Description("Number of steps along the y axis")]
-        public int Ysteps
+        [Description("The number of steps along the Y axis")]
+        public int YSteps
         {
             get
             {
@@ -148,12 +148,12 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         {
     		return Observable.Defer(() => Observable.Return(
     			new GridParameters {
-    				X0 = _x0,
+                    X0 = _x0,
                     X1 = _x1,
-                    Xsteps = _xsteps,
-    				Y0 = _y0,
+                    XSteps = _xsteps,
+                    Y0 = _y0,
                     Y1 = _y1,
-                    Ysteps = _ysteps,
+                    YSteps = _ysteps,
     			}));
         }
 
@@ -168,23 +168,26 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             });
         }
 
+        /// <summary>
+        /// Converts a PyObject, represeting a Kalman Filter Linear Regression Model, into a GridParameters object
+        /// </summary>
         public static GridParameters ConvertPyObject(PyObject pyObject)
         {
             var x0PyObj = pyObject.GetAttr<double>("x0");
             var x1PyObj = pyObject.GetAttr<double>("x1");
-            var xstepsPyObj = pyObject.GetAttr<int>("xsteps");
+            var xStepsPyObj = pyObject.GetAttr<int>("xsteps");
 
             var y0PyObj = pyObject.GetAttr<double>("y0");
             var y1PyObj = pyObject.GetAttr<double>("y1");
-            var ystepsPyObj = pyObject.GetAttr<int>("ysteps");
+            var yStepsPyObj = pyObject.GetAttr<int>("ysteps");
 
             return new GridParameters {
                 X0 = x0PyObj,
                 X1 = x1PyObj,
-                Xsteps = xstepsPyObj,
+                XSteps = xStepsPyObj,
                 Y0 = y0PyObj,
                 Y1 = y1PyObj,
-                Ysteps = ystepsPyObj,
+                YSteps = yStepsPyObj,
             };
         }
     
@@ -197,10 +200,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
                 new GridParameters {
     				X0 = _x0,
                     X1 = _x1,
-                    Xsteps = _xsteps,
+                    XSteps = _xsteps,
     				Y0 = _y0,
                     Y1 = _y1,
-                    Ysteps = _ysteps,
+                    YSteps = _ysteps,
                 });
         }
 
@@ -208,7 +211,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         public override string ToString()
         {
 
-            return $"x0={_x0},x1={_x1},xsteps={_xsteps},y0={_y0},y1={_y1},ysteps={_ysteps}";
+            return $"x0={_x0}, x1={_x1}, xsteps={_xsteps}, y0={_y0}, y1={_y1}, ysteps={_ysteps}";
         }
     }
 }

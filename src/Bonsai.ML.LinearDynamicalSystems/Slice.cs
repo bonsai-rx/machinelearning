@@ -1,20 +1,45 @@
 using System;
 using System.Reactive.Linq;
+using System.ComponentModel;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
     /// <summary>
-    /// A class that converts a python object, representing a multivariate PDF, into a multidimensional array
-    /// /// </summary>
-    [Combinator()]
+    /// Represents an operator that slices a 2D multi-dimensional array.
+    /// </summary>
+    [Combinator]
+    [Description("Slices a 2D multi-dimensional array.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class Slice
     {
-        public int? RowStart {get;set;} = null;
-        public int? RowEnd {get;set;} = null;
-        public int? ColStart {get;set;} = null;
-        public int? ColEnd {get;set;} = null;
 
+        /// <summary>
+        /// Gets or sets the index to begin slicing the rows of the array. A value of null indicates the first row of the array.
+        /// </summary>
+        [Description("The index to begin slicing the rows of the array. A value of null indicates the first row of the array.")]
+        public int? RowStart { get; set; }
+
+        /// <summary>
+        /// Gets or sets the index to stop slicing the rows of the array. A value of null indicates the last row of the array.
+        /// </summary>
+        [Description("The index to stop slicing the rows of the array. A value of null indicates the last row of the array.")]
+        public int? RowEnd { get; set; }
+
+        /// <summary>
+        /// Gets or sets the index to begin slicing the columns of the array. A value of null indicates the first column of the array.
+        /// </summary>
+        [Description("The index to begin slicing the columns of the array. A value of null indicates the first column of the array.")]
+        public int? ColStart { get; set; }
+
+        /// <summary>
+        /// Gets or sets the index to stop slicing the columns of the array. A value of null indicates the last column of the array.
+        /// </summary>
+        [Description("The index to stop slicing the columns of the array. A value of null indicates the last column of the array.")]
+        public int? ColEnd { get; set; }
+
+        /// <summary>
+        /// Slices a 2D multi-dimensional array into a new multi-dimensional array by extracting elements between the provided start and end indices of the rows and columns.
+        /// </summary>
         public IObservable<double[,]> Process(IObservable<double[,]> source)
         {
 
@@ -49,14 +74,11 @@ namespace Bonsai.ML.LinearDynamicalSystems
                     colEnd = inputCols;
                 }
 
-                // Calculate the size of the new sliced array
                 int rowCount = rowEnd - rowStart;
                 int colCount = colEnd - colStart;
 
-                // Initialize the new array with the calculated size
                 double[,] slicedArray = new double[rowCount, colCount];
 
-                // Copy the data from the original array to the new array
                 for (int i = 0; i < rowCount; i++)
                 {
                     for (int j = 0; j < colCount; j++)

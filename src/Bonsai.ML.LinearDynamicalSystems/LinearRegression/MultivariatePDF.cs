@@ -7,22 +7,28 @@ using System.Xml.Serialization;
 namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
 {
     /// <summary>
-    /// A class that converts a python object, representing a multivariate PDF, into a multidimensional array
-    /// /// </summary>
-    [Description("A multivariate PDF")]
-    [Combinator()]
+    /// Represents an operator that converts a python object, representing a multivariate PDF, into a multivariate PDF class.
+    /// </summary>
+    [Combinator]
+    [Description("Converts a python object, representing a multivariate PDF, into a multivariate PDF.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class MultivariatePDF
     {
 
+        /// <summary>
+        /// Gets or sets the grid parameters used for generating the multivariate PDF.
+        /// </summary>
         [XmlIgnore]
         public GridParameters GridParameters;
 
+        /// <summary>
+        /// Gets or sets the probability density value at each 2D position of the grid.
+        /// </summary>
         [XmlIgnore]
         public double[,] Values;
 
         /// <summary>
-        /// Converts a python object, representing a multivariate PDF, into a multidimensional array
+        /// Converts a PyObject into a multivariate PDF.
         /// </summary>
         public IObservable<MultivariatePDF> Process(IObservable<PyObject> source)
         {

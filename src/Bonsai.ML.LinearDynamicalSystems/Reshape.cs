@@ -1,18 +1,32 @@
 using System;
 using System.Reactive.Linq;
+using System.ComponentModel;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
     /// <summary>
-    /// A class that converts a python object, representing a multivariate PDF, into a multidimensional array
-    /// /// </summary>
-    [Combinator()]
+    /// Represents an operator that reshapes the dimensions of a 2D multi-dimensional array.
+    /// </summary>
+    [Combinator]
+    [Description("Reshapes the dimensions of a 2D multi-dimensional array.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class Reshape
     {
-        public int Rows {get;set;}
-        public int Cols {get;set;}
+        /// <summary>
+        /// Gets or sets the number of rows in the reshaped array.
+        /// </summary>
+        [Description("The number of rows in the reshaped array.")]
+        public int Rows { get; set; }
 
+        /// <summary>
+        /// Gets or sets the number of columns in the reshaped array.
+        /// </summary>
+        [Description("The number of columns in the reshaped array.")]
+        public int Cols { get; set; }
+
+        /// <summary>
+        /// Reshapes a 2D multi-dimensional array into a new multi-dimensional array with the provided number of rows and columns.
+        /// </summary>
         public IObservable<double[,]> Process(IObservable<double[,]> source)
         {
 
@@ -27,7 +41,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
 
                 if (totalElements != rows * cols)
                 {
-                    throw new InvalidOperationException($"Multidimensional array of shape {rows}x{cols} cannot be made from input array with a total of {totalElements} elements.");
+                    throw new InvalidOperationException($"Multi-dimensional array of shape {rows}x{cols} cannot be made from the input array with a total of {totalElements} elements.");
                 }
 
                 double[,] reshapedArray = new double[rows, cols];

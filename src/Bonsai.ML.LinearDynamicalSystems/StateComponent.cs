@@ -54,14 +54,15 @@ namespace Bonsai.ML.LinearDynamicalSystems
         }
 
         /// <summary>
-        /// Base constructor of a state component
+        /// Initializes a new instance of the <see cref="Bonsai.ML.LinearDynamicalSystems.StateComponent"/> class.
         /// </summary>
         public StateComponent() 
         {
         }
 
         /// <summary>
-        /// Constructs a state compenent from the full state and covariance matrices given an index
+        /// Initializes a new instance of the <see cref="Bonsai.ML.LinearDynamicalSystems.StateComponent"/> class from 
+        /// the full state and covariance matrices given an index
         /// </summary>
         public StateComponent(double[,] X, double[,] P, int i) 
         {
