@@ -36,7 +36,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the lower bound of the X axis.
         /// </summary>
         [JsonProperty("x0")]
-        [Description("The lower bound of the X axis")]
+        [Description("The lower bound of the X axis.")]
         public double X0
         {
             get
@@ -55,7 +55,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the upper bound of the X axis.
         /// </summary>
         [JsonProperty("x1")]
-        [Description("The upper bound of the X axis")]
+        [Description("The upper bound of the X axis.")]
         public double X1
         {
             get
@@ -73,7 +73,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the number of steps along the X axis.
         /// </summary>
         [JsonProperty("xsteps")]
-        [Description("The number of steps along the X axis")]
+        [Description("The number of steps along the X axis.")]
         public int XSteps
         {
             get
@@ -91,7 +91,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the lower bound of the Y axis.
         /// </summary>
         [JsonProperty("y0")]
-        [Description("The lower bound of the Y axis")]
+        [Description("The lower bound of the Y axis.")]
         public double Y0
         {
             get
@@ -109,7 +109,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the upper bound of the Y axis.
         /// </summary>
         [JsonProperty("y1")]
-        [Description("The upper bound of the Y axis")]
+        [Description("The upper bound of the Y axis.")]
         public double Y1
         {
             get
@@ -127,7 +127,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the number of steps along the Y axis.
         /// </summary>
         [JsonProperty("ysteps")]
-        [Description("The number of steps along the Y axis")]
+        [Description("The number of steps along the Y axis.")]
         public int YSteps
         {
             get
@@ -146,15 +146,15 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// </summary>    
         public IObservable<GridParameters> Process()
         {
-    		return Observable.Defer(() => Observable.Return(
-    			new GridParameters {
+            return Observable.Defer(() => Observable.Return(
+                new GridParameters {
                     X0 = _x0,
                     X1 = _x1,
                     XSteps = _xsteps,
                     Y0 = _y0,
                     Y1 = _y1,
                     YSteps = _ysteps,
-    			}));
+                }));
         }
 
         /// <summary>
@@ -162,8 +162,8 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// </summary>
         public IObservable<GridParameters> Process(IObservable<PyObject> source)
         {
-    		return Observable.Select(source, pyObject =>
-    		{
+            return Observable.Select(source, pyObject =>
+            {
                 return ConvertPyObject(pyObject);
             });
         }
@@ -198,10 +198,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         {
             return Observable.Select(source, x =>
                 new GridParameters {
-    				X0 = _x0,
+                    X0 = _x0,
                     X1 = _x1,
                     XSteps = _xsteps,
-    				Y0 = _y0,
+                    Y0 = _y0,
                     Y1 = _y1,
                     YSteps = _ysteps,
                 });

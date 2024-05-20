@@ -32,19 +32,19 @@
       <Expression xsi:type="ExternalizedMapping">
         <Property Name="X0" Category="GridParameters" />
         <Property Name="X1" Category="GridParameters" />
-        <Property Name="Xsteps" Category="GridParameters" />
+        <Property Name="XSteps" Category="GridParameters" />
         <Property Name="Y0" Category="GridParameters" />
         <Property Name="Y1" Category="GridParameters" />
-        <Property Name="Ysteps" Category="GridParameters" />
+        <Property Name="YSteps" Category="GridParameters" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:GridParameters">
           <p2:X0>-1</p2:X0>
           <p2:X1>1</p2:X1>
-          <p2:Xsteps>100</p2:Xsteps>
+          <p2:XSteps>100</p2:XSteps>
           <p2:Y0>-1</p2:Y0>
           <p2:Y1>1</p2:Y1>
-          <p2:Ysteps>100</p2:Ysteps>
+          <p2:YSteps>100</p2:YSteps>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
@@ -76,7 +76,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="py:Exec">
-                <py:Script>model.pdf(x0=-1,x1=1,xsteps=100,y0=-1,y1=1,ysteps=100)</py:Script>
+                <py:Script>model.pdf(x0=-1, x1=1, xsteps=100, y0=-1, y1=1, ysteps=100)</py:Script>
               </Combinator>
             </Expression>
             <Expression xsi:type="WorkflowOutput" />

@@ -12,8 +12,8 @@
         <Name>Source1</Name>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="LikelihoodPrecisionCoef" Category="Parameters" />
-        <Property Name="PriorPrecisionCoef" Category="Parameters" />
+        <Property Name="LikelihoodPrecisionCoefficient" Category="Parameters" />
+        <Property Name="PriorPrecisionCoefficient" Category="Parameters" />
         <Property Name="NumFeatures" Category="Parameters" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
@@ -22,8 +22,8 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:KFModelParameters">
-          <p1:LikelihoodPrecisionCoef>25</p1:LikelihoodPrecisionCoef>
-          <p1:PriorPrecisionCoef>2</p1:PriorPrecisionCoef>
+          <p1:LikelihoodPrecisionCoefficient>25</p1:LikelihoodPrecisionCoefficient>
+          <p1:PriorPrecisionCoefficient>2</p1:PriorPrecisionCoefficient>
           <p1:NumFeatures>2</p1:NumFeatures>
         </Combinator>
       </Expression>
@@ -73,7 +73,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="py:Exec">
-                <py:Script>model = KalmanFilterLinearRegression(likelihood_precision_coef=25,prior_precision_coef=2,n_features=2,x=None,P=None)</py:Script>
+                <py:Script>model = KalmanFilterLinearRegression(likelihood_precision_coef=25, prior_precision_coef=2, n_features=2, x=None, P=None)</py:Script>
               </Combinator>
             </Expression>
             <Expression xsi:type="WorkflowOutput" />

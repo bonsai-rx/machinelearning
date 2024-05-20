@@ -36,7 +36,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the likelihood precision coefficient.
         /// </summary>
         [JsonProperty("likelihood_precision_coef")]
-        [Description("The likelihood precision coefficient")]
+        [Description("The likelihood precision coefficient.")]
         [Category("Parameters")]
         public double LikelihoodPrecisionCoefficient
         {
@@ -55,7 +55,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the prior precision coefficient.
         /// </summary>
         [JsonProperty("prior_precision_coef")]
-        [Description("The prior precision coefficient")]
+        [Description("The prior precision coefficient.")]
         [Category("Parameters")]
         public double PriorPrecisionCoefficient
         {
@@ -74,7 +74,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// Gets or sets the number of features present in the model.
         /// </summary>
         [JsonProperty("n_features")]
-        [Description("The number of features")]
+        [Description("The number of features.")]
         [Category("Parameters")]
         public int NumFeatures
         {
@@ -94,7 +94,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// </summary>
         [XmlIgnore]
         [JsonProperty("x")]
-        [Description("The matrix representing the mean of the state")]
+        [Description("The matrix representing the mean of the state.")]
         [Category("ModelState")]
         public double[,] X
         {
@@ -143,14 +143,14 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// </summary>
         public IObservable<KFModelParameters> Process()
         {
-    		return Observable.Defer(() => Observable.Return(
-    			new KFModelParameters {
-    				LikelihoodPrecisionCoefficient = _likelihood_precision_coef,
+            return Observable.Defer(() => Observable.Return(
+                new KFModelParameters {
+                    LikelihoodPrecisionCoefficient = _likelihood_precision_coef,
                     PriorPrecisionCoefficient = _prior_precision_coef,
                     NumFeatures = _n_features,
                     X = _x,
                     P = _p
-    			}));
+                }));
         }
 
         /// <summary>
@@ -158,8 +158,8 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         /// </summary>
         public IObservable<KFModelParameters> Process(IObservable<PyObject> source)
         {
-    		return Observable.Select(source, pyObject =>
-    		{
+            return Observable.Select(source, pyObject =>
+            {
                 var likelihood_precision_coefPyObj = pyObject.GetAttr<double>("likelihood_precision_coef");
                 var prior_precision_coefPyObj = pyObject.GetAttr<double>("prior_precision_coef");
                 var n_featuresPyObj = pyObject.GetAttr<int>("n_features");
@@ -181,7 +181,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         {
             return Observable.Select(source, x =>
                 new KFModelParameters {
-    				LikelihoodPrecisionCoefficient = _likelihood_precision_coef,
+                    LikelihoodPrecisionCoefficient = _likelihood_precision_coef,
                     PriorPrecisionCoefficient = _prior_precision_coef,
                     NumFeatures = _n_features,
                     X = _x,
