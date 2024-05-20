@@ -12,42 +12,18 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
     /// </summary>
     public class ForecastResult
     {
-        private KinematicState kinematicState;
-
-        private TimeSpan timestep;
-
         /// <summary>
         /// kinematic state
         /// </summary>
-        public KinematicState KinematicState
-        {
-            get
-            {
-                return kinematicState;
-            }
-            private set
-            {
-                kinematicState = value;
-            }
-        }
+        public KinematicState KinematicState { get; private set; }
 
         /// <summary>
         /// timestep
         /// </summary>
-        public TimeSpan Timestep
-        {
-            get
-            {
-                return timestep;
-            }
-            private set
-            {
-                timestep = value;
-            }
-        }
+        public TimeSpan Timestep { get; private set; }
 
         /// <summary>
-        /// Constructor of a forecast result class
+        /// Initializes a new instance of the <see cref="ForecastResult"/> class.
         /// </summary>
         /// <param name="kinematicState"></param>
         /// <param name="timestep"></param>

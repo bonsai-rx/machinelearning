@@ -7,77 +7,49 @@ using Newtonsoft.Json;
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
     /// <summary>
-    /// State of a Kalman filter model representing kinematics of position, velocity, and acceleration
+    /// Represents an operator that converts the full state of a Kalman filter model into a KinematicState class representing position, velocity, and acceleration.
     /// </summary>
-    [Description("State of a Kalman filter model representing kinematics of position, velocity, and acceleration")]
-    [Combinator()]
+    [Combinator]
+    [Description("Converts the full state of a Kalman filter model into a KinematicState representing position, velocity, and acceleration.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class KinematicState
-    {
-        private KinematicComponent _position;
-    
-        private KinematicComponent _velocity;
-    
-        private KinematicComponent _acceleration;
-    
+    {    
         /// <summary>
-        /// position kinematic component
+        /// Gets or sets the position kinematic component.
         /// </summary>
         [XmlIgnore()]
         [JsonProperty("position")]
-        [Description("position kinematic component")]
-        public KinematicComponent Position
-        {
-            get
-            {
-                return _position;
-            }
-            private set
-            {
-                _position = value;
-            }
-        }
+        [Description("The position kinematic component")]
+        public KinematicComponent Position { get; set; }
     
         /// <summary>
-        /// velocity kinematic components
+        /// Gets or sets the velocity kinematic component.
         /// </summary>
         [XmlIgnore()]
         [JsonProperty("velocity")]
-        [Description("velocity kinematic components")]
-        public KinematicComponent Velocity
-        {
-            get
-            {
-                return _velocity;
-            }
-            private set
-            {
-                _velocity = value;
-            }
-        }
+        [Description("THe velocity kinematic component")]
+        public KinematicComponent Velocity { get; set; }
     
         /// <summary>
-        /// acceleration kinematic components
+        /// Gets or sets the acceleration kinematic component.
         /// </summary>
         [XmlIgnore()]
         [JsonProperty("acceleration")]
-        [Description("acceleration kinematic components")]
-        public KinematicComponent Acceleration
+        [Description("The acceleration kinematic component")]
+        public KinematicComponent Acceleration { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KinematicState"/> class
+        /// </summary>
+        public KinematicState ()
         {
-            get
-            {
-                return _acceleration;
-            }
-            private set
-            {
-                _acceleration = value;
-            }
         }
 
         /// <summary>
-        /// constructor for a new KinematicState object
+        /// Initializes a new instance of the <see cref="KinematicState"/> class
+        /// from the full state of a Kalman filter model.
         /// </summary>
-        public KinematicState Construct(State state)
+        public KinematicState (State state)
         {
             Position = new KinematicComponent{
                 X = new StateComponent(state.X, state.P, 0),
@@ -96,7 +68,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
                 Y = new StateComponent(state.X, state.P, 5),
                 Covariance = state.P[2,5]
             };
-            return this;
         }
 
         /// <summary>
@@ -106,7 +77,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         {
             return Observable.Select(source, state => 
             {
-                return new KinematicState().Construct(state);
+                return new KinematicState(state);
             });
         }
     }

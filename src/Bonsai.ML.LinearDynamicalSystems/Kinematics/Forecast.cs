@@ -11,35 +11,23 @@ using System.Collections.Generic;
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
     /// <summary>
-    /// Forecasts for a Kalman Filter Kinematics python class
+    /// Represents an operator for converting forecasts from a Kalman Filter Kinematics python class into a list of forecasted results.
     /// </summary>
     [Combinator]
-    [WorkflowElementCategory(ElementCategory.Transform)]
     [Description("Forecasts for a Kalman Filter Kinematics (KFK) model")]
+    [WorkflowElementCategory(ElementCategory.Transform)]
     public class Forecast
     {
-        private List<ForecastResult> forecastResults;
-
         /// <summary>
-        /// list of forecast results
+        /// Gets or sets the list of forecast results.
         /// </summary>
         [XmlIgnore()]
         [JsonProperty("forecasts")]
-        [Description("list of forecast results")]
-        public List<ForecastResult> ForecastResults
-        {
-            get
-            {
-                return forecastResults;
-            }
-            private set
-            {
-                forecastResults = value;
-            }
-        }
+        [Description("The list of forecast results.")]
+        public List<ForecastResult> ForecastResults { get; private set; }
 
         /// <summary>
-        /// Grabs the forecasted state of a Kalman Filter model from a type of PyObject
+        /// Converts a PyObject representing a Kalman Filter forecast into a Forecast class representing a list of forecasted results.
         /// </summary>
         public IObservable<Forecast> Process(IObservable<PyObject> source)
         {
@@ -58,7 +46,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
                     double[,] x = (double[,])PythonHelper.ConvertPythonObjectToCSharp(xs[i]);
                     double[,] P = (double[,])PythonHelper.ConvertPythonObjectToCSharp(Ps[i]);
                     var state = new State {X=x, P=P};
-                    var kinematicState = new KinematicState().Construct(state);
+                    var kinematicState = new KinematicState(state);
 
                     var dt = dts[i];
                     var timestep = TimeSpan.FromSeconds(dt);
