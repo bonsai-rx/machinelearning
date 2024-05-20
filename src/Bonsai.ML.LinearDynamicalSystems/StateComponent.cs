@@ -80,11 +80,11 @@ namespace Bonsai.ML.LinearDynamicalSystems
         /// </summary>
         public IObservable<StateComponent> Process()
         {
-    		return Observable.Defer(() => Observable.Return(
-    			new StateComponent {
+            return Observable.Defer(() => Observable.Return(
+                new StateComponent {
                     Mean = _mean,
                     Variance = _variance
-    			}));
+                }));
         }
 
         /// <summary>
