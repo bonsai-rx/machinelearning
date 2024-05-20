@@ -13,20 +13,20 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
     public class ForecastResult
     {
         /// <summary>
-        /// kinematic state
+        /// Gets or privately sets the kinematic state of the forecasted result.
         /// </summary>
         public KinematicState KinematicState { get; private set; }
 
         /// <summary>
-        /// timestep
+        /// Gets or privately sets the future time step of the forecasted result.
         /// </summary>
         public TimeSpan Timestep { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ForecastResult"/> class.
         /// </summary>
-        /// <param name="kinematicState"></param>
-        /// <param name="timestep"></param>
+        /// <param name="kinematicState">The kinematic state of the forecasted result.</param>
+        /// <param name="timestep">The future timestep of the forecasted result.</param>
         public ForecastResult(KinematicState kinematicState, TimeSpan timestep)
         {
             KinematicState = kinematicState;

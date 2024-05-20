@@ -14,7 +14,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
     /// Represents an operator for converting forecasts from a Kalman Filter Kinematics python class into a list of forecasted results.
     /// </summary>
     [Combinator]
-    [Description("Forecasts for a Kalman Filter Kinematics (KFK) model")]
+    [Description("Forecasts for a Kalman Filter Kinematics (KFK) model.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class Forecast
     {
