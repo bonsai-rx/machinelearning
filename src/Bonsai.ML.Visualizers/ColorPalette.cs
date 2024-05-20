@@ -1,6 +1,6 @@
 namespace Bonsai.ML.Visualizers
 {
-    internal enum ColorPalettes
+    internal enum ColorPalette
     {
         Cividis,
         Inferno,
