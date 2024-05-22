@@ -31,8 +31,6 @@ namespace Bonsai.ML.Visualizers
         /// </summary>
         public int Capacity { get; set; }
 
-        public ToolStripComboBox ComboBox => comboBox;
-
         public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
