@@ -114,5 +114,10 @@ namespace Bonsai.ML.LinearDynamicalSystems
         {
             return Process<KinematicComponent>(source);
         }
+
+        public IObservable<string> Process(IObservable<LinearRegression.KFModelParameters> source)
+        {
+            return Process<LinearRegression.KFModelParameters>(source);
+        }
     }
 }

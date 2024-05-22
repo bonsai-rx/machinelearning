@@ -1,19 +1,6 @@
-from lds.inference import OnlineKalmanFilter
+from lds.inference import OnlineKalmanFilter, TimeVaryingOnlineKalmanFilter
 import numpy as np
-
-DEFAULT_PARAMS = {
-    "pos_x0" : 0, 
-    "pos_y0" : 0,
-    "vel_x0" : 0, 
-    "vel_y0" : 0,
-    "acc_x0" : 0, 
-    "acc_y0" : 0,
-    "sigma_a" : 10000, 
-    "sigma_x" : 100,
-    "sigma_y" : 100,
-    "sqrt_diag_V0_value" : 0.001,
-    "fps" : 60
-}
+from scipy.stats import multivariate_normal
 
 class KalmanFilterKinematics(OnlineKalmanFilter):
 
@@ -31,8 +18,6 @@ class KalmanFilterKinematics(OnlineKalmanFilter):
                     fps: int
                     ) -> None:
         
-        super(OnlineKalmanFilter, self).__init__()
-
         self.pos_x0=pos_x0
         self.pos_y0=pos_y0
         self.vel_x0=vel_x0
@@ -51,12 +36,8 @@ class KalmanFilterKinematics(OnlineKalmanFilter):
         if np.isnan(self.pos_y0):
             self.pos_y0 = 0
 
-        # build KF matrices for tracking
         dt = 1.0 / self.fps
-        # Taken from the book
-        # barShalomEtAl01-estimationWithApplicationToTrackingAndNavigation.pdf
-        # section 6.3.3
-            # Eq. 6.3.3-2
+
         B = np.array([  [1,     dt,     .5*dt**2,   0,      0,      0],
                         [0,     1,      dt,         0,      0,      0],
                         [0,     0,      1,          0,      0,      0],
@@ -64,8 +45,10 @@ class KalmanFilterKinematics(OnlineKalmanFilter):
                         [0,     0,      0,          0,      1,      dt],
                         [0,     0,      0,          0,      0,      1]],
                       dtype=np.double)
+        
         Z = np.array([  [1, 0, 0, 0, 0, 0],
                         [0, 0, 0, 1, 0, 0]],
+
                       dtype=np.double)
         Qt = np.array([ [dt**4/4,   dt**3/2,    dt**2/2,    0,          0,          0],
                         [dt**3/2,   dt**2,      dt,         0,          0,          0],
@@ -91,12 +74,61 @@ class KalmanFilterKinematics(OnlineKalmanFilter):
 
         return super().update(y=np.array([x, y]))
     
-if __name__ == "__main__":
+class KalmanFilterLinearRegression(TimeVaryingOnlineKalmanFilter):
 
-    model = KalmanFilterKinematics(**DEFAULT_PARAMS)
-    x, y = 100, 100
-    model.predict()
-    model.update(x, y)
-    print(model.x)
-    print(model.x.shape)
-    print(model.P.shape)
+    def __init__(self,
+                    likelihood_precision_coef: float,
+                    prior_precision_coef: float,
+                    n_features: int,
+                    x: list[list[float]] = None,
+                    P: list[list[float]] = None,
+                    ) -> None:
+
+        self.likelihood_precision_coef = likelihood_precision_coef
+        self.prior_precision_coef = prior_precision_coef
+        self.n_features = n_features
+
+        if x is None:
+            x = np.zeros((self.n_features,1), dtype=np.double)
+        else:
+            x = np.array(x)
+        
+        if P is None:
+            P = 1.0 / self.prior_precision_coef * np.eye(len(x))
+        else:
+            P = np.array(P)
+
+        self.x = x
+        self.P = P
+
+        self.B = np.eye(N=len(self.x))
+        self.Q = np.zeros(shape=((len(self.x), len(self.x))))
+        self.R = np.array([[1.0/self.likelihood_precision_coef]])
+
+        super().__init__()
+
+    def predict(self):
+        self.x, self.P = super().predict(x = self.x, P = self.P, B = self.B, Q = self.Q)
+
+    def update(self, x, y):
+        if not isinstance(x, list):
+            x = [x]
+        self.x, self.P = super().update(y = np.array(y, dtype=np.float64), x = self.x, P = self.P, Z = np.array(x).reshape((1, -1)), R = self.R)
+        if self.x.ndim == 1:
+            self.x = self.x[:, np.newaxis]
+    
+    def pdf(self, x0 = 0, x1 = 1, xsteps = 100, y0 = 0, y1 = 1, ysteps = 100):
+
+        self.x0 = x0
+        self.x1 = x1
+        self.xsteps = xsteps
+        self.y0 = y0
+        self.y1 = y1
+        self.ysteps = ysteps
+        
+        rv = multivariate_normal(self.x.flatten(), self.P)
+        xpos = np.linspace(x0, x1, xsteps)
+        ypos = np.linspace(y0, y1, ysteps)
+        xx, yy = np.meshgrid(xpos, ypos)
+        pos = np.dstack((xx, yy))
+        self.pdf_values = rv.pdf(pos)
