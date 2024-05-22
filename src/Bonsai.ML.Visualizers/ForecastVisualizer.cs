@@ -8,6 +8,7 @@ using Bonsai.ML.LinearDynamicalSystems.Kinematics;
 using System.Drawing;
 using OxyPlot;
 using OxyPlot.Series;
+using System.Reactive;
 
 [assembly: TypeVisualizer(typeof(ForecastVisualizer), Target = typeof(Forecast))]
 
@@ -16,7 +17,7 @@ namespace Bonsai.ML.Visualizers
     /// <summary>
     /// Provides a type visualizer to display the forecast of a Kalman Filter kinematics model.
     /// </summary>
-    public class ForecastVisualizer : DialogTypeVisualizer
+    public class ForecastVisualizer : BufferedVisualizer
     {
 
         private DateTime? _startTime;
@@ -25,16 +26,6 @@ namespace Bonsai.ML.Visualizers
         private TimeSeriesOxyPlotBase Plot;
         private LineSeries lineSeries;
         private AreaSeries areaSeries;
-
-        /// <summary>
-        /// Update frequency of the plot
-        /// </summary>
-        public TimeSpan UpdateFrequency { get; set; } = TimeSpan.FromSeconds(1/30);
-
-        /// <summary>
-        /// Size of the window when loaded
-        /// </summary>
-        public Size Size { get; set; } = new Size(320, 240);
 
         /// <summary>
         /// Capacity or length of time shown along the x axis of the plot during automatic updating
@@ -73,7 +64,11 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            var time = DateTime.Now;
+        }
+
+        /// <inheritdoc/>
+        public override void Show(DateTime time, object value)
+        {
             if (!_startTime.HasValue)
             {
                 _startTime = time;
@@ -112,10 +107,14 @@ namespace Bonsai.ML.Visualizers
             }
 
             Plot.SetAxes(minTime: forecastTime.AddSeconds(-Capacity), maxTime: forecastTime);
+        }
 
-            if (lastUpdate is null || time - lastUpdate > UpdateFrequency)
+        /// <inheritdoc/>
+        protected override void ShowBuffer(IList<Timestamped<object>> values)
+        {
+            base.ShowBuffer(values);
+            if (values.Count > 0)
             {
-                lastUpdate = time;
                 Plot.UpdatePlot();
             }
         }
