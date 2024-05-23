@@ -22,24 +22,27 @@ namespace Bonsai.ML.Visualizers
         private StatusStrip statusStrip;
 
         /// <summary>
-        /// DateTime value that determines the starting time of the data values.
+        /// Gets or sets the datetime value that determines the starting time of the data values.
         /// </summary>
         public DateTime StartTime { get; set; }
 
         /// <summary>
-        /// Integer value that determines how many data points should be shown along the x axis.
+        /// Gets or sets the integer value that determines how many data points should be shown along the x axis.
         /// </summary>
         public int Capacity { get; set; }
 
+        /// <summary>
+        /// Gets the status strip control.
+        /// </summary>
         public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
-        /// Buffer the data beyond the capacity.
+        /// Gets or sets a boolean value that determines whether to buffer the data beyond the capacity.
         /// </summary>
         public bool BufferData { get; set; }
 
         /// <summary>
-        /// Constructor of the TimeSeriesOxyPlotBase class.
+        /// Initializes a new instance of the <see cref="TimeSeriesOxyPlotBase"/> class
         /// </summary>
         public TimeSeriesOxyPlotBase()
         {
