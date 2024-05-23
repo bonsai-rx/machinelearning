@@ -18,7 +18,7 @@ namespace Bonsai.ML.LinearDynamicalSystems
             return attr.As<T>();
         }
 
-        static object ConvertPythonObjectToCSharp(PyObject pyObject)
+        public static object ConvertPythonObjectToCSharp(PyObject pyObject)
         {
             if (PyInt.IsIntType(pyObject))
             {

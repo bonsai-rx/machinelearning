@@ -43,27 +43,28 @@ class KalmanFilterKinematics(OnlineKalmanFilter):
         if np.isnan(self.pos_y0):
             self.pos_y0 = 0
 
-        dt = 1.0 / self.fps
+        self.dt = 1.0 / self.fps
 
-        B = np.array([  [1,     dt,     .5*dt**2,   0,      0,      0],
-                        [0,     1,      dt,         0,      0,      0],
-                        [0,     0,      1,          0,      0,      0],
-                        [0,     0,      0,          1,      dt,     0.5*dt**2],
-                        [0,     0,      0,          0,      1,      dt],
-                        [0,     0,      0,          0,      0,      1]],
+        B = np.array([  [1,     self.dt,    0.5*self.dt**2, 0,      0,          0],
+                        [0,     1,          self.dt,        0,      0,          0],
+                        [0,     0,          1,              0,      0,          0],
+                        [0,     0,          0,              1,      self.dt,    0.5*self.dt**2],
+                        [0,     0,          0,              0,      1,          self.dt],
+                        [0,     0,          0,              0,      0,          1]],
                       dtype=np.double)
         
         Z = np.array([  [1, 0, 0, 0, 0, 0],
                         [0, 0, 0, 1, 0, 0]],
 
                       dtype=np.double)
-        self.Qe = np.array([ [dt**4/4,   dt**3/2,    dt**2/2,    0,          0,          0],
-                        [dt**3/2,   dt**2,      dt,         0,          0,          0],
-                        [dt**2/2,   dt,         1,          0,          0,          0],
-                        [0,         0,          0,          dt**4/4,    dt**3/2,    dt**2/2],
-                        [0,         0,          0,          dt**3/2,    dt**2,      dt],
-                        [0,         0,          0,          dt**2/2,    dt,         1]],
-                        dtype=np.double)
+
+        self.Qe = np.array([    [self.dt**4/4,  self.dt**3/2,   self.dt**2/2,   0,              0,              0],
+                                [self.dt**3/2,  self.dt**2,     self.dt,        0,              0,              0],
+                                [self.dt**2/2,  self.dt,        1,              0,              0,              0],
+                                [0,             0,              0,              self.dt**4/4,   self.dt**3/2,   self.dt**2/2],
+                                [0,             0,              0,              self.dt**3/2,   self.dt**2,     self.dt],
+                                [0,             0,              0,              self.dt**2/2,   self.dt,        1]],
+                                dtype=np.double)
 
         R = np.diag([self.sigma_x**2, self.sigma_y**2]).astype(np.double)
         m0 = np.array([[self.pos_x0, self.vel_x0, self.acc_x0, self.pos_y0, self.vel_y0, self.acc_y0]], dtype=np.double).T
@@ -87,6 +88,29 @@ class KalmanFilterKinematics(OnlineKalmanFilter):
 
         return super().update(y=np.array([x, y]))
     
+    def forecast(self, timesteps = 1):
+
+        assert timesteps > 0
+
+        x = self.x.copy()
+        P = self.P.copy()
+
+        forecast_x = [x]
+        forecast_P = [P]
+        forecast_dt = [0]
+
+        for i in range(timesteps):
+            self.predict()
+            self.update(x = np.nan, y = np.nan)
+            forecast_x.append(self.x)
+            forecast_P.append(self.P)
+            forecast_dt.append(self.dt * (i + 1))
+
+        self.x = x
+        self.P = P
+
+        return forecast_x, forecast_P, forecast_dt
+
     def optimize(self, vars_to_estimate, max_iter, disp):
         sqrt_diag_R = np.array([self.sigma_x, self.sigma_y])
         m0 = self.m0.squeeze().copy()
