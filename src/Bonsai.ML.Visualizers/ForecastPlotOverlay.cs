@@ -17,11 +17,11 @@ namespace Bonsai.ML.Visualizers
     /// </summary>
     public class ForecastPlotOverlay : DialogTypeVisualizer
     {
-        private TimeSeriesOxyPlotBase plot;
+        private List<StateComponentVisualizer> componentVisualizers;
 
-        private LineSeries lineSeries;
+        private List<LineSeries> lineSeriesList = new();
 
-        private AreaSeries areaSeries;
+        private List<AreaSeries> areaSeriesList = new();
 
         private KinematicStateVisualizer visualizer;
 
@@ -29,41 +29,52 @@ namespace Bonsai.ML.Visualizers
         public override void Show(object value)
         {
             var time = DateTime.Now;
-            plot.ResetLineSeries(lineSeries);
-            plot.ResetAreaSeries(areaSeries);
-
             Forecast forecast = (Forecast)value;
-            List<ForecastResult> forecastResults = forecast.ForecastResults;
-            DateTime forecastTime = time;
 
-            for (int i = 0; i < forecastResults.Count; i++)
+            for (int i = 0; i < componentVisualizers.Count; i++)
             {
-                var forecastResult = forecastResults[i];
-                var kinematicState = forecastResult.KinematicState;
+                var plot = componentVisualizers[i].Plot;
+                var lineSeries = lineSeriesList[i];
+                var areaSeries = areaSeriesList[i];
 
-                forecastTime = time + forecastResult.Timestep;
+                plot.ResetLineSeries(lineSeries);
+                plot.ResetAreaSeries(areaSeries);
 
-                KinematicComponent kinematicComponent = (KinematicComponent)visualizer.kinematicComponentProperty.GetValue(kinematicState);
-                StateComponent stateComponent = (StateComponent)visualizer.stateComponentProperty.GetValue(kinematicComponent);
+                DateTime forecastTime = time;
 
-                double mean = stateComponent.Mean;
-                double variance = stateComponent.Variance;
+                for (int j = 0; j < forecast.ForecastResults.Count; j++)
+                {
+                    var forecastResult = forecast.ForecastResults[j];
+                    var kinematicState = forecastResult.KinematicState;
+                    forecastTime = time + forecastResult.Timestep;
 
-                plot.AddToLineSeries(
-                    lineSeries: lineSeries,
-                    time: forecastTime,
-                    value: mean
-                );
+                    StateComponent[] stateComponents = new StateComponent[] {kinematicState.Position.X, kinematicState.Position.Y, kinematicState.Velocity.X, kinematicState.Velocity.Y, kinematicState.Acceleration.X, kinematicState.Acceleration.Y};
 
-                plot.AddToAreaSeries(
-                    areaSeries: areaSeries,
-                    time: forecastTime,
-                    value1: mean + variance,
-                    value2: mean - variance
-                );
+                    AddStateComponentDataToSeries(plot, stateComponents[i], lineSeries, areaSeries, forecastTime);                    
+
+                }
+
+                plot.SetAxes(minTime: forecastTime.AddSeconds(-plot.Capacity), maxTime: forecastTime);
             }
+        }
 
-            plot.SetAxes(minTime: forecastTime.AddSeconds(-plot.Capacity), maxTime: forecastTime);
+        private void AddStateComponentDataToSeries(TimeSeriesOxyPlotBase plot, StateComponent stateComponent, LineSeries lineSeries, AreaSeries areaSeries, DateTime time)
+        {
+            double mean = stateComponent.Mean;
+            double variance = stateComponent.Variance;
+
+            plot.AddToLineSeries(
+                lineSeries: lineSeries,
+                time: time,
+                value: mean
+            );
+
+            plot.AddToAreaSeries(
+                areaSeries: areaSeries,
+                time: time,
+                value1: mean + variance,
+                value2: mean - variance
+            );
         }
         
         /// <inheritdoc/>
@@ -71,21 +82,24 @@ namespace Bonsai.ML.Visualizers
         {
             var service = provider.GetService(typeof(MashupVisualizer));
             visualizer = (KinematicStateVisualizer)service;
-            plot = visualizer.Plot;
+            componentVisualizers = visualizer.componentVisualizers;
 
-            lineSeries = plot.AddNewLineSeries("Forecast Mean", color: OxyColors.Yellow);
-            areaSeries = plot.AddNewAreaSeries("Forecast Variance", color: OxyColors.Yellow, opacity: 50);
+            for (int i = 0; i < componentVisualizers.Count; i++)
+            {
+                var lineSeries = componentVisualizers[i].Plot.AddNewLineSeries($"Forecast {visualizer.Labels[i]} Mean", color: OxyColors.Yellow);
+                var areaSeries = componentVisualizers[i].Plot.AddNewAreaSeries($"Forecast {visualizer.Labels[i]} Variance", color: OxyColors.Yellow, opacity: 50);
 
-            plot.ResetLineSeries(lineSeries);
-            plot.ResetAreaSeries(areaSeries);
+                componentVisualizers[i].Plot.ResetLineSeries(lineSeries);
+                componentVisualizers[i].Plot.ResetAreaSeries(areaSeries);
+
+                lineSeriesList.Add(lineSeries);
+                areaSeriesList.Add(areaSeries);
+            }
         }
 
         /// <inheritdoc/>
         public override void Unload()
         {
-            plot.ResetLineSeries(lineSeries);
-            plot.ResetAreaSeries(areaSeries);
         }
-
     }
 }
