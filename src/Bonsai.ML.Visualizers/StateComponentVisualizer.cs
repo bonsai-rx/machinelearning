@@ -5,9 +5,10 @@ using Bonsai;
 using Bonsai.Design;
 using Bonsai.ML.Visualizers;
 using Bonsai.ML.LinearDynamicalSystems;
-using System.Drawing;
+using OxyPlot;
 using System.Reactive;
 using OxyPlot.Series;
+using System.Linq;
 
 [assembly: TypeVisualizer(typeof(StateComponentVisualizer), Target = typeof(StateComponent))]
 
@@ -19,23 +20,40 @@ namespace Bonsai.ML.Visualizers
     public class StateComponentVisualizer : BufferedVisualizer
     {
 
-        private DateTime? _startTime;
+        internal DateTime? startTime { get; set; }
 
-        private TimeSeriesOxyPlotBase Plot;
+        internal TimeSeriesOxyPlotBase Plot;
 
-        private LineSeries lineSeries;
+        internal LineSeries lineSeries { get; private set; }
 
-        private AreaSeries areaSeries;
+        internal AreaSeries areaSeries { get; private set; }
+
+        private bool resetAxes = true;
 
         /// <summary>
-        /// Capacity or length of time shown along the x axis of the plot during automatic updating
+        /// Gets or sets the amount of time in seconds that should be shown along the x axis.
         /// </summary>
         public int Capacity { get; set; } = 10;
 
         /// <summary>
-        /// Buffer the data beyond the capacity.
+        /// Gets or sets a boolean value that determines whether to buffer the data beyond the capacity.
         /// </summary>
         public bool BufferData { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the optional label to prepend to the line and area series names.
+        /// </summary>
+        public string Label { get; set; }
+
+        /// <summary>
+        /// Gets or sets the color to use for the line series.
+        /// </summary>
+        public OxyColor? LineSeriesColor { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the color to use for the area series.
+        /// </summary>
+        public OxyColor? AreaSeriesColor { get; set; } = null;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -48,8 +66,11 @@ namespace Bonsai.ML.Visualizers
                 BufferData = BufferData
             };
 
-            lineSeries = Plot.AddNewLineSeries("Mean");
-            areaSeries = Plot.AddNewAreaSeries("Variance");
+            var lineSeriesName = string.IsNullOrEmpty(Label) ? "Mean" : $"{Label} Mean";
+            lineSeries = Plot.AddNewLineSeries(lineSeriesName, color: LineSeriesColor);
+
+            var areaSeriesName = string.IsNullOrEmpty(Label) ? "Variance" : $"{Label} Variance";
+            areaSeries = Plot.AddNewAreaSeries(areaSeriesName, color: AreaSeriesColor);
 
             Plot.ResetLineSeries(lineSeries);
             Plot.ResetAreaSeries(areaSeries);
@@ -70,10 +91,10 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         protected override void Show(DateTime time, object value)
         {
-            if (!_startTime.HasValue)
+            if (!startTime.HasValue)
             {
-                _startTime = time;
-                Plot.StartTime = _startTime.Value;
+                startTime = time;
+                Plot.StartTime = startTime.Value;
                 Plot.ResetAxes();
             }
 
@@ -93,9 +114,6 @@ namespace Bonsai.ML.Visualizers
                 value1: mean + variance,
                 value2: mean - variance
             );
-
-            Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
-
         }
 
         /// <inheritdoc/>
@@ -104,14 +122,25 @@ namespace Bonsai.ML.Visualizers
             base.ShowBuffer(values);
             if (values.Count > 0)
             {
+                if (resetAxes)
+                {
+                    var time = values.LastOrDefault().Timestamp.DateTime;
+                    Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
+                }             
                 Plot.UpdatePlot();
             }
+        }
+
+        internal void ShowDataBuffer(IList<Timestamped<object>> values, bool resetAxes = true)
+        {
+            this.resetAxes = resetAxes;
+            ShowBuffer(values);
         }
 
         /// <inheritdoc/>
         public override void Unload()
         {
-            _startTime = null;
+            startTime = null;
             if (!Plot.IsDisposed)
             {
                 Plot.Dispose();
