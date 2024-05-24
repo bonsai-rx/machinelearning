@@ -5,9 +5,7 @@ using Bonsai;
 using Bonsai.Design;
 using Bonsai.ML.Visualizers;
 using Bonsai.ML.LinearDynamicalSystems.Kinematics;
-using System.Drawing;
 using OxyPlot;
-using OxyPlot.Series;
 using System.Reactive;
 using System.Linq;
 using System.Reactive.Linq;
@@ -91,6 +89,7 @@ namespace Bonsai.ML.Visualizers
             var latestForecast = values.Last();
             var timestamp = latestForecast.Timestamp;
             var forecast = (Forecast)latestForecast.Value;
+            var futureTime = timestamp;
 
             List<Timestamped<object>> positionX = new();
             List<Timestamped<object>> positionY = new();
@@ -101,7 +100,7 @@ namespace Bonsai.ML.Visualizers
 
             foreach (var forecastResult in forecast.ForecastResults)
             {
-                var futureTime = timestamp + forecastResult.Timestep;
+                futureTime = timestamp + forecastResult.Timestep;
                 positionX.Add(new Timestamped<object>(forecastResult.KinematicState.Position.X, futureTime));
                 positionY.Add(new Timestamped<object>(forecastResult.KinematicState.Position.Y, futureTime));
                 velocityX.Add(new Timestamped<object>(forecastResult.KinematicState.Velocity.X, futureTime));
@@ -119,6 +118,7 @@ namespace Bonsai.ML.Visualizers
                 item.Visualizer.Plot.ResetLineSeries(item.Visualizer.lineSeries);
                 item.Visualizer.Plot.ResetAreaSeries(item.Visualizer.areaSeries);
                 item.Visualizer.ShowDataBuffer(item.Data);
+                item.Visualizer.Plot.SetAxes(minTime: timestamp.DateTime, maxTime: futureTime.DateTime);
             }
         }
 
