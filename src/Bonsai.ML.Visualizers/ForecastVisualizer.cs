@@ -9,6 +9,8 @@ using System.Drawing;
 using OxyPlot;
 using OxyPlot.Series;
 using System.Reactive;
+using System.Linq;
+using System.Reactive.Linq;
 
 [assembly: TypeVisualizer(typeof(ForecastVisualizer), Target = typeof(Forecast))]
 
@@ -20,44 +22,60 @@ namespace Bonsai.ML.Visualizers
     public class ForecastVisualizer : BufferedVisualizer
     {
 
-        private DateTime? _startTime;
-        private DateTime? lastUpdate = null;
+        internal int RowCount { get; set; } = 3;
+        internal int ColumnCount { get; set; } = 2;
+        internal string[] Labels = new string[] { 
+            "Forecast Position X", 
+            "Forecast Position Y", 
+            "Forecast Velocity X", 
+            "Forecast Velocity Y", 
+            "Forecast Acceleration X", 
+            "Forecast Acceleration Y" 
+        };
 
-        private TimeSeriesOxyPlotBase Plot;
-        private LineSeries lineSeries;
-        private AreaSeries areaSeries;
-
-        /// <summary>
-        /// Capacity or length of time shown along the x axis of the plot during automatic updating
-        /// </summary>
-        public int Capacity { get; set; } = 10;
-
-        /// <summary>
-        /// Buffer the data beyond the capacity
-        /// </summary>
-        public bool BufferData { get; set; } = true;
+        internal List<StateComponentVisualizer> componentVisualizers = new();
+        private TableLayoutPanel container;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Plot = new TimeSeriesOxyPlotBase()
+            container = new TableLayoutPanel
             {
-                Size = Size,
-                Capacity = Capacity,
-                Dock = DockStyle.Fill,
-                StartTime = DateTime.Now,
-                BufferData = BufferData,
+                ColumnCount = ColumnCount,
+                RowCount = RowCount,
+                Dock = DockStyle.Fill
             };
 
-            lineSeries = Plot.AddNewLineSeries("Forecast Mean", color: OxyColors.Yellow);
-            areaSeries = Plot.AddNewAreaSeries("Forecast Variance", color: OxyColors.Yellow);
+            for (int i = 0; i < container.RowCount; i++)
+            {
+                container.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / RowCount));
+            }
 
-            Plot.ResetAxes();
+            for (int i = 0; i < container.ColumnCount; i++)
+            {
+                container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / ColumnCount));
+            }
+
+            for (int i = 0 ; i < RowCount; i++)
+            {
+                for (int j = 0; j < ColumnCount; j++)
+                {
+                    var StateComponentVisualizer = new StateComponentVisualizer() {
+                        Label = Labels[i * ColumnCount + j],
+                        LineSeriesColor = OxyColors.Yellow,
+                        AreaSeriesColor = OxyColors.Yellow
+                    };
+                    StateComponentVisualizer.Load(provider);
+                    container.Controls.Add(StateComponentVisualizer.Plot, j, i);
+                    componentVisualizers.Add(StateComponentVisualizer);
+                }
+            }
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
+
             if (visualizerService != null)
             {
-                visualizerService.AddControl(Plot);
+                visualizerService.AddControl(container);
             }
         }
 
@@ -67,66 +85,49 @@ namespace Bonsai.ML.Visualizers
         }
 
         /// <inheritdoc/>
-        public override void Show(DateTime time, object value)
-        {
-            if (!_startTime.HasValue)
-            {
-                _startTime = time;
-                Plot.StartTime = _startTime.Value;
-                Plot.ResetAxes();
-            }
-
-            Plot.ResetLineSeries(lineSeries);
-            Plot.ResetAreaSeries(areaSeries);
-
-            Forecast forecast = (Forecast)value;
-            List<ForecastResult> forecastResults = forecast.ForecastResults;
-            DateTime forecastTime = time;
-
-            for (int i = 0; i < forecastResults.Count; i++)
-            {
-                var forecastResult = forecastResults[i];
-                var kinematicState = forecastResult.KinematicState;
-
-                forecastTime = time + forecastResult.Timestep;
-                double mean = kinematicState.Position.X.Mean;
-                double variance = kinematicState.Position.X.Variance;
-
-                Plot.AddToLineSeries(
-                    lineSeries: lineSeries,
-                    time: forecastTime,
-                    value: mean
-                );
-
-                Plot.AddToAreaSeries(
-                    areaSeries: areaSeries,
-                    time: forecastTime,
-                    value1: mean + variance,
-                    value2: mean - variance
-                );
-            }
-
-            Plot.SetAxes(minTime: forecastTime.AddSeconds(-Capacity), maxTime: forecastTime);
-        }
-
-        /// <inheritdoc/>
         protected override void ShowBuffer(IList<Timestamped<object>> values)
         {
-            base.ShowBuffer(values);
-            if (values.Count > 0)
+            if (values.Count == 0) return;
+            var latestForecast = values.Last();
+            var timestamp = latestForecast.Timestamp;
+            var forecast = (Forecast)latestForecast.Value;
+
+            List<Timestamped<object>> positionX = new();
+            List<Timestamped<object>> positionY = new();
+            List<Timestamped<object>> velocityX = new();
+            List<Timestamped<object>> velocityY = new();
+            List<Timestamped<object>> accelerationX = new();
+            List<Timestamped<object>> accelerationY = new();
+
+            foreach (var forecastResult in forecast.ForecastResults)
             {
-                Plot.UpdatePlot();
+                var futureTime = timestamp + forecastResult.Timestep;
+                positionX.Add(new Timestamped<object>(forecastResult.KinematicState.Position.X, futureTime));
+                positionY.Add(new Timestamped<object>(forecastResult.KinematicState.Position.Y, futureTime));
+                velocityX.Add(new Timestamped<object>(forecastResult.KinematicState.Velocity.X, futureTime));
+                velocityY.Add(new Timestamped<object>(forecastResult.KinematicState.Velocity.Y, futureTime));
+                accelerationX.Add(new Timestamped<object>(forecastResult.KinematicState.Acceleration.X, futureTime));
+                accelerationY.Add(new Timestamped<object>(forecastResult.KinematicState.Acceleration.Y, futureTime));
+            }
+
+            var dataList = new List<List<Timestamped<object>>>() { positionX, positionY, velocityX, velocityY, accelerationX, accelerationY };
+
+            var zippedData = dataList.Zip(componentVisualizers, (data, visualizer) => new { Data = data, Visualizer = visualizer });
+
+            foreach (var item in zippedData)
+            {
+                item.Visualizer.Plot.ResetLineSeries(item.Visualizer.lineSeries);
+                item.Visualizer.Plot.ResetAreaSeries(item.Visualizer.areaSeries);
+                item.Visualizer.ShowDataBuffer(item.Data);
             }
         }
 
         /// <inheritdoc/>
         public override void Unload()
         {
-            _startTime = null;
-            if (!Plot.IsDisposed)
-            {
-                Plot.Dispose();
-            }
+            foreach (var componentVisualizer in componentVisualizers) componentVisualizer.Unload();
+            if (componentVisualizers.Count > 0) componentVisualizers.Clear();
+            if (!container.IsDisposed) container.Dispose();
         }
     }
 }
