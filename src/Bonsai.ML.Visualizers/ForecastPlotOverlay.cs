@@ -17,8 +17,6 @@ namespace Bonsai.ML.Visualizers
     /// </summary>
     public class ForecastPlotOverlay : DialogTypeVisualizer
     {
-        private List<StateComponentVisualizer> componentVisualizers;
-
         private List<LineSeries> lineSeriesList = new();
 
         private List<AreaSeries> areaSeriesList = new();
@@ -30,6 +28,7 @@ namespace Bonsai.ML.Visualizers
         {
             var time = DateTime.Now;
             Forecast forecast = (Forecast)value;
+            var componentVisualizers = visualizer.componentVisualizers;
 
             for (int i = 0; i < componentVisualizers.Count; i++)
             {
@@ -80,9 +79,21 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
+            if (lineSeriesList.Count > 0)
+            {
+                lineSeriesList.Clear();
+                lineSeriesList = new();
+            }
+
+            if (areaSeriesList.Count > 0)
+            {
+                areaSeriesList.Clear();
+                areaSeriesList = new();
+            }
+
             var service = provider.GetService(typeof(MashupVisualizer));
             visualizer = (KinematicStateVisualizer)service;
-            componentVisualizers = visualizer.componentVisualizers;
+            var componentVisualizers = visualizer.componentVisualizers;
 
             for (int i = 0; i < componentVisualizers.Count; i++)
             {
