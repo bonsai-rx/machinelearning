@@ -1,17 +1,12 @@
 using Bonsai.Design;
 using Bonsai;
-using Bonsai.ML.LinearDynamicalSystems;
 using Bonsai.ML.LinearDynamicalSystems.Kinematics;
 using Bonsai.ML.Visualizers;
 using System.Collections.Generic;
 using System;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 using System.Reactive.Linq;
-using OxyPlot.Series;
 using System.Linq;
-using System.Drawing;
-using System.Reflection;
 using System.Reactive;
 
 [assembly: TypeVisualizer(typeof(KinematicStateVisualizer), Target = typeof(KinematicState))]
@@ -26,7 +21,7 @@ namespace Bonsai.ML.Visualizers
     {
         internal int RowCount { get; set; } = 3;
         internal int ColumnCount { get; set; } = 2;
-        internal List<StateComponentVisualizer> componentVisualizers = new();
+        internal List<StateComponentVisualizer> componentVisualizers { get; private set; } = new();
         private TableLayoutPanel container;
         private int updateFrequency = 1000 / 50;
         private bool resetAxes = true;
@@ -169,8 +164,15 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         public override void Unload()
         {
-            foreach (var componentVisualizer in componentVisualizers) componentVisualizer.Unload();
-            if (componentVisualizers.Count > 0) componentVisualizers.Clear();
+            foreach (var componentVisualizer in componentVisualizers) 
+            {
+                componentVisualizer.Unload();
+            }
+            if (componentVisualizers.Count > 0) 
+            {
+                componentVisualizers.Clear();
+                componentVisualizers = new();
+            }
             if (!container.IsDisposed) container.Dispose();
         }
     }
