@@ -12,6 +12,7 @@ using OxyPlot.Series;
 using System.Linq;
 using System.Drawing;
 using System.Reflection;
+using System.Reactive;
 
 [assembly: TypeVisualizer(typeof(KinematicStateVisualizer), Target = typeof(KinematicState))]
 
@@ -23,91 +24,61 @@ namespace Bonsai.ML.Visualizers
     /// </summary>
     public class KinematicStateVisualizer : MashupVisualizer
     {
+        internal int RowCount { get; set; } = 3;
+        internal int ColumnCount { get; set; } = 2;
+        internal List<StateComponentVisualizer> componentVisualizers = new();
+        private TableLayoutPanel container;
+        private int updateFrequency = 1000 / 50;
+        private bool resetAxes = true;
 
-        private int selectedStateIndex = 0;
-        private int selectedKinematicIndex = 0;
-        private DateTime? _startTime;
-        private TimeSpan updateFrequency = TimeSpan.FromSeconds(1/30);
-        private LineSeries lineSeries;
-        private AreaSeries areaSeries;
-
-        /// <summary>
-        /// The selected state component property of the Kinematic State object being visualized.
-        /// </summary>
-        [XmlIgnore()]
-        public PropertyInfo stateComponentProperty { get; private set; }
-
-        /// <summary>
-        /// The selected kinematic component property of the Kinematic State object being visualized.
-        /// </summary>
-        [XmlIgnore()]
-        public PropertyInfo kinematicComponentProperty { get; private set; }
-
-        /// <summary>
-        /// The underlying plot used for visualization.
-        /// </summary>
-        // [XmlIgnore()]
-        internal TimeSeriesOxyPlotBase Plot { get; private set; }
-
-        /// <summary>
-        /// The selected index of the state component to be visualized
-        /// </summary>
-        public int SelectedStateIndex { get => selectedStateIndex; set => selectedStateIndex = value; }
-
-        /// <summary>
-        /// The selected index of the kinematic component to be visualized
-        /// </summary>
-        public int SelectedKinematicIndex { get => selectedKinematicIndex; set => selectedKinematicIndex = value; }
-
-        /// <summary>
-        /// Size of the window when loaded
-        /// </summary>
-        public Size Size { get; set; } = new Size(320, 240);
-
-        /// <summary>
-        /// Capacity or length of time shown along the x axis of the plot during automatic updating
-        /// </summary>
-        public int Capacity { get; set; } = 10;
-
-        /// <summary>
-        /// Buffer the data beyond the capacity.
-        /// </summary>
-        public bool BufferData { get; set; } = true;
+        internal string[] Labels = new string[] { 
+            "Position X", 
+            "Position Y", 
+            "Velocity X", 
+            "Velocity Y", 
+            "Acceleration X", 
+            "Acceleration Y" 
+        };
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Plot = new TimeSeriesOxyPlotBase()
+            container = new TableLayoutPanel
             {
-                Dock = DockStyle.Fill,
-                StartTime = DateTime.Now,
-                Capacity = Capacity,
-                Size = Size,
-                BufferData = BufferData
+                ColumnCount = ColumnCount,
+                RowCount = RowCount,
+                Dock = DockStyle.Fill
             };
 
-            lineSeries = Plot.AddNewLineSeries("Mean");
-            areaSeries = Plot.AddNewAreaSeries("Variance");
+            for (int i = 0; i < container.RowCount; i++)
+            {
+                container.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / RowCount));
+            }
 
-            Plot.ResetLineSeries(lineSeries);
-            Plot.ResetAreaSeries(areaSeries);
-            Plot.ResetAxes();
+            for (int i = 0; i < container.ColumnCount; i++)
+            {
+                container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / ColumnCount));
+            }
 
-            List<string> stateComponents = KinematicsHelper.GetStateComponents();
-            List<string> kinematicComponents = KinematicsHelper.GetKinematicComponents();
-
-            Plot.AddComboBoxWithLabel("State component:", stateComponents, selectedStateIndex, StateComponentChanged);
-            Plot.AddComboBoxWithLabel("Kinematic component:", kinematicComponents, selectedKinematicIndex, KinematicComponentChanged);
-
-            stateComponentProperty = typeof(KinematicComponent).GetProperty(stateComponents[selectedStateIndex]);
-            kinematicComponentProperty = typeof(KinematicState).GetProperty(kinematicComponents[selectedKinematicIndex]);
+            for (int i = 0 ; i < RowCount; i++)
+            {
+                for (int j = 0; j < ColumnCount; j++)
+                {
+                    var StateComponentVisualizer = new StateComponentVisualizer() {
+                        Label = Labels[i * ColumnCount + j]
+                    };
+                    StateComponentVisualizer.Load(provider);
+                    container.Controls.Add(StateComponentVisualizer.Plot, j, i);
+                    componentVisualizers.Add(StateComponentVisualizer);
+                }
+            }
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
+
             if (visualizerService != null)
             {
-                visualizerService.AddControl(Plot);
+                visualizerService.AddControl(container);
             }
-            _startTime = null;
 
             base.Load(provider);
         }
@@ -116,88 +87,91 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            var time = DateTime.Now;
-            if (!_startTime.HasValue)
+        }
+
+        /// <inheritdoc/>
+        public void ShowBuffer(IList<Timestamped<object>> values)
+        {
+            List<Timestamped<object>> positionX = new();
+            List<Timestamped<object>> positionY = new();
+            List<Timestamped<object>> velocityX = new();
+            List<Timestamped<object>> velocityY = new();
+            List<Timestamped<object>> accelerationX = new();
+            List<Timestamped<object>> accelerationY = new();
+
+            foreach (var value in values)
             {
-                _startTime = time;
-                Plot.StartTime = _startTime.Value;
-                Plot.ResetAxes();
+                positionX.Add(new Timestamped<object>(((KinematicState)value.Value).Position.X, value.Timestamp));
+                positionY.Add(new Timestamped<object>(((KinematicState)value.Value).Position.Y, value.Timestamp));
+                velocityX.Add(new Timestamped<object>(((KinematicState)value.Value).Velocity.X, value.Timestamp));
+                velocityY.Add(new Timestamped<object>(((KinematicState)value.Value).Velocity.Y, value.Timestamp));
+                accelerationX.Add(new Timestamped<object>(((KinematicState)value.Value).Acceleration.X, value.Timestamp));
+                accelerationY.Add(new Timestamped<object>(((KinematicState)value.Value).Acceleration.Y, value.Timestamp));
             }
 
-            KinematicState kinematicState = (KinematicState)value;
-            KinematicComponent kinematicComponent = (KinematicComponent)kinematicComponentProperty.GetValue(kinematicState);
-            StateComponent stateComponent = (StateComponent)stateComponentProperty.GetValue(kinematicComponent);
-
-            double mean = stateComponent.Mean;
-            double variance = stateComponent.Variance;
-
-            Plot.AddToLineSeries(
-                lineSeries: lineSeries,
-                time: time,
-                value: mean
-            );
-
-            Plot.AddToAreaSeries(
-                areaSeries: areaSeries,
-                time: time,
-                value1: mean + variance,
-                value2: mean - variance
-            );
-
-            if (MashupSources.Count == 0) Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
-
+            componentVisualizers[0].ShowDataBuffer(positionX, resetAxes);
+            componentVisualizers[1].ShowDataBuffer(positionY, resetAxes);
+            componentVisualizers[2].ShowDataBuffer(velocityX, resetAxes);
+            componentVisualizers[3].ShowDataBuffer(velocityY, resetAxes);
+            componentVisualizers[4].ShowDataBuffer(accelerationX, resetAxes);
+            componentVisualizers[5].ShowDataBuffer(accelerationY, resetAxes);
         }
 
         /// <inheritdoc/>
         public override IObservable<object> Visualize(IObservable<IObservable<object>> source, IServiceProvider provider)
         {
+            if (provider.GetService(typeof(IDialogTypeVisualizerService)) is not Control visualizerControl)
+            {
+                return source;
+            }
+
+            var visualizerSource = VisualizeSource(source, visualizerControl);
+
+            if (MashupSources.Count == 0)
+            {
+                resetAxes = true;
+                return visualizerSource;
+            }
+
+            resetAxes = false;
+
             var mashupSourceStreams = MashupSources.Select(mashupSource =>
                 mashupSource.Visualizer.Visualize(mashupSource.Source.Output, provider)
                     .Do(value => mashupSource.Visualizer.Show(value)));
 
             var mergedMashupSources = Observable.Merge(mashupSourceStreams);
 
-            var processedSource = base.Visualize(source, provider);
+            return Observable.Merge(mergedMashupSources, visualizerSource);
+        }
 
-            return Observable.Merge(mergedMashupSources, processedSource)
-                .Sample(updateFrequency)
-                .Do(_ => Plot.UpdatePlot());
+        private IObservable<object> VisualizeSource(IObservable<IObservable<object>> source, Control visualizerControl)
+        {
+            return Observable.Using(
+                () => new Timer(),
+                timer =>
+                {
+                    timer.Interval = updateFrequency;
+                    var timerTick = Observable.FromEventPattern<EventHandler, EventArgs>(
+                        handler => timer.Tick += handler,
+                        handler => timer.Tick -= handler);
+                    timer.Start();
+                    var mergedSource = source.SelectMany(xs => xs.Do(
+                        _ => { },
+                        () => visualizerControl.BeginInvoke((Action)SequenceCompleted)));
+                    return mergedSource
+                        .Timestamp(HighResolutionScheduler.Default)
+                        .Buffer(() => timerTick)
+                        .Do(ShowBuffer)
+                        .Finally(timer.Stop);
+                });
         }
 
         /// <inheritdoc/>
         public override void Unload()
         {
-            _startTime = null;
-            if (!Plot.IsDisposed)
-            {
-                Plot.Dispose();
-            }
-        }
-
-        private void StateComponentChanged(object sender, EventArgs e)
-        {
-            ToolStripComboBox comboBox = sender as ToolStripComboBox;
-            selectedStateIndex = comboBox.SelectedIndex;
-            var selectedName = comboBox.SelectedItem.ToString();
-            stateComponentProperty = typeof(KinematicComponent).GetProperty(selectedName);
-            _startTime = null;
-
-            Plot.ResetLineSeries(lineSeries);
-            Plot.ResetAreaSeries(areaSeries);
-            Plot.ResetAxes();
-        }
-
-        private void KinematicComponentChanged(object sender, EventArgs e)
-        {
-            ToolStripComboBox comboBox = sender as ToolStripComboBox;
-            selectedKinematicIndex = comboBox.SelectedIndex;
-            var selectedName = comboBox.SelectedItem.ToString();
-            kinematicComponentProperty = typeof(KinematicState).GetProperty(selectedName);
-            _startTime = null;
-
-            Plot.ResetLineSeries(lineSeries);
-            Plot.ResetAreaSeries(areaSeries);
-            Plot.ResetAxes();
+            foreach (var componentVisualizer in componentVisualizers) componentVisualizer.Unload();
+            if (componentVisualizers.Count > 0) componentVisualizers.Clear();
+            if (!container.IsDisposed) container.Dispose();
         }
     }
 }
