@@ -21,7 +21,7 @@ jobs:
         uses: microsoft/setup-msbuild@v2
         
       - name: Restore NuGet Packages
-        run: msbuild -t:restore src/Bonsai.ML.sln
+        run: msbuild -t:restore Bonsai.ML.sln
 
       - name: Build Solution
-        run: msbuild src/Bonsai.ML.sln /p:Configuration=Release
+        run: msbuild Bonsai.ML.sln /p:Configuration=Release
