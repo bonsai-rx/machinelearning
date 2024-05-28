@@ -11,7 +11,7 @@ using Bonsai.ML.LinearDynamicalSystems;
 namespace Bonsai.ML.Examples.Tests.ReceptiveFieldSimpleCell;
 
 [TestClass]
-public class ComparingBonsaiPythonOutput
+public class ReceptiveFieldSimpleCellTest
 {
     private string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReceptiveFieldSimpleCell");
     private int nSamples = 10000;
