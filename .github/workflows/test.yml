@@ -23,11 +23,8 @@ jobs:
         with:
           python-version: 3.10
 
-      - name: Restore Bonsai.ML Dependencies
-        run: dotnet restore Bonsai.ML.sln
-
-      - name: Build Bonsai.ML
-        run: dotnet build Bonsai.ML.sln
+      - name: Build Solution
+        uses: ./.github/workflows/build.yml
 
       - name: Run Tests
         run: dotnet test Bonsai.ML.sln
