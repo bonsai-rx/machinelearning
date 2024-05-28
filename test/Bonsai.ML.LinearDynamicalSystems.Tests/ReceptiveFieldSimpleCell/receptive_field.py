@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import lds.inference
 import argparse
+import os
 
 # Parse arguments
 parser = argparse.ArgumentParser()
@@ -17,9 +18,11 @@ prior_precision_coef = 2.0
 likelihood_precision_coef = 0.1
 fig_update_delay = 0.1
 
+data_dir = os.path.join(args.base_dir, "data")
+
 # Load data
-images = pd.read_csv(f"{args.base_dir}/ReceptiveFieldSimpleCell/images.csv", header=0).to_numpy(dtype=np.float64)
-responses = pd.read_csv(f"{args.base_dir}/ReceptiveFieldSimpleCell/responses.csv", header=0).to_numpy(dtype=np.float64).flatten()
+images = pd.read_csv(os.path.join(data_dir, "images.csv"), header=0).to_numpy(dtype=np.float64)
+responses = pd.read_csv(os.path.join(data_dir, "responses.csv"), header=0).to_numpy(dtype=np.float64).flatten()
 Phi = np.column_stack((images, np.ones(len(images), dtype=np.float64)))
 
 n_pixels = images.shape[1]
