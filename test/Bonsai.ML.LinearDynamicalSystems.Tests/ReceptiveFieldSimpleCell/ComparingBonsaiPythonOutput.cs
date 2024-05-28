@@ -125,7 +125,7 @@ public class ComparingBonsaiPythonOutput
         return state;
     }
 
-    private bool CompareJSONData(string basePath, float tolerance = 1e-9)
+    private bool CompareJSONData(string basePath, double tolerance = 1e-9)
     {
         var originalFileName = Path.Combine(basePath, "original-receptivefield.json");
         var bonsaiFileName = Path.Combine(basePath, "bonsai-receptivefield.json");
