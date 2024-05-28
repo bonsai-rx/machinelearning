@@ -32,7 +32,7 @@
               <Property Name="FileName" DisplayName="ImagesCsv" Category="PathToDataset" />
             </Expression>
             <Expression xsi:type="io:CsvReader">
-              <io:FileName>ReceptiveFieldSimpleCell/images.csv</io:FileName>
+              <io:FileName>data/images.csv</io:FileName>
               <io:ListSeparator />
               <io:ScanPattern />
               <io:SkipRows>1</io:SkipRows>
@@ -41,7 +41,7 @@
               <Property Name="FileName" DisplayName="ResponsesCsv" Category="PathToDataset" />
             </Expression>
             <Expression xsi:type="io:CsvReader">
-              <io:FileName>ReceptiveFieldSimpleCell/responses.csv</io:FileName>
+              <io:FileName>data/responses.csv</io:FileName>
               <io:ListSeparator />
               <io:ScanPattern />
               <io:SkipRows>2</io:SkipRows>
@@ -73,8 +73,8 @@
         <Combinator xsi:type="py:GetRuntime" />
       </Expression>
       <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:LinearRegression.CreateKFModel.bonsai">
-        <LikelihoodPrecisionCoef>0.1</LikelihoodPrecisionCoef>
-        <PriorPrecisionCoef>2</PriorPrecisionCoef>
+        <LikelihoodPrecisionCoefficient>0.1</LikelihoodPrecisionCoefficient>
+        <PriorPrecisionCoefficient>2</PriorPrecisionCoefficient>
         <NumFeatures>145</NumFeatures>
         <Name>model</Name>
       </Expression>
