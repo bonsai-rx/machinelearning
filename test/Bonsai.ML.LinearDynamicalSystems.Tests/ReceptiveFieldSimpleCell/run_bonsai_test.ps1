@@ -5,8 +5,8 @@ param(
     [String]$N_SAMPLES
 )
 
-dotnet new bonsaienv -o $BASE_PATH --allow-scripts Yes
+dotnet new bonsaienv -o $BASE_PATH --allow-scripts Yes --force
 Copy-Item "$BASE_PATH\\Bonsai.config" "$BASE_PATH\\.bonsai\\"
 Copy-Item "$BASE_PATH\\NuGet.config" "$BASE_PATH\\.bonsai\\"
 
-& "$BASE_PATH\\.bonsai\\Bonsai.exe" "$BASE_PATH\\receptive_field.bonsai" --no-editor --start --property PythonHome="$BASE_PATH\\.venv" --property ImagesCsv="$BASE_PATH\\ReceptiveFieldSimpleCell\\images.csv" --property ResponsesCsv="$BASE_PATH\\ReceptiveFieldSimpleCell\\responses.csv" --property NSamples=$N_SAMPLES
+& "$BASE_PATH\\.bonsai\\Bonsai.exe" "$BASE_PATH\\receptive_field.bonsai" --no-editor --start --property PythonHome="$BASE_PATH\\.venv" --property ImagesCsv="$BASE_PATH\\data\\images.csv" --property ResponsesCsv="$BASE_PATH\\data\\responses.csv" --property NSamples=$N_SAMPLES
