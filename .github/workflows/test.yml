@@ -23,14 +23,11 @@ jobs:
         with:
           python-version: 3.10
 
-      - name: Restore Test Examples Dependencies
-        run: dotnet restore docs/examples/test/Bonsai.ML.Examples.sln
-
       - name: Restore Bonsai.ML Dependencies
-        run: dotnet restore src/Bonsai.ML.sln
+        run: dotnet restore Bonsai.ML.sln
 
       - name: Build Bonsai.ML
-        run: dotnet build src/Bonsai.ML.sln
+        run: dotnet build Bonsai.ML.sln
 
       - name: Run Tests
-        run: dotnet test docs/examples/test/Bonsai.ML.Examples.sln
+        run: dotnet test test/Bonsai.ML.Examples.sln
