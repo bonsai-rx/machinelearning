@@ -13,7 +13,7 @@ namespace Bonsai.ML.Examples.Tests.ReceptiveFieldSimpleCell;
 [TestClass]
 public class ReceptiveFieldSimpleCellTest
 {
-    private string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReceptiveFieldSimpleCell");
+    private string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReceptiveFieldSimpleCellTest");
     private int nSamples = 10000;
 
     private void RunProcess(string fileName, string fmtArg)
@@ -191,12 +191,12 @@ public class ReceptiveFieldSimpleCellTest
         Assert.IsTrue(result);
     }
 
-    [TestCleanup]
-    public void Cleanup()
-    {
-        if (Directory.Exists(basePath))
-        {
-            Directory.Delete(basePath, true);
-        }
-    }
+    // [TestCleanup]
+    // public void Cleanup()
+    // {
+    //     if (Directory.Exists(basePath))
+    //     {
+    //         Directory.Delete(basePath, true);
+    //     }
+    // }
 }

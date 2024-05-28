@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Bonsai" Version="2.8.3" />
     <PackageReference Include="Bonsai.Editor" Version="2.8.2" />
-    <PackageReference Include="Bonsai.ML.LinearDynamicalSystems" Version="0.2.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
@@ -19,8 +18,11 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ReceptiveFieldSimpleCell/*">
+    <Content Include="ReceptiveFieldSimpleCellTest/*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
 </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj" />
+  </ItemGroup>
 </Project>
