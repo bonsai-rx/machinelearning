@@ -19,25 +19,7 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ReceptiveFieldSimpleCell/run_python_test.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ReceptiveFieldSimpleCell/receptive_field.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ReceptiveFieldSimpleCell/run_bonsai_test.sh">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ReceptiveFieldSimpleCell/run_bonsai_test.ps1">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ReceptiveFieldSimpleCell/receptive_field.bonsai">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ReceptiveFieldSimpleCell/Bonsai.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ReceptiveFieldSimpleCell/NuGet.config">
+    <Content Include="ReceptiveFieldSimpleCell/*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
 </ItemGroup>
