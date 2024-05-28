@@ -30,4 +30,4 @@ jobs:
         run: dotnet build Bonsai.ML.sln
 
       - name: Run Tests
-        run: dotnet test test/Bonsai.ML.Examples.sln
+        run: dotnet test Bonsai.ML.sln
