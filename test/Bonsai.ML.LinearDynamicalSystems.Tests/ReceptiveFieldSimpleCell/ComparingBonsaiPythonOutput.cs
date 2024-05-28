@@ -53,7 +53,7 @@ public class ComparingBonsaiPythonOutput
     private void DownloadData(string basePath)
     {
         string zipFileUrl = "https://zenodo.org/records/10879253/files/ReceptiveFieldSimpleCell.zip";
-        string outputPath = Path.Combine(basePath, "ReceptiveFieldSimpleCell");
+        string outputPath = Path.Combine(basePath, "data");
         string tempFilePath = Path.Combine(Path.GetTempPath(), "tempfile.zip");
 
         try
@@ -125,15 +125,15 @@ public class ComparingBonsaiPythonOutput
         return state;
     }
 
-    private bool CompareJSONData(string basePath)
+    private bool CompareJSONData(string basePath, float tolerance = 1e-9)
     {
+        var originalFileName = Path.Combine(basePath, "original-receptivefield.json");
         var bonsaiFileName = Path.Combine(basePath, "bonsai-receptivefield.json");
         var pythonFileName = Path.Combine(basePath, "python-receptivefield.json");
 
+        var originalOutput = GetStateFromJson(originalFileName);
         var bonsaiOutput = GetStateFromJson(bonsaiFileName);
         var pythonOutput = GetStateFromJson(pythonFileName);
-
-        var tolerance = 1e-9;
 
         try
         {
@@ -141,14 +141,22 @@ public class ComparingBonsaiPythonOutput
             {
                 for (int j = 0; j < bonsaiOutput.X.GetLength(1); j++)
                 {
-                    if (Math.Abs(bonsaiOutput.X[i,j] - pythonOutput.X[i,j]) > tolerance) return false;
+                    if (Math.Abs(bonsaiOutput.X[i,j] - pythonOutput.X[i,j]) > tolerance || Math.Abs(originalOutput.X[i,j] - pythonOutput.X[i,j]) > tolerance)
+                    {
+                        Console.WriteLine($"Discrepency found comparing X at index ({i},{j}) with tolerance {tolerance}: bonsaiOutput = {bonsaiOutput.X[i,j]}, pythonOutput = {pythonOutput.X[i,j]}, originalOutput = {originalOutput.X[i,j]}.");
+                        return false;
+                    }
                 }
             }
             for (int i = 0; i < bonsaiOutput.P.GetLength(0); i++)
             {
                 for (int j = 0; j < bonsaiOutput.P.GetLength(1); j++)
                 {
-                    if (Math.Abs(bonsaiOutput.P[i,j] - pythonOutput.P[i,j]) > tolerance) return false;
+                    if (Math.Abs(bonsaiOutput.P[i,j] - pythonOutput.P[i,j]) > tolerance || Math.Abs(originalOutput.P[i,j] - pythonOutput.P[i,j]) > tolerance)
+                    {
+                        Console.WriteLine($"Discrepency found comparing P at index ({i},{j}) with tolerance {tolerance}: bonsaiOutput = {bonsaiOutput.P[i,j]}, pythonOutput = {pythonOutput.P[i,j]}, originalOutput = {originalOutput.P[i,j]}.");
+                        return false;
+                    }
                 }
             }
         }
@@ -167,6 +175,7 @@ public class ComparingBonsaiPythonOutput
     [DeploymentItem("receptive_field.bonsai")]
     [DeploymentItem("Bonsai.config")]
     [DeploymentItem("NuGet.config")]
+    [DeploymentItem("original-receptivefield.json")]
     public void TestSetup()
     {
         Directory.CreateDirectory(basePath);
