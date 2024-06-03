@@ -19,16 +19,15 @@ namespace Bonsai.ML.Visualizers
     /// </summary>
     public class StateComponentVisualizer : BufferedVisualizer
     {
-
-        internal DateTime? startTime { get; set; }
-
         internal TimeSeriesOxyPlotBase Plot;
 
-        internal LineSeries lineSeries { get; private set; }
+        internal LineSeries LineSeries { get; private set; }
 
-        internal AreaSeries areaSeries { get; private set; }
+        internal AreaSeries AreaSeries { get; private set; }
 
         private bool resetAxes = true;
+
+        private DateTime? startTime;
 
         /// <summary>
         /// Gets or sets the amount of time in seconds that should be shown along the x axis.
@@ -67,13 +66,13 @@ namespace Bonsai.ML.Visualizers
             };
 
             var lineSeriesName = string.IsNullOrEmpty(Label) ? "Mean" : $"{Label} Mean";
-            lineSeries = Plot.AddNewLineSeries(lineSeriesName, color: LineSeriesColor);
+            LineSeries = Plot.AddNewLineSeries(lineSeriesName, color: LineSeriesColor);
 
             var areaSeriesName = string.IsNullOrEmpty(Label) ? "Variance" : $"{Label} Variance";
-            areaSeries = Plot.AddNewAreaSeries(areaSeriesName, color: AreaSeriesColor);
+            AreaSeries = Plot.AddNewAreaSeries(areaSeriesName, color: AreaSeriesColor);
 
-            Plot.ResetLineSeries(lineSeries);
-            Plot.ResetAreaSeries(areaSeries);
+            Plot.ResetLineSeries(LineSeries);
+            Plot.ResetAreaSeries(AreaSeries);
             Plot.ResetAxes();
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
@@ -103,13 +102,13 @@ namespace Bonsai.ML.Visualizers
             double variance = stateComponent.Variance;
 
             Plot.AddToLineSeries(
-                lineSeries: lineSeries,
+                lineSeries: LineSeries,
                 time: time,
                 value: mean
             );
 
             Plot.AddToAreaSeries(
-                areaSeries: areaSeries,
+                areaSeries: AreaSeries,
                 time: time,
                 value1: mean + variance,
                 value2: mean - variance
