@@ -21,7 +21,7 @@ namespace Bonsai.ML.Visualizers
     {
         internal int RowCount { get; set; } = 3;
         internal int ColumnCount { get; set; } = 2;
-        internal List<StateComponentVisualizer> componentVisualizers { get; private set; } = new();
+        internal List<StateComponentVisualizer> ComponentVisualizers { get; private set; } = new();
         private TableLayoutPanel container;
         private int updateFrequency = 1000 / 50;
         private bool resetAxes = true;
@@ -64,7 +64,7 @@ namespace Bonsai.ML.Visualizers
                     };
                     StateComponentVisualizer.Load(provider);
                     container.Controls.Add(StateComponentVisualizer.Plot, j, i);
-                    componentVisualizers.Add(StateComponentVisualizer);
+                    ComponentVisualizers.Add(StateComponentVisualizer);
                 }
             }
 
@@ -104,12 +104,12 @@ namespace Bonsai.ML.Visualizers
                 accelerationY.Add(new Timestamped<object>(((KinematicState)value.Value).Acceleration.Y, value.Timestamp));
             }
 
-            componentVisualizers[0].ShowDataBuffer(positionX, resetAxes);
-            componentVisualizers[1].ShowDataBuffer(positionY, resetAxes);
-            componentVisualizers[2].ShowDataBuffer(velocityX, resetAxes);
-            componentVisualizers[3].ShowDataBuffer(velocityY, resetAxes);
-            componentVisualizers[4].ShowDataBuffer(accelerationX, resetAxes);
-            componentVisualizers[5].ShowDataBuffer(accelerationY, resetAxes);
+            ComponentVisualizers[0].ShowDataBuffer(positionX, resetAxes);
+            ComponentVisualizers[1].ShowDataBuffer(positionY, resetAxes);
+            ComponentVisualizers[2].ShowDataBuffer(velocityX, resetAxes);
+            ComponentVisualizers[3].ShowDataBuffer(velocityY, resetAxes);
+            ComponentVisualizers[4].ShowDataBuffer(accelerationX, resetAxes);
+            ComponentVisualizers[5].ShowDataBuffer(accelerationY, resetAxes);
         }
 
         /// <inheritdoc/>
@@ -164,14 +164,14 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         public override void Unload()
         {
-            foreach (var componentVisualizer in componentVisualizers) 
+            foreach (var componentVisualizer in ComponentVisualizers) 
             {
                 componentVisualizer.Unload();
             }
-            if (componentVisualizers.Count > 0) 
+            if (ComponentVisualizers.Count > 0) 
             {
-                componentVisualizers.Clear();
-                componentVisualizers = new();
+                ComponentVisualizers.Clear();
+                ComponentVisualizers = new();
             }
             if (!container.IsDisposed) container.Dispose();
         }
