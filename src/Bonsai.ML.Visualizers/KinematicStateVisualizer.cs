@@ -19,14 +19,14 @@ namespace Bonsai.ML.Visualizers
     /// </summary>
     public class KinematicStateVisualizer : MashupVisualizer
     {
-        internal int RowCount { get; set; } = 3;
-        internal int ColumnCount { get; set; } = 2;
         internal List<StateComponentVisualizer> ComponentVisualizers { get; private set; } = new();
         private TableLayoutPanel container;
         private int updateFrequency = 1000 / 50;
         private bool resetAxes = true;
+        private int rowCount = 3;
+        private int columnCount = 2;
 
-        internal string[] Labels = new string[] { 
+        private string[] labels = new string[] { 
             "Position X", 
             "Position Y", 
             "Velocity X", 
@@ -40,27 +40,27 @@ namespace Bonsai.ML.Visualizers
         {
             container = new TableLayoutPanel
             {
-                ColumnCount = ColumnCount,
-                RowCount = RowCount,
+                ColumnCount = columnCount,
+                RowCount = rowCount,
                 Dock = DockStyle.Fill
             };
 
             for (int i = 0; i < container.RowCount; i++)
             {
-                container.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / RowCount));
+                container.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / rowCount));
             }
 
             for (int i = 0; i < container.ColumnCount; i++)
             {
-                container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / ColumnCount));
+                container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / columnCount));
             }
 
-            for (int i = 0 ; i < RowCount; i++)
+            for (int i = 0 ; i < rowCount; i++)
             {
-                for (int j = 0; j < ColumnCount; j++)
+                for (int j = 0; j < columnCount; j++)
                 {
                     var StateComponentVisualizer = new StateComponentVisualizer() {
-                        Label = Labels[i * ColumnCount + j]
+                        Label = labels[i * columnCount + j]
                     };
                     StateComponentVisualizer.Load(provider);
                     container.Controls.Add(StateComponentVisualizer.Plot, j, i);
