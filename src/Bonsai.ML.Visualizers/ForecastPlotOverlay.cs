@@ -28,7 +28,7 @@ namespace Bonsai.ML.Visualizers
         {
             var time = DateTime.Now;
             Forecast forecast = (Forecast)value;
-            var componentVisualizers = visualizer.componentVisualizers;
+            var componentVisualizers = visualizer.ComponentVisualizers;
 
             for (int i = 0; i < componentVisualizers.Count; i++)
             {
@@ -93,7 +93,7 @@ namespace Bonsai.ML.Visualizers
 
             var service = provider.GetService(typeof(MashupVisualizer));
             visualizer = (KinematicStateVisualizer)service;
-            var componentVisualizers = visualizer.componentVisualizers;
+            var componentVisualizers = visualizer.ComponentVisualizers;
 
             for (int i = 0; i < componentVisualizers.Count; i++)
             {
