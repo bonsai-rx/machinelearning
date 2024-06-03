@@ -19,14 +19,15 @@ namespace Bonsai.ML.Visualizers
     /// </summary>
     public class KinematicStateVisualizer : MashupVisualizer
     {
-        internal List<StateComponentVisualizer> ComponentVisualizers { get; private set; } = new();
         private TableLayoutPanel container;
         private int updateFrequency = 1000 / 50;
         private bool resetAxes = true;
         private int rowCount = 3;
         private int columnCount = 2;
 
-        private string[] labels = new string[] { 
+        internal List<StateComponentVisualizer> ComponentVisualizers { get; private set; } = new();
+
+        internal string[] Labels = new string[] { 
             "Position X", 
             "Position Y", 
             "Velocity X", 
@@ -60,7 +61,7 @@ namespace Bonsai.ML.Visualizers
                 for (int j = 0; j < columnCount; j++)
                 {
                     var StateComponentVisualizer = new StateComponentVisualizer() {
-                        Label = labels[i * columnCount + j]
+                        Label = Labels[i * columnCount + j]
                     };
                     StateComponentVisualizer.Load(provider);
                     container.Controls.Add(StateComponentVisualizer.Plot, j, i);
