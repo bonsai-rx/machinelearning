@@ -5,8 +5,10 @@ using Bonsai;
 using Bonsai.Design;
 using Bonsai.ML.Visualizers;
 using Bonsai.ML.LinearDynamicalSystems;
-using System.Drawing;
+using OxyPlot;
 using System.Reactive;
+using OxyPlot.Series;
+using System.Linq;
 
 [assembly: TypeVisualizer(typeof(StateComponentVisualizer), Target = typeof(StateComponent))]
 
@@ -17,36 +19,61 @@ namespace Bonsai.ML.Visualizers
     /// </summary>
     public class StateComponentVisualizer : BufferedVisualizer
     {
+        internal TimeSeriesOxyPlotBase Plot;
 
-        private DateTime? _startTime;
+        internal LineSeries LineSeries { get; private set; }
 
-        private TimeSeriesOxyPlotBase Plot;
+        internal AreaSeries AreaSeries { get; private set; }
+
+        private bool resetAxes = true;
+
+        private DateTime? startTime;
 
         /// <summary>
-        /// Size of the window when loaded
-        /// </summary>
-        public Size Size { get; set; } = new Size(320, 240);
-
-        /// <summary>
-        /// Capacity or length of time shown along the x axis of the plot during automatic updating
+        /// Gets or sets the amount of time in seconds that should be shown along the x axis.
         /// </summary>
         public int Capacity { get; set; } = 10;
+
+        /// <summary>
+        /// Gets or sets a boolean value that determines whether to buffer the data beyond the capacity.
+        /// </summary>
+        public bool BufferData { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the optional label to prepend to the line and area series names.
+        /// </summary>
+        public string Label { get; set; }
+
+        /// <summary>
+        /// Gets or sets the color to use for the line series.
+        /// </summary>
+        public OxyColor? LineSeriesColor { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the color to use for the area series.
+        /// </summary>
+        public OxyColor? AreaSeriesColor { get; set; } = null;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Plot = new TimeSeriesOxyPlotBase(
-                lineSeriesName: "Mean",
-                areaSeriesName: "Variance"
-            )
+            Plot = new TimeSeriesOxyPlotBase()
             {
-                Size = Size,
                 Capacity = Capacity,
                 Dock = DockStyle.Fill,
-                StartTime = DateTime.Now
+                StartTime = DateTime.Now,
+                BufferData = BufferData
             };
 
-            Plot.ResetSeries();
+            var lineSeriesName = string.IsNullOrEmpty(Label) ? "Mean" : $"{Label} Mean";
+            LineSeries = Plot.AddNewLineSeries(lineSeriesName, color: LineSeriesColor);
+
+            var areaSeriesName = string.IsNullOrEmpty(Label) ? "Variance" : $"{Label} Variance";
+            AreaSeries = Plot.AddNewAreaSeries(areaSeriesName, color: AreaSeriesColor);
+
+            Plot.ResetLineSeries(LineSeries);
+            Plot.ResetAreaSeries(AreaSeries);
+            Plot.ResetAxes();
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             if (visualizerService != null)
@@ -63,11 +90,11 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         protected override void Show(DateTime time, object value)
         {
-            if (!_startTime.HasValue)
+            if (!startTime.HasValue)
             {
-                _startTime = time;
-                Plot.StartTime = _startTime.Value;
-                Plot.ResetSeries();
+                startTime = time;
+                Plot.StartTime = startTime.Value;
+                Plot.ResetAxes();
             }
 
             StateComponent stateComponent = (StateComponent)value;
@@ -75,18 +102,17 @@ namespace Bonsai.ML.Visualizers
             double variance = stateComponent.Variance;
 
             Plot.AddToLineSeries(
+                lineSeries: LineSeries,
                 time: time,
-                mean: mean
+                value: mean
             );
 
             Plot.AddToAreaSeries(
+                areaSeries: AreaSeries,
                 time: time,
-                mean: mean,
-                variance: variance
+                value1: mean + variance,
+                value2: mean - variance
             );
-
-            Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
-
         }
 
         /// <inheritdoc/>
@@ -95,14 +121,25 @@ namespace Bonsai.ML.Visualizers
             base.ShowBuffer(values);
             if (values.Count > 0)
             {
+                if (resetAxes)
+                {
+                    var time = values.LastOrDefault().Timestamp.DateTime;
+                    Plot.SetAxes(minTime: time.AddSeconds(-Capacity), maxTime: time);
+                }             
                 Plot.UpdatePlot();
             }
+        }
+
+        internal void ShowDataBuffer(IList<Timestamped<object>> values, bool resetAxes = true)
+        {
+            this.resetAxes = resetAxes;
+            ShowBuffer(values);
         }
 
         /// <inheritdoc/>
         public override void Unload()
         {
-            _startTime = null;
+            startTime = null;
             if (!Plot.IsDisposed)
             {
                 Plot.Dispose();

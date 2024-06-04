@@ -13,52 +13,39 @@ namespace Bonsai.ML.Visualizers
     {
         private PlotView view;
         private PlotModel model;
-        private ToolStripComboBox comboBox;
-        private ToolStripLabel label;
+        private OxyColor defaultLineSeriesColor = OxyColors.Blue;
+        private OxyColor defaultAreaSeriesColor = OxyColors.LightBlue;
 
-        private string _lineSeriesName;
-        private string _areaSeriesName;
-        private int _selectedIndex;
-        private IEnumerable _dataSource;
-
-        private LineSeries lineSeries;
-        private AreaSeries areaSeries;
         private Axis xAxis;
         private Axis yAxis;
 
         private StatusStrip statusStrip;
 
         /// <summary>
-        /// Event handler which can be used to hook into events generated when the combobox values have changed.
-        /// </summary>
-        public event EventHandler ComboBoxValueChanged;
-
-        /// <summary>
-        /// DateTime value that determines the starting time of the data values.
+        /// Gets or sets the datetime value that determines the starting time of the data values.
         /// </summary>
         public DateTime StartTime { get; set; }
 
         /// <summary>
-        /// Integer value that determines how many data points should be shown along the x axis.
+        /// Gets or sets the integer value that determines how many data points should be shown along the x axis.
         /// </summary>
         public int Capacity { get; set; }
 
-        public ToolStripComboBox ComboBox => comboBox;
-
+        /// <summary>
+        /// Gets the status strip control.
+        /// </summary>
         public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
-        /// Constructor of the TimeSeriesOxyPlotBase class.
-        /// Requires a line series name and an area series name.
-        /// Data source is optional, since pasing it to the constructor will populate the combobox and leave it empty otherwise.
-        /// The selected index is only needed when the data source is provided.
+        /// Gets or sets a boolean value that determines whether to buffer the data beyond the capacity.
         /// </summary>
-        public TimeSeriesOxyPlotBase(string lineSeriesName, string areaSeriesName, IEnumerable dataSource = null, int selectedIndex = 0)
+        public bool BufferData { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimeSeriesOxyPlotBase"/> class
+        /// </summary>
+        public TimeSeriesOxyPlotBase()
         {
-            _lineSeriesName = lineSeriesName;
-            _areaSeriesName = areaSeriesName;
-            _dataSource = dataSource;
-            _selectedIndex = selectedIndex;
             Initialize();
         }
 
@@ -71,17 +58,6 @@ namespace Bonsai.ML.Visualizers
             };
 
             model = new PlotModel();
-
-            lineSeries = new LineSeries {
-                Title = _lineSeriesName,
-                Color = OxyColors.Blue
-            };
-
-            areaSeries = new AreaSeries {
-                Title = _areaSeriesName,
-                Color = OxyColors.LightBlue,
-                Fill = OxyColor.FromArgb(100, 173, 216, 230)
-            };
 
             xAxis = new DateTimeAxis {
                 Position = AxisPosition.Bottom,
@@ -102,9 +78,6 @@ namespace Bonsai.ML.Visualizers
             model.Axes.Add(xAxis);
             model.Axes.Add(yAxis);
 
-            model.Series.Add(lineSeries);
-            model.Series.Add(areaSeries);
-
             view.Model = model;
             Controls.Add(view);
 
@@ -113,17 +86,8 @@ namespace Bonsai.ML.Visualizers
                 Visible = false
             };
 
-            if (_dataSource != null)
-            {
-                InitializeComboBox(_dataSource);
-
-                statusStrip.Items.AddRange(new ToolStripItem[] {
-                    label,
-                    comboBox,
-                });
-
-                view.MouseClick += new MouseEventHandler(onMouseClick);
-            }
+            view.MouseClick += new MouseEventHandler(onMouseClick);
+            Controls.Add(statusStrip);
 
             Controls.Add(statusStrip);
 
@@ -138,66 +102,144 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
-        private void InitializeComboBox(IEnumerable dataSource)
+        /// <summary>
+        /// Method to add a combobox with a label to the status strip.
+        /// Requires a string label, an enumerable data source, a selected index, and a callback method for the selected index changed event.
+        /// </summary>
+        public void AddComboBoxWithLabel(string label, IEnumerable dataSource, int selectedIndex, EventHandler onComboBoxSelectionChanged)
         {
-            label = new ToolStripLabel
-            {
-                Text = "State component:",
-                AutoSize = true,
-            };
-
-            comboBox = new ToolStripComboBox()
-            {
-                Name = "stateComponent",
-                AutoSize = true,
-            };
+            ToolStripLabel toolStripLabel = new ToolStripLabel(label);
+            ToolStripComboBox toolStripComboBox = new ToolStripComboBox();
 
             foreach (var value in dataSource)
             {
-                comboBox.Items.Add(value);
+                toolStripComboBox.Items.Add(value);
             }
-            
-            comboBox.SelectedIndexChanged += ComboBoxSelectedIndexChanged;
-            comboBox.SelectedIndex = _selectedIndex;
+
+            toolStripComboBox.SelectedIndexChanged += onComboBoxSelectionChanged;
+            toolStripComboBox.SelectedIndex = selectedIndex;
+
+            statusStrip.Items.AddRange(new ToolStripItem[] {
+                toolStripLabel,
+                toolStripComboBox
+            });
+       
         }
 
-        private void ComboBoxSelectedIndexChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Method to add a new line series to the data plot.
+        /// Requires a string for the name of the line series
+        /// Color of the line series is optional.
+        /// </summary>
+        public LineSeries AddNewLineSeries(string lineSeriesName, OxyColor? color = null)
         {
-            if (comboBox.SelectedIndex != _selectedIndex)
+            OxyColor _color = color.HasValue ? color.Value : defaultLineSeriesColor;
+            LineSeries lineSeries = new LineSeries {
+                Title = lineSeriesName,
+                Color = _color
+            };
+            model.Series.Add(lineSeries);
+            return lineSeries;
+        }
+
+        /// <summary>
+        /// Method to add a new area series to the data plot.
+        /// Requires a string for the name of the area series
+        /// Optional parameters are color of the lines, fill color, and opacity.
+        /// Returns the new line series.
+        /// </summary>
+        public AreaSeries AddNewAreaSeries(string areaSeriesName, OxyColor? color = null, OxyColor? fill = null, byte opacity = 100)
+        {
+            OxyColor _color = color.HasValue ? color.Value : defaultAreaSeriesColor;
+            OxyColor _fill = fill.HasValue? fill.Value : OxyColor.FromArgb(opacity, _color.R, _color.G, _color.B);
+            AreaSeries areaSeries = new AreaSeries {
+                Title = areaSeriesName,
+                Color = _color,
+                Fill = _fill
+            };
+            model.Series.Add(areaSeries);
+            return areaSeries;
+        }
+
+        /// <summary>
+        /// Method to add data to a line series.
+        /// Requires the line series, time, and value.
+        /// </summary>
+        public void AddToLineSeries(LineSeries lineSeries, DateTime time, double value)
+        {
+            if (!BufferData)
             {
-                _selectedIndex = comboBox.SelectedIndex;
-                ComboBoxValueChanged?.Invoke(this, e);
+                var timeCap = DateTimeAxis.ToDouble(time.AddSeconds(-Capacity));
+                lineSeries.Points.RemoveAll(dataPoint => dataPoint.X < timeCap);
             }
+            lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time), value));
         }
 
-        public void AddToLineSeries(DateTime time, double mean)
+        /// <summary>
+        /// Method to add data to an area series.
+        /// Requires the area series, time, value1, and value2.
+        /// </summary>
+        public void AddToAreaSeries(AreaSeries areaSeries, DateTime time, double value1, double value2)
         {
-            lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time), mean));
+            if (!BufferData)
+            {
+                var timeCap = DateTimeAxis.ToDouble(time.AddSeconds(-Capacity));
+                areaSeries.Points.RemoveAll(dataPoint => dataPoint.X < timeCap);
+                areaSeries.Points2.RemoveAll(dataPoint => dataPoint.X < timeCap);
+            }
+            var curTime = DateTimeAxis.ToDouble(time);
+            areaSeries.Points.Add(new DataPoint(curTime, value1));
+            areaSeries.Points2.Add(new DataPoint(curTime, value2));
         }
 
-        public void AddToAreaSeries(DateTime time, double mean, double variance)
-        {
-            areaSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(time), mean + variance));
-            areaSeries.Points2.Add(new DataPoint(DateTimeAxis.ToDouble(time), mean - variance));
-        }
-
+        /// <summary>
+        /// Set the minimum and maximum values to show along the x axis.
+        /// Requires the minTime and maxTime.
+        /// </summary>
         public void SetAxes(DateTime minTime, DateTime maxTime)
         {
             xAxis.Minimum = DateTimeAxis.ToDouble(minTime);
             xAxis.Maximum = DateTimeAxis.ToDouble(maxTime);
         }
 
+        /// <summary>
+        /// Method to update the plot.
+        /// </summary>
         public void UpdatePlot()
         {
             model.InvalidatePlot(true);
         }
 
-        public void ResetSeries()
+        /// <summary>
+        /// Method to reset the line series.
+        /// </summary>
+        public void ResetLineSeries(LineSeries lineSeries)
         {
             lineSeries.Points.Clear();
+        }
+
+        /// <summary>
+        /// Method to reset the area series.
+        /// </summary>
+        public void ResetAreaSeries(AreaSeries areaSeries)
+        {
             areaSeries.Points.Clear();
             areaSeries.Points2.Clear();
+        }
 
+        /// <summary>
+        /// Method to reset all series in the current PlotModel.
+        /// </summary>
+        public void ResetModelSeries()
+        {
+            model.Series.Clear();
+        }
+
+        /// <summary>
+        /// Method to reset the x and y axes to their default.
+        /// </summary>
+        public void ResetAxes()
+        {
             xAxis.Reset();
             yAxis.Reset();
 
