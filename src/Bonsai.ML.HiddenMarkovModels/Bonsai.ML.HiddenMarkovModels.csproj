@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Bonsai.ML.HiddenMarkovModels</Title>
+    <Description>A Bonsai package for hidden markov models. Interfaces with the SSM python package using the Bonsai.Scripting.Python package.</Description>
+    <TargetFramework>net472</TargetFramework>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.8.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="*.py" />
+    <EmbeddedResource Include="**\*.bonsai" />
+  </ItemGroup>
+</Project>
