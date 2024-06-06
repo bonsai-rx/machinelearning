@@ -83,6 +83,8 @@ namespace Bonsai.ML.Visualizers
                 Plot.SetAxes(minValue - (minValue * paddingPercentage), maxValue + (maxValue * paddingPercentage));
 
                 shown = statistics;
+
+                Plot.UpdatePlot();
             }
         }
 
