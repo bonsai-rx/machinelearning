@@ -5,7 +5,8 @@ npr.seed(0)
 
 class HiddenMarkovModel(HMM):
 
-    def __init__(self, num_states, dimensions, observation_type, init_state_distn = None, transitions = None, observations = None):
+    def __init__(self, num_states, dimensions, observation_type, init_state_distribution = None, transition_matrix = None, observation_means = None, observation_covs = None):
+        
         self.num_states = num_states
         self.dimensions = dimensions
         self.observation_type = observation_type
@@ -13,20 +14,21 @@ class HiddenMarkovModel(HMM):
 
         hmm_params = self.params
 
-        if init_state_distn is not None:
-            hmm_params = ((np.array(init_state_distn),),) + hmm_params[1:]
+        if init_state_distribution is not None:
+            hmm_params = ((np.array(init_state_distribution),),) + hmm_params[1:]
 
-        if transitions is not None:
-            hmm_params = (hmm_params[0],) + ((np.array(transitions),),) + (hmm_params[2],)
+        if transition_matrix is not None:
+            hmm_params = (hmm_params[0],) + ((np.array(transition_matrix),),) + (hmm_params[2],)
         
-        if observations is not None:
-            hmm_params = hmm_params[:2] + ((np.array(observations),),)
+        if observation_means is not None and observation_covs is not None:
+            hmm_params = hmm_params[:2] + ((np.array(observation_means), np.array(observation_covs)),)
 
         self.params = hmm_params
 
-        self.init_state_distn = self.params[0][0]
-        self.transitions = self.params[1][0]
-        self.observations = list(self.params[2])
+        self.init_state_distribution = hmm_params[0][0]
+        self.transition_matrix = hmm_params[1][0]
+        self.observation_means = hmm_params[2][0]
+        self.observation_covs = hmm_params[2][1]
 
     def most_likely_state(self, observation):
         self.state = super(HiddenMarkovModel, self).most_likely_state(observation)
