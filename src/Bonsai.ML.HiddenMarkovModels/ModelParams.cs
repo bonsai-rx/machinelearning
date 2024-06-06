@@ -83,7 +83,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// The initial state distribution.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("init_state_distn")]
+        [JsonProperty("init_state_distribution")]
         [Description("The initial state distribution.")]
         [Category("ModelState")]
         public double[] InitStateDistribution 
@@ -104,7 +104,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// The state transition matrix.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("transitions")]
+        [JsonProperty("transition_matrix")]
         [Description("The state transition matrix.")]
         [Category("ModelState")]
         public double[,] TransitionMatrix 
@@ -118,8 +118,29 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
 
-        private double[,] observationMatrix = null;
-        private string observationMatrixStr = "";
+        private double[,] observationMeans = null;
+        private string observationMeansStr = "";
+
+        /// <summary>
+        /// The observation matrix.
+        /// </summary>
+        [XmlIgnore]
+        [JsonProperty("observation_matrix")]
+        [Description("The observation matrix.")]
+        [Category("ModelState")]
+        public double[,] ObservationMeans
+        {
+            get => observationMeans;
+            set 
+            {
+                observationMeans = value;
+                observationMeansStr = observationMeans == null ? "None" : NumpyHelper.NumpyParser.ParseArray(observationMeans);
+            }
+        }
+
+
+        private double[,,] observationCovs = null;
+        private string observationCovsStr = "";
 
         /// <summary>
         /// The observation matrix.
@@ -128,13 +149,13 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonProperty("observations")]
         [Description("The observation matrix.")]
         [Category("ModelState")]
-        public double[,] ObservationMatrix
+        public double[,,] ObservationCovs
         {
-            get => observationMatrix;
+            get => observationCovs;
             set 
             {
-                observationMatrix = value;
-                observationMatrixStr = observationMatrix == null ? "None" : NumpyHelper.NumpyParser.ParseArray(observationMatrix);
+                observationCovs = value;
+                observationCovsStr = observationCovs == null ? "None" : NumpyHelper.NumpyParser.ParseArray(observationCovs);
             }
         }
 
@@ -158,7 +179,8 @@ namespace Bonsai.ML.HiddenMarkovModels
                     ObservationType = ObservationType, 
                     InitStateDistribution = InitStateDistribution, 
                     TransitionMatrix = TransitionMatrix,
-                    ObservationMatrix = ObservationMatrix
+                    ObservationMeans = ObservationMeans,
+                    ObservationCovs = ObservationCovs
                 });
         }
 
@@ -173,7 +195,8 @@ namespace Bonsai.ML.HiddenMarkovModels
                     ObservationType = ObservationType, 
                     InitStateDistribution = InitStateDistribution, 
                     TransitionMatrix = TransitionMatrix,
-                    ObservationMatrix = ObservationMatrix
+                    ObservationMeans = ObservationMeans,
+                    ObservationCovs = ObservationCovs
                 };
             });
         }
@@ -185,9 +208,11 @@ namespace Bonsai.ML.HiddenMarkovModels
                 var numStatesPyObj = pyObject.GetAttr<int>("num_states");
                 var dimensionsPyObj = pyObject.GetAttr<int>("dimensions");
                 var observationTypeStrPyObj = pyObject.GetAttr<string>("observation_type");
-                var initStateDistributionPyObj = (double[])pyObject.GetArrayAttr("init_state_distn");
-                var transitionMatrixPyObj = (double[,])pyObject.GetArrayAttr("transitions");
-                var observationMatrixPyObj = (double[,])pyObject.GetArrayAttr("observations");
+
+                var initStateDistributionPyObj = (double[])pyObject.GetArrayAttr("init_state_distribution");
+                var transitionMatrixPyObj = (double[,])pyObject.GetArrayAttr("transition_matrix");
+                var observationMeansPyObj = (double[,])pyObject.GetArrayAttr("observation_means");
+                var observationCovsPyObj = (double[,,])pyObject.GetArrayAttr("observation_covs");
 
                 observationTypeStrLookup.TryGetValue(observationTypeStrPyObj, out var observationTypePyObj);
 
@@ -198,14 +223,15 @@ namespace Bonsai.ML.HiddenMarkovModels
                     ObservationType = observationTypePyObj, 
                     InitStateDistribution = initStateDistributionPyObj, 
                     TransitionMatrix = transitionMatrixPyObj,
-                    ObservationMatrix = observationMatrixPyObj
+                    ObservationMeans = observationMeansPyObj, 
+                    ObservationCovs = observationCovsPyObj
                 };
             });
         }
 
         public override string ToString()
         {
-            return $"num_states={numStatesStr}, dimensions={dimensionsStr}, observation_type={observationTypeStr}, init_state_distn={initStateDistributionStr}, transitions={transitionMatrixStr}, observations={observationMatrixStr}";
+            return $"num_states={numStatesStr}, dimensions={dimensionsStr}, observation_type=\"{observationTypeStr}\", init_state_distribution={initStateDistributionStr}, transition_matrix={transitionMatrixStr}, observation_means={observationMeansStr}, observation_covs={observationCovsStr}";
         }
 
         private static readonly Dictionary<ObservationType, string> observationTypeLookup = new Dictionary<ObservationType, string>
