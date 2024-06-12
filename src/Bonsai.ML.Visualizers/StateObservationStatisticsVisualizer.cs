@@ -1,18 +1,12 @@
 using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Reflection;
 using Bonsai;
 using Bonsai.Design;
 using Bonsai.ML.Visualizers;
 using Bonsai.ML.HiddenMarkovModels;
-using Bonsai.ML.LinearDynamicalSystems.LinearRegression;
-using System.Drawing;
-using System.Reactive;
-using Bonsai.Reactive;
 using OxyPlot;
 using OxyPlot.Series;
-using System.Linq;
 
 [assembly: TypeVisualizer(typeof(StateObservationStatisticsVisualizer), Target = typeof(StateObservationStatistics))]
 
@@ -38,6 +32,13 @@ namespace Bonsai.ML.Visualizers
             if (visualizerService != null)
             {
                 visualizerService.AddControl(Plot);
+            }
+
+            if (shown != null)
+            {
+                var value = shown;
+                shown = null;
+                Show(value);
             }
         }
 
@@ -72,15 +73,18 @@ namespace Bonsai.ML.Visualizers
                     for (int j = 0; j < statistics.Means.GetLength(1); j++)
                     {
                         var val = statistics.Means[i, j];
+                        var err = statistics.StdDevs[i, j];
 
-                        minValue = Math.Min(minValue, val);
-                        maxValue = Math.Max(maxValue, val);
+                        minValue = Math.Min(minValue, val - err);
+                        maxValue = Math.Max(maxValue, val + err);
 
-                        Plot.AddValueAndErrorToBarSeries(allBarSeries[j], statistics.Means[i, j], statistics.StdDevs[i, j]);
+                        Plot.AddValueAndErrorToBarSeries(allBarSeries[j], val, err);
                     }
                 }
 
-                Plot.SetAxes(minValue - (minValue * paddingPercentage), maxValue + (maxValue * paddingPercentage));
+                var pad = Math.Max(Math.Abs(minValue), Math.Abs(maxValue)) * paddingPercentage;
+
+                Plot.SetAxes(minValue - pad, maxValue + pad);
 
                 shown = statistics;
 
