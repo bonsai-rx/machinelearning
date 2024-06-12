@@ -1,5 +1,6 @@
 from typing import List
 from ssm import HMM
+from ssm.messages import logsumexp
 import numpy as np
 import autograd.numpy.random as npr
 
@@ -13,8 +14,8 @@ class HiddenMarkovModel(HMM):
         num_states,
         dimensions,
         observation_type,
-        init_state_distribution=None,
-        transition_matrix=None,
+        initial_state_distribution=None,
+        log_transition_probabilities=None,
         observation_means=None,
         observation_covs=None,
     ):
@@ -28,14 +29,14 @@ class HiddenMarkovModel(HMM):
 
         hmm_params = self.params
 
-        if init_state_distribution is not None:
-            hmm_params = ((np.array(init_state_distribution),),
+        if initial_state_distribution is not None:
+            hmm_params = ((np.array(initial_state_distribution),),
                           ) + hmm_params[1:]
 
-        if transition_matrix is not None:
+        if log_transition_probabilities is not None:
             hmm_params = (
                 (hmm_params[0],) +
-                ((np.array(transition_matrix),),) + (hmm_params[2],)
+                ((np.array(log_transition_probabilities),),) + (hmm_params[2],)
             )
 
         if observation_means is not None and observation_covs is not None:
@@ -45,14 +46,27 @@ class HiddenMarkovModel(HMM):
 
         self.params = hmm_params
 
-        self.init_state_distribution = hmm_params[0][0]
-        self.transition_matrix = hmm_params[1][0]
+        self.initial_state_distribution = hmm_params[0][0]
+        self.log_transition_probabilities = hmm_params[1][0]
         self.observation_means = hmm_params[2][0]
-        self.observation_stds = np.sqrt(np.diagonal(hmm_params[2][1], axis1=1, axis2=2))
+        self.observation_stds = np.diagonal(hmm_params[2][1], axis1=1, axis2=2)
         self.observation_covs = hmm_params[2][1]
 
-    def most_likely_states(self, observation: List[float]):
+        self.log_alpha = None
+        self.alpha = None
 
-        self.state = super(HiddenMarkovModel, self).most_likely_states(
-            np.array(observation)
-        ).tolist()[0]
+    def infer_state(self, observation: List[float]):
+
+        self.log_alpha = self.compute_log_alpha(observation, self.log_alpha)
+        self.alpha = np.exp(self.log_alpha).tolist()
+        self.state = np.argmax(self.alpha)
+
+    def compute_log_alpha(self, obs, log_alpha = None):
+        
+        if log_alpha is None:
+            log_alpha = (np.log(self.init_state_distn.initial_state_distn) + self.observations.log_likelihoods(obs, None, None, None)).squeeze()
+            return log_alpha - logsumexp(log_alpha)
+        
+        m = np.max(log_alpha)
+        log_alpha = (np.log(np.dot(np.exp(log_alpha - m), self.transitions.transition_matrix)) + m + self.observations.log_likelihoods(obs, None, None, None)).squeeze()
+        return log_alpha - logsumexp(log_alpha)
