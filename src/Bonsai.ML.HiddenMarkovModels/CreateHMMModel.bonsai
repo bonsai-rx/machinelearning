@@ -32,14 +32,11 @@
         <Property Name="NumStates" />
         <Property Name="Dimensions" />
         <Property Name="ObservationType" />
-        <Property Name="InitStateDistribution" />
-        <Property Name="TransitionMatrix" />
-        <Property Name="ObservationMeans" />
-        <Property Name="ObservationCovs" />
+        <Property Name="StateParameters" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p2:ModelParams">
-          <p2:NumStates>14</p2:NumStates>
+        <Combinator xsi:type="p2:ModelParameters">
+          <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
           <p2:ObservationType>Gaussian</p2:ObservationType>
         </Combinator>
@@ -100,7 +97,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p2:ModelParams">
+        <Combinator xsi:type="p2:ModelParameters">
           <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
           <p2:ObservationType>Gaussian</p2:ObservationType>

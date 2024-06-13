@@ -19,19 +19,35 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
         /// <summary>
-        /// Serializes each <see cref="State"/> object in the sequence to
+        /// Serializes each <see cref="StateParameters"/> object in the sequence to
         /// a JSON string.
         /// </summary>
         /// <param name="source">
-        /// A sequence of <see cref="State"/> objects.
+        /// A sequence of <see cref="StateParameters"/> objects.
         /// </param>
         /// <returns>
         /// A sequence of JSON strings representing the corresponding
-        /// <see cref="State"/> object.
+        /// <see cref="StateParameters"/> object.
         /// </returns>
-        public IObservable<string> Process(IObservable<State> source)
+        public IObservable<string> Process(IObservable<StateParameters> source)
         {
-            return Process<State>(source);
+            return Process<StateParameters>(source);
+        }
+
+        /// <summary>
+        /// Serializes each <see cref="ModelParameters"/> object in the sequence to
+        /// a JSON string.
+        /// </summary>
+        /// <param name="source">
+        /// A sequence of <see cref="ModelParameters"/> objects.
+        /// </param>
+        /// <returns>
+        /// A sequence of JSON strings representing the corresponding
+        /// <see cref="ModelParameters"/> object.
+        /// </returns>
+        public IObservable<string> Process(IObservable<ModelParameters> source)
+        {
+            return Process<ModelParameters>(source);
         }
     }
 }

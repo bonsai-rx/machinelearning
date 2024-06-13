@@ -1,4 +1,3 @@
-from typing import List
 from ssm import HMM
 from ssm.messages import logsumexp
 import numpy as np
@@ -55,11 +54,10 @@ class HiddenMarkovModel(HMM):
         self.log_alpha = None
         self.alpha = None
 
-    def infer_state(self, observation: List[float]):
+    def infer_state(self, observation: list[float]):
 
-        self.log_alpha = self.compute_log_alpha(observation, self.log_alpha)
-        self.alpha = np.exp(self.log_alpha).tolist()
-        self.state = np.argmax(self.alpha)
+        self.log_alpha = self.compute_log_alpha(np.expand_dims(np.array(observation), 0), self.log_alpha)
+        self.state_probabilities = np.exp(self.log_alpha).astype(np.double)
 
     def compute_log_alpha(self, obs, log_alpha = None):
         

@@ -13,7 +13,7 @@ namespace Bonsai.ML.HiddenMarkovModels
     [Combinator]
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class ModelParams
+    public class ModelParameters
     {
 
         private int numStates;
@@ -24,7 +24,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         [JsonProperty("num_states")]
         [Description("The number of discrete latent states of the HMM model")]
-        [Category("InitParameters")]
+        [Category("InitialParameters")]
         public int NumStates 
         { 
             get => numStates; 
@@ -44,7 +44,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         [JsonProperty("dimensions")]
         [Description("The dimensionality of the observations into the HMM model")]
-        [Category("InitParameters")]
+        [Category("InitialParameters")]
         public int Dimensions 
         {
             get => dimensions;
@@ -64,7 +64,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         [JsonProperty("observation_type")]
         [Description("The type of distribution that the HMM will use to model the emission of data observations.")]
-        [Category("InitParameters")]
+        [Category("InitialParameters")]
         public ObservationType ObservationType 
         { 
             get => observationType; 
@@ -76,162 +76,92 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
 
-        private double[] initStateDistribution = null;
-        private string initStateDistributionStr = "";
+        private StateParameters stateParameters = null;
+        private string stateParametersStr = "";
 
         /// <summary>
-        /// The initial state distribution.
+        /// The state parameters of the HMM model.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("init_state_distribution")]
-        [Description("The initial state distribution.")]
+        [Description("The state parameters of the HMM model.")]
         [Category("ModelState")]
-        public double[] InitStateDistribution 
-        { 
-            get => initStateDistribution; 
-            set 
-            { 
-                initStateDistribution = value; 
-                initStateDistributionStr = initStateDistribution == null ? "None" : NumpyHelper.NumpyParser.ParseArray(initStateDistribution); 
-            } 
-        }
-
-
-        private double[,] transitionMatrix = null;
-        private string transitionMatrixStr = "";
-
-        /// <summary>
-        /// The state transition matrix.
-        /// </summary>
-        [XmlIgnore]
-        [JsonProperty("transition_matrix")]
-        [Description("The state transition matrix.")]
-        [Category("ModelState")]
-        public double[,] TransitionMatrix 
-        { 
-            get => transitionMatrix; 
-            set
-            {
-                transitionMatrix = value;
-                transitionMatrixStr = transitionMatrix == null ? "None" : NumpyHelper.NumpyParser.ParseArray(transitionMatrix);
-            }
-        }
-
-
-        private double[,] observationMeans = null;
-        private string observationMeansStr = "";
-
-        /// <summary>
-        /// The observation matrix.
-        /// </summary>
-        [XmlIgnore]
-        [JsonProperty("observation_matrix")]
-        [Description("The observation matrix.")]
-        [Category("ModelState")]
-        public double[,] ObservationMeans
+        public StateParameters StateParameters
         {
-            get => observationMeans;
+            get => stateParameters;
             set 
             {
-                observationMeans = value;
-                observationMeansStr = observationMeans == null ? "None" : NumpyHelper.NumpyParser.ParseArray(observationMeans);
-            }
-        }
-
-
-        private double[,,] observationCovs = null;
-        private string observationCovsStr = "";
-
-        /// <summary>
-        /// The observation matrix.
-        /// </summary>
-        [XmlIgnore]
-        [JsonProperty("observations")]
-        [Description("The observation matrix.")]
-        [Category("ModelState")]
-        public double[,,] ObservationCovs
-        {
-            get => observationCovs;
-            set 
-            {
-                observationCovs = value;
-                observationCovsStr = observationCovs == null ? "None" : NumpyHelper.NumpyParser.ParseArray(observationCovs);
+                stateParameters = value;
+                stateParametersStr = stateParameters == null ? "" : 
+                    $"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(stateParameters.InitialStateDistribution)}," +
+                    $"log_transition_probabilities={NumpyHelper.NumpyParser.ParseArray(stateParameters.LogTransitionProbabilities)}," +
+                    $"observation_means={NumpyHelper.NumpyParser.ParseArray(stateParameters.ObservationMeans)}," +
+                    $"observation_covs={NumpyHelper.NumpyParser.ParseArray(stateParameters.ObservationCovs)}";
             }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ModelParams"/> class.
+        /// Initializes a new instance of the <see cref="ModelParameters"/> class.
         /// </summary>
-        public ModelParams()
+        public ModelParameters()
         {
             NumStates = 2;
             Dimensions = 2;
             ObservationType = ObservationType.Gaussian;
         }
 
-        public IObservable<ModelParams> Process()
+        public IObservable<ModelParameters> Process()
         {
             return Observable.Return(
-                new ModelParams()  
+                new ModelParameters()  
                 { 
                     NumStates = NumStates, 
                     Dimensions = Dimensions, 
                     ObservationType = ObservationType, 
-                    InitStateDistribution = InitStateDistribution, 
-                    TransitionMatrix = TransitionMatrix,
-                    ObservationMeans = ObservationMeans,
-                    ObservationCovs = ObservationCovs
+                    StateParameters = StateParameters
                 });
         }
 
-        public IObservable<ModelParams> Process<TSource>(IObservable<TSource> source)
+        public IObservable<ModelParameters> Process<TSource>(IObservable<TSource> source)
         {
             return Observable.Select(source, item => 
             {
-                return new ModelParams() 
+                return new ModelParameters() 
                 { 
                     NumStates = NumStates, 
                     Dimensions = Dimensions, 
                     ObservationType = ObservationType, 
-                    InitStateDistribution = InitStateDistribution, 
-                    TransitionMatrix = TransitionMatrix,
-                    ObservationMeans = ObservationMeans,
-                    ObservationCovs = ObservationCovs
+                    StateParameters = StateParameters
                 };
             });
         }
 
-        public IObservable<ModelParams> Process(IObservable<PyObject> source)
+        public IObservable<ModelParameters> Process(IObservable<PyObject> source)
         {
+            var stateParametersObservable = new StateParameters().Process(source);
             return Observable.Select(source, pyObject => 
             {
                 var numStatesPyObj = pyObject.GetAttr<int>("num_states");
                 var dimensionsPyObj = pyObject.GetAttr<int>("dimensions");
                 var observationTypeStrPyObj = pyObject.GetAttr<string>("observation_type");
 
-                var initStateDistributionPyObj = (double[])pyObject.GetArrayAttr("init_state_distribution");
-                var transitionMatrixPyObj = (double[,])pyObject.GetArrayAttr("transition_matrix");
-                var observationMeansPyObj = (double[,])pyObject.GetArrayAttr("observation_means");
-                var observationCovsPyObj = (double[,,])pyObject.GetArrayAttr("observation_covs");
-
                 observationTypeStrLookup.TryGetValue(observationTypeStrPyObj, out var observationTypePyObj);
 
-                return new ModelParams() 
+                return new ModelParameters() 
                 { 
                     NumStates = numStatesPyObj, 
                     Dimensions = dimensionsPyObj, 
                     ObservationType = observationTypePyObj, 
-                    InitStateDistribution = initStateDistributionPyObj, 
-                    TransitionMatrix = transitionMatrixPyObj,
-                    ObservationMeans = observationMeansPyObj, 
-                    ObservationCovs = observationCovsPyObj
                 };
+            }).Zip(stateParametersObservable, (modelParameters, stateParameters) => 
+            {
+                modelParameters.StateParameters = stateParameters;
+                return modelParameters;
             });
         }
 
         public override string ToString()
         {
-            return $"num_states={numStatesStr}, dimensions={dimensionsStr}, observation_type=\"{observationTypeStr}\", init_state_distribution={initStateDistributionStr}, transition_matrix={transitionMatrixStr}, observation_means={observationMeansStr}, observation_covs={observationCovsStr}";
+            return $"num_states={numStatesStr}, dimensions={dimensionsStr}, observation_type=\"{observationTypeStr}\", {stateParametersStr}";
         }
 
         private static readonly Dictionary<ObservationType, string> observationTypeLookup = new Dictionary<ObservationType, string>

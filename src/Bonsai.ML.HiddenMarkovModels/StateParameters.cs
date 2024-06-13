@@ -9,16 +9,16 @@ namespace Bonsai.ML.HiddenMarkovModels
 {
 
     /// <summary>
-    /// State of a Hidden Markov Model (HMM).
+    /// StateParameters of a Hidden Markov Model (HMM).
     /// </summary>
     [Combinator]
-    [Description("State of a Hidden Markov Model (HMM).")]
+    [Description("StateParameters of a Hidden Markov Model (HMM).")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class State
+    public class StateParameters
     {
 
-        private double[] initStateDistribution;
-        private double[,] transitionMatrix;
+        private double[] initialStateDistribution;
+        private double[,] logTransitionProbabilities;
         private double[,] observationMeans;
         private double[,,] observationCovs;
 
@@ -26,26 +26,26 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// The initial state distribution.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("init_state_distn")]
+        [JsonProperty("initial_state_distribution")]
         [Description("The initial state distribution.")]
-        [Category("ModelState")]
-        public double[] InitStateDistribution 
+        [Category("ModelStateParameters")]
+        public double[] InitialStateDistribution 
         { 
-            get => initStateDistribution; 
-            set => initStateDistribution = value; 
+            get => initialStateDistribution; 
+            set => initialStateDistribution = value; 
         }
     
         /// <summary>
-        /// The state transition matrix.
+        /// The log of the state transition probabilities.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("transitions")]
-        [Description("The state transition matrix.")]
-        [Category("ModelState")]
-        public double[,] TransitionMatrix 
+        [JsonProperty("log_transition_probabilities")]
+        [Description("The log of the state transition probabilities.")]
+        [Category("ModelStateParameters")]
+        public double[,] LogTransitionProbabilities 
         { 
-            get => transitionMatrix; 
-            set => transitionMatrix = value;
+            get => logTransitionProbabilities; 
+            set => logTransitionProbabilities = value;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         [XmlIgnore]
         [JsonProperty("observation_means")]
         [Description("The observation means.")]
-        [Category("ModelState")]
+        [Category("ModelStateParameters")]
         public double[,] ObservationMeans
         {
             get => observationMeans;
@@ -67,40 +67,40 @@ namespace Bonsai.ML.HiddenMarkovModels
         [XmlIgnore]
         [JsonProperty("observation_covs")]
         [Description("The observation covariances.")]
-        [Category("ModelState")]
+        [Category("ModelStateParameters")]
         public double[,,] ObservationCovs
         {
             get => observationCovs;
             set => observationCovs = value;
         }
 
-        public IObservable<State> Process<TSource>(IObservable<TSource> source)
+        public IObservable<StateParameters> Process<TSource>(IObservable<TSource> source)
         {
             return Observable.Select(source, pyObject =>
             {
-                return new State ()
+                return new StateParameters ()
                 {
-                    InitStateDistribution = InitStateDistribution,
-                    TransitionMatrix = TransitionMatrix,
+                    InitialStateDistribution = InitialStateDistribution,
+                    LogTransitionProbabilities = LogTransitionProbabilities,
                     ObservationMeans = ObservationMeans,
                     ObservationCovs = ObservationCovs
                 };
             });
         }
 
-        public IObservable<State> Process(IObservable<PyObject> source)
+        public IObservable<StateParameters> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>
             {
-                var initStateDistributionPyObj = (double[])pyObject.GetArrayAttr("init_state_distn");
-                var transitionMatrixPyObj = (double[,])pyObject.GetArrayAttr("transitions");
+                var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
+                var logTransitionProbabilitiesPyObj = (double[,])pyObject.GetArrayAttr("log_transition_probabilities");
                 var observationMeansPyObj = (double[,])pyObject.GetArrayAttr("observation_means");
                 var observationCovsPyObj = (double[,,])pyObject.GetArrayAttr("observation_covs");
 
-                return new State ()
+                return new StateParameters ()
                 {
-                    InitStateDistribution = initStateDistributionPyObj,
-                    TransitionMatrix = transitionMatrixPyObj,
+                    InitialStateDistribution = initialStateDistributionPyObj,
+                    LogTransitionProbabilities = logTransitionProbabilitiesPyObj,
                     ObservationMeans = observationMeansPyObj,
                     ObservationCovs = observationCovsPyObj
                 };

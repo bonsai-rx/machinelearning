@@ -15,7 +15,8 @@ namespace Bonsai.ML.HiddenMarkovModels
     /// </summary>
     [DefaultProperty(nameof(Type))]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    [XmlInclude(typeof(TypeMapping<State>))]
+    [XmlInclude(typeof(TypeMapping<StateParameters>))]
+    [XmlInclude(typeof(TypeMapping<ModelParameters>))]
     [Description("Deserializes a sequence of JSON strings into data model objects.")]
     public partial class DeserializeFromJson : SingleArgumentExpressionBuilder
     {
@@ -24,7 +25,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         public DeserializeFromJson()
         {
-            Type = new TypeMapping<State>();
+            Type = new TypeMapping<StateParameters>();
         }
 
         /// <summary>
