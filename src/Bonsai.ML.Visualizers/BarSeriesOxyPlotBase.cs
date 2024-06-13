@@ -97,13 +97,14 @@ namespace Bonsai.ML.Visualizers
         /// Requires a string for the name of the bar series
         /// Fill color of the bar series is optional.
         /// </summary>
-        public BarSeries AddNewBarSeries(string barSeriesName, OxyColor? fillColor = null)
+        public BarSeries AddNewBarSeries(string barSeriesName, OxyColor? fillColor = null, OxyColor? strokeColor = null)
         {
             BarSeries barSeries = new BarSeries
             {
                 Title = barSeriesName,
                 FillColor = fillColor ?? defaultBarSeriesColor,
-                StrokeColor = OxyColors.Black,
+                StrokeColor = strokeColor ?? OxyColors.Automatic,
+                StrokeThickness = strokeColor != null ? 1 : 0,
                 XAxisKey = "x1",
                 YAxisKey = "y1"
             };
@@ -116,13 +117,14 @@ namespace Bonsai.ML.Visualizers
         /// Requires a string for the name of the bar series
         /// Fill color of the bar series is optional.
         /// </summary>
-        public ErrorBarSeries AddNewErrorBarSeries(string barSeriesName, OxyColor? fillColor = null)
+        public ErrorBarSeries AddNewErrorBarSeries(string barSeriesName, OxyColor? fillColor = null, OxyColor? strokeColor = null)
         {
             ErrorBarSeries errorBarSeries = new ErrorBarSeries
             {
                 Title = barSeriesName,
                 FillColor = fillColor ?? defaultBarSeriesColor,
-                StrokeColor = OxyColors.Black,
+                StrokeColor = strokeColor ?? OxyColors.Automatic,
+                StrokeThickness = strokeColor != null ? 1 : 0,
                 XAxisKey = "x1",
                 YAxisKey = "y1"
             };

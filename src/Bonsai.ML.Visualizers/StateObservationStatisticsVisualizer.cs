@@ -54,8 +54,7 @@ namespace Bonsai.ML.Visualizers
 
                     for (int i = 0; i < seriesCount; i++)
                     {
-                        OxyColor fillColor = OxyPalettes.Jet(seriesCount).Colors[i];
-                        allBarSeries.Add(Plot.AddNewErrorBarSeries($"Dimension: {i}", fillColor: fillColor));
+                        allBarSeries.Add(Plot.AddNewErrorBarSeries($"Dimension: {i}", strokeColor: OxyColors.Black));
                     }
                 }
 
@@ -73,6 +72,7 @@ namespace Bonsai.ML.Visualizers
 
                 for (int i = 0; i < nStates; i++)
                 {
+                    OxyColor fillColor = OxyPalettes.Jet(nStates).Colors[i];
                     for (int j = 0; j < nDims; j++)
                     {
                         var val = statistics.Means[i, j];
@@ -81,7 +81,7 @@ namespace Bonsai.ML.Visualizers
                         minValue = Math.Min(minValue, val - err);
                         maxValue = Math.Max(maxValue, val + err);
 
-                        Plot.AddValueAndErrorToBarSeries(allBarSeries[j], val, err);
+                        Plot.AddValueAndErrorToBarSeries(allBarSeries[j], val, err, fillColor: fillColor);
                     }
                 }
 

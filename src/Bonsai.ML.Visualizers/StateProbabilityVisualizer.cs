@@ -50,7 +50,7 @@ namespace Bonsai.ML.Visualizers
                     for (int i = 0; i < statesCount; i++)
                     {
                         OxyColor fillColor = OxyPalettes.Jet(statesCount).Colors[i];
-                        allBarSeries.Add(Plot.AddNewBarSeries($"State: {i}", fillColor: fillColor));
+                        allBarSeries.Add(Plot.AddNewBarSeries($"State: {i}", fillColor: fillColor, strokeColor: OxyColors.Black));
                     }
                 }
 
@@ -65,7 +65,7 @@ namespace Bonsai.ML.Visualizers
 
                 var nStates = stateProbability.Probabilities.Length;
                 CategoryAxis categoryAxis = (CategoryAxis)Plot.xAxis;
-                categoryAxis.ItemsSource = Enumerable.Range(0, nStates).Select(i => i.ToString());
+                categoryAxis.ItemsSource = Enumerable.Range(1, nStates);
 
                 for (int i = 0; i < nStates; i++)
                 {
