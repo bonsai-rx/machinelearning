@@ -52,7 +52,7 @@ class HiddenMarkovModel(HMM):
         self.observation_covs = hmm_params[2][1]
 
         self.log_alpha = None
-        self.alpha = None
+        self.state_probabilities = None
 
     def infer_state(self, observation: list[float]):
 
