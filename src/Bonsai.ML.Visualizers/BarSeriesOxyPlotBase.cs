@@ -13,9 +13,9 @@ namespace Bonsai.ML.Visualizers
     {
         private PlotView view;
         private PlotModel model;
-        private OxyColor defaultBarSeriesColor = OxyColors.LightBlue;
+        private OxyColor defaultBarSeriesColor = OxyColors.Automatic;
 
-        private Axis xAxis;
+        internal Axis xAxis;
         private Axis yAxis;
 
         private StatusStrip statusStrip;
@@ -99,11 +99,10 @@ namespace Bonsai.ML.Visualizers
         /// </summary>
         public BarSeries AddNewBarSeries(string barSeriesName, OxyColor? fillColor = null)
         {
-            OxyColor _fillColor = fillColor.HasValue ? fillColor.Value : defaultBarSeriesColor;
             BarSeries barSeries = new BarSeries
             {
                 Title = barSeriesName,
-                FillColor = _fillColor,
+                FillColor = fillColor ?? defaultBarSeriesColor,
                 StrokeColor = OxyColors.Black,
                 XAxisKey = "x1",
                 YAxisKey = "y1"
@@ -119,11 +118,10 @@ namespace Bonsai.ML.Visualizers
         /// </summary>
         public ErrorBarSeries AddNewErrorBarSeries(string barSeriesName, OxyColor? fillColor = null)
         {
-            OxyColor _fillColor = fillColor.HasValue ? fillColor.Value : defaultBarSeriesColor;
             ErrorBarSeries errorBarSeries = new ErrorBarSeries
             {
                 Title = barSeriesName,
-                FillColor = _fillColor,
+                FillColor = fillColor ?? defaultBarSeriesColor,
                 StrokeColor = OxyColors.Black,
                 XAxisKey = "x1",
                 YAxisKey = "y1"
@@ -145,9 +143,26 @@ namespace Bonsai.ML.Visualizers
         /// Method to add a value to a bar series.
         /// Requires the bar series and value.
         /// </summary>
-        public void AddValueToBarSeries(BarSeries barSeries, double value)
+        public void AddValueToBarSeries(BarSeries barSeries, double value, OxyColor? fillColor = null)
         {
-            var barItem = new BarItem { Value = value };
+            var barItem = new BarItem { 
+                Value = value,
+                Color = fillColor ?? barSeries.FillColor
+            };
+            AddBarItemToBarSeries(barSeries, barItem);
+        }
+
+        /// <summary>
+        /// Method to add a value to a bar series.
+        /// Requires the bar series and value.
+        /// </summary>
+        public void AddValueToBarSeries(BarSeries barSeries, int index, double value, OxyColor? fillColor = null)
+        {
+            var barItem = new BarItem {
+                CategoryIndex = index,
+                Value = value,
+                Color = fillColor ?? barSeries.FillColor,
+            };
             AddBarItemToBarSeries(barSeries, barItem);
         }
 
@@ -155,9 +170,28 @@ namespace Bonsai.ML.Visualizers
         /// Method to add value with error to a bar series.
         /// Requires the bar series, value, and error.
         /// </summary>
-        public void AddValueAndErrorToBarSeries(BarSeries barSeries, double value, double error)
+        public void AddValueAndErrorToBarSeries(BarSeries barSeries, double value, double error, OxyColor? fillColor = null)
         {
-            var barItem = new ErrorBarItem { Value = value, Error = error };
+            var barItem = new ErrorBarItem { 
+                Value = value, 
+                Error = error,
+                Color = fillColor ?? barSeries.FillColor
+            };
+            AddBarItemToBarSeries(barSeries, barItem);
+        }
+
+        /// <summary>
+        /// Method to add value with error to a bar series.
+        /// Requires the bar series, value, and error.
+        /// </summary>
+        public void AddValueAndErrorToBarSeries(BarSeries barSeries, int index, double value, double error, OxyColor? fillColor = null)
+        {
+            var barItem = new ErrorBarItem { 
+                CategoryIndex = index,
+                Value = value, 
+                Error = error,
+                Color = fillColor ?? barSeries.FillColor
+            };
             AddBarItemToBarSeries(barSeries, barItem);
         }
 
