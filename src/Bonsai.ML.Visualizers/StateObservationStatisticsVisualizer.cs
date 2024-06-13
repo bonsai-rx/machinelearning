@@ -52,7 +52,7 @@ namespace Bonsai.ML.Visualizers
                     allBarSeries = new List<ErrorBarSeries>();
                     var seriesCount = statistics.Means.GetLength(1);
 
-                    for (int i = 0; i < statistics.Means.GetLength(1); i++)
+                    for (int i = 0; i < seriesCount; i++)
                     {
                         OxyColor fillColor = OxyPalettes.Jet(seriesCount).Colors[i];
                         allBarSeries.Add(Plot.AddNewErrorBarSeries($"Dimension: {i}", fillColor: fillColor));
@@ -68,9 +68,12 @@ namespace Bonsai.ML.Visualizers
                 var maxValue = 0.0;
                 var paddingPercentage = 0.05;
 
-                for (int i = 0; i < statistics.Means.GetLength(0); i++)
+                var nStates = statistics.Means.GetLength(0);
+                var nDims = statistics.Means.GetLength(1);
+
+                for (int i = 0; i < nStates; i++)
                 {
-                    for (int j = 0; j < statistics.Means.GetLength(1); j++)
+                    for (int j = 0; j < nDims; j++)
                     {
                         var val = statistics.Means[i, j];
                         var err = statistics.StdDevs[i, j];
