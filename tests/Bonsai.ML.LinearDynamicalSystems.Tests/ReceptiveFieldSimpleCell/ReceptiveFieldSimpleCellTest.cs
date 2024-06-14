@@ -3,17 +3,14 @@ using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Reflection;
-using Bonsai;
-using Bonsai.Editor;
 using Newtonsoft.Json;
-using Bonsai.ML.LinearDynamicalSystems;
 
-namespace Bonsai.ML.Examples.Tests.ReceptiveFieldSimpleCell;
+namespace Bonsai.ML.LinearDynamicalSystems.Tests.ReceptiveFieldSimpleCell;
 
 [TestClass]
 public class ReceptiveFieldSimpleCellTest
 {
-    private string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReceptiveFieldSimpleCellTest");
+    private string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReceptiveFieldSimpleCell");
     private int nSamples = 10000;
 
     private void RunProcess(string fileName, string fmtArg)
@@ -95,19 +92,19 @@ public class ReceptiveFieldSimpleCellTest
         Console.WriteLine("Run python script finished.");
     }
 
-    private void RunBonsaiWorkflow(string basePath)
+    private async Task RunBonsaiWorkflow(string basePath)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        var currentDirectory = Environment.CurrentDirectory;
+        Environment.CurrentDirectory = basePath;
+        try
         {
-            RunProcess("powershell", $"\"{basePath}\\run_bonsai_test.ps1\" {basePath} {nSamples}");
+            var workflowPath = Path.Combine(basePath, "receptive_field.bonsai");
+            await WorkflowHelper.RunWorkflow(
+                workflowPath,
+                properties: [("NSamples", nSamples)]);
+            Console.WriteLine("Run bonsai workflow finished.");
         }
-
-        else
-        {
-            RunProcess("/bin/bash", $"\"{basePath}/run_bonsai_test.sh\" {basePath} {nSamples}");
-        }
-        
-        Console.WriteLine("Run bonsai workflow finished.");
+        finally { Environment.CurrentDirectory = currentDirectory; }
     }
 
     private string GetJsonData(string jsonFileName)
@@ -176,12 +173,12 @@ public class ReceptiveFieldSimpleCellTest
     [DeploymentItem("Bonsai.config")]
     [DeploymentItem("NuGet.config")]
     [DeploymentItem("original-receptivefield.json")]
-    public void TestSetup()
+    public async Task TestSetup()
     {
         Directory.CreateDirectory(basePath);
         DownloadData(basePath);
         RunPythonScript(basePath);
-        RunBonsaiWorkflow(basePath);
+        await RunBonsaiWorkflow(basePath);
     }
 
     [TestMethod]
