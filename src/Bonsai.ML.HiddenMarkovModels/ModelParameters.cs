@@ -137,8 +137,9 @@ namespace Bonsai.ML.HiddenMarkovModels
 
         public IObservable<ModelParameters> Process(IObservable<PyObject> source)
         {
-            var stateParametersObservable = new StateParameters().Process(source);
-            return Observable.Select(source, pyObject => 
+            var sharedSource = source.Publish().RefCount();
+            var stateParametersObservable = new StateParameters().Process(sharedSource);
+            return sharedSource.Select(pyObject => 
             {
                 var numStatesPyObj = pyObject.GetAttr<int>("num_states");
                 var dimensionsPyObj = pyObject.GetAttr<int>("dimensions");
