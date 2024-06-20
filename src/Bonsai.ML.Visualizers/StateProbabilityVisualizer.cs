@@ -65,7 +65,7 @@ namespace Bonsai.ML.Visualizers
 
                 var nStates = stateProbability.Probabilities.Length;
                 CategoryAxis categoryAxis = (CategoryAxis)Plot.xAxis;
-                categoryAxis.ItemsSource = Enumerable.Range(1, nStates);
+                categoryAxis.ItemsSource = Enumerable.Range(0, nStates);
 
                 for (int i = 0; i < nStates; i++)
                 {
