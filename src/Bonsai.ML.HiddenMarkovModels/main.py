@@ -63,6 +63,9 @@ class HiddenMarkovModel(HMM):
         self._fit_finished = False
         self.loop = None
         self.thread = None
+        self.curr_batch_size = 0
+        self.flush_data_between_batches = True
+        self.most_likely_state_sequence = None
 
     def infer_state(self, observation: list[float]):
 
@@ -84,28 +87,47 @@ class HiddenMarkovModel(HMM):
 
     def fit_async(self,
                   observation: list[float],
-                  batch_size=20,
-                  max_iter=50):
+                  batch_size: int = 20,
+                  max_iter: int = 50,
+                  flush_data_between_batches: bool = False):
+        
+        self.flush_data_between_batches = flush_data_between_batches
+
+        if self.batch is None:
+            self.batch = np.expand_dims(np.array(observation), 0)
+            self.curr_batch_size += 1
+
+        elif self.curr_batch_size < batch_size or not flush_data_between_batches:
+            self.batch = np.vstack(
+                [self.batch, np.expand_dims(np.array(observation), 0)])
+            self.curr_batch_size += 1
+        
+        elif self.curr_batch_size == batch_size:
+            self.batch = np.vstack(
+                [self.batch[1:], np.expand_dims(np.array(observation), 0)])
 
         if not self.is_running:
 
-            if self.batch is None:
-                self.batch = np.expand_dims(np.array(observation), 0)
-
-            elif len(self.batch) < batch_size:
-                self.batch = np.vstack(
-                    [self.batch, np.expand_dims(np.array(observation), 0)])
-
-            if len(self.batch) == batch_size:
+            if self.curr_batch_size >= batch_size:
 
                 def start_loop(loop):
                     asyncio.set_event_loop(loop)
                     loop.run_forever()
 
                 def on_completion(future):
-                    self.batch = None
+
+                    self.initial_state_distribution = self.params[0][0]
+                    self.log_transition_probabilities = self.params[1][0]
+                    self.observation_means = self.params[2][0]
+                    self.observation_stds = np.diagonal(self.params[2][1], axis1=1, axis2=2)
+                    self.observation_covs = self.params[2][1]
+
                     self.is_running = False
                     self._fit_finished = True
+                    self.curr_batch_size = 0
+
+                    if self.flush_data_between_batches:
+                        self.batch = None
 
                 self.is_running = True
 
@@ -124,11 +146,11 @@ class HiddenMarkovModel(HMM):
         return self.is_running
 
     async def _fit_async(self, *args, **kwargs):
-        func = partial(self.fit, *args, **kwargs)
+        func = partial(super(HiddenMarkovModel, self).fit, *args, **kwargs)
         with ThreadPoolExecutor() as pool:
             await self.loop.run_in_executor(pool, func)
 
-    def get_fitting_finished(self):
+    def get_fit_finished(self):
         return self._fit_finished
 
     def reset_fit_loop(self):
@@ -148,3 +170,7 @@ class HiddenMarkovModel(HMM):
 
         self.thread = None
         self.loop = None
+
+    def most_likely_state_seq_from_batch(self):
+        if self.batch is not None:
+            self.most_likely_state_sequence = self.most_likely_states(self.batch)
