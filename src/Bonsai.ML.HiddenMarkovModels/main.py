@@ -31,6 +31,22 @@ class HiddenMarkovModel(HMM):
             K=self.num_states, D=self.dimensions, observations=self.observation_type
         )
 
+        self.update_params(initial_state_distribution,
+                           log_transition_probabilities, observation_means, observation_covs)
+
+        self.log_alpha = None
+        self.state_probabilities = None
+
+        self.batch = None
+        self.is_running = False
+        self._fit_finished = False
+        self.loop = None
+        self.thread = None
+        self.curr_batch_size = 0
+        self.flush_data_between_batches = True
+        self.inferred_most_probable_states = np.array([])
+
+    def update_params(self, initial_state_distribution, log_transition_probabilities, observation_means, observation_covs):
         hmm_params = self.params
 
         if initial_state_distribution is not None:
@@ -45,7 +61,7 @@ class HiddenMarkovModel(HMM):
 
         if observation_means is not None and observation_covs is not None:
             hmm_params = hmm_params[:2] + (
-                (np.array(observation_means), np.array(observation_covs)),
+                (np.array(observation_means), np.linalg.cholesky(np.array(observation_covs) * np.eye(self.dimensions))),
             )
 
         self.params = hmm_params
@@ -54,19 +70,8 @@ class HiddenMarkovModel(HMM):
         self.log_transition_probabilities = hmm_params[1][0]
         self.observation_means = hmm_params[2][0]
         self.observation_covs = np.maximum(self.observations.Sigmas, 0)
-        self.observation_stds = np.sqrt(np.diagonal(self.observation_covs, axis1=1, axis2=2))
-
-        self.log_alpha = None
-        self.state_probabilities = None
-
-        self.batch = None
-        self.is_running = False
-        self._fit_finished = False
-        self.loop = None
-        self.thread = None
-        self.curr_batch_size = 0
-        self.flush_data_between_batches = True
-        self.inferred_most_probable_states = np.array([])
+        self.observation_stds = np.sqrt(np.diagonal(
+            self.observation_covs, axis1=1, axis2=2))
 
     def infer_state(self, observation: list[float]):
 
@@ -89,6 +94,7 @@ class HiddenMarkovModel(HMM):
 
     def fit_async(self,
                   observation: list[float],
+                  vars_to_estimate: dict = None,
                   batch_size: int = 20,
                   max_iter: int = 50,
                   flush_data_between_batches: bool = False):
@@ -114,18 +120,28 @@ class HiddenMarkovModel(HMM):
             self.inferred_most_probable_states = np.array(
                 [self.infer_state(obs) for obs in self.batch_observations]).astype(int)
         else:
-            self.inferred_most_probable_states = np.append(self.inferred_most_probable_states, self.infer_state(self.batch_observations[-1])).astype(int)
+            self.inferred_most_probable_states = np.append(
+                self.inferred_most_probable_states, self.infer_state(self.batch_observations[-1])).astype(int)
 
         if not self.is_running and self.loop is None and self.thread is None:
 
             if self.curr_batch_size >= batch_size:
+
+                if vars_to_estimate is None:
+                    vars_to_estimate = {
+                        "initial_state_distribution": True,
+                        "log_transition_probabilities": True,
+                        "observation_means": True,
+                        "observation_covs": True
+                    }
 
                 def calculate_permutation(mat1, mat2):
                     num_states = mat1.shape[0]
                     cost_matrix = np.zeros((num_states, num_states))
                     for i in range(num_states):
                         for j in range(num_states):
-                            cost_matrix[i, j] = np.linalg.norm(mat1[i] - mat2[j])
+                            cost_matrix[i, j] = np.linalg.norm(
+                                mat1[i] - mat2[j])
                     return linear_sum_assignment(cost_matrix)[1]
 
                 def start_loop(loop):
@@ -133,14 +149,20 @@ class HiddenMarkovModel(HMM):
                     loop.run_forever()
 
                 def on_completion(future):
-                    permutation = calculate_permutation(self.observation_means, self.params[2][0])
+                    permutation = calculate_permutation(
+                        self.observation_means, self.params[2][0])
                     super(HiddenMarkovModel, self).permute(permutation)
 
-                    self.initial_state_distribution = self.params[0][0]
-                    self.log_transition_probabilities = self.params[1][0]
-                    self.observation_means = self.params[2][0]
-                    self.observation_covs = np.maximum(self.observations.Sigmas, 0)
-                    self.observation_stds = np.sqrt(np.diagonal(self.observation_covs, axis1=1, axis2=2))
+                    initial_state_distribution = None if vars_to_estimate[
+                        "initial_state_distribution"] else self.initial_state_distribution
+                    log_transition_probabilities = None if vars_to_estimate[
+                        "log_transition_probabilities"] else self.log_transition_probabilities
+                    observation_means = None if vars_to_estimate[
+                        "observation_means"] else self.observation_means
+                    observation_covs = None if vars_to_estimate["observation_covs"] else self.observation_covs
+
+                    self.update_params(initial_state_distribution,
+                                       log_transition_probabilities, observation_means, observation_covs)
 
                     self.is_running = False
                     self._fit_finished = True
