@@ -16,7 +16,7 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="IntProperty">
-          <Value>200</Value>
+          <Value>50</Value>
         </Combinator>
       </Expression>
       <Expression xsi:type="PropertyMapping">
@@ -26,7 +26,7 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="IntProperty">
-          <Value>200</Value>
+          <Value>50</Value>
         </Combinator>
       </Expression>
       <Expression xsi:type="PropertyMapping">
@@ -36,8 +36,8 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="rx:BufferCount">
-          <rx:Count>200</rx:Count>
-          <rx:Skip>200</rx:Skip>
+          <rx:Count>50</rx:Count>
+          <rx:Skip>50</rx:Skip>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
@@ -60,7 +60,7 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="IntProperty">
-          <Value>200</Value>
+          <Value>50</Value>
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
@@ -72,7 +72,39 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="FlushDataBetweenBatches" Category="Hyperparameters" />
+        <Property Name="Value" DisplayName="FlushDataBetweenBatches" Category="TrainingData" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="BooleanProperty">
+          <Value>false</Value>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="Value" DisplayName="InitialStateDistribution" Category="ParametersToFit" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="BooleanProperty">
+          <Value>true</Value>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="Value" DisplayName="LogTransitionProbabilities" Category="ParametersToFit" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="BooleanProperty">
+          <Value>true</Value>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="Value" DisplayName="ObservationMeans" Category="ParametersToFit" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="BooleanProperty">
+          <Value>true</Value>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="Value" DisplayName="ObservationCovs" Category="ParametersToFit" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
@@ -83,8 +115,8 @@
         <Combinator xsi:type="rx:CombineLatest" />
       </Expression>
       <Expression xsi:type="Format">
-        <Format>batch_size={0},max_iter={1},flush_data_between_batches={2}</Format>
-        <Selector>it.Item1, it.Item2, it.Item3</Selector>
+        <Format>vars_to_estimate={{"initial_state_distribution":{3},"log_transition_probabilities":{4},"observation_means":{5},"observation_covs":{6}}},batch_size={0},max_iter={1},flush_data_between_batches={2}</Format>
+        <Selector>it.Item1, it.Item2, it.Item3,it.Item4,it.Item5,it.Item6,it.Item7</Selector>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="rx:WithLatestFrom" />
@@ -108,7 +140,7 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="py:Eval">
-          <py:Expression>hmm.fit_async([372.270477294922,149.264526367188], batch_size=200, max_iter=50)</py:Expression>
+          <py:Expression>hmm.fit_async([1.38021159584039,14.2434706648223], vars_to_estimate={"initial_state_distribution":True,"log_transition_probabilities":True,"observation_means":False,"observation_covs":False},batch_size=50,max_iter=50,flush_data_between_batches=False)</py:Expression>
         </Combinator>
       </Expression>
       <Expression xsi:type="scr:ExpressionTransform">
@@ -148,23 +180,31 @@
       <Edge From="9" To="10" Label="Source1" />
       <Edge From="10" To="11" Label="Source1" />
       <Edge From="11" To="12" Label="Source2" />
-      <Edge From="12" To="20" Label="Source1" />
-      <Edge From="13" To="18" Label="Source1" />
+      <Edge From="12" To="28" Label="Source1" />
+      <Edge From="13" To="26" Label="Source1" />
       <Edge From="14" To="15" Label="Source1" />
-      <Edge From="15" To="18" Label="Source2" />
+      <Edge From="15" To="26" Label="Source2" />
       <Edge From="16" To="17" Label="Source1" />
-      <Edge From="17" To="18" Label="Source3" />
+      <Edge From="17" To="26" Label="Source3" />
       <Edge From="18" To="19" Label="Source1" />
-      <Edge From="19" To="20" Label="Source2" />
+      <Edge From="19" To="26" Label="Source4" />
       <Edge From="20" To="21" Label="Source1" />
-      <Edge From="21" To="22" Label="Source1" />
-      <Edge From="22" To="25" Label="Source1" />
-      <Edge From="23" To="24" Label="Source1" />
-      <Edge From="24" To="25" Label="Source2" />
-      <Edge From="25" To="26" Label="Source1" />
+      <Edge From="21" To="26" Label="Source5" />
+      <Edge From="22" To="23" Label="Source1" />
+      <Edge From="23" To="26" Label="Source6" />
+      <Edge From="24" To="25" Label="Source1" />
+      <Edge From="25" To="26" Label="Source7" />
       <Edge From="26" To="27" Label="Source1" />
-      <Edge From="27" To="28" Label="Source1" />
+      <Edge From="27" To="28" Label="Source2" />
       <Edge From="28" To="29" Label="Source1" />
+      <Edge From="29" To="30" Label="Source1" />
+      <Edge From="30" To="33" Label="Source1" />
+      <Edge From="31" To="32" Label="Source1" />
+      <Edge From="32" To="33" Label="Source2" />
+      <Edge From="33" To="34" Label="Source1" />
+      <Edge From="34" To="35" Label="Source1" />
+      <Edge From="35" To="36" Label="Source1" />
+      <Edge From="36" To="37" Label="Source1" />
     </Edges>
   </Workflow>
 </WorkflowBuilder>
