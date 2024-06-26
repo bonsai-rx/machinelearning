@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
 using Python.Runtime;
+using Bonsai.ML.HiddenMarkovModels.Observations;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -25,34 +26,34 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonProperty("num_states")]
         [Description("The number of discrete latent states of the HMM model")]
         [Category("InitialParameters")]
-        public int NumStates 
-        { 
-            get => numStates; 
-            set 
-            { 
-                numStates = value; 
-                numStatesStr = numStates.ToString(); 
-            } 
+        public int NumStates
+        {
+            get => numStates;
+            set
+            {
+                numStates = value;
+                numStatesStr = numStates.ToString();
+            }
         }
 
 
         private int dimensions;
         private string dimensionsStr = "";
-        
+
         /// <summary>
         /// The dimensionality of the observations into the HMM model.
         /// </summary>
         [JsonProperty("dimensions")]
         [Description("The dimensionality of the observations into the HMM model")]
         [Category("InitialParameters")]
-        public int Dimensions 
+        public int Dimensions
         {
             get => dimensions;
-            set 
+            set
             {
                 dimensions = value;
-                dimensionsStr = dimensions.ToString(); 
-            } 
+                dimensionsStr = dimensions.ToString();
+            }
         }
 
 
@@ -65,14 +66,14 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonProperty("observation_type")]
         [Description("The type of distribution that the HMM will use to model the emission of data observations.")]
         [Category("InitialParameters")]
-        public ObservationType ObservationType 
-        { 
-            get => observationType; 
-            set 
-            { 
-                observationType = value; 
-                observationTypeLookup.TryGetValue(observationType, out observationTypeStr); 
-            } 
+        public ObservationType ObservationType
+        {
+            get => observationType;
+            set
+            {
+                observationType = value;
+                observationTypeLookup.TryGetValue(observationType, out observationTypeStr);
+            }
         }
 
 
@@ -88,14 +89,10 @@ namespace Bonsai.ML.HiddenMarkovModels
         public StateParameters StateParameters
         {
             get => stateParameters;
-            set 
+            set
             {
                 stateParameters = value;
-                stateParametersStr = stateParameters == null ? "" : 
-                    $"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(stateParameters.InitialStateDistribution)}," +
-                    $"log_transition_probabilities={NumpyHelper.NumpyParser.ParseArray(stateParameters.LogTransitionProbabilities)}," +
-                    $"observation_means={NumpyHelper.NumpyParser.ParseArray(stateParameters.ObservationMeans)}," +
-                    $"observation_covs={NumpyHelper.NumpyParser.ParseArray(stateParameters.ObservationCovs)}";
+                stateParametersStr = stateParameters == null ? "" : stateParameters.ToString();
             }
         }
 
@@ -112,24 +109,24 @@ namespace Bonsai.ML.HiddenMarkovModels
         public IObservable<ModelParameters> Process()
         {
             return Observable.Return(
-                new ModelParameters()  
-                { 
-                    NumStates = NumStates, 
-                    Dimensions = Dimensions, 
-                    ObservationType = ObservationType, 
+                new ModelParameters()
+                {
+                    NumStates = NumStates,
+                    Dimensions = Dimensions,
+                    ObservationType = ObservationType,
                     StateParameters = StateParameters
                 });
         }
 
         public IObservable<ModelParameters> Process<TSource>(IObservable<TSource> source)
         {
-            return Observable.Select(source, item => 
+            return Observable.Select(source, item =>
             {
-                return new ModelParameters() 
-                { 
-                    NumStates = NumStates, 
-                    Dimensions = Dimensions, 
-                    ObservationType = ObservationType, 
+                return new ModelParameters()
+                {
+                    NumStates = NumStates,
+                    Dimensions = Dimensions,
+                    ObservationType = ObservationType,
                     StateParameters = StateParameters
                 };
             });
@@ -138,8 +135,8 @@ namespace Bonsai.ML.HiddenMarkovModels
         public IObservable<ModelParameters> Process(IObservable<PyObject> source)
         {
             var sharedSource = source.Publish().RefCount();
-            var stateParametersObservable = new StateParameters().Process(sharedSource);
-            return sharedSource.Select(pyObject => 
+            var stateParametersObservable = new StateParameters() { ObservationType = ObservationType }.Process(sharedSource);
+            return sharedSource.Select(pyObject =>
             {
                 var numStatesPyObj = pyObject.GetAttr<int>("num_states");
                 var dimensionsPyObj = pyObject.GetAttr<int>("dimensions");
@@ -147,13 +144,13 @@ namespace Bonsai.ML.HiddenMarkovModels
 
                 observationTypeStrLookup.TryGetValue(observationTypeStrPyObj, out var observationTypePyObj);
 
-                return new ModelParameters() 
-                { 
-                    NumStates = numStatesPyObj, 
-                    Dimensions = dimensionsPyObj, 
-                    ObservationType = observationTypePyObj, 
+                return new ModelParameters()
+                {
+                    NumStates = numStatesPyObj,
+                    Dimensions = dimensionsPyObj,
+                    ObservationType = observationTypePyObj,
                 };
-            }).Zip(stateParametersObservable, (modelParameters, stateParameters) => 
+            }).Zip(stateParametersObservable, (modelParameters, stateParameters) =>
             {
                 modelParameters.StateParameters = stateParameters;
                 return modelParameters;

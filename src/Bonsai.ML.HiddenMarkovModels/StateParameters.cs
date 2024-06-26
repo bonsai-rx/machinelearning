@@ -4,6 +4,8 @@ using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
+using Bonsai.ML.HiddenMarkovModels.Observations;
+using System.Collections.Generic;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -19,8 +21,8 @@ namespace Bonsai.ML.HiddenMarkovModels
 
         private double[] initialStateDistribution;
         private double[,] logTransitionProbabilities;
-        private double[,] observationMeans;
-        private double[,,] observationCovs;
+        private ObservationParams observationParams;
+        private ObservationType observationTypeEnum;
 
         /// <summary>
         /// The initial state distribution.
@@ -49,29 +51,29 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
         /// <summary>
-        /// The observation means.
+        /// The observation type.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("observation_means")]
-        [Description("The observation means.")]
+        [JsonProperty("observation_type")]
+        [Description("The observation type.")]
         [Category("ModelStateParameters")]
-        public double[,] ObservationMeans
+        public ObservationType ObservationType
         {
-            get => observationMeans;
-            set => observationMeans = value;
+            get => observationTypeEnum;
+            set => observationTypeEnum = value;
         }
 
         /// <summary>
-        /// The observation covariances.
+        /// The observation parameters.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("observation_covs")]
-        [Description("The observation covariances.")]
+        [JsonProperty("observation_params")]
+        [Description("The observation parameters.")]
         [Category("ModelStateParameters")]
-        public double[,,] ObservationCovs
+        public ObservationParams ObservationParams
         {
-            get => observationCovs;
-            set => observationCovs = value;
+            get => observationParams;
+            set => observationParams = value;
         }
 
         public IObservable<StateParameters> Process<TSource>(IObservable<TSource> source)
@@ -82,8 +84,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     InitialStateDistribution = InitialStateDistribution,
                     LogTransitionProbabilities = LogTransitionProbabilities,
-                    ObservationMeans = ObservationMeans,
-                    ObservationCovs = ObservationCovs
+                    ObservationParams = ObservationParams
                 };
             });
         }
@@ -94,17 +95,28 @@ namespace Bonsai.ML.HiddenMarkovModels
             {
                 var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
                 var logTransitionProbabilitiesPyObj = (double[,])pyObject.GetArrayAttr("log_transition_probabilities");
-                var observationMeansPyObj = (double[,])pyObject.GetArrayAttr("observation_means");
-                var observationCovsPyObj = (double[,,])pyObject.GetArrayAttr("observation_covs");
+                var observationParamsPyObj = (object[])pyObject.GetArrayAttr("observation_params");
+                observationTypeEnumLookup.TryGetValue(ObservationType, out Type observationType);
+                ObservationParams observationParams = (ObservationParams)Activator.CreateInstance(observationType);
+                observationParams.Params = observationParamsPyObj;
 
                 return new StateParameters ()
                 {
                     InitialStateDistribution = initialStateDistributionPyObj,
                     LogTransitionProbabilities = logTransitionProbabilitiesPyObj,
-                    ObservationMeans = observationMeansPyObj,
-                    ObservationCovs = observationCovsPyObj
+                    ObservationType = ObservationType,
+                    ObservationParams = observationParams
                 };
             });
         }
+
+        private static readonly Dictionary<ObservationType, Type> observationTypeEnumLookup = new Dictionary<ObservationType, Type>
+        {
+            { ObservationType.Gaussian, typeof(GaussianObservations) },
+            { ObservationType.Exponential, typeof(ExponentialObservations) },
+            { ObservationType.Poisson, typeof(PoissonObservations) },
+            { ObservationType.Bernoulli, typeof(BernoulliObservations) },
+            { ObservationType.Autoregressive, typeof(AutoRegressiveObservations) }
+        };
     }
 }
