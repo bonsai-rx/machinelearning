@@ -6,6 +6,7 @@ from ssm import HMM
 from ssm.messages import logsumexp
 import numpy as np
 import autograd.numpy.random as npr
+from scipy.optimize import linear_sum_assignment
 
 npr.seed(0)
 
@@ -52,8 +53,8 @@ class HiddenMarkovModel(HMM):
         self.initial_state_distribution = hmm_params[0][0]
         self.log_transition_probabilities = hmm_params[1][0]
         self.observation_means = hmm_params[2][0]
-        self.observation_stds = np.diagonal(hmm_params[2][1], axis1=1, axis2=2)
-        self.observation_covs = hmm_params[2][1]
+        self.observation_covs = np.maximum(self.observations.Sigmas, 0)
+        self.observation_stds = np.sqrt(np.diagonal(self.observation_covs, axis1=1, axis2=2))
 
         self.log_alpha = None
         self.state_probabilities = None
@@ -65,13 +66,14 @@ class HiddenMarkovModel(HMM):
         self.thread = None
         self.curr_batch_size = 0
         self.flush_data_between_batches = True
-        self.most_likely_state_sequence = None
+        self.inferred_most_probable_states = np.array([])
 
     def infer_state(self, observation: list[float]):
 
         self.log_alpha = self.compute_log_alpha(
             np.expand_dims(np.array(observation), 0), self.log_alpha)
         self.state_probabilities = np.exp(self.log_alpha).astype(np.double)
+        return self.state_probabilities.argmax()
 
     def compute_log_alpha(self, obs, log_alpha=None):
 
@@ -90,7 +92,7 @@ class HiddenMarkovModel(HMM):
                   batch_size: int = 20,
                   max_iter: int = 50,
                   flush_data_between_batches: bool = False):
-        
+
         self.flush_data_between_batches = flush_data_between_batches
 
         if self.batch is None:
@@ -101,26 +103,44 @@ class HiddenMarkovModel(HMM):
             self.batch = np.vstack(
                 [self.batch, np.expand_dims(np.array(observation), 0)])
             self.curr_batch_size += 1
-        
+
         elif self.curr_batch_size == batch_size:
             self.batch = np.vstack(
                 [self.batch[1:], np.expand_dims(np.array(observation), 0)])
 
-        if not self.is_running:
+        self.batch_observations = self.batch
+
+        if len(self.inferred_most_probable_states) >= len(self.batch_observations):
+            self.inferred_most_probable_states = np.array(
+                [self.infer_state(obs) for obs in self.batch_observations]).astype(int)
+        else:
+            self.inferred_most_probable_states = np.append(self.inferred_most_probable_states, self.infer_state(self.batch_observations[-1])).astype(int)
+
+        if not self.is_running and self.loop is None and self.thread is None:
 
             if self.curr_batch_size >= batch_size:
+
+                def calculate_permutation(mat1, mat2):
+                    num_states = mat1.shape[0]
+                    cost_matrix = np.zeros((num_states, num_states))
+                    for i in range(num_states):
+                        for j in range(num_states):
+                            cost_matrix[i, j] = np.linalg.norm(mat1[i] - mat2[j])
+                    return linear_sum_assignment(cost_matrix)[1]
 
                 def start_loop(loop):
                     asyncio.set_event_loop(loop)
                     loop.run_forever()
 
                 def on_completion(future):
+                    permutation = calculate_permutation(self.observation_means, self.params[2][0])
+                    super(HiddenMarkovModel, self).permute(permutation)
 
                     self.initial_state_distribution = self.params[0][0]
                     self.log_transition_probabilities = self.params[1][0]
                     self.observation_means = self.params[2][0]
-                    self.observation_stds = np.diagonal(self.params[2][1], axis1=1, axis2=2)
-                    self.observation_covs = self.params[2][1]
+                    self.observation_covs = np.maximum(self.observations.Sigmas, 0)
+                    self.observation_stds = np.sqrt(np.diagonal(self.observation_covs, axis1=1, axis2=2))
 
                     self.is_running = False
                     self._fit_finished = True
@@ -170,7 +190,3 @@ class HiddenMarkovModel(HMM):
 
         self.thread = None
         self.loop = None
-
-    def most_likely_state_seq_from_batch(self):
-        if self.batch is not None:
-            self.most_likely_state_sequence = self.most_likely_states(self.batch)
