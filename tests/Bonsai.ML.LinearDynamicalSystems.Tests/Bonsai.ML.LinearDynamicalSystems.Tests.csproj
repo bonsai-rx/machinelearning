@@ -19,7 +19,7 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ReceptiveFieldSimpleCell/*">
+    <Content Include="ReceptiveFieldSimpleCell/*" Exclude="ReceptiveFieldSimpleCell/*.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
 </ItemGroup>
