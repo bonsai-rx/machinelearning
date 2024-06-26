@@ -86,8 +86,8 @@ public class ReceptiveFieldSimpleCellTest
         var pythonExec = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "python"
             : "python3";
-
-        RunProcess(pythonExec, $"\"{basePath}/run_python_test.py\" {basePath} {nSamples}");
+        var scriptPath = Path.Combine(basePath, "run_python_test.py");
+        RunProcess(pythonExec, $"\"{scriptPath}\" {basePath} {nSamples}");
 
         Console.WriteLine("Run python script finished.");
     }
@@ -167,11 +167,7 @@ public class ReceptiveFieldSimpleCellTest
     [TestInitialize]
     [DeploymentItem("run_python_test.py")]
     [DeploymentItem("receptive_field.py")]
-    [DeploymentItem("run_bonsai_test.sh")]
-    [DeploymentItem("run_bonsai_test.ps1")]
     [DeploymentItem("receptive_field.bonsai")]
-    [DeploymentItem("Bonsai.config")]
-    [DeploymentItem("NuGet.config")]
     [DeploymentItem("original-receptivefield.json")]
     public async Task TestSetup()
     {
