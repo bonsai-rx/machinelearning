@@ -188,12 +188,12 @@ public class ReceptiveFieldSimpleCellTest
         Assert.IsTrue(result);
     }
 
-    // [TestCleanup]
-    // public void Cleanup()
-    // {
-    //     if (Directory.Exists(basePath))
-    //     {
-    //         Directory.Delete(basePath, true);
-    //     }
-    // }
+    [TestCleanup]
+    public void Cleanup()
+    {
+        if (Directory.Exists(basePath))
+        {
+            Directory.Delete(basePath, true);
+        }
+    }
 }
