@@ -17,11 +17,13 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: 8.x
         
       - name: Restore NuGet Packages
-        run: msbuild -t:restore Bonsai.ML.sln
+        run: dotnet restore Bonsai.ML.sln
 
       - name: Build Solution
-        run: msbuild Bonsai.ML.sln /p:Configuration=Release
+        run: dotnet build Bonsai.ML.sln -c Release
