@@ -11,15 +11,15 @@ namespace Bonsai.ML.Visualizers
 {
     internal class TimeSeriesOxyPlotBase : UserControl
     {
-        private PlotView view;
-        private PlotModel model;
-        private OxyColor defaultLineSeriesColor = OxyColors.Blue;
-        private OxyColor defaultAreaSeriesColor = OxyColors.LightBlue;
+        private readonly PlotView view;
+        private readonly PlotModel model;
+        private static readonly OxyColor defaultLineSeriesColor = OxyColors.Blue;
+        private static readonly OxyColor defaultAreaSeriesColor = OxyColors.LightBlue;
 
-        private Axis xAxis;
-        private Axis yAxis;
+        private readonly Axis xAxis;
+        private readonly Axis yAxis;
 
-        private StatusStrip statusStrip;
+        private readonly StatusStrip statusStrip;
 
         /// <summary>
         /// Gets or sets the datetime value that determines the starting time of the data values.
@@ -42,14 +42,18 @@ namespace Bonsai.ML.Visualizers
         public bool BufferData { get; set; }
 
         /// <summary>
+        /// Gets or sets the label of the value axis in the time series plot.
+        /// </summary>
+        public string ValueLabel
+        {
+            get => yAxis.Title;
+            set => yAxis.Title = value;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TimeSeriesOxyPlotBase"/> class
         /// </summary>
         public TimeSeriesOxyPlotBase()
-        {
-            Initialize();
-        }
-
-        private void Initialize()
         {
             view = new PlotView
             {
