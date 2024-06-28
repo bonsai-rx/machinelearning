@@ -65,7 +65,7 @@ Alternatively, you can use the `Setup.cmd` file to setup the bonsai environment 
 2. Install the lds_python package
 
 ```cmd
-pip install lds_python@git+https://github.com/joacorapela/lds_python@4233363320e021f77f9b3e124846ec2e49c0e741
+pip install lds_python@git+https://github.com/joacorapela/lds_python@f761c201f3df883503ecb67acef35ba846e3524c
 ```
 
 If you encounter errors during installation of the lds_python package, you will have to diagnose the issue and install the correct packge dependencies manually.
