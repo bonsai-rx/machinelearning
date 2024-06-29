@@ -71,6 +71,7 @@ namespace Bonsai.ML.Visualizers
             var areaSeriesName = string.IsNullOrEmpty(Label) ? "Variance" : $"{Label} Variance";
             AreaSeries = Plot.AddNewAreaSeries(areaSeriesName, color: AreaSeriesColor);
 
+            if (Label != null) Plot.ValueLabel = Label;
             Plot.ResetLineSeries(LineSeries);
             Plot.ResetAreaSeries(AreaSeries);
             Plot.ResetAxes();
