@@ -95,21 +95,16 @@ namespace Bonsai.ML.HiddenMarkovModels
         {
             return Observable.Select(source, pyObject =>
             {
-                Console.WriteLine("here1");
                 var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
                 var logTransitionProbabilitiesPyObj = (double[,])pyObject.GetArrayAttr("log_transition_probabilities");
                 var observationsPyObj = (object[])pyObject.GetArrayAttr("observation_params");
                 var observationTypePyObj = pyObject.GetAttr<string>("observation_type");
-                
-                Console.WriteLine($"observationTypePyObj: {observationTypePyObj}");
-                Console.WriteLine($"observationPyObj length: {observationsPyObj.Length}");
 
                 ObservationType = GetFromString(observationTypePyObj);
 
                 var observationClassType = GetObservationsClassType(ObservationType);
                 Observations = (ObservationParams)Activator.CreateInstance(observationClassType);
                 observations.Params = observationsPyObj;
-                Console.WriteLine("here2");
 
                 return new StateParameters()
                 {
@@ -123,7 +118,7 @@ namespace Bonsai.ML.HiddenMarkovModels
 
         public override string ToString()
         {
-            return $"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution)},log_transition_probabilities={NumpyHelper.NumpyParser.ParseArray(LogTransitionProbabilities)},observation_params={Observations}";
+            return $"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution)},log_transition_probabilities={NumpyHelper.NumpyParser.ParseArray(LogTransitionProbabilities)},{Observations}";
         }
     }
 }
