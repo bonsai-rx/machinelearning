@@ -57,7 +57,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         public override string ToString()
         {
-            return $"({NumpyHelper.NumpyParser.ParseArray(Mus)}, {NumpyHelper.NumpyParser.ParseArray(SqrtSigmas)})";
+            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(Mus)}, {NumpyHelper.NumpyParser.ParseArray(SqrtSigmas)})";
         }
     }
 }

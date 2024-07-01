@@ -42,5 +42,10 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                 };
             });
         }
+
+        public override string ToString()
+        {
+            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(LogLambdas)},)";
+        }
     }
 }

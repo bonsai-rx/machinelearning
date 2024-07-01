@@ -44,7 +44,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         }
         public override string ToString()
         {
-            return $"({NumpyHelper.NumpyParser.ParseArray(LogLambdas)},)";
+            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(LogLambdas)},)";
         }
     }
 }
