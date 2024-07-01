@@ -15,13 +15,12 @@ class HiddenMarkovModel(HMM):
 
     def __init__(
         self,
-        num_states,
-        dimensions,
-        observation_type,
-        initial_state_distribution=None,
-        log_transition_probabilities=None,
-        observation_means=None,
-        observation_covs=None,
+        num_states: int,
+        dimensions: int,
+        observation_type: str,
+        initial_state_distribution: list[float] = None,
+        log_transition_probabilities: list[list[float]] = None,
+        observation_params: tuple = None,
     ):
 
         self.num_states = num_states
@@ -32,7 +31,7 @@ class HiddenMarkovModel(HMM):
         )
 
         self.update_params(initial_state_distribution,
-                           log_transition_probabilities, observation_means, observation_covs)
+                           log_transition_probabilities, observation_params)
 
         self.log_alpha = None
         self.state_probabilities = None
@@ -46,7 +45,7 @@ class HiddenMarkovModel(HMM):
         self.flush_data_between_batches = True
         self.inferred_most_probable_states = np.array([])
 
-    def update_params(self, initial_state_distribution, log_transition_probabilities, observation_means, observation_covs):
+    def update_params(self, initial_state_distribution, log_transition_probabilities, observation_params):
         hmm_params = self.params
 
         if initial_state_distribution is not None:
@@ -59,19 +58,16 @@ class HiddenMarkovModel(HMM):
                 ((np.array(log_transition_probabilities),),) + (hmm_params[2],)
             )
 
-        if observation_means is not None and observation_covs is not None:
-            hmm_params = hmm_params[:2] + (
-                (np.array(observation_means), np.linalg.cholesky(np.array(observation_covs) * np.eye(self.dimensions))),
-            )
+        if observation_params is not None:
+            hmm_params = hmm_params[:2] + \
+                tuple([np.array(param) for param in observation_params])
 
         self.params = hmm_params
 
         self.initial_state_distribution = hmm_params[0][0]
         self.log_transition_probabilities = hmm_params[1][0]
-        self.observation_means = hmm_params[2][0]
-        self.observation_covs = np.maximum(self.observations.Sigmas, 0)
-        self.observation_stds = np.sqrt(np.diagonal(
-            self.observation_covs, axis1=1, axis2=2))
+        self.observation_params = hmm_params[2] if isinstance(hmm_params[2], tuple) else (
+            hmm_params[2],)
 
     def infer_state(self, observation: list[float]):
 
@@ -131,8 +127,7 @@ class HiddenMarkovModel(HMM):
                     vars_to_estimate = {
                         "initial_state_distribution": True,
                         "log_transition_probabilities": True,
-                        "observation_means": True,
-                        "observation_covs": True
+                        "observation_params": True
                     }
 
                 def calculate_permutation(mat1, mat2):
@@ -150,19 +145,18 @@ class HiddenMarkovModel(HMM):
 
                 def on_completion(future):
                     permutation = calculate_permutation(
-                        self.observation_means, self.params[2][0])
+                        self.observation_params[0], self.params[2][0])
                     super(HiddenMarkovModel, self).permute(permutation)
 
                     initial_state_distribution = None if vars_to_estimate[
                         "initial_state_distribution"] else self.initial_state_distribution
                     log_transition_probabilities = None if vars_to_estimate[
                         "log_transition_probabilities"] else self.log_transition_probabilities
-                    observation_means = None if vars_to_estimate[
-                        "observation_means"] else self.observation_means
-                    observation_covs = None if vars_to_estimate["observation_covs"] else self.observation_covs
+                    observation_params = None if vars_to_estimate[
+                        "observation_params"] else self.observation_params
 
                     self.update_params(initial_state_distribution,
-                                       log_transition_probabilities, observation_means, observation_covs)
+                                       log_transition_probabilities, observation_params)
 
                     self.is_running = False
                     self._fit_finished = True
