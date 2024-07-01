@@ -1,13 +1,13 @@
 using Bonsai;
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
 using Python.Runtime;
 using Bonsai.ML.HiddenMarkovModels.Observations;
+using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -72,7 +72,7 @@ namespace Bonsai.ML.HiddenMarkovModels
             set
             {
                 observationType = value;
-                observationTypeLookup.TryGetValue(observationType, out observationTypeStr);
+                observationTypeStr = GetString(observationType);
             }
         }
 
@@ -142,7 +142,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 var dimensionsPyObj = pyObject.GetAttr<int>("dimensions");
                 var observationTypeStrPyObj = pyObject.GetAttr<string>("observation_type");
 
-                observationTypeStrLookup.TryGetValue(observationTypeStrPyObj, out var observationTypePyObj);
+                var observationTypePyObj = GetFromString(observationTypeStrPyObj);
 
                 return new ModelParameters()
                 {
@@ -161,24 +161,6 @@ namespace Bonsai.ML.HiddenMarkovModels
         {
             return $"num_states={numStatesStr}, dimensions={dimensionsStr}, observation_type=\"{observationTypeStr}\", {stateParametersStr}";
         }
-
-        private static readonly Dictionary<ObservationType, string> observationTypeLookup = new Dictionary<ObservationType, string>
-        {
-            { ObservationType.Gaussian, "gaussian" },
-            { ObservationType.Exponential, "exponential" },
-            { ObservationType.Poisson, "poisson" },
-            { ObservationType.Bernoulli, "bernoulli" },
-            { ObservationType.Autoregressive, "ar" }
-        };
-
-        private static readonly Dictionary<string, ObservationType> observationTypeStrLookup = new Dictionary<string, ObservationType>
-        {
-            { "gaussian", ObservationType.Gaussian },
-            { "exponential", ObservationType.Exponential },
-            { "poisson", ObservationType.Poisson },
-            { "bernoulli", ObservationType.Bernoulli },
-            { "ar", ObservationType.Autoregressive }
-        };
     }
 }
 

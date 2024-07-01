@@ -5,7 +5,8 @@ using Python.Runtime;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Bonsai.ML.HiddenMarkovModels.Observations;
-using System.Collections.Generic;
+using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
+using System.Linq;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -21,7 +22,7 @@ namespace Bonsai.ML.HiddenMarkovModels
 
         private double[] initialStateDistribution;
         private double[,] logTransitionProbabilities;
-        private ObservationParams observationParams;
+        private ObservationParams observations;
         private ObservationType observationTypeEnum;
 
         /// <summary>
@@ -31,12 +32,12 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonProperty("initial_state_distribution")]
         [Description("The initial state distribution.")]
         [Category("ModelStateParameters")]
-        public double[] InitialStateDistribution 
-        { 
-            get => initialStateDistribution; 
-            set => initialStateDistribution = value; 
+        public double[] InitialStateDistribution
+        {
+            get => initialStateDistribution;
+            set => initialStateDistribution = value;
         }
-    
+
         /// <summary>
         /// The log of the state transition probabilities.
         /// </summary>
@@ -44,9 +45,9 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonProperty("log_transition_probabilities")]
         [Description("The log of the state transition probabilities.")]
         [Category("ModelStateParameters")]
-        public double[,] LogTransitionProbabilities 
-        { 
-            get => logTransitionProbabilities; 
+        public double[,] LogTransitionProbabilities
+        {
+            get => logTransitionProbabilities;
             set => logTransitionProbabilities = value;
         }
 
@@ -64,27 +65,28 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
         /// <summary>
-        /// The observation parameters.
+        /// The observations.
         /// </summary>
         [XmlIgnore]
         [JsonProperty("observation_params")]
-        [Description("The observation parameters.")]
+        [Description("The observations.")]
         [Category("ModelStateParameters")]
-        public ObservationParams ObservationParams
+        public ObservationParams Observations
         {
-            get => observationParams;
-            set => observationParams = value;
+            get => observations;
+            set => observations = value;
         }
 
         public IObservable<StateParameters> Process<TSource>(IObservable<TSource> source)
         {
             return Observable.Select(source, pyObject =>
             {
-                return new StateParameters ()
+                return new StateParameters()
                 {
                     InitialStateDistribution = InitialStateDistribution,
                     LogTransitionProbabilities = LogTransitionProbabilities,
-                    ObservationParams = ObservationParams
+                    ObservationType = ObservationType,
+                    Observations = Observations
                 };
             });
         }
@@ -93,30 +95,35 @@ namespace Bonsai.ML.HiddenMarkovModels
         {
             return Observable.Select(source, pyObject =>
             {
+                Console.WriteLine("here1");
                 var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
                 var logTransitionProbabilitiesPyObj = (double[,])pyObject.GetArrayAttr("log_transition_probabilities");
-                var observationParamsPyObj = (object[])pyObject.GetArrayAttr("observation_params");
-                observationTypeEnumLookup.TryGetValue(ObservationType, out Type observationType);
-                ObservationParams observationParams = (ObservationParams)Activator.CreateInstance(observationType);
-                observationParams.Params = observationParamsPyObj;
+                var observationsPyObj = (object[])pyObject.GetArrayAttr("observation_params");
+                var observationTypePyObj = pyObject.GetAttr<string>("observation_type");
+                
+                Console.WriteLine($"observationTypePyObj: {observationTypePyObj}");
+                Console.WriteLine($"observationPyObj length: {observationsPyObj.Length}");
 
-                return new StateParameters ()
+                ObservationType = GetFromString(observationTypePyObj);
+
+                var observationClassType = GetObservationsClassType(ObservationType);
+                Observations = (ObservationParams)Activator.CreateInstance(observationClassType);
+                observations.Params = observationsPyObj;
+                Console.WriteLine("here2");
+
+                return new StateParameters()
                 {
                     InitialStateDistribution = initialStateDistributionPyObj,
                     LogTransitionProbabilities = logTransitionProbabilitiesPyObj,
                     ObservationType = ObservationType,
-                    ObservationParams = observationParams
+                    Observations = observations
                 };
             });
         }
 
-        private static readonly Dictionary<ObservationType, Type> observationTypeEnumLookup = new Dictionary<ObservationType, Type>
+        public override string ToString()
         {
-            { ObservationType.Gaussian, typeof(GaussianObservations) },
-            { ObservationType.Exponential, typeof(ExponentialObservations) },
-            { ObservationType.Poisson, typeof(PoissonObservations) },
-            { ObservationType.Bernoulli, typeof(BernoulliObservations) },
-            { ObservationType.Autoregressive, typeof(AutoRegressiveObservations) }
-        };
+            return $"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution)},log_transition_probabilities={NumpyHelper.NumpyParser.ParseArray(LogTransitionProbabilities)},observation_params={Observations}";
+        }
     }
 }
