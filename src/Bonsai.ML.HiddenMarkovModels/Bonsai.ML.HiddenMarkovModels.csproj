@@ -3,7 +3,7 @@
     <Title>Bonsai.ML.HiddenMarkovModels</Title>
     <Description>A Bonsai package for hidden markov models. Interfaces with the SSM python package using the Bonsai.Scripting.Python package.</Description>
     <PackageTags>Bonsai Rx ML SSM Hidden Markov Models</PackageTags>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <Version>0.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
