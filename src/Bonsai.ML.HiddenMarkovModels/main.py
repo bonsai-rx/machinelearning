@@ -20,7 +20,7 @@ class HiddenMarkovModel(HMM):
         observation_type: str,
         initial_state_distribution: list[float] = None,
         log_transition_probabilities: list[list[float]] = None,
-        observation_params: tuple = None,
+        observation_params: tuple = None
     ):
 
         self.num_states = num_states
@@ -59,8 +59,11 @@ class HiddenMarkovModel(HMM):
             )
 
         if observation_params is not None:
-            hmm_params = hmm_params[:2] + \
-                tuple([np.array(param) for param in observation_params])
+            if isinstance(hmm_params[2], tuple):
+                hmm_params = hmm_params[:2] + \
+                    tuple([np.array(param) for param in observation_params])
+            else:
+                hmm_params[2] = np.array(observation_params)
 
         self.params = hmm_params
 
