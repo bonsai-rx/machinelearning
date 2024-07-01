@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Xml.Serialization;
 using Python.Runtime;
 using Bonsai.ML.HiddenMarkovModels.Observations;
@@ -64,6 +65,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// The type of distribution that the HMM will use to model the emission of data observations.
         /// </summary>
         [JsonProperty("observation_type")]
+        [JsonConverter(typeof(StringEnumConverter))]
         [Description("The type of distribution that the HMM will use to model the emission of data observations.")]
         [Category("InitialParameters")]
         public ObservationType ObservationType

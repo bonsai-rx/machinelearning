@@ -4,9 +4,9 @@ using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Bonsai.ML.HiddenMarkovModels.Observations;
 using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
-using System.Linq;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -56,6 +56,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         [XmlIgnore]
         [JsonProperty("observation_type")]
+        [JsonConverter(typeof(StringEnumConverter))]
         [Description("The observation type.")]
         [Category("ModelStateParameters")]
         public ObservationType ObservationType
