@@ -56,12 +56,22 @@ namespace Bonsai.ML
                 return resultDict;
             }
 
+            if (PyTuple.IsTupleType(pyObject))
+            {
+                var pyTuple = new PyTuple(pyObject);
+                var resultArray = new object[pyTuple.Length()];
+                for (int i = 0; i < pyTuple.Length(); i++) {
+                    resultArray[i] = ConvertPythonObjectToCSharp(pyTuple[i]);
+                }
+                return resultArray;
+            }
+
             if (NumpyHelper.IsNumPyArray(pyObject))
             {
                 return NumpyHelper.PyObjectToArray(pyObject);
             }
 
-            throw new InvalidOperationException("Unable to convert python data type to C#. Allowed data types include: integer, float, string, list, dictionary, and numpy arrays");
+            throw new InvalidOperationException($"Unable to convert python data type to C#. Allowed data types include: integer, float, string, list, dictionary, and numpy arrays. Instead, got: {pyObject.GetPythonType()}");
         }
     }
 }
