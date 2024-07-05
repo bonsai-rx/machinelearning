@@ -13,7 +13,6 @@ To get started, you must install the following tools:
 - [Python (v3.10.12)](https://www.python.org/downloads/)
 - [dotnet-sdk (v8)](https://dotnet.microsoft.com/en-us/download)
 - [Git](https://git-scm.com/downloads)
-- [Powershell on Linux](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-linux?view=powershell-7.4)
 - [Bonsai-Rx Linux Environment Template](https://github.com/ncguilbeault/bonsai-linux-environment-template)
 
 > [!WARNING]
