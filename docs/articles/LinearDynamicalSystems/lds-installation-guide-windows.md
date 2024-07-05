@@ -37,7 +37,7 @@ python -m venv .venv
 3. Create a bonsai environment. When prompted, enter yes to run the powershell setup script.
 
 ```cmd
-dotnet new bonsaienv -o .bonsai
+dotnet new bonsaienv
 ```
 
 > [!TIP]

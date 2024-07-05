@@ -44,7 +44,7 @@ python3 -m venv .venv
 > This step uses the [bonsai linux environment template tool](https://github.com/ncguilbeault/bonsai-linux-environment-template) for easy creation of linux environments
 
 ```cmd
-dotnet new bonsaienvl -o .bonsai
+dotnet new bonsaienvl
 ```
 
 When prompted, enter yes to run the powershell setup script.
