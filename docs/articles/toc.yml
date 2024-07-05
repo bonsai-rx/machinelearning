@@ -1,14 +1,11 @@
 - name: Introduction
   href: ../index.md
-- name: Packages
-  items:
-  - name: Bonsai.ML.LinearDynamicalSystems
-    items:
-    - name: Overview
-      href: LinearDynamicalSystems/lds-overview.md
-    - name: Installing on Windows
-      href: LinearDynamicalSystems/lds-installation-guide-windows.md
-    - name: Installing on Linux
-      href: LinearDynamicalSystems/lds-installation-guide-linux.md
-    - name: Getting Started
-      href: LinearDynamicalSystems/lds-getting-started.md
+- name: LinearDynamicalSystems
+- name: Overview
+  href: LinearDynamicalSystems/lds-overview.md
+- name: Installing on Windows
+  href: LinearDynamicalSystems/lds-installation-guide-windows.md
+- name: Installing on Linux
+  href: LinearDynamicalSystems/lds-installation-guide-linux.md
+- name: Getting Started
+  href: LinearDynamicalSystems/lds-getting-started.md
