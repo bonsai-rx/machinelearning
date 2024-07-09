@@ -26,17 +26,20 @@ namespace Bonsai.ML.Visualizers
         private StatusStrip statusStrip;
         public StatusStrip StatusStrip => statusStrip;
 
-        private int dimension1SelectedIndex;
+        private int dimension1SelectedIndex = 0;
         public int Dimension1SelectedIndex { get => dimension1SelectedIndex; set => dimension1SelectedIndex = value; }
         private ToolStripComboBox dimension1ComboBox;
         private ToolStripLabel dimension1Label;
         public ToolStripComboBox Dimension1ComboBox => dimension1ComboBox;
 
-        private int dimension2SelectedIndex;
+        private int dimension2SelectedIndex = 1;
         public int Dimension2SelectedIndex { get => dimension2SelectedIndex; set => dimension2SelectedIndex = value; }
         private ToolStripComboBox dimension2ComboBox;
         private ToolStripLabel dimension2Label;
         public ToolStripComboBox Dimension2ComboBox => dimension2ComboBox;
+
+        public bool BufferData { get; set; } = true;
+        public int BufferCount { get; set; } = 250;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -146,7 +149,14 @@ namespace Bonsai.ML.Visualizers
                     }
                 }
 
-                if (allScatterSeries == null)
+                if (allScatterSeries != null)
+                {
+                    foreach (var scatterSeries in allScatterSeries)
+                    {
+                        scatterSeries.Points.Clear();
+                    }
+                }
+                else
                 {
                     allScatterSeries = new List<ScatterSeries>();
                     for (int i = 0; i < statesCount; i++)
@@ -185,7 +195,9 @@ namespace Bonsai.ML.Visualizers
                     }
                 }
 
-                for (int i = 0; i < gaussianObservationsStatistics.BatchObservations.GetLength(0); i++)
+                var batchObservationsCount = gaussianObservationsStatistics.BatchObservations.GetLength(0);
+                var offset = BufferData ? batchObservationsCount - batchObservationsCount : 0;
+                for (int i = offset; i < batchObservationsCount; i++)
                 {
                     var dim1 = gaussianObservationsStatistics.BatchObservations[i, dimension1SelectedIndex];
                     var dim2 = gaussianObservationsStatistics.BatchObservations[i, dimension2SelectedIndex];
@@ -218,7 +230,7 @@ namespace Bonsai.ML.Visualizers
                     evals = evals.PointwiseAbsoluteMaximum(0);
                     var evecs = evd.EigenVectors;
 
-                    double angle = Math.Atan2(evecs[1, 0], evecs[0, 0]) * 180 / Math.PI;
+                    double angle = Math.Atan2(evecs[1, 0], evecs[0, 0]);
 
                     for (int j = 1; j < 4; j++)
                     {

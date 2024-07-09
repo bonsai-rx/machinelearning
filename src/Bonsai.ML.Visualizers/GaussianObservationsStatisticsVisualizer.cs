@@ -47,6 +47,11 @@ namespace Bonsai.ML.Visualizers
         {
             if (value is GaussianObservationsStatistics statistics && statistics != shown)
             {
+                if (statistics.Means == null || statistics.StdDevs == null)
+                {
+                    return;
+                }
+                
                 if (allBarSeries == null)
                 {
                     allBarSeries = new List<ErrorBarSeries>();

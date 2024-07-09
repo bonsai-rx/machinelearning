@@ -53,8 +53,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
             {
                 var observationsPyObj = pyObject.GetAttr("observations");
                 var meansPyObj = (double[,])observationsPyObj.GetArrayAttr("mus");
-                var stdDevsPyObj = (double[,])observationsPyObj.GetArrayAttr("Sigmas");
-                var covarianceMatricesPyObj = (double[,,])pyObject.GetArrayAttr("observation_covs");
+                var stdDevsPyObj = GetDiagonal((double[,,])observationsPyObj.GetArrayAttr("Sigmas"));
+                var covarianceMatricesPyObj = (double[,,])observationsPyObj.GetArrayAttr("_sqrt_Sigmas");
                 var batchObservationsPyObj = (double[,])pyObject.GetArrayAttr("batch_observations");
                 var inferredMostProbableStatesPyObj = (long[])pyObject.GetArrayAttr("inferred_most_probable_states");
 
@@ -67,6 +67,23 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                     InferredMostProbableStates = inferredMostProbableStatesPyObj
                 };
             });
+        }
+
+        private static double[,] GetDiagonal(double[,,] matrix)
+        {
+            var states = matrix.GetLength(0);
+            var dimensions = matrix.GetLength(1);
+            var diagonal = new double[states, dimensions];
+
+            for (int i = 0; i < states; i++)
+            {
+                for (int j = 0; j < dimensions; j++)
+                {
+                    diagonal[i, j] = matrix[i, j, j];
+                }
+            }
+
+            return diagonal;
         }
     }
 }
