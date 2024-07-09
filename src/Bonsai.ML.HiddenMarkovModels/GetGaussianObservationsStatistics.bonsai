@@ -46,7 +46,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p2:GaussianObservationsStatistics" />
+        <Combinator xsi:type="p2:GetGaussianObservationsStatisticsFromHMM" />
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
     </Nodes>
