@@ -16,6 +16,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                 { ObservationType.Exponential, (typeof(ExponentialObservations), "exponential") },
                 { ObservationType.Bernoulli, (typeof(BernoulliObservations), "bernoulli") },
                 { ObservationType.Poisson, (typeof(PoissonObservations), "poisson") },
+                { ObservationType.AutoRegressive, (typeof(AutoRegressiveObservations), "autoregressive") }
             };
         }
 

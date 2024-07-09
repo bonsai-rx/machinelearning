@@ -5,6 +5,7 @@
         Gaussian,
         Exponential,
         Bernoulli,
-        Poisson
+        Poisson,
+        AutoRegressive
     }
 }
