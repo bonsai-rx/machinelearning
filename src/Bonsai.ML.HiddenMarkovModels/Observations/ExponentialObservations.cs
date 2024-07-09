@@ -10,6 +10,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Combinator]
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Transform)]
+    [JsonObject(MemberSerialization.OptIn)]
     public class ExponentialObservations : ObservationParams<ExponentialObservations>
     {
 
@@ -17,10 +18,10 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// The log lambdas of the observations for each state.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("log_lambdas")]
         [Description("The log lambdas of the observations for each state.")]
         public double[,] LogLambdas { get; private set; }
 
+        [JsonProperty]
         public override object[] Params
         {
             get { return new object[] { LogLambdas }; }
@@ -30,7 +31,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
             }
         }
 
-        public override IObservable<ExponentialObservations> Process(IObservable<PyObject> source)
+        public IObservable<ExponentialObservations> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>
             {

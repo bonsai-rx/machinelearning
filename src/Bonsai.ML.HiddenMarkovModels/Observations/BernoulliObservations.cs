@@ -11,23 +11,24 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Combinator]
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Transform)]
+    [JsonObject(MemberSerialization.OptIn)]
     public class BernoulliObservations : ObservationParams<BernoulliObservations>
     {
         /// <summary>
         /// The logit P of the observations for each state.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("logit_ps")]
         [Description("The logit P of the observations for each state.")]
         public double[,] LogitPs { get; private set; }
 
+        [JsonProperty]
         public override object[] Params
         {
             get { return new object[] { LogitPs }; }
             set { LogitPs = (double[,])value[0]; }
         }
 
-        public override IObservable<BernoulliObservations> Process(IObservable<PyObject> source)
+        public IObservable<BernoulliObservations> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>
             {

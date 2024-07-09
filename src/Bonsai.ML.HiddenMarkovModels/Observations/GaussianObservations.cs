@@ -11,6 +11,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Combinator]
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Transform)]
+    [JsonObject(MemberSerialization.OptIn)]
     public class GaussianObservations : ObservationParams<GaussianObservations>
     {
 
@@ -18,7 +19,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// The means of the observations for each state.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("mus")]
         [Description("The means of the observations for each state.")]
         public double[,] Mus { get; private set; }
 
@@ -26,10 +26,10 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// The standard deviations of the observations for each state.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("_sqrt_Sigmas")]
         [Description("The standard deviations of the observations for each state.")]
         public double[,,] SqrtSigmas { get; private set; }
 
+        [JsonProperty]
         public override object[] Params
         {
             get { return new object[] { Mus, SqrtSigmas }; }
@@ -40,7 +40,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
             }
         }
 
-        public override IObservable<GaussianObservations> Process(IObservable<PyObject> source)
+        public IObservable<GaussianObservations> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>
             {
