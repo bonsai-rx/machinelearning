@@ -18,14 +18,13 @@ namespace Bonsai.ML.HiddenMarkovModels
     [Combinator]
     [JsonConverter(typeof(StateParametersJsonConverter))]
     [Description("StateParameters of a Hidden Markov Model (HMM).")]
-    [WorkflowElementCategory(ElementCategory.Transform)]
+    [WorkflowElementCategory(ElementCategory.Source)]
     public class StateParameters
     {
 
-        private double[] initialStateDistribution;
-        private double[,] logTransitionProbabilities;
-        private ObservationsBase observations;
-        private ObservationsType observationsTypeEnum;
+        private double[] initialStateDistribution = null;
+        private double[,] logTransitionProbabilities = null;
+        private ObservationsModel observations = null;
 
         /// <summary>
         /// The initial state distribution.
@@ -54,30 +53,28 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
         /// <summary>
-        /// The observation type.
-        /// </summary>
-        [XmlIgnore]
-        [JsonProperty("observation_type")]
-        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
-        [Description("The observation type.")]
-        [Category("ModelStateParameters")]
-        public ObservationsType ObservationsType
-        {
-            get => observationsTypeEnum;
-            set => observationsTypeEnum = value;
-        }
-
-        /// <summary>
         /// The observations.
         /// </summary>
         [XmlIgnore]
         [JsonProperty("observation_params")]
         [Description("The observations.")]
         [Category("ModelStateParameters")]
-        public ObservationsBase Observations
+        public ObservationsModel Observations
         {
             get => observations;
             set => observations = value;
+        }
+
+        public IObservable<StateParameters> Process()
+        {
+            return Observable.Return(
+                new StateParameters() 
+                {
+                    InitialStateDistribution = InitialStateDistribution,
+                    LogTransitionProbabilities = LogTransitionProbabilities,
+                    Observations = Observations
+                }
+            );
         }
 
         public IObservable<StateParameters> Process<TSource>(IObservable<TSource> source)
@@ -88,7 +85,6 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     InitialStateDistribution = InitialStateDistribution,
                     LogTransitionProbabilities = LogTransitionProbabilities,
-                    ObservationsType = ObservationsType,
                     Observations = Observations
                 };
             });
@@ -107,10 +103,10 @@ namespace Bonsai.ML.HiddenMarkovModels
                 var observationKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
                 var observationConstructors = observationKwargsPyObj.Values.ToArray();
 
-                observationsTypeEnum = GetFromString(observationsTypePyObj);
-                var observationClassType = GetObservationsClassType(observationsTypeEnum);
+                var observationsType = GetFromString(observationsTypePyObj);
+                var observationClassType = GetObservationsClassType(observationsType);
 
-                observations = (ObservationsBase)Activator.CreateInstance(observationClassType, 
+                observations = (ObservationsModel)Activator.CreateInstance(observationClassType,
                     observationConstructors.Length == 0 ? null : observationConstructors);
 
                 observations.Params = observationsPyObj;
@@ -119,7 +115,6 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     InitialStateDistribution = initialStateDistributionPyObj,
                     LogTransitionProbabilities = logTransitionProbabilitiesPyObj,
-                    ObservationsType = observationsTypeEnum,
                     Observations = observations
                 };
             });
@@ -127,7 +122,9 @@ namespace Bonsai.ML.HiddenMarkovModels
 
         public override string ToString()
         {
-            return $"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution)},log_transition_probabilities={NumpyHelper.NumpyParser.ParseArray(LogTransitionProbabilities)},{Observations}";
+            return $"initial_state_distribution={(InitialStateDistribution == null ? "None" : NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution))}," + 
+                $"log_transition_probabilities={(LogTransitionProbabilities == null ? "None" : NumpyHelper.NumpyParser.ParseArray(LogTransitionProbabilities))}," +
+                $"{(Observations == null ? "" : Observations)}";
         }
     }
 }

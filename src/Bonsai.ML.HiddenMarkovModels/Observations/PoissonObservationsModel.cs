@@ -7,36 +7,24 @@ using Newtonsoft.Json;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
-    [JsonObject(MemberSerialization.OptIn)]
-    public class PoissonObservations : ObservationsModel
+    [Combinator]
+    [Description("")]
+    [WorkflowElementCategory(ElementCategory.Transform)]
+    public class PoissonObservationsModel : ObservationsModelBuilder<PoissonObservations>
     {
 
         /// <summary>
         /// The log lambdas of the observations for each state.
         /// </summary>
+        [XmlIgnore]
         [Description("The log lambdas of the observations for each state.")]
         public double[,] LogLambdas { get; private set; } = null;
-
-        /// <inheritdoc/>
-        [JsonProperty]
-        public override ObservationsType ObservationsType => ObservationsType.Poisson;
-
-        /// <inheritdoc/>
-        [JsonProperty]
-        public override object[] Params
-        {
-            get { return [ LogLambdas ]; }
-            set
-            {
-                LogLambdas = (double[,])value[0];
-            }
-        }
 
         public IObservable<PoissonObservations> Process()
         {
             return Observable.Return(
                 new PoissonObservations {
-                    LogLambdas = LogLambdas
+                    Params = [ LogLambdas ]
                 });
         }
 
@@ -46,9 +34,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
             {
                 var logLambdasPyObj = (double[,])pyObject.GetArrayAttr("log_lambdas");
 
-                return new PoissonObservations
-                {
-                    LogLambdas = logLambdasPyObj
+                return new PoissonObservations {
+                    Params = [ logLambdasPyObj ]
                 };
             });
         }

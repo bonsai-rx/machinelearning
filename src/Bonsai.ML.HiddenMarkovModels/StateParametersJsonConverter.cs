@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 using Bonsai.ML.HiddenMarkovModels.Observations;
 using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
 
@@ -16,17 +17,25 @@ namespace Bonsai.ML.HiddenMarkovModels
 
             result.InitialStateDistribution = jo["InitialStateDistribution"]?.ToObject<double[]>();
             result.LogTransitionProbabilities = jo["LogTransitionProbabilities"]?.ToObject<double[,]>();
-            result.ObservationsType = GetFromString(jo["ObservationsType"]?.ToString());
+            var observationsType = GetFromString(jo["Observations"]["ObservationsType"]?.ToString());
 
-            JArray paramsArray = (JArray)jo["Observations"]["Params"];
-            object[] objArr = new object[paramsArray.Count];
+            var paramsArray = (JArray)jo["Observations"]["Params"];
+            object[] paramsObjArr = new object[paramsArray.Count];
             for (int i = 0; i < paramsArray.Count; i++)
             {
-                objArr[i] = NumpyHelper.NumpyParser.ParseString(paramsArray[i].ToString(), typeof(double));
+                paramsObjArr[i] = NumpyHelper.NumpyParser.ParseString(paramsArray[i].ToString(), typeof(double));
             }
 
-            var observations = (ObservationsBase)Activator.CreateInstance(GetObservationsClassType(result.ObservationsType));
-            observations.Params = objArr;
+            var kwargs = (JObject)jo["Observations"]["Kwargs"];
+            object[] kwargsArray = kwargs.Properties()
+                        .Select(p => p.Value.ToObject<object>())
+                        .ToArray();
+
+            var observations = kwargsArray.Count() == 0 
+                ? (ObservationsModel)Activator.CreateInstance(GetObservationsClassType(observationsType)) 
+                : (ObservationsModel)Activator.CreateInstance(GetObservationsClassType(observationsType), kwargsArray);
+
+            observations.Params = paramsObjArr;
             result.Observations = observations;
             
             return result;
@@ -41,9 +50,6 @@ namespace Bonsai.ML.HiddenMarkovModels
 
             writer.WritePropertyName("LogTransitionProbabilities");
             serializer.Serialize(writer, value.LogTransitionProbabilities);
-
-            writer.WritePropertyName("ObservationsType");
-            writer.WriteValue(GetString(value.ObservationsType));
 
             writer.WritePropertyName("Observations");
             serializer.Serialize(writer, value.Observations);

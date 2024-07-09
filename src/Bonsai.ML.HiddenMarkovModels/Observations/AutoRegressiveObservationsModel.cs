@@ -7,75 +7,75 @@ using Newtonsoft.Json;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
+    [Combinator]
+    [Description("")]
+    [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class AutoRegressiveObservations : ObservationsModel
+    public class AutoRegressiveObservationsModel : ObservationsModelBuilder<AutoRegressiveObservations>
     {
-
         /// <summary>
         /// The lags of the observations for each state.
         /// </summary>
-        [JsonProperty]
         [Description("The lags of the observations for each state.")]
+        [JsonProperty]
         public int Lags { get; set; } = 1;
 
         /// <summary>
         /// The As of the observations for each state.
         /// </summary>
+        [XmlIgnore]
         [Description("The As of the observations for each state.")]
         public double[,,] As { get; private set; } = null;
 
         /// <summary>
         /// The bs of the observations for each state.
         /// </summary>
+        [XmlIgnore]
         [Description("The bs of the observations for each state.")]
         public double[,] Bs { get; private set; } = null;
 
         /// <summary>
         /// The Vs of the observations for each state.
         /// </summary>
+        [XmlIgnore]
         [Description("The Vs of the observations for each state.")]
         public double[,,] Vs { get; private set; } = null;
 
         /// <summary>
         /// The square root sigmas of the observations for each state.
         /// </summary>
+        [XmlIgnore]
         [Description("The square root sigmas of the observations for each state.")]
         public double[,,] SqrtSigmas { get; private set; } = null;
 
-        /// <inheritdoc/>
-        [JsonProperty]
-        public override ObservationsType ObservationsType => ObservationsType.AutoRegressive;
-
-        /// <inheritdoc/>
-        [JsonProperty]
-        public override object[] Params
+        public IObservable<AutoRegressiveObservations> Process()
         {
-            get { return [ As, Bs, Vs, SqrtSigmas ]; }
-            set
+            return Observable.Return(
+                new AutoRegressiveObservations (Lags) {
+                    Params = [ As, Bs, Vs, SqrtSigmas ],
+                });
+        }
+
+        public IObservable<AutoRegressiveObservations> Process(IObservable<PyObject> source)
+        {
+            return Observable.Select(source, pyObject =>
             {
-                As = (double[,,])value[0];
-                Bs = (double[,])value[1];
-                Vs = (double[,,])value[2];
-                SqrtSigmas = (double[,,])value[3];
-            }
-        }
+                var lagsPyObj = (int)pyObject.GetArrayAttr("lags");
+                var asPyObj = (double[,,])pyObject.GetArrayAttr("As");
+                var bsPyObj = (double[,])pyObject.GetArrayAttr("bs");
+                var vsPyObj = (double[,,])pyObject.GetArrayAttr("Vs");
+                var sqrtSigmasPyObj = (double[,,])pyObject.GetArrayAttr("_sqrt_Sigmas");
 
-        public AutoRegressiveObservations (params object[] args)
-        {
-            Lags = (int)args[0];
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            if (As is null || Bs is null || Vs is null || SqrtSigmas is null) 
-                return $"observation_params=None,observation_kwargs={{'lags':{Lags}}}";
-
-            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(As)}," +
-                $"{NumpyHelper.NumpyParser.ParseArray(Bs)}," +
-                $"{NumpyHelper.NumpyParser.ParseArray(Vs)}," +
-                $"{NumpyHelper.NumpyParser.ParseArray(SqrtSigmas)})," +
-                $"observation_kwargs={{'lags':{Lags}}}";
+                return new AutoRegressiveObservations(Lags)
+                {
+                    Params = [
+                        asPyObj,
+                        bsPyObj,
+                        vsPyObj,
+                        sqrtSigmasPyObj
+                    ]
+                };
+            });
         }
     }
 }
