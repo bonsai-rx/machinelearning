@@ -20,18 +20,23 @@ class HiddenMarkovModel(HMM):
         observation_type: str,
         initial_state_distribution: list[float] = None,
         log_transition_probabilities: list[list[float]] = None,
-        observation_params: tuple = None
+        observation_params: tuple = None,
+        observation_kwargs: dict = None
     ):
 
         self.num_states = num_states
         self.dimensions = dimensions
         self.observation_type = observation_type
         super(HiddenMarkovModel, self).__init__(
-            K=self.num_states, D=self.dimensions, observations=self.observation_type
+            K=self.num_states, D=self.dimensions, observations=self.observation_type, observation_kwargs=observation_kwargs
         )
 
         self.update_params(initial_state_distribution,
                            log_transition_probabilities, observation_params)
+        
+        if observation_kwargs is None:
+            observation_kwargs = {}
+        self.observation_kwargs = observation_kwargs
 
         self.log_alpha = None
         self.state_probabilities = None
@@ -59,18 +64,21 @@ class HiddenMarkovModel(HMM):
             )
 
         if observation_params is not None:
+            obs_params = tuple([np.array(param) for param in observation_params])
             if isinstance(hmm_params[2], tuple):
-                hmm_params = hmm_params[:2] + \
-                    tuple([np.array(param) for param in observation_params])
+                hmm_params = hmm_params[:2] + (obs_params,)
             else:
-                hmm_params[2] = np.array(observation_params)
+                hmm_params = hmm_params[:2] + obs_params
 
         self.params = hmm_params
 
         self.initial_state_distribution = hmm_params[0][0]
         self.log_transition_probabilities = hmm_params[1][0]
-        self.observation_params = hmm_params[2] if isinstance(hmm_params[2], tuple) else (
-            hmm_params[2],)
+
+        if isinstance(hmm_params[2], tuple):
+            self.observation_params = hmm_params[2] 
+        else:
+            self.observation_params = (hmm_params[2],)
 
     def infer_state(self, observation: list[float]):
 
