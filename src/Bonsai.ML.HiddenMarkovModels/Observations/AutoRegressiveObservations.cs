@@ -12,7 +12,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class AutoRegressiveObservations : ObservationParams<AutoRegressiveObservations>
+    public class AutoRegressiveObservations : Observations<AutoRegressiveObservations>
     {
 
         /// <summary>

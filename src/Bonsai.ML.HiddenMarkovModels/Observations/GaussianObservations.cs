@@ -12,7 +12,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class GaussianObservations : ObservationParams<GaussianObservations>
+    public class GaussianObservations : Observations<GaussianObservations>
     {
 
         /// <summary>

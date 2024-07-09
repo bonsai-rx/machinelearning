@@ -3,12 +3,12 @@ using Python.Runtime;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
-    public abstract class ObservationParams
+    public abstract class Observations
     {
         public abstract object[] Params { get; set; }
     }
 
-    public abstract class ObservationParams<T> : ObservationParams where T : ObservationParams<T>
+    public abstract class Observations<T> : Observations where T : Observations<T>
     {
         public abstract override object[] Params { get; set; }
     }

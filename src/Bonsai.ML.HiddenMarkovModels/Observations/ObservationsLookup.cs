@@ -6,23 +6,23 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
     public static class ObservationsLookup
     {
-        private static readonly Dictionary<ObservationType, (Type Type, string StringValue)> _lookup;
+        private static readonly Dictionary<ObservationsType, (Type Type, string StringValue)> _lookup;
 
         static ObservationsLookup()
         {
-            _lookup = new Dictionary<ObservationType, (Type, string)>
+            _lookup = new Dictionary<ObservationsType, (Type, string)>
             {
-                { ObservationType.Gaussian, (typeof(GaussianObservations), "gaussian") },
-                { ObservationType.Exponential, (typeof(ExponentialObservations), "exponential") },
-                { ObservationType.Bernoulli, (typeof(BernoulliObservations), "bernoulli") },
-                { ObservationType.Poisson, (typeof(PoissonObservations), "poisson") },
-                { ObservationType.AutoRegressive, (typeof(AutoRegressiveObservations), "autoregressive") }
+                { ObservationsType.Gaussian, (typeof(GaussianObservations), "gaussian") },
+                { ObservationsType.Exponential, (typeof(ExponentialObservations), "exponential") },
+                { ObservationsType.Bernoulli, (typeof(BernoulliObservations), "bernoulli") },
+                { ObservationsType.Poisson, (typeof(PoissonObservations), "poisson") },
+                { ObservationsType.AutoRegressive, (typeof(AutoRegressiveObservations), "autoregressive") }
             };
         }
 
-        public static Type GetObservationsClassType(ObservationType type) => _lookup[type].Type;
-        public static string GetString(ObservationType type) => _lookup[type].StringValue;
-        public static ObservationType GetFromString(string value) => _lookup.First(x => x.Value.StringValue == value).Key;
-        public static ObservationType GetFromType(Type type) => _lookup.First(x => x.Value.Type == type).Key;
+        public static Type GetObservationsClassType(ObservationsType type) => _lookup[type].Type;
+        public static string GetString(ObservationsType type) => _lookup[type].StringValue;
+        public static ObservationsType GetFromString(string value) => _lookup.First(x => x.Value.StringValue == value).Key;
+        public static ObservationsType GetFromType(Type type) => _lookup.First(x => x.Value.Type == type).Key;
     }
 }

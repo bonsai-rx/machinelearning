@@ -1,6 +1,6 @@
 ﻿namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
-    public enum ObservationType
+    public enum ObservationsType
     {
         Gaussian,
         Exponential,
