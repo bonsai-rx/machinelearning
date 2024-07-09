@@ -42,13 +42,14 @@ class HiddenMarkovModel(HMM):
         self.state_probabilities = None
 
         self.batch = None
+        self.batch_observations = np.array([[]], dtype=float)
         self.is_running = False
         self._fit_finished = False
         self.loop = None
         self.thread = None
         self.curr_batch_size = 0
         self.flush_data_between_batches = True
-        self.inferred_most_probable_states = np.array([])
+        self.inferred_most_probable_states = np.array([], dtype=int)
 
     def update_params(self, initial_state_distribution, log_transition_probabilities, observation_params):
         hmm_params = self.params
