@@ -36,6 +36,7 @@ class HiddenMarkovModel(HMM):
         
         if observation_kwargs is None:
             observation_kwargs = {}
+
         self.observation_kwargs = observation_kwargs
 
         self.log_alpha = None
@@ -124,18 +125,11 @@ class HiddenMarkovModel(HMM):
 
         self.batch_observations = self.batch
 
-        if len(self.inferred_most_probable_states) >= len(self.batch_observations):
-            self.inferred_most_probable_states = np.array(
-                [self.infer_state(obs) for obs in self.batch_observations]).astype(int)
-        else:
-            self.inferred_most_probable_states = np.append(
-                self.inferred_most_probable_states, self.infer_state(self.batch_observations[-1])).astype(int)
-
         if not self.is_running and self.loop is None and self.thread is None:
 
             if self.curr_batch_size >= batch_size:
 
-                if vars_to_estimate is None:
+                if vars_to_estimate is None or vars_to_estimate == {}:
                     vars_to_estimate = {
                         "initial_state_distribution": True,
                         "log_transition_probabilities": True,
@@ -176,6 +170,8 @@ class HiddenMarkovModel(HMM):
 
                     if self.flush_data_between_batches:
                         self.batch = None
+
+                    self.inferred_most_probable_states = np.array([self.infer_state(obs) for obs in self.batch_observations]).astype(int)
 
                 self.is_running = True
 
