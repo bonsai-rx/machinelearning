@@ -65,7 +65,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// The type of distribution that the HMM will use to model the emission of data observations.
         /// </summary>
         [JsonProperty("observation_type")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(ObservationTypeJsonConverter))]
         [Description("The type of distribution that the HMM will use to model the emission of data observations.")]
         [Category("InitialParameters")]
         public ObservationType ObservationType
