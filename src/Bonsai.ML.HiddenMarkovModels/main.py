@@ -3,10 +3,10 @@ from functools import partial
 import threading
 import asyncio
 from ssm import HMM
-from ssm.messages import logsumexp
 import numpy as np
 import autograd.numpy.random as npr
 from scipy.optimize import linear_sum_assignment
+from scipy.special import logsumexp
 
 npr.seed(0)
 
