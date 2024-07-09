@@ -58,23 +58,23 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
 
-        private ObservationType observationType;
-        private string observationTypeStr = "";
+        private ObservationsType observationsType;
+        private string observationsTypeStr = "";
 
         /// <summary>
         /// The type of distribution that the HMM will use to model the emission of data observations.
         /// </summary>
         [JsonProperty("observation_type")]
-        [JsonConverter(typeof(ObservationTypeJsonConverter))]
+        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         [Description("The type of distribution that the HMM will use to model the emission of data observations.")]
         [Category("InitialParameters")]
-        public ObservationType ObservationType
+        public ObservationsType ObservationsType
         {
-            get => observationType;
+            get => observationsType;
             set
             {
-                observationType = value;
-                observationTypeStr = GetString(observationType);
+                observationsType = value;
+                observationsTypeStr = GetString(observationsType);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         {
             NumStates = 2;
             Dimensions = 2;
-            ObservationType = ObservationType.Gaussian;
+            ObservationsType = ObservationsType.Gaussian;
         }
 
         public IObservable<ModelParameters> Process()
@@ -115,7 +115,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     NumStates = NumStates,
                     Dimensions = Dimensions,
-                    ObservationType = ObservationType,
+                    ObservationsType = ObservationsType,
                     StateParameters = StateParameters
                 });
         }
@@ -128,7 +128,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     NumStates = NumStates,
                     Dimensions = Dimensions,
-                    ObservationType = ObservationType,
+                    ObservationsType = ObservationsType,
                     StateParameters = StateParameters
                 };
             });
@@ -137,20 +137,20 @@ namespace Bonsai.ML.HiddenMarkovModels
         public IObservable<ModelParameters> Process(IObservable<PyObject> source)
         {
             var sharedSource = source.Publish().RefCount();
-            var stateParametersObservable = new StateParameters() { ObservationType = ObservationType }.Process(sharedSource);
+            var stateParametersObservable = new StateParameters() { ObservationsType = ObservationsType }.Process(sharedSource);
             return sharedSource.Select(pyObject =>
             {
                 var numStatesPyObj = pyObject.GetAttr<int>("num_states");
                 var dimensionsPyObj = pyObject.GetAttr<int>("dimensions");
-                var observationTypeStrPyObj = pyObject.GetAttr<string>("observation_type");
+                var observationsTypeStrPyObj = pyObject.GetAttr<string>("observation_type");
 
-                var observationTypePyObj = GetFromString(observationTypeStrPyObj);
+                var observationsTypePyObj = GetFromString(observationsTypeStrPyObj);
 
                 return new ModelParameters()
                 {
                     NumStates = numStatesPyObj,
                     Dimensions = dimensionsPyObj,
-                    ObservationType = observationTypePyObj,
+                    ObservationsType = observationsTypePyObj,
                 };
             }).Zip(stateParametersObservable, (modelParameters, stateParameters) =>
             {
@@ -161,7 +161,7 @@ namespace Bonsai.ML.HiddenMarkovModels
 
         public override string ToString()
         {
-            return $"num_states={numStatesStr}, dimensions={dimensionsStr}, observation_type=\"{observationTypeStr}\", {stateParametersStr}";
+            return $"num_states={numStatesStr}, dimensions={dimensionsStr}, observation_type=\"{observationsTypeStr}\", {stateParametersStr}";
         }
     }
 }

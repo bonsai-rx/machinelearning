@@ -25,7 +25,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         private double[] initialStateDistribution;
         private double[,] logTransitionProbabilities;
         private ObservationsBase observations;
-        private ObservationsType observationTypeEnum;
+        private ObservationsType observationsTypeEnum;
 
         /// <summary>
         /// The initial state distribution.
@@ -61,10 +61,10 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         [Description("The observation type.")]
         [Category("ModelStateParameters")]
-        public ObservationsType ObservationType
+        public ObservationsType ObservationsType
         {
-            get => observationTypeEnum;
-            set => observationTypeEnum = value;
+            get => observationsTypeEnum;
+            set => observationsTypeEnum = value;
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     InitialStateDistribution = InitialStateDistribution,
                     LogTransitionProbabilities = LogTransitionProbabilities,
-                    ObservationType = ObservationType,
+                    ObservationsType = ObservationsType,
                     Observations = Observations
                 };
             });
@@ -100,15 +100,15 @@ namespace Bonsai.ML.HiddenMarkovModels
             {
                 var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
                 var logTransitionProbabilitiesPyObj = (double[,])pyObject.GetArrayAttr("log_transition_probabilities");
-                var observationTypePyObj = pyObject.GetAttr<string>("observation_type");
+                var observationsTypePyObj = pyObject.GetAttr<string>("observation_type");
 
                 var observationsArrayPyObj = (Array)pyObject.GetArrayAttr("observation_params");
                 var observationsPyObj = (object[])observationsArrayPyObj;
                 var observationKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
                 var observationConstructors = observationKwargsPyObj.Values.ToArray();
 
-                observationTypeEnum = GetFromString(observationTypePyObj);
-                var observationClassType = GetObservationsClassType(observationTypeEnum);
+                observationsTypeEnum = GetFromString(observationsTypePyObj);
+                var observationClassType = GetObservationsClassType(observationsTypeEnum);
 
                 observations = (ObservationsBase)Activator.CreateInstance(observationClassType, 
                     observationConstructors.Length == 0 ? null : observationConstructors);
@@ -119,7 +119,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     InitialStateDistribution = initialStateDistributionPyObj,
                     LogTransitionProbabilities = logTransitionProbabilitiesPyObj,
-                    ObservationType = observationTypeEnum,
+                    ObservationsType = observationsTypeEnum,
                     Observations = observations
                 };
             });
