@@ -110,12 +110,8 @@ namespace Bonsai.ML.HiddenMarkovModels
                 observationTypeEnum = GetFromString(observationTypePyObj);
                 var observationClassType = GetObservationsClassType(observationTypeEnum);
 
-                if (observationConstructors.Length == 0) {
-                    observations = (ObservationParams)Activator.CreateInstance(observationClassType);
-                }
-                else {
-                    observations = (ObservationParams)Activator.CreateInstance(observationClassType, observationConstructors);
-                }
+                observations = (ObservationParams)Activator.CreateInstance(observationClassType, 
+                    observationConstructors.Length == 0 ? null : observationConstructors);
 
                 observations.Params = observationsPyObj;
 
