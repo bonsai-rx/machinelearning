@@ -41,6 +41,9 @@ namespace Bonsai.ML.Visualizers
         public bool BufferData { get; set; } = true;
         public int BufferCount { get; set; } = 250;
 
+        private LinearAxis xAxis;
+        private LinearAxis yAxis;
+
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
@@ -51,16 +54,16 @@ namespace Bonsai.ML.Visualizers
 
             model = new PlotModel();
 
-            var xAxis = new LinearAxis
+            xAxis = new LinearAxis
             {
                 Position = AxisPosition.Bottom,
-                Title = "Dimension0",
+                Title = $"Observation Dimension: {dimension1SelectedIndex}",
             };
 
-            var yAxis = new LinearAxis
+            yAxis = new LinearAxis
             {
                 Position = AxisPosition.Left,
-                Title = "Dimension1",
+                Title = $"Observation Dimension: {dimension2SelectedIndex}",
             };
 
             model.Axes.Add(xAxis);
@@ -196,7 +199,7 @@ namespace Bonsai.ML.Visualizers
                 }
 
                 var batchObservationsCount = gaussianObservationsStatistics.BatchObservations.GetLength(0);
-                var offset = BufferData ? batchObservationsCount - batchObservationsCount : 0;
+                var offset = BufferData && batchObservationsCount > BufferCount ? batchObservationsCount - BufferCount : 0;
                 for (int i = offset; i < batchObservationsCount; i++)
                 {
                     var dim1 = gaussianObservationsStatistics.BatchObservations[i, dimension1SelectedIndex];
@@ -265,6 +268,7 @@ namespace Bonsai.ML.Visualizers
             if (dimension1ComboBox.SelectedIndex != dimension1SelectedIndex)
             {
                 dimension1SelectedIndex = dimension1ComboBox.SelectedIndex;
+                xAxis.Title = $"Observation Dimension: {dimension1SelectedIndex}";
             }
         }
 
@@ -273,6 +277,7 @@ namespace Bonsai.ML.Visualizers
             if (dimension2ComboBox.SelectedIndex != dimension2SelectedIndex)
             {
                 dimension2SelectedIndex = dimension2ComboBox.SelectedIndex;
+                yAxis.Title = $"Observation Dimension: {dimension2SelectedIndex}";
             }
         }
 
