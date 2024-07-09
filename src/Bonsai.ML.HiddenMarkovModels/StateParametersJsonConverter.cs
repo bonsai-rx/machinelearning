@@ -25,7 +25,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 objArr[i] = NumpyHelper.NumpyParser.ParseString(paramsArray[i].ToString(), typeof(double));
             }
 
-            var observations = (ObservationParams)Activator.CreateInstance(GetObservationsClassType(result.ObservationType));
+            var observations = (ObservationsBase)Activator.CreateInstance(GetObservationsClassType(result.ObservationType));
             observations.Params = objArr;
             result.Observations = observations;
             

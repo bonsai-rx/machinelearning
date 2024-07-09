@@ -24,8 +24,8 @@ namespace Bonsai.ML.HiddenMarkovModels
 
         private double[] initialStateDistribution;
         private double[,] logTransitionProbabilities;
-        private ObservationParams observations;
-        private ObservationType observationTypeEnum;
+        private ObservationsBase observations;
+        private ObservationsType observationTypeEnum;
 
         /// <summary>
         /// The initial state distribution.
@@ -58,10 +58,10 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         [XmlIgnore]
         [JsonProperty("observation_type")]
-        [JsonConverter(typeof(ObservationTypeJsonConverter))]
+        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         [Description("The observation type.")]
         [Category("ModelStateParameters")]
-        public ObservationType ObservationType
+        public ObservationsType ObservationType
         {
             get => observationTypeEnum;
             set => observationTypeEnum = value;
@@ -74,7 +74,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonProperty("observation_params")]
         [Description("The observations.")]
         [Category("ModelStateParameters")]
-        public ObservationParams Observations
+        public ObservationsBase Observations
         {
             get => observations;
             set => observations = value;
@@ -110,7 +110,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 observationTypeEnum = GetFromString(observationTypePyObj);
                 var observationClassType = GetObservationsClassType(observationTypeEnum);
 
-                observations = (ObservationParams)Activator.CreateInstance(observationClassType, 
+                observations = (ObservationsBase)Activator.CreateInstance(observationClassType, 
                     observationConstructors.Length == 0 ? null : observationConstructors);
 
                 observations.Params = observationsPyObj;
