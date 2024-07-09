@@ -28,14 +28,14 @@
       <Expression xsi:type="ExternalizedMapping">
         <Property Name="NumStates" />
         <Property Name="Dimensions" />
-        <Property Name="ObservationType" />
+        <Property Name="ObservationsType" />
         <Property Name="StateParameters" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:ModelParameters">
           <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
-          <p2:ObservationType>Gaussian</p2:ObservationType>
+          <p2:ObservationsType>Gaussian</p2:ObservationsType>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
@@ -91,7 +91,7 @@
         <Combinator xsi:type="p2:ModelParameters">
           <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
-          <p2:ObservationType>Gaussian</p2:ObservationType>
+          <p2:ObservationsType>Gaussian</p2:ObservationsType>
         </Combinator>
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
