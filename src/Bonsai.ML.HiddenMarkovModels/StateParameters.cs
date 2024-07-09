@@ -4,9 +4,10 @@ using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Bonsai.ML.HiddenMarkovModels.Observations;
 using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -15,6 +16,7 @@ namespace Bonsai.ML.HiddenMarkovModels
     /// StateParameters of a Hidden Markov Model (HMM).
     /// </summary>
     [Combinator]
+    [JsonConverter(typeof(StateParametersJsonConverter))]
     [Description("StateParameters of a Hidden Markov Model (HMM).")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class StateParameters
@@ -56,7 +58,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         [XmlIgnore]
         [JsonProperty("observation_type")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(ObservationTypeJsonConverter))]
         [Description("The observation type.")]
         [Category("ModelStateParameters")]
         public ObservationType ObservationType
@@ -98,20 +100,30 @@ namespace Bonsai.ML.HiddenMarkovModels
             {
                 var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
                 var logTransitionProbabilitiesPyObj = (double[,])pyObject.GetArrayAttr("log_transition_probabilities");
-                var observationsPyObj = (object[])pyObject.GetArrayAttr("observation_params");
                 var observationTypePyObj = pyObject.GetAttr<string>("observation_type");
 
-                ObservationType = GetFromString(observationTypePyObj);
+                var observationsArrayPyObj = (Array)pyObject.GetArrayAttr("observation_params");
+                var observationsPyObj = (object[])observationsArrayPyObj;
+                var observationKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
+                var observationConstructors = observationKwargsPyObj.Values.ToArray();
 
-                var observationClassType = GetObservationsClassType(ObservationType);
-                Observations = (ObservationParams)Activator.CreateInstance(observationClassType);
+                observationTypeEnum = GetFromString(observationTypePyObj);
+                var observationClassType = GetObservationsClassType(observationTypeEnum);
+
+                if (observationConstructors.Length == 0) {
+                    observations = (ObservationParams)Activator.CreateInstance(observationClassType);
+                }
+                else {
+                    observations = (ObservationParams)Activator.CreateInstance(observationClassType, observationConstructors);
+                }
+
                 observations.Params = observationsPyObj;
 
                 return new StateParameters()
                 {
                     InitialStateDistribution = initialStateDistributionPyObj,
                     LogTransitionProbabilities = logTransitionProbabilitiesPyObj,
-                    ObservationType = ObservationType,
+                    ObservationType = observationTypeEnum,
                     Observations = observations
                 };
             });
