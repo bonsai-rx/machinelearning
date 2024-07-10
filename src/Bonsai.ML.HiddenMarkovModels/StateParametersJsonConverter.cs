@@ -3,7 +3,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using Bonsai.ML.HiddenMarkovModels.Observations;
+using Bonsai.ML.HiddenMarkovModels.Transitions;
 using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
+using static Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsLookup;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -19,39 +21,73 @@ namespace Bonsai.ML.HiddenMarkovModels
             StateParameters result = new StateParameters();
 
             result.InitialStateDistribution = jo["InitialStateDistribution"]?.ToObject<double[]>();
-            result.LogTransitionProbabilities = jo["LogTransitionProbabilities"]?.ToObject<double[,]>();
-            var observationsObj = (JObject)jo["Observations"];
-            var observationsType = GetFromString(observationsObj["ObservationsType"]?.ToString());
 
-            object[] kwargsArray = null;
-            object[] paramsArray = [];
+            var transitionsObj = (JObject)jo["Transitions"];
+            var transitionsType = TransitionsLookup.GetFromString(transitionsObj["TransitionsType"]?.ToString());
+
+            object[] transitionsKwargsArray = null;
+            object[] transitionsParamsArray = [];
+
+            if (transitionsObj.ContainsKey("Kwargs"))
+            {
+                var kwargs = (JObject)transitionsObj["Kwargs"];
+                transitionsKwargsArray = kwargs.Properties()
+                    .Select(p => p.Value.ToObject<object>())
+                    .ToArray();
+                if (transitionsKwargsArray.Count() == 0)
+                {
+                    transitionsKwargsArray = null;
+                }
+            }
+
+            var transitions = (TransitionsModel)Activator.CreateInstance(GetTransitionsClassType(transitionsType), transitionsKwargsArray);
+
+            if (transitionsObj.ContainsKey("Params"))
+            {
+                var paramsJArray = (JArray)transitionsObj["Params"];
+                var nParams = paramsJArray.Count;
+                transitionsParamsArray = new object[nParams];
+                for (int i = 0; i < nParams; i++)
+                {
+                    transitionsParamsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                }
+            }
+
+            transitions.Params = transitionsParamsArray;
+            result.Transitions = transitions;
+            
+            var observationsObj = (JObject)jo["Observations"];
+            var observationsType = ObservationsLookup.GetFromString(observationsObj["ObservationsType"]?.ToString());
+
+            object[] observationsKwargsArray = null;
+            object[] observationsParamsArray = [];
 
             if (observationsObj.ContainsKey("Kwargs"))
             {
                 var kwargs = (JObject)observationsObj["Kwargs"];
-                kwargsArray = kwargs.Properties()
+                observationsKwargsArray = kwargs.Properties()
                     .Select(p => p.Value.ToObject<object>())
                     .ToArray();
-                if (kwargsArray.Count() == 0)
+                if (observationsKwargsArray.Count() == 0)
                 {
-                    kwargsArray = null;
+                    observationsKwargsArray = null;
                 }
             }
 
-            var observations = (ObservationsModel)Activator.CreateInstance(GetObservationsClassType(observationsType), kwargsArray);
+            var observations = (ObservationsModel)Activator.CreateInstance(GetObservationsClassType(observationsType), observationsKwargsArray);
 
             if (observationsObj.ContainsKey("Params"))
             {
                 var paramsJArray = (JArray)observationsObj["Params"];
                 var nParams = paramsJArray.Count;
-                paramsArray = new object[nParams];
+                observationsParamsArray = new object[nParams];
                 for (int i = 0; i < nParams; i++)
                 {
-                    paramsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                    observationsParamsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
                 }
             }
 
-            observations.Params = paramsArray;
+            observations.Params = observationsParamsArray;
             result.Observations = observations;
 
             return result;
@@ -65,8 +101,8 @@ namespace Bonsai.ML.HiddenMarkovModels
             writer.WritePropertyName("InitialStateDistribution");
             serializer.Serialize(writer, value.InitialStateDistribution);
 
-            writer.WritePropertyName("LogTransitionProbabilities");
-            serializer.Serialize(writer, value.LogTransitionProbabilities);
+            writer.WritePropertyName("Transitions");
+            serializer.Serialize(writer, value.Transitions);
 
             writer.WritePropertyName("Observations");
             serializer.Serialize(writer, value.Observations);

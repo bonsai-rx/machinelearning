@@ -5,7 +5,9 @@ using Python.Runtime;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Bonsai.ML.HiddenMarkovModels.Observations;
+using Bonsai.ML.HiddenMarkovModels.Transitions;
 using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
+using static Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsLookup;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,7 +24,7 @@ namespace Bonsai.ML.HiddenMarkovModels
     {
 
         private double[] initialStateDistribution = null;
-        private double[,] logTransitionProbabilities = null;
+        private TransitionsModel transitions = null;
         private ObservationsModel observations = null;
 
         /// <summary>
@@ -42,17 +44,17 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
         /// <summary>
-        /// The log of the state transition probabilities.
+        /// The transitions model.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("log_transition_probabilities")]
-        [Description("The log of the state transition probabilities.")]
+        [JsonProperty("transition_params")]
+        [Description("The transitions model.")]
         [Category("ModelStateParameters")]
-        public double[,] LogTransitionProbabilities
+        public TransitionsModel Transitions
         {
-            get => logTransitionProbabilities;
+            get => transitions;
             set {
-                logTransitionProbabilities = value;
+                transitions = value;
                 UpdateString();
             }
         }
@@ -82,7 +84,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 new StateParameters() 
                 {
                     InitialStateDistribution = InitialStateDistribution,
-                    LogTransitionProbabilities = LogTransitionProbabilities,
+                    Transitions = Transitions,
                     Observations = Observations
                 }
             );
@@ -99,7 +101,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 return new StateParameters()
                 {
                     InitialStateDistribution = InitialStateDistribution,
-                    LogTransitionProbabilities = LogTransitionProbabilities,
+                    Transitions = Transitions,
                     Observations = Observations
                 };
             });
@@ -114,26 +116,39 @@ namespace Bonsai.ML.HiddenMarkovModels
             return Observable.Select(source, pyObject =>
             {
                 var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
-                var logTransitionProbabilitiesPyObj = (double[,])pyObject.GetArrayAttr("log_transition_probabilities");
-                var observationsTypePyObj = pyObject.GetAttr<string>("observation_type");
+                
+                var transitionsTypePyObj = pyObject.GetAttr<string>("transition_type");
+                var transitionsArrayPyObj = (Array)pyObject.GetArrayAttr("transition_params");
+                var transitionsPyObj = (object[])transitionsArrayPyObj;
+                var transitionsKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("transition_kwargs");
+                var transitionsConstructors = transitionsKwargsPyObj.Values.ToArray();
 
+                var transitionsType = TransitionsLookup.GetFromString(transitionsTypePyObj);
+                var transitionsClassType = GetTransitionsClassType(transitionsType);
+
+                transitions = (TransitionsModel)Activator.CreateInstance(transitionsClassType,
+                    transitionsConstructors.Length == 0 ? null : transitionsConstructors);
+
+                transitions.Params = transitionsPyObj;
+
+                var observationsTypePyObj = pyObject.GetAttr<string>("observation_type");
                 var observationsArrayPyObj = (Array)pyObject.GetArrayAttr("observation_params");
                 var observationsPyObj = (object[])observationsArrayPyObj;
-                var observationKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
-                var observationConstructors = observationKwargsPyObj.Values.ToArray();
+                var observationsKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
+                var observationsConstructors = observationsKwargsPyObj.Values.ToArray();
 
-                var observationsType = GetFromString(observationsTypePyObj);
-                var observationClassType = GetObservationsClassType(observationsType);
+                var observationsType = ObservationsLookup.GetFromString(observationsTypePyObj);
+                var observationsClassType = GetObservationsClassType(observationsType);
 
-                observations = (ObservationsModel)Activator.CreateInstance(observationClassType,
-                    observationConstructors.Length == 0 ? null : observationConstructors);
+                observations = (ObservationsModel)Activator.CreateInstance(observationsClassType,
+                    observationsConstructors.Length == 0 ? null : observationsConstructors);
 
                 observations.Params = observationsPyObj;
 
                 return new StateParameters()
                 {
                     InitialStateDistribution = initialStateDistributionPyObj,
-                    LogTransitionProbabilities = logTransitionProbabilitiesPyObj,
+                    Transitions = transitions,
                     Observations = observations
                 };
             });
@@ -148,8 +163,8 @@ namespace Bonsai.ML.HiddenMarkovModels
                 StringBuilder.Append($"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution)},");
             }
 
-            if (LogTransitionProbabilities != null) {
-                StringBuilder.Append($"log_transition_probabilities={NumpyHelper.NumpyParser.ParseArray(LogTransitionProbabilities)},");
+            if (Transitions != null) {
+                StringBuilder.Append($"{Transitions},");
             }
 
             if (Observations != null) {
