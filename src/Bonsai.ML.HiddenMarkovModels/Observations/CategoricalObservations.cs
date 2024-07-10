@@ -53,8 +53,16 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         public CategoricalObservations (params object[] args)
         {
-            categories = Convert.ToInt32(args[0]);
-            UpdateString();
+            if (args is not null && args.Length == 1)
+            {
+                Categories = args[0] switch
+                {
+                    int c => c,
+                    long c => Convert.ToInt32(c),
+                    _ => 2
+                };
+                UpdateString();
+            }
         }
     }
 }
