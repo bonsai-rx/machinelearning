@@ -29,37 +29,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
             set
             {
                 LogLambdas = (double[,])value[0];
+                UpdateString();
             }
-        }
-
-        public IObservable<PoissonObservations> Process()
-        {
-            return Observable.Return(
-                new PoissonObservations {
-                    LogLambdas = LogLambdas
-                });
-        }
-
-        public IObservable<PoissonObservations> Process(IObservable<PyObject> source)
-        {
-            return Observable.Select(source, pyObject =>
-            {
-                var logLambdasPyObj = (double[,])pyObject.GetArrayAttr("log_lambdas");
-
-                return new PoissonObservations
-                {
-                    LogLambdas = logLambdasPyObj
-                };
-            });
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            if (LogLambdas is null) 
-                return $"observation_params=None";
-
-            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(LogLambdas)},)";
         }
     }
 }

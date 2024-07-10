@@ -9,8 +9,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
     [Combinator]
     [Description("")]
-    [WorkflowElementCategory(ElementCategory.Transform)]
-    public class PoissonObservationsModel : ObservationsModelBuilder<PoissonObservations>
+    [WorkflowElementCategory(ElementCategory.Source)]
+    [JsonObject(MemberSerialization.OptIn)]
+    public class PoissonObservationsModel
     {
 
         /// <summary>
@@ -38,15 +39,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                     Params = [ logLambdasPyObj ]
                 };
             });
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            if (LogLambdas is null) 
-                return $"observation_params=None";
-
-            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(LogLambdas)},)";
         }
     }
 }

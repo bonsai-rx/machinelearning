@@ -32,22 +32,13 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         [JsonProperty]
         public override object[] Params
         {
-            get { return [ Mus, SqrtSigmas ]; }
+            get => [ Mus, SqrtSigmas ];
             set
             {
                 Mus = (double[,])value[0];
                 SqrtSigmas = (double[,,])value[1];
+                UpdateString();
             }
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            if (Mus is null || SqrtSigmas is null) 
-                return $"observation_params=None";
-
-            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(Mus)}," +
-                $"{NumpyHelper.NumpyParser.ParseArray(SqrtSigmas)})";
         }
     }
 }

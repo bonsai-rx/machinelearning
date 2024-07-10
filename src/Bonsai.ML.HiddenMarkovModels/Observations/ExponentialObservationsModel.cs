@@ -9,9 +9,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
     [Combinator]
     [Description("")]
-    [WorkflowElementCategory(ElementCategory.Transform)]
+    [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class ExponentialObservationsModel : ObservationsModelBuilder<ExponentialObservations>
+    public class ExponentialObservationsModel
     {
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace Bonsai.ML.HiddenMarkovModels
     [JsonConverter(typeof(StateParametersJsonConverter))]
     [Description("StateParameters of a Hidden Markov Model (HMM).")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class StateParameters
+    public class StateParameters : PythonStringBuilder
     {
 
         private double[] initialStateDistribution = null;
@@ -36,7 +36,10 @@ namespace Bonsai.ML.HiddenMarkovModels
         public double[] InitialStateDistribution
         {
             get => initialStateDistribution;
-            set => initialStateDistribution = value;
+            set {
+                initialStateDistribution = value;
+                UpdateString();
+            }
         }
 
         /// <summary>
@@ -49,7 +52,10 @@ namespace Bonsai.ML.HiddenMarkovModels
         public double[,] LogTransitionProbabilities
         {
             get => logTransitionProbabilities;
-            set => logTransitionProbabilities = value;
+            set {
+                logTransitionProbabilities = value;
+                UpdateString();
+            }
         }
 
         /// <summary>
@@ -62,7 +68,10 @@ namespace Bonsai.ML.HiddenMarkovModels
         public ObservationsModel Observations
         {
             get => observations;
-            set => observations = value;
+            set { 
+                observations = value;
+                UpdateString();
+            }
         }
 
         public IObservable<StateParameters> Process()
@@ -120,11 +129,25 @@ namespace Bonsai.ML.HiddenMarkovModels
             });
         }
 
-        public override string ToString()
+        protected override string BuildString()
         {
-            return $"initial_state_distribution={(InitialStateDistribution == null ? "None" : NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution))}," + 
-                $"log_transition_probabilities={(LogTransitionProbabilities == null ? "None" : NumpyHelper.NumpyParser.ParseArray(LogTransitionProbabilities))}," +
-                $"{(Observations == null ? "" : Observations)}";
+            StringBuilder.Clear();
+
+            if (InitialStateDistribution != null) {
+                StringBuilder.Append($"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution)},");
+            }
+
+            if (LogTransitionProbabilities != null) {
+                StringBuilder.Append($"log_transition_probabilities={NumpyHelper.NumpyParser.ParseArray(LogTransitionProbabilities)},");
+            }
+
+            if (Observations != null) {
+                StringBuilder.Append($"{Observations},");
+            }
+
+            StringBuilder.Remove(StringBuilder.Length - 1, 1);
+
+            return StringBuilder.ToString();            
         }
     }
 }

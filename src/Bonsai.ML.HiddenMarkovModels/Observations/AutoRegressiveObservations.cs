@@ -1,8 +1,5 @@
-using System;
-using Python.Runtime;
-using System.Reactive.Linq;
 using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
@@ -11,12 +8,14 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     public class AutoRegressiveObservations : ObservationsModel
     {
 
+        private int lags = 1;
+
         /// <summary>
         /// The lags of the observations for each state.
         /// </summary>
         [JsonProperty]
         [Description("The lags of the observations for each state.")]
-        public int Lags { get; set; } = 1;
+        public int Lags { get => lags; set {lags = value; UpdateString(); } }
 
         /// <summary>
         /// The As of the observations for each state.
@@ -50,32 +49,28 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         [JsonProperty]
         public override object[] Params
         {
-            get { return [ As, Bs, Vs, SqrtSigmas ]; }
+            get =>[ As, Bs, Vs, SqrtSigmas ];
             set
             {
                 As = (double[,,])value[0];
                 Bs = (double[,])value[1];
                 Vs = (double[,,])value[2];
                 SqrtSigmas = (double[,,])value[3];
+                UpdateString();
             }
         }
+
+        /// <inheritdoc/>
+        [JsonProperty]
+        public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
+        {
+            ["lags"] = Lags,
+        };
 
         public AutoRegressiveObservations (params object[] args)
         {
             Lags = (int)args[0];
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            if (As is null || Bs is null || Vs is null || SqrtSigmas is null) 
-                return $"observation_params=None,observation_kwargs={{'lags':{Lags}}}";
-
-            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(As)}," +
-                $"{NumpyHelper.NumpyParser.ParseArray(Bs)}," +
-                $"{NumpyHelper.NumpyParser.ParseArray(Vs)}," +
-                $"{NumpyHelper.NumpyParser.ParseArray(SqrtSigmas)})," +
-                $"observation_kwargs={{'lags':{Lags}}}";
+            UpdateString();
         }
     }
 }

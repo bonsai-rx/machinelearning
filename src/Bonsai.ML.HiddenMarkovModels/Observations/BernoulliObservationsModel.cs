@@ -11,7 +11,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class BernoulliObservationsModel : ObservationsModelBuilder<BernoulliObservations>
+    public class BernoulliObservationsModel
     {
         /// <summary>
         /// The logit P of the observations for each state.

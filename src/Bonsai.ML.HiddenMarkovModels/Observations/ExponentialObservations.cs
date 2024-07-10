@@ -1,9 +1,7 @@
-using System;
-using Python.Runtime;
-using System.Reactive.Linq;
 using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Text;
 using Newtonsoft.Json;
+using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
@@ -29,16 +27,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
             set
             {
                 LogLambdas = (double[,])value[0];
+                UpdateString();
             }
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            if (LogLambdas is null) 
-                return $"observation_params=None";
-
-            return $"observation_params=({NumpyHelper.NumpyParser.ParseArray(LogLambdas)},)";
         }
     }
 }

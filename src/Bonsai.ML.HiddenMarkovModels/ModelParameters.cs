@@ -3,8 +3,8 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System.Xml.Serialization;
 using Python.Runtime;
 using Bonsai.ML.HiddenMarkovModels.Observations;
@@ -15,7 +15,7 @@ namespace Bonsai.ML.HiddenMarkovModels
     [Combinator]
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class ModelParameters
+    public class ModelParameters : PythonStringBuilder
     {
 
         private int numStates;
@@ -29,7 +29,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonProperty("num_states")]
         [Description("The number of discrete latent states of the HMM model")]
         [Category("InitialParameters")]
-        public int NumStates { get => numStates; set => numStates = value; }
+        public int NumStates { get => numStates; set { numStates = value; UpdateString(); } }
 
         /// <summary>
         /// The dimensionality of the observations into the HMM model.
@@ -37,7 +37,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonProperty("dimensions")]
         [Description("The dimensionality of the observations into the HMM model")]
         [Category("InitialParameters")]
-        public int Dimensions { get => dimensions; set => dimensions = value; }
+        public int Dimensions { get => dimensions; set { dimensions = value; UpdateString(); } }
 
         /// <summary>
         /// The type of distribution that the HMM will use to model the emission of data observations.
@@ -46,7 +46,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         [Description("The type of distribution that the HMM will use to model the emission of data observations.")]
         [Category("InitialParameters")]
-        public ObservationsType ObservationsType { get => observationsType; set => observationsType = value; }
+        public ObservationsType ObservationsType { get => observationsType; set { observationsType = value; UpdateString(); } }
 
         /// <summary>
         /// The state parameters of the HMM model.
@@ -54,7 +54,16 @@ namespace Bonsai.ML.HiddenMarkovModels
         [XmlIgnore]
         [Description("The state parameters of the HMM model.")]
         [Category("ModelState")]
-        public StateParameters StateParameters { get => stateParameters; set => stateParameters = value; }
+        public StateParameters StateParameters
+        {
+            get => stateParameters;
+            set
+            {
+                stateParameters = value;
+                ObservationsType = stateParameters.Observations.ObservationsType;
+                UpdateString();
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModelParameters"/> class.
@@ -98,17 +107,17 @@ namespace Bonsai.ML.HiddenMarkovModels
             var stateParametersObservable = new StateParameters().Process(sharedSource);
             return sharedSource.Select(pyObject =>
             {
-                var numStatesPyObj = pyObject.GetAttr<int>("num_states");
-                var dimensionsPyObj = pyObject.GetAttr<int>("dimensions");
+                NumStates = pyObject.GetAttr<int>("num_states");
+                Dimensions = pyObject.GetAttr<int>("dimensions");
                 var observationsTypeStrPyObj = pyObject.GetAttr<string>("observation_type");
 
-                var observationsTypePyObj = GetFromString(observationsTypeStrPyObj);
+                ObservationsType = GetFromString(observationsTypeStrPyObj);
 
                 return new ModelParameters()
                 {
-                    NumStates = numStatesPyObj,
-                    Dimensions = dimensionsPyObj,
-                    ObservationsType = observationsTypePyObj,
+                    NumStates = NumStates,
+                    Dimensions = Dimensions,
+                    ObservationsType = ObservationsType,
                 };
             }).Zip(stateParametersObservable, (modelParameters, stateParameters) =>
             {
@@ -117,12 +126,21 @@ namespace Bonsai.ML.HiddenMarkovModels
             });
         }
 
-        public override string ToString()
+        protected override string BuildString()
         {
-            return $"num_states={numStates}," +
-                $"dimensions={dimensions}," +
-                $"observation_type=\"{GetString(observationsType)}\"," +
-                $"{(stateParameters == null ? "" : stateParameters)}";
+            StringBuilder.Clear();
+            StringBuilder.Append($"num_states={numStates},")
+                .Append($"dimensions={dimensions},");
+
+            if (stateParameters == null)
+            {
+                StringBuilder.Append($"observation_type=\"{GetString(observationsType)}\"");
+            }
+            else
+            {
+                StringBuilder.Append($"{stateParameters}");
+            }
+            return StringBuilder.ToString();
         }
     }
 }
