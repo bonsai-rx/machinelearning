@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System;
@@ -18,31 +17,26 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// The lags of the observations for each state.
         /// </summary>
         [JsonProperty]
-        [Description("The lags of the observations for each state.")]
         public int Lags { get => lags; set {lags = value; UpdateString(); } }
 
         /// <summary>
         /// The As of the observations for each state.
         /// </summary>
-        [Description("The As of the observations for each state.")]
         public double[,,] As { get; private set; } = null;
 
         /// <summary>
         /// The bs of the observations for each state.
         /// </summary>
-        [Description("The bs of the observations for each state.")]
         public double[,] Bs { get; private set; } = null;
 
         /// <summary>
         /// The Vs of the observations for each state.
         /// </summary>
-        [Description("The Vs of the observations for each state.")]
         public double[,,] Vs { get; private set; } = null;
 
         /// <summary>
         /// The square root sigmas of the observations for each state.
         /// </summary>
-        [Description("The square root sigmas of the observations for each state.")]
         public double[,,] SqrtSigmas { get; private set; } = null;
 
         /// <inheritdoc/>

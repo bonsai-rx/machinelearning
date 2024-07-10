@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
@@ -12,7 +11,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <summary>
         /// The logit P of the observations for each state.
         /// </summary>
-        [Description("The logit P of the observations for each state.")]
         public double[,] LogitPs { get; private set; } = null;
 
         /// <inheritdoc/>

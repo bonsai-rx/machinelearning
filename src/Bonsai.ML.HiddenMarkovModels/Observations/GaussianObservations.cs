@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
@@ -13,13 +12,11 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <summary>
         /// The means of the observations for each state.
         /// </summary>
-        [Description("The means of the observations for each state.")]
         public double[,] Mus { get; private set; } = null;
 
         /// <summary>
         /// The standard deviations of the observations for each state.
         /// </summary>
-        [Description("The standard deviations of the observations for each state.")]
         public double[,,] SqrtSigmas { get; private set; } = null;
 
         /// <inheritdoc/>
