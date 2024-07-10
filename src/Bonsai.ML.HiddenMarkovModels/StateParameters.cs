@@ -37,7 +37,8 @@ namespace Bonsai.ML.HiddenMarkovModels
         public double[] InitialStateDistribution
         {
             get => initialStateDistribution;
-            set {
+            set
+            {
                 initialStateDistribution = value;
                 UpdateString();
             }
@@ -53,7 +54,8 @@ namespace Bonsai.ML.HiddenMarkovModels
         public TransitionsModel Transitions
         {
             get => transitions;
-            set {
+            set
+            {
                 transitions = value;
                 UpdateString();
             }
@@ -69,7 +71,8 @@ namespace Bonsai.ML.HiddenMarkovModels
         public ObservationsModel Observations
         {
             get => observations;
-            set { 
+            set
+            {
                 observations = value;
                 UpdateString();
             }
@@ -81,7 +84,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         public IObservable<StateParameters> Process()
         {
             return Observable.Return(
-                new StateParameters() 
+                new StateParameters()
                 {
                     InitialStateDistribution = InitialStateDistribution,
                     Transitions = Transitions,
@@ -159,15 +162,18 @@ namespace Bonsai.ML.HiddenMarkovModels
         {
             StringBuilder.Clear();
 
-            if (InitialStateDistribution != null) {
+            if (InitialStateDistribution != null)
+            {
                 StringBuilder.Append($"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution)},");
             }
 
-            if (Transitions != null) {
+            if (Transitions != null)
+            {
                 StringBuilder.Append($"{Transitions},");
             }
 
-            if (Observations != null) {
+            if (Observations != null)
+            {
                 StringBuilder.Append($"{Observations},");
             }
 
@@ -176,7 +182,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 StringBuilder.Remove(StringBuilder.Length - 1, 1);
             }
 
-            return StringBuilder.ToString();            
+            return StringBuilder.ToString();
         }
     }
 }
