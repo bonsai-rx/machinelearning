@@ -13,7 +13,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         private static readonly Dictionary<TransitionsType, (Type Type, string StringValue)> _lookup = new Dictionary<TransitionsType, (Type, string)>
         {
             { TransitionsType.Stationary, (typeof(StationaryTransitions), "stationary") },
-            { TransitionsType.ConstrainedStationary, (typeof(ConstrainedStationaryTransitions), "constrained") }
+            { TransitionsType.ConstrainedStationary, (typeof(ConstrainedStationaryTransitions), "constrained") },
+            { TransitionsType.Sticky, (typeof(StickyTransitions), "sticky") }
         };
 
         /// <summary>

@@ -13,6 +13,11 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// Constrained stationary transitions.
         /// </summary>
-        ConstrainedStationary
+        ConstrainedStationary,
+
+        /// <summary>
+        /// Sticky transitions.
+        /// </summary>
+        Sticky
     }
 }
