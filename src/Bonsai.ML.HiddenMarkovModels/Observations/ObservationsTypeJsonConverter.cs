@@ -10,16 +10,16 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     public class ObservationsTypeJsonConverter : JsonConverter<ObservationsType>
     {
         /// <inheritdoc/>
-        public override void WriteJson(JsonWriter writer, ObservationsType value, JsonSerializer serializer)
-        {
-            writer.WriteValue(GetString(value));
-        }
-
-        /// <inheritdoc/>
         public override ObservationsType ReadJson(JsonReader reader, Type objectType, ObservationsType existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             string stringValue = reader.Value?.ToString();
             return GetFromString(stringValue);
+        }
+
+        /// <inheritdoc/>
+        public override void WriteJson(JsonWriter writer, ObservationsType value, JsonSerializer serializer)
+        {
+            writer.WriteValue(GetString(value));
         }
     }
 }

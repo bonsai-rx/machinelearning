@@ -10,16 +10,16 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
     public class TransitionsTypeJsonConverter : JsonConverter<TransitionsType>
     {
         /// <inheritdoc/>
-        public override void WriteJson(JsonWriter writer, TransitionsType value, JsonSerializer serializer)
-        {
-            writer.WriteValue(GetString(value));
-        }
-
-        /// <inheritdoc/>
         public override TransitionsType ReadJson(JsonReader reader, Type objectType, TransitionsType existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             string stringValue = reader.Value?.ToString();
             return GetFromString(stringValue);
+        }
+
+        /// <inheritdoc/>
+        public override void WriteJson(JsonWriter writer, TransitionsType value, JsonSerializer serializer)
+        {
+            writer.WriteValue(GetString(value));
         }
     }
 }
