@@ -29,7 +29,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         [XmlIgnore]
         [Description("The logit of the observations for each state.")]
-        public double[,,] Logits { get; private set; } = null;
+        public double[,,] Logits { get; set; } = null;
 
         /// <summary>
         /// Returns an observable sequence of <see cref="CategoricalObservations"/> objects.

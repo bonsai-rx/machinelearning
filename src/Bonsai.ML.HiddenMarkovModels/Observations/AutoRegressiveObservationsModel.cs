@@ -29,28 +29,28 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         [XmlIgnore]
         [Description("The As of the observations for each state.")]
-        public double[,,] As { get; private set; } = null;
+        public double[,,] As { get; set; } = null;
 
         /// <summary>
         /// The bs of the observations for each state.
         /// </summary>
         [XmlIgnore]
         [Description("The bs of the observations for each state.")]
-        public double[,] Bs { get; private set; } = null;
+        public double[,] Bs { get; set; } = null;
 
         /// <summary>
         /// The Vs of the observations for each state.
         /// </summary>
         [XmlIgnore]
         [Description("The Vs of the observations for each state.")]
-        public double[,,] Vs { get; private set; } = null;
+        public double[,,] Vs { get; set; } = null;
 
         /// <summary>
         /// The square root sigmas of the observations for each state.
         /// </summary>
         [XmlIgnore]
         [Description("The square root sigmas of the observations for each state.")]
-        public double[,,] SqrtSigmas { get; private set; } = null;
+        public double[,,] SqrtSigmas { get; set; } = null;
 
         /// <summary>
         /// Returns an observable sequence of <see cref="AutoRegressiveObservations"/> objects.

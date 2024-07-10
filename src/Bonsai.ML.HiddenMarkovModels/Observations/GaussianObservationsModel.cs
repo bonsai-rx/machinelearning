@@ -23,14 +23,14 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         [XmlIgnore]
         [Description("The means of the observations for each state.")]
-        public double[,] Mus { get; private set; } = null;
+        public double[,] Mus { get; set; } = null;
 
         /// <summary>
         /// The standard deviations of the observations for each state.
         /// </summary>
         [XmlIgnore]
         [Description("The standard deviations of the observations for each state.")]
-        public double[,,] SqrtSigmas { get; private set; } = null;
+        public double[,,] SqrtSigmas { get; set; } = null;
 
         /// <summary>
         /// Returns an observable sequence of <see cref="GaussianObservations"/> objects.

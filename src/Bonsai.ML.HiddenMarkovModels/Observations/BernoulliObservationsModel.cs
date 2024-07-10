@@ -22,7 +22,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         [XmlIgnore]
         [Description("The logit P of the observations for each state.")]
-        public double[,] LogitPs { get; private set; } = null;
+        public double[,] LogitPs { get; set; } = null;
 
         /// <summary>
         /// Returns an observable sequence of <see cref="BernoulliObservations"/> objects.

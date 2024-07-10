@@ -23,7 +23,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         [XmlIgnore]
         [Description("The log lambdas of the observations for each state.")]
-        public double[,] LogLambdas { get; private set; } = null;
+        public double[,] LogLambdas { get; set; } = null;
 
         /// <summary>
         /// Returns an observable sequence of <see cref="PoissonObservations"/> objects.
