@@ -1,9 +1,11 @@
 using System.ComponentModel;
 using Newtonsoft.Json;
-using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
+    /// <summary>
+    /// Represents an bernoulli observations model.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class BernoulliObservations : ObservationsModel
     {
@@ -15,6 +17,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
+        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         public override ObservationsType ObservationsType => ObservationsType.Bernoulli;
 
         /// <inheritdoc/>

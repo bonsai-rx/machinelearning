@@ -1,9 +1,13 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
+    /// <summary>
+    /// Represents an autoregressive observations model.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class AutoRegressiveObservations : ObservationsModel
     {
@@ -43,6 +47,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
+        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         public override ObservationsType ObservationsType => ObservationsType.AutoRegressive;
 
         /// <inheritdoc/>
@@ -67,9 +72,12 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
             ["lags"] = Lags,
         };
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AutoRegressiveObservations"/> class.
+        /// </summary>
         public AutoRegressiveObservations (params object[] args)
         {
-            Lags = (int)args[0];
+            Lags = Convert.ToInt32(args[0]);
             UpdateString();
         }
     }

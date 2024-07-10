@@ -1,12 +1,10 @@
-using Bonsai;
-using System;
 using System.ComponentModel;
-using System.Reactive.Linq;
-using Python.Runtime;
-using System.Xml.Serialization;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
+    /// <summary>
+    /// Represents summary statistics and related data of an HMM model with gaussian observations.
+    /// </summary>
     public class GaussianObservationsStatistics
     {
         /// <summary>

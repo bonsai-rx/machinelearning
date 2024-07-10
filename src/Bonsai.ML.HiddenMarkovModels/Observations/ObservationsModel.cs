@@ -25,6 +25,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         public virtual Dictionary<string, object> Kwargs => new();
 
+        /// <inheritdoc/>
         protected override string BuildString()
         {
             StringBuilder.Clear();

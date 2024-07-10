@@ -12,6 +12,10 @@ using OxyPlot.Series;
 
 namespace Bonsai.ML.Visualizers
 {
+    /// <summary>
+    /// Provides a type visualizer of <see cref="GaussianObservationsStatistics"/> to display the means and standard 
+    /// deviations of each state of an HMM with gaussian observations model.
+    /// </summary>
     public class GaussianObservationStatisticsVisualizer : DialogTypeVisualizer
     {
         

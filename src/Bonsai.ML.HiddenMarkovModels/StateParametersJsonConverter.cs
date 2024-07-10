@@ -7,40 +7,57 @@ using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
-    public class StateParametersJsonConverter: JsonConverter<StateParameters>
+    /// <summary>
+    /// Provides a type converter to convert between <see cref="StateParameters"/> and a JSON string representation.
+    /// </summary>
+    public class StateParametersJsonConverter : JsonConverter<StateParameters>
     {
+        /// <inheritdoc/>
         public override StateParameters ReadJson(JsonReader reader, Type objectType, StateParameters existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             JObject jo = JObject.Load(reader);
-            
             StateParameters result = new StateParameters();
 
             result.InitialStateDistribution = jo["InitialStateDistribution"]?.ToObject<double[]>();
             result.LogTransitionProbabilities = jo["LogTransitionProbabilities"]?.ToObject<double[,]>();
-            var observationsType = GetFromString(jo["Observations"]["ObservationsType"]?.ToString());
+            var observationsObj = (JObject)jo["Observations"];
+            var observationsType = GetFromString(observationsObj["ObservationsType"]?.ToString());
 
-            var paramsArray = (JArray)jo["Observations"]["Params"];
-            object[] paramsObjArr = new object[paramsArray.Count];
-            for (int i = 0; i < paramsArray.Count; i++)
+            object[] kwargsArray = null;
+            object[] paramsArray = [];
+
+            if (observationsObj.ContainsKey("Kwargs"))
             {
-                paramsObjArr[i] = NumpyHelper.NumpyParser.ParseString(paramsArray[i].ToString(), typeof(double));
+                var kwargs = (JObject)observationsObj["Kwargs"];
+                kwargsArray = kwargs.Properties()
+                    .Select(p => p.Value.ToObject<object>())
+                    .ToArray();
+                if (kwargsArray.Count() == 0)
+                {
+                    kwargsArray = null;
+                }
             }
 
-            var kwargs = (JObject)jo["Observations"]["Kwargs"];
-            object[] kwargsArray = kwargs.Properties()
-                        .Select(p => p.Value.ToObject<object>())
-                        .ToArray();
+            var observations = (ObservationsModel)Activator.CreateInstance(GetObservationsClassType(observationsType), kwargsArray);
 
-            var observations = kwargsArray.Count() == 0 
-                ? (ObservationsModel)Activator.CreateInstance(GetObservationsClassType(observationsType)) 
-                : (ObservationsModel)Activator.CreateInstance(GetObservationsClassType(observationsType), kwargsArray);
+            if (observationsObj.ContainsKey("Params"))
+            {
+                var paramsJArray = (JArray)observationsObj["Params"];
+                var nParams = paramsJArray.Count;
+                paramsArray = new object[nParams];
+                for (int i = 0; i < nParams; i++)
+                {
+                    paramsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                }
+            }
 
-            observations.Params = paramsObjArr;
+            observations.Params = paramsArray;
             result.Observations = observations;
-            
+
             return result;
         }
 
+        /// <inheritdoc/>
         public override void WriteJson(JsonWriter writer, StateParameters value, JsonSerializer serializer)
         {
             writer.WriteStartObject();

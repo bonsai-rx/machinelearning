@@ -15,6 +15,10 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace Bonsai.ML.Visualizers
 {
+    /// <summary>
+    /// Provides a type visualizer of <see cref="GaussianObservationsStatistics"/> to display how the observations 
+    /// cluster with respect to the mean and covariance of each state of an HMM with gaussian observations model.
+    /// </summary>
     public class GaussianObservationsClustersVisualizer : DialogTypeVisualizer
     {
         private PlotView view;
@@ -22,27 +26,50 @@ namespace Bonsai.ML.Visualizers
         private List<LineSeries> allLineSeries = null;
         private List<ScatterSeries> allScatterSeries = null;
         private List<OxyColor> colorList = null;
-
         private StatusStrip statusStrip;
-        public StatusStrip StatusStrip => statusStrip;
-
         private int dimension1SelectedIndex = 0;
-        public int Dimension1SelectedIndex { get => dimension1SelectedIndex; set => dimension1SelectedIndex = value; }
         private ToolStripComboBox dimension1ComboBox;
         private ToolStripLabel dimension1Label;
-        public ToolStripComboBox Dimension1ComboBox => dimension1ComboBox;
-
         private int dimension2SelectedIndex = 1;
-        public int Dimension2SelectedIndex { get => dimension2SelectedIndex; set => dimension2SelectedIndex = value; }
         private ToolStripComboBox dimension2ComboBox;
         private ToolStripLabel dimension2Label;
-        public ToolStripComboBox Dimension2ComboBox => dimension2ComboBox;
-
-        public bool BufferData { get; set; } = true;
-        public int BufferCount { get; set; } = 250;
-
         private LinearAxis xAxis;
         private LinearAxis yAxis;
+
+        /// <summary>
+        /// Gets the status strip.
+        /// </summary>
+        public StatusStrip StatusStrip => statusStrip;
+
+        /// <summary>
+        /// Gets the selected index of the first dimension.
+        /// </summary>
+        public int Dimension1SelectedIndex { get => dimension1SelectedIndex; set => dimension1SelectedIndex = value; }
+
+        /// <summary>
+        /// Gets the selected index of the second dimension.
+        /// </summary>
+        public int Dimension2SelectedIndex { get => dimension2SelectedIndex; set => dimension2SelectedIndex = value; }
+
+        /// <summary>
+        /// Gets the first dimension combo box.
+        /// </summary>
+        public ToolStripComboBox Dimension1ComboBox => dimension1ComboBox;
+
+        /// <summary>
+        /// Gets the second dimension combo box.
+        /// </summary>
+        public ToolStripComboBox Dimension2ComboBox => dimension2ComboBox;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the data should be buffered.
+        /// </summary>
+        public bool BufferData { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the buffer count.
+        /// </summary>
+        public int BufferCount { get; set; } = 250;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -139,6 +166,7 @@ namespace Bonsai.ML.Visualizers
                     dimension1ComboBox.SelectedIndex = dimension1SelectedIndex;
 
                     dimension2ComboBox.SelectedIndexChanged += dimension2ComboBoxSelectedIndexChanged;
+                    dimension2SelectedIndex = Math.Max(dimension2ComboBox.Items.Count - 1, dimension2SelectedIndex);
                     dimension2ComboBox.SelectedIndex = dimension2SelectedIndex;
                 }
 

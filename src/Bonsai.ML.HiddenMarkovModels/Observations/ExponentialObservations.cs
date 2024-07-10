@@ -1,14 +1,14 @@
 using System.ComponentModel;
-using System.Text;
 using Newtonsoft.Json;
-using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
+    /// <summary>
+    /// Represents an exponential observations model.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class ExponentialObservations : ObservationsModel
     {
-
         /// <summary>
         /// The log lambdas of the observations for each state.
         /// </summary>
@@ -17,6 +17,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
+        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         public override ObservationsType ObservationsType => ObservationsType.Exponential;
 
         /// <inheritdoc/>

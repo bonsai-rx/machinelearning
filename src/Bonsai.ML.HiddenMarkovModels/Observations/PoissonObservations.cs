@@ -1,12 +1,11 @@
-using System;
-using Python.Runtime;
-using System.Reactive.Linq;
 using System.ComponentModel;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
+    /// <summary>
+    /// Represents a poisson observations model.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class PoissonObservations : ObservationsModel
     {
@@ -19,6 +18,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
+        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         public override ObservationsType ObservationsType => ObservationsType.Poisson;
 
         /// <inheritdoc/>

@@ -11,13 +11,12 @@ using System.Linq;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
-
     /// <summary>
-    /// StateParameters of a Hidden Markov Model (HMM).
+    /// Represents the state parameters of a Hidden Markov Model (HMM).
     /// </summary>
     [Combinator]
     [JsonConverter(typeof(StateParametersJsonConverter))]
-    [Description("StateParameters of a Hidden Markov Model (HMM).")]
+    [Description("State parameters of a Hidden Markov Model (HMM).")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class StateParameters : PythonStringBuilder
     {
@@ -74,6 +73,9 @@ namespace Bonsai.ML.HiddenMarkovModels
             }
         }
 
+        /// <summary>
+        /// Returns an observable sequence of <see cref="StateParameters"/> objects.
+        /// </summary>
         public IObservable<StateParameters> Process()
         {
             return Observable.Return(
@@ -86,6 +88,10 @@ namespace Bonsai.ML.HiddenMarkovModels
             );
         }
 
+        /// <summary>
+        /// Takes an observable seqence and returns an observable sequence of <see cref="StateParameters"/> 
+        /// objects that are emitted every time the input sequence emits a new element.
+        /// </summary>
         public IObservable<StateParameters> Process<TSource>(IObservable<TSource> source)
         {
             return Observable.Select(source, pyObject =>
@@ -99,6 +105,10 @@ namespace Bonsai.ML.HiddenMarkovModels
             });
         }
 
+        /// <summary>
+        /// Transforms an observable sequence of <see cref="PyObject"/> into an observable sequence 
+        /// of <see cref="StateParameters"/> objects by accessing internal attributes of the <see cref="PyObject"/>.
+        /// </summary>
         public IObservable<StateParameters> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>
@@ -129,6 +139,7 @@ namespace Bonsai.ML.HiddenMarkovModels
             });
         }
 
+        /// <inheritdoc/>
         protected override string BuildString()
         {
             StringBuilder.Clear();
@@ -145,7 +156,10 @@ namespace Bonsai.ML.HiddenMarkovModels
                 StringBuilder.Append($"{Observations},");
             }
 
-            StringBuilder.Remove(StringBuilder.Length - 1, 1);
+            if (StringBuilder.Length > 0)
+            {
+                StringBuilder.Remove(StringBuilder.Length - 1, 1);
+            }
 
             return StringBuilder.ToString();            
         }

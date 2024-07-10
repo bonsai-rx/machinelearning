@@ -1,17 +1,23 @@
-using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using Python.Runtime;
-using System.Xml.Serialization;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
+    /// <summary>
+    /// Represents an operator that will transform an observable sequence of
+    /// <see cref="PyObject"/> into an observable sequence of <see cref="GaussianObservationsStatistics"/>.
+    /// </summary>
     [Combinator]
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class GetGaussianObservationsStatisticsFromHMM
     {
+        /// <summary>
+        /// Transforms an observable sequence of <see cref="PyObject"/> into an observable sequence 
+        /// of <see cref="GaussianObservationsStatistics"/> objects by accessing internal attributes of the <see cref="PyObject"/>.
+        /// </summary>
         public IObservable<GaussianObservationsStatistics> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>

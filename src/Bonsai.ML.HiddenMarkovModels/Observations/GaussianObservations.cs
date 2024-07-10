@@ -1,13 +1,11 @@
-using System;
-using Python.Runtime;
-using System.Reactive.Linq;
 using System.ComponentModel;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
+    /// <summary>
+    /// Represents a gaussian observations model.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class GaussianObservations : ObservationsModel
     {
@@ -26,6 +24,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
+        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         public override ObservationsType ObservationsType => ObservationsType.Gaussian;
 
         /// <inheritdoc/>

@@ -14,9 +14,12 @@ using OxyPlot.Axes;
 
 namespace Bonsai.ML.Visualizers
 {
+    /// <summary>
+    /// Provides a type visualizer of <see cref="StateProbability"/> to display the probabilities 
+    /// of being in each state of an HMM given the observation.
+    /// </summary>
     public class StateProbabilityVisualizer : DialogTypeVisualizer
     {
-        
         private BarSeriesOxyPlotBase Plot;
 
         private List<BarSeries> allBarSeries;
