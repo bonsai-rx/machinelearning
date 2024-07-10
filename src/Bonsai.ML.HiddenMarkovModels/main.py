@@ -150,9 +150,11 @@ class HiddenMarkovModel(HMM):
                     loop.run_forever()
 
                 def on_completion(future):
-                    permutation = calculate_permutation(
-                        self.observation_params[0], self.params[2][0])
-                    super(HiddenMarkovModel, self).permute(permutation)
+
+                    if self.observation_type == "gaussian":
+                        permutation = calculate_permutation(
+                            self.observation_params[0], self.params[2][0])
+                        super(HiddenMarkovModel, self).permute(permutation)
 
                     initial_state_distribution = None if vars_to_estimate[
                         "initial_state_distribution"] else self.initial_state_distribution
