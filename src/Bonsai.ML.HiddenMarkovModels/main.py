@@ -18,26 +18,38 @@ class HiddenMarkovModel(HMM):
         num_states: int,
         dimensions: int,
         observation_type: str,
+        transition_type: str,
         initial_state_distribution: list[float] = None,
-        log_transition_probabilities: list[list[float]] = None,
         observation_params: tuple = None,
-        observation_kwargs: dict = None
+        observation_kwargs: dict = None,
+        transition_params: tuple = None,
+        transition_kwargs: dict = None
     ):
 
         self.num_states = num_states
         self.dimensions = dimensions
         self.observation_type = observation_type
         super(HiddenMarkovModel, self).__init__(
-            K=self.num_states, D=self.dimensions, observations=self.observation_type, observation_kwargs=observation_kwargs
+            K=self.num_states, 
+            D=self.dimensions, 
+            observations=self.observation_type, 
+            observation_kwargs=observation_kwargs,
+            transitions=transition_type,
+            transition_kwargs=transition_kwargs
         )
 
         self.update_params(initial_state_distribution,
-                           log_transition_probabilities, observation_params)
+                           transition_params, observation_params)
         
         if observation_kwargs is None:
             observation_kwargs = {}
 
         self.observation_kwargs = observation_kwargs
+
+        if transition_kwargs is None:
+            transition_kwargs = {}
+
+        self.transition_kwargs = transition_kwargs
 
         self.log_alpha = None
         self.state_probabilities = None
@@ -52,18 +64,25 @@ class HiddenMarkovModel(HMM):
         self.flush_data_between_batches = True
         self.inferred_most_probable_states = np.array([], dtype=int)
 
-    def update_params(self, initial_state_distribution, log_transition_probabilities, observation_params):
+    def update_params(self, initial_state_distribution, transition_params, observation_params):
         hmm_params = self.params
 
         if initial_state_distribution is not None:
             hmm_params = ((np.array(initial_state_distribution),),
                           ) + hmm_params[1:]
 
-        if log_transition_probabilities is not None:
-            hmm_params = (
-                (hmm_params[0],) +
-                ((np.array(log_transition_probabilities),),) + (hmm_params[2],)
-            )
+        # if log_transition_probabilities is not None:
+        #     hmm_params = (
+        #         (hmm_params[0],) +
+        #         ((np.array(log_transition_probabilities),),) + (hmm_params[2],)
+        #     )
+
+        if transition_params is not None:
+            trans_params = tuple([np.array(param) for param in transition_params])
+            if isinstance(hmm_params[1], tuple):
+                hmm_params = (hmm_params[0],) + (trans_params,) + (hmm_params[2],)
+            else:
+                hmm_params = (hmm_params[0],) + trans_params + (hmm_params[2],)
 
         if observation_params is not None:
             obs_params = tuple([np.array(param) for param in observation_params])
@@ -75,7 +94,11 @@ class HiddenMarkovModel(HMM):
         self.params = hmm_params
 
         self.initial_state_distribution = hmm_params[0][0]
-        self.log_transition_probabilities = hmm_params[1][0]
+
+        if isinstance(hmm_params[1], tuple):
+            self.transition_params = hmm_params[1] 
+        else:
+            self.transition_params = (hmm_params[1],)
 
         if isinstance(hmm_params[2], tuple):
             self.observation_params = hmm_params[2] 
@@ -97,7 +120,7 @@ class HiddenMarkovModel(HMM):
             return log_alpha - logsumexp(log_alpha)
 
         m = np.max(log_alpha)
-        log_alpha = (np.log(np.dot(np.exp(log_alpha - m), self.transitions.transition_matrix)
+        log_alpha = (np.log(np.dot(np.exp(log_alpha - m), self.transitions.transition_matrices)
                             ) + m + self.observations.log_likelihoods(obs, None, None, None)).squeeze()
         return log_alpha - logsumexp(log_alpha)
 
@@ -132,7 +155,7 @@ class HiddenMarkovModel(HMM):
                 if vars_to_estimate is None or vars_to_estimate == {}:
                     vars_to_estimate = {
                         "initial_state_distribution": True,
-                        "log_transition_probabilities": True,
+                        "transition_params": True,
                         "observation_params": True
                     }
 
@@ -158,13 +181,13 @@ class HiddenMarkovModel(HMM):
 
                     initial_state_distribution = None if vars_to_estimate[
                         "initial_state_distribution"] else self.initial_state_distribution
-                    log_transition_probabilities = None if vars_to_estimate[
-                        "log_transition_probabilities"] else self.log_transition_probabilities
+                    transition_params = None if vars_to_estimate[
+                        "transition_params"] else self.transition_params
                     observation_params = None if vars_to_estimate[
                         "observation_params"] else self.observation_params
 
                     self.update_params(initial_state_distribution,
-                                       log_transition_probabilities, observation_params)
+                                       transition_params, observation_params)
 
                     self.is_running = False
                     self._fit_finished = True
