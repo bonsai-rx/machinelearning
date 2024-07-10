@@ -29,6 +29,18 @@ class HiddenMarkovModel(HMM):
         self.num_states = num_states
         self.dimensions = dimensions
         self.observation_type = observation_type
+        self.transition_type = transition_type
+
+        if observation_kwargs is not None:
+            for (key, value) in observation_kwargs.items():
+                if isinstance(value, list):
+                    observation_kwargs[key] = np.array(value)
+
+        if transition_kwargs is not None:
+            for (key, value) in transition_kwargs.items():
+                if isinstance(value, list):
+                    transition_kwargs[key] = np.array(value)
+
         super(HiddenMarkovModel, self).__init__(
             K=self.num_states, 
             D=self.dimensions, 
@@ -70,12 +82,6 @@ class HiddenMarkovModel(HMM):
         if initial_state_distribution is not None:
             hmm_params = ((np.array(initial_state_distribution),),
                           ) + hmm_params[1:]
-
-        # if log_transition_probabilities is not None:
-        #     hmm_params = (
-        #         (hmm_params[0],) +
-        #         ((np.array(log_transition_probabilities),),) + (hmm_params[2],)
-        #     )
 
         if transition_params is not None:
             trans_params = tuple([np.array(param) for param in transition_params])
@@ -120,8 +126,10 @@ class HiddenMarkovModel(HMM):
             return log_alpha - logsumexp(log_alpha)
 
         m = np.max(log_alpha)
-        log_alpha = (np.log(np.dot(np.exp(log_alpha - m), self.transitions.transition_matrices)
+
+        log_alpha = (np.log(np.dot(np.exp(log_alpha - m), self.transitions.transition_matrices(obs, None, None, None).squeeze())
                             ) + m + self.observations.log_likelihoods(obs, None, None, None)).squeeze()
+
         return log_alpha - logsumexp(log_alpha)
 
     def fit_async(self,
