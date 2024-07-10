@@ -15,11 +15,20 @@ namespace Bonsai.ML
         public static T GetAttr<T>(this PyObject pyObject, string attributeName)
         {
             using var attr = pyObject.GetAttr(attributeName);
+            if (attr == null || attr.IsNone())
+            {
+                return default;
+            }
             return attr.As<T>();
         }
 
         public static object ConvertPythonObjectToCSharp(PyObject pyObject)
         {
+            if (pyObject == null || pyObject.IsNone())
+            {
+                return null;
+            }
+
             if (PyInt.IsIntType(pyObject))
             {
                 return pyObject.As<int>();
