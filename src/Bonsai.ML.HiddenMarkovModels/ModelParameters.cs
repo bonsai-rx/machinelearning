@@ -168,7 +168,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 .Append($"dimensions={dimensions},");
             if (stateParameters == null)
             {
-                StringBuilder.Append($"observation_type=\"{ObservationsLookup.GetString(observationsType)}\"");
+                StringBuilder.Append($"observation_type=\"{ObservationsLookup.GetString(observationsType)}\",");
                 StringBuilder.Append($"transition_type=\"{TransitionsLookup.GetString(transitionsType)}\"");
             }
             else
