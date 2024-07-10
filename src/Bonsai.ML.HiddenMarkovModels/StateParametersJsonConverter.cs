@@ -18,9 +18,10 @@ namespace Bonsai.ML.HiddenMarkovModels
         public override StateParameters ReadJson(JsonReader reader, Type objectType, StateParameters existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             JObject jo = JObject.Load(reader);
-            StateParameters result = new StateParameters();
-
-            result.InitialStateDistribution = jo["InitialStateDistribution"]?.ToObject<double[]>();
+            StateParameters result = new StateParameters
+            {
+                InitialStateDistribution = jo["InitialStateDistribution"]?.ToObject<double[]>()
+            };
 
             var transitionsObj = (JObject)jo["Transitions"];
             var transitionsType = TransitionsLookup.GetFromString(transitionsObj["TransitionsType"]?.ToString());
