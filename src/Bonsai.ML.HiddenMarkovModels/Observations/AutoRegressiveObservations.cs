@@ -16,7 +16,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <summary>
         /// The lags of the observations for each state.
         /// </summary>
-        [JsonProperty]
         public int Lags { get => lags; set {lags = value; UpdateString(); } }
 
         /// <summary>
@@ -71,8 +70,16 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         public AutoRegressiveObservations (params object[] args)
         {
-            Lags = Convert.ToInt32(args[0]);
-            UpdateString();
+            if (args is not null && args.Length == 1)
+            {
+                Lags = args[0] switch
+                {
+                    int lags => lags,
+                    long lags => Convert.ToInt32(lags),
+                    _ => 1
+                };
+                UpdateString();
+            }
         }
     }
 }
