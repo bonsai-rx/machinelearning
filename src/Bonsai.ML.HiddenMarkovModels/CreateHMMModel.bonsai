@@ -30,12 +30,14 @@
         <Property Name="Dimensions" />
         <Property Name="ObservationsType" />
         <Property Name="StateParameters" />
+        <Property Name="TransitionsType" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:ModelParameters">
           <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
           <p2:ObservationsType>Gaussian</p2:ObservationsType>
+          <p2:TransitionsType>Stationary</p2:TransitionsType>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
@@ -92,6 +94,7 @@
           <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
           <p2:ObservationsType>Gaussian</p2:ObservationsType>
+          <p2:TransitionsType>Stationary</p2:TransitionsType>
         </Combinator>
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
