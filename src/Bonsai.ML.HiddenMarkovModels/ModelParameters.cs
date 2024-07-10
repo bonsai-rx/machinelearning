@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using System.Xml.Serialization;
 using Python.Runtime;
 using Bonsai.ML.HiddenMarkovModels.Observations;
-using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
+using Bonsai.ML.HiddenMarkovModels.Transitions;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -24,6 +24,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         private int numStates;
         private int dimensions;
         private ObservationsType observationsType;
+        private TransitionsType transitionsType;
         private StateParameters stateParameters = null;
 
         /// <summary>
@@ -52,6 +53,15 @@ namespace Bonsai.ML.HiddenMarkovModels
         public ObservationsType ObservationsType { get => observationsType; set { observationsType = value; UpdateString(); } }
 
         /// <summary>
+        /// The type of transition model that the HMM will use to calculate the probabilities of transitioning between states.
+        /// </summary>
+        [JsonProperty("transition_type")]
+        [JsonConverter(typeof(TransitionsTypeJsonConverter))]
+        [Description("TThe type of transition model that the HMM will use to calculate the probabilities of transitioning between states.")]
+        [Category("ModelSpecification")]
+        public TransitionsType TransitionsType { get => transitionsType; set { transitionsType = value; UpdateString(); } }
+
+        /// <summary>
         /// The state parameters of the HMM model.
         /// </summary>
         [XmlIgnore]
@@ -66,6 +76,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 if (value != null) 
                 {
                     ObservationsType = stateParameters.Observations.ObservationsType;
+                    TransitionsType = stateParameters.Transitions.TransitionsType;
                 }
                 UpdateString();
             }
@@ -79,6 +90,7 @@ namespace Bonsai.ML.HiddenMarkovModels
             NumStates = 2;
             Dimensions = 2;
             ObservationsType = ObservationsType.Gaussian;
+            TransitionsType = TransitionsType.Stationary;
         }
 
         /// <summary>
@@ -92,6 +104,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                     NumStates = NumStates,
                     Dimensions = Dimensions,
                     ObservationsType = ObservationsType,
+                    TransitionsType = TransitionsType,
                     StateParameters = StateParameters
                 });
         }
@@ -109,6 +122,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                     NumStates = NumStates,
                     Dimensions = Dimensions,
                     ObservationsType = ObservationsType,
+                    TransitionsType = TransitionsType,
                     StateParameters = StateParameters
                 };
             });
@@ -127,14 +141,17 @@ namespace Bonsai.ML.HiddenMarkovModels
                 numStates = pyObject.GetAttr<int>("num_states");
                 dimensions = pyObject.GetAttr<int>("dimensions");
                 var observationsTypeStrPyObj = pyObject.GetAttr<string>("observation_type");
+                var transitionsTypeStrPyObj = pyObject.GetAttr<string>("transition_type");
 
-                observationsType = GetFromString(observationsTypeStrPyObj);
+                observationsType = ObservationsLookup.GetFromString(observationsTypeStrPyObj);
+                transitionsType = TransitionsLookup.GetFromString(transitionsTypeStrPyObj);
 
                 return new ModelParameters()
                 {
                     NumStates = NumStates,
                     Dimensions = Dimensions,
                     ObservationsType = ObservationsType,
+                    TransitionsType = TransitionsType
                 };
             }).Zip(stateParametersObservable, (modelParameters, stateParameters) =>
             {
@@ -151,7 +168,8 @@ namespace Bonsai.ML.HiddenMarkovModels
                 .Append($"dimensions={dimensions},");
             if (stateParameters == null)
             {
-                StringBuilder.Append($"observation_type=\"{GetString(observationsType)}\"");
+                StringBuilder.Append($"observation_type=\"{ObservationsLookup.GetString(observationsType)}\"");
+                StringBuilder.Append($"transition_type=\"{TransitionsLookup.GetString(transitionsType)}\"");
             }
             else
             {
