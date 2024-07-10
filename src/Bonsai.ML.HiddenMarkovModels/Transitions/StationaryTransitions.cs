@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using System;
 
 namespace Bonsai.ML.HiddenMarkovModels.Transitions
 {
@@ -24,7 +22,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         [JsonProperty]
         public override object[] Params
         {
-            get =>[ LogPs ];
+            get => [LogPs];
             set
             {
                 LogPs = (double[,])value[0];

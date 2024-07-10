@@ -22,7 +22,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// </summary>
         [XmlIgnore]
         [Description("The log Ps of the transitions.")]
-        public double[,] LogPs { get; private set; } = null;
+        public double[,] LogPs { get; set; } = null;
 
         /// <summary>
         /// Returns an observable sequence of <see cref="StationaryTransitions"/> objects.
@@ -30,8 +30,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         public IObservable<StationaryTransitions> Process()
         {
             return Observable.Return(
-                new StationaryTransitions {
-                    Params = [ LogPs ]
+                new StationaryTransitions
+                {
+                    Params = [LogPs]
                 });
         }
 
@@ -47,7 +48,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
                 return new StationaryTransitions
                 {
-                    Params = [ logPsPyObj ]
+                    Params = [logPsPyObj]
                 };
             });
         }
