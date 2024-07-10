@@ -18,6 +18,11 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// Sticky transitions.
         /// </summary>
-        Sticky
+        Sticky,
+
+        /// <summary>
+        /// Neural network recurrent transitions.
+        /// </summary>
+        NeuralNetworkRecurrent
     }
 }

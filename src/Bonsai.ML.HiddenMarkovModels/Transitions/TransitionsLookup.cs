@@ -14,7 +14,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         {
             { TransitionsType.Stationary, (typeof(StationaryTransitions), "stationary") },
             { TransitionsType.ConstrainedStationary, (typeof(ConstrainedStationaryTransitions), "constrained") },
-            { TransitionsType.Sticky, (typeof(StickyTransitions), "sticky") }
+            { TransitionsType.Sticky, (typeof(StickyTransitions), "sticky") },
+            { TransitionsType.NeuralNetworkRecurrent, (typeof(NeuralNetworkRecurrentTransitions), "nn_recurrent") }
         };
 
         /// <summary>
