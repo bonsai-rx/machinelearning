@@ -42,13 +42,13 @@ namespace Bonsai.ML.HiddenMarkovModels
             return Expression.Call(
                 typeof(DeserializeFromJson),
                 nameof(Process),
-                new Type[] { returnType },
+                [ returnType ],
                 Enumerable.Single(arguments));
         }
 
         private static IObservable<T> Process<T>(IObservable<string> source)
         {
-            return source.Select(value => JsonConvert.DeserializeObject<T>(value));
+            return source.Select(JsonConvert.DeserializeObject<T>);
         }
     }
 }
