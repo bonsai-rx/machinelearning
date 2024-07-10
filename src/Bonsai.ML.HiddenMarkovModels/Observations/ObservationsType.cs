@@ -28,6 +28,11 @@
         /// <summary>
         /// Autoregressive observations.
         /// </summary>
-        AutoRegressive
+        AutoRegressive,
+
+        /// <summary>
+        /// Categorical observations.
+        /// </summary>
+        Categorical
     }
 }
