@@ -116,10 +116,10 @@ namespace Bonsai.ML.HiddenMarkovModels
             return Observable.Select(source, pyObject =>
             {
                 var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
-                
+
                 var transitionsTypePyObj = pyObject.GetAttr<string>("transition_type");
-                var transitionsArrayPyObj = (Array)pyObject.GetArrayAttr("transition_params");
-                var transitionsPyObj = (object[])transitionsArrayPyObj;
+                var transitionsParamsPyObj = (Array)pyObject.GetArrayAttr("transition_params");
+                var transitionsParams = (object[])transitionsParamsPyObj;
                 var transitionsKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("transition_kwargs");
                 var transitionsConstructors = transitionsKwargsPyObj.Values.ToArray();
 
@@ -129,11 +129,11 @@ namespace Bonsai.ML.HiddenMarkovModels
                 transitions = (TransitionsModel)Activator.CreateInstance(transitionsClassType,
                     transitionsConstructors.Length == 0 ? null : transitionsConstructors);
 
-                transitions.Params = transitionsPyObj;
+                transitions.Params = transitionsParams;
 
                 var observationsTypePyObj = pyObject.GetAttr<string>("observation_type");
-                var observationsArrayPyObj = (Array)pyObject.GetArrayAttr("observation_params");
-                var observationsPyObj = (object[])observationsArrayPyObj;
+                var observationsParamsPyObj = (Array)pyObject.GetArrayAttr("observation_params");
+                var observationsParams = (object[])observationsParamsPyObj;
                 var observationsKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
                 var observationsConstructors = observationsKwargsPyObj.Values.ToArray();
 
@@ -143,7 +143,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 observations = (ObservationsModel)Activator.CreateInstance(observationsClassType,
                     observationsConstructors.Length == 0 ? null : observationsConstructors);
 
-                observations.Params = observationsPyObj;
+                observations.Params = observationsParams;
 
                 return new StateParameters()
                 {
