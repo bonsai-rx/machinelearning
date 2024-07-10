@@ -50,14 +50,15 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                     paramsStringBuilder.Append(")");
                     StringBuilder.Append(paramsStringBuilder);
                 }
-                
             }
 
             if (Kwargs is not null && Kwargs.Count > 0)
             {
                 StringBuilder.Append(",observation_kwargs={");
                 foreach (var kp in Kwargs) {
-                    StringBuilder.Append($"\"{kp.Key}\":{(kp.Value is Array ? NumpyHelper.NumpyParser.ParseArray((Array)kp.Value) : kp.Value)},");
+                    StringBuilder.Append($"\"{kp.Key}\":{(kp.Value is null ? "None" 
+                        : kp.Value is Array ? NumpyHelper.NumpyParser.ParseArray((Array)kp.Value) 
+                        : kp.Value)},");
                 }
                 StringBuilder.Remove(StringBuilder.Length - 1, 1);
                 StringBuilder.Append("}");   
