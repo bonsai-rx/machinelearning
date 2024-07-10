@@ -18,6 +18,7 @@ namespace Bonsai.ML.HiddenMarkovModels
     [Combinator]
     [Description("Model parameters of a Hidden Markov Model (HMM).")]
     [WorkflowElementCategory(ElementCategory.Source)]
+    [JsonConverter(typeof(ModelParametersJsonConverter))]
     public class ModelParameters : PythonStringBuilder
     {
 
@@ -30,7 +31,6 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// <summary>
         /// The number of states of the HMM model.
         /// </summary>
-        [JsonProperty("num_states")]
         [Description("The number of discrete latent states of the HMM model")]
         [Category("ModelSpecification")]
         public int NumStates { get => numStates; set { numStates = value; UpdateString(); } }
@@ -38,7 +38,6 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// <summary>
         /// The dimensionality of the observations into the HMM model.
         /// </summary>
-        [JsonProperty("dimensions")]
         [Description("The dimensionality of the observations into the HMM model")]
         [Category("ModelSpecification")]
         public int Dimensions { get => dimensions; set { dimensions = value; UpdateString(); } }
@@ -46,8 +45,6 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// <summary>
         /// The type of distribution that the HMM will use to model the emission of data observations.
         /// </summary>
-        [JsonProperty("observation_type")]
-        [JsonConverter(typeof(ObservationsTypeJsonConverter))]
         [Description("The type of distribution that the HMM will use to model the emission of data observations.")]
         [Category("ModelSpecification")]
         public ObservationsType ObservationsType { get => observationsType; set { observationsType = value; UpdateString(); } }
@@ -55,9 +52,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// <summary>
         /// The type of transition model that the HMM will use to calculate the probabilities of transitioning between states.
         /// </summary>
-        [JsonProperty("transition_type")]
-        [JsonConverter(typeof(TransitionsTypeJsonConverter))]
-        [Description("TThe type of transition model that the HMM will use to calculate the probabilities of transitioning between states.")]
+        [Description("The type of transition model that the HMM will use to calculate the probabilities of transitioning between states.")]
         [Category("ModelSpecification")]
         public TransitionsType TransitionsType { get => transitionsType; set { transitionsType = value; UpdateString(); } }
 
@@ -73,10 +68,16 @@ namespace Bonsai.ML.HiddenMarkovModels
             set
             {
                 stateParameters = value;
-                if (value != null) 
+                if (value != null)
                 {
-                    ObservationsType = stateParameters.Observations.ObservationsType;
-                    TransitionsType = stateParameters.Transitions.TransitionsType;
+                    if (stateParameters.Observations != null)
+                    {
+                        ObservationsType = stateParameters.Observations.ObservationsType;
+                    }
+                    if (stateParameters.Transitions != null)
+                    {
+                        TransitionsType = stateParameters.Transitions.TransitionsType;
+                    }
                 }
                 UpdateString();
             }
@@ -166,14 +167,23 @@ namespace Bonsai.ML.HiddenMarkovModels
             StringBuilder.Clear();
             StringBuilder.Append($"num_states={numStates},")
                 .Append($"dimensions={dimensions},");
-            if (stateParameters == null)
+            if (stateParameters == null || string.IsNullOrEmpty(stateParameters.ToString()))
             {
                 StringBuilder.Append($"observation_type=\"{ObservationsLookup.GetString(observationsType)}\",");
                 StringBuilder.Append($"transition_type=\"{TransitionsLookup.GetString(transitionsType)}\"");
             }
             else
             {
-                StringBuilder.Append($"{stateParameters}");
+                StringBuilder.Append($"{stateParameters},");
+                if (stateParameters.Observations == null)
+                {
+                    StringBuilder.Append($"observation_type=\"{ObservationsLookup.GetString(observationsType)}\",");
+                }
+                if (stateParameters.Transitions == null)
+                {
+                    StringBuilder.Append($"transition_type=\"{TransitionsLookup.GetString(transitionsType)}\",");
+                }
+                StringBuilder.Remove(StringBuilder.Length - 1, 1);
             }
             return StringBuilder.ToString();
         }
