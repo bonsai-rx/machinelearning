@@ -13,7 +13,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// The Log Ps of the transitions.
         /// </summary>
-        public double[,,] LogPs { get; private set; } = null;
+        public double[,] LogPs { get; private set; } = null;
 
         /// <inheritdoc/>
         [JsonProperty]
@@ -27,7 +27,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
             get =>[ LogPs ];
             set
             {
-                LogPs = (double[,,])value[0];
+                LogPs = (double[,])value[0];
                 UpdateString();
             }
         }
