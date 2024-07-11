@@ -4,7 +4,7 @@ The **Bonsai.ML** project is a collection of packages designed to integrate mach
 
 ## Core Package
 - **Bonsai.ML**
-  Provides common tools and functionalities across all Bonsai.ML packages.
+    Provides common tools and functionalities across all Bonsai.ML packages.
 
 ## Available Packages
 
@@ -12,19 +12,19 @@ The **Bonsai.ML** project is a collection of packages designed to integrate mach
 This package facilitates inference of linear dynamical systems. It interfaces with the [lds_python](https://github.com/joacorapela/lds_python) package using the [Bonsai - Python Scripting](https://github.com/bonsai-rx/python-scripting) library.
 
 - **Bonsai.ML.LinearDynamicalSystems.Kinematics**
-  Supports the use of the Kalman Filter for inferring kinematic data.
+    Supports the use of the Kalman Filter for inferring kinematic data.
 
 - **Bonsai.ML.LinearDynamicalSystems.LinearRegression** 
-  Utilizes the Kalman Filter to perform online Bayesian linear regression.
+    Utilizes the Kalman Filter to perform online Bayesian linear regression.
 
 ### Bonsai.ML.HiddenMarkovModels
 This package provides tools for building and using Hidden Markov Models (HMMs). It interfaces with the [ssm](https://github.com/lindermanlab/ssm) package using the [Bonsai - Python Scripting](https://github.com/bonsai-rx/python-scripting) library.
 
 - **Bonsai.ML.HiddenMarkovModels.Observations**
-  Provides an interface for using different types of observation models.
+    Provides an interface for using different types of observation models.
 
 - **Bonsai.ML.HiddenMarkovModels.Transitions**
-  Provides an interface for using different types of transition models.
+    Provides an interface for using different types of transition models.
   
 ### Bonsai.ML.Visualizers
 Offers a set of tools for dynamic graphing and plotting to visualize data.
