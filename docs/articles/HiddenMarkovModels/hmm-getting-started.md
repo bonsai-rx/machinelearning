@@ -38,9 +38,9 @@ Next, the `PythonEngine` node is passed to a `LoadHMMModule` node which will loa
 
 Once the HMM module has been initialized, the `CreateHMMModel` node instantiates a python instance of the HMM model. Here, you can specify the initialization parameters of the model and provide a `ModelName` parameter that gets used to reference the model in other parts of the Bonsai workflow.
 
-It is crucial that the data are formatted into a string that the model can use, namely a string that represents a Python list. For example, if you pass a Tuple with 2 items as your data, then the formatter should look something like `"[" + Item1.ToString() + Item2.ToString() + "]"`. The output of this should be used as your observations into the model.
+It is crucial that the `Data` are formatted into a string that the model can use, namely a string representing a Python list. For example, if you pass a Tuple with 2 items as your data, then the formatter should look something like `"[" + Item1.ToString() + Item2.ToString() + "]"`. The output of this should be used as your observations into the model, so connect your data source to a `Subject` named `Data` and modify the `FormatToPython` node to fit with your data.
 
-Observations are then passed to an `InferState` node, which will use the specified model (given by the `ModelName` property) to infer the latent state of the model and outputs the `StateProbabilities`, or probabilities of being in each state given the observation.
+`Observations` are then passed to an `InferState` node, which will use the specified model (given by the `ModelName` property) to infer the latent state of the model and outputs the `StateProbabilities`, or probabilities of being in each state given the observation.
 
 ### Further Examples
 
