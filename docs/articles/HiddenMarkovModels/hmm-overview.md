@@ -17,11 +17,12 @@ Since the package relies on both Bonsai and Python, installation steps for both 
 To get started, you must install the following tools:
 
 - [Python (v3.10)](https://www.python.org/downloads/) 
-  > [!TIP]
-  > Install through the standard installer and add to the system PATH.
 - [dotnet-sdk (v8)](https://dotnet.microsoft.com/en-us/download)
 - [Git](https://git-scm.com/downloads)
 - [Bonsai-Rx Templates tool](https://www.nuget.org/packages/Bonsai.Templates)
+
+  > [!TIP]
+  > Install Python through the standard installer and add to the system PATH.
 
 ### Installation Guide - Windows
 
@@ -38,8 +39,6 @@ To get started, you must install the following tools:
     ```cmd
     python -m venv .venv
     ```
-    > [!TIP]
-    > Ensure Python is available on the system PATH. Restart the terminal if needed.
 
 3. Create a Bonsai environment:
     ```cmd
@@ -101,7 +100,8 @@ To get started, you must install the following tools:
     dotnet new bonsaienv
     ```
     > [!NOTE]
-    > This step uses the [Bonsai Linux Environment Template tool](https://github.com/ncguilbeault/bonsai-linux-environment-template) for easy creation of bonsai environments on Linux
+    > This step uses the [Bonsai Linux Environment Template tool](https://github.com/ncguilbeault/bonsai-linux-environment-template) for easy creation of bonsai environments on Linux.
+    > See [this discussion](https://github.com/orgs/bonsai-rx/discussions/1101) for more information on getting Bonsai running on Linux.
 
 #### Python Environment Setup
 
