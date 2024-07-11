@@ -25,10 +25,10 @@
         <TransitionsType>Stationary</TransitionsType>
       </Expression>
       <Expression xsi:type="SubscribeSubject">
-        <Name>BehaviorData</Name>
+        <Name>Data</Name>
       </Expression>
       <Expression xsi:type="scr:ExpressionTransform">
-        <scr:Name>FormatToPythonList</scr:Name>
+        <scr:Name>FormatToPython</scr:Name>
         <scr:Expression>"[" + it.Item1.ToString() + it.Item2.ToString() + "]"</scr:Expression>
       </Expression>
       <Expression xsi:type="rx:BehaviorSubject">
