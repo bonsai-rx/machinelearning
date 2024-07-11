@@ -49,7 +49,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// Returns an observable sequence of <see cref="NeuralNetworkRecurrentTransitions"/> objects.
         /// </summary>
-        new public IObservable<NeuralNetworkRecurrentTransitions> Process()
+        public IObservable<NeuralNetworkRecurrentTransitions> Process()
         {
             return Observable.Return(
                 new NeuralNetworkRecurrentTransitions(HiddenLayerSizes)
@@ -62,7 +62,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// Transforms an observable sequence of <see cref="PyObject"/> into an observable sequence 
         /// of <see cref="NeuralNetworkRecurrentTransitions"/> objects by accessing internal attributes of the <see cref="PyObject"/>.
         /// </summary>
-        new public IObservable<NeuralNetworkRecurrentTransitions> Process(IObservable<PyObject> source)
+        public IObservable<NeuralNetworkRecurrentTransitions> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>
             {
