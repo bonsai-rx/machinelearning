@@ -1,7 +1,7 @@
 using Bonsai.Design;
 using Bonsai;
 using Bonsai.ML.LinearDynamicalSystems.Kinematics;
-using Bonsai.ML.Visualizers;
+using Bonsai.ML.Visualizers.LinearDynamicalSystems;
 using System.Collections.Generic;
 using System;
 using System.Windows.Forms;
@@ -11,7 +11,7 @@ using System.Reactive;
 
 [assembly: TypeVisualizer(typeof(KinematicStateVisualizer), Target = typeof(KinematicState))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Visualizers.LinearDynamicalSystems
 {
 
     /// <summary>
@@ -20,7 +20,7 @@ namespace Bonsai.ML.Visualizers
     public class KinematicStateVisualizer : MashupVisualizer
     {
         private TableLayoutPanel container;
-        private int updateFrequency = 1000 / 50;
+        private int updateFrequency = 20;
         private bool resetAxes = true;
         private int rowCount = 3;
         private int columnCount = 2;

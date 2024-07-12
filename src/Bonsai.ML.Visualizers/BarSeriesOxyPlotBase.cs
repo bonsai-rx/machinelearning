@@ -3,19 +3,20 @@ using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.WindowsForms;
 using System.Drawing;
-using System;
 using OxyPlot.Axes;
-using System.Collections;
 
 namespace Bonsai.ML.Visualizers
 {
-    internal class BarSeriesOxyPlotBase : UserControl
+    /// <summary>
+    /// Provides a user control to display data as a bar plot using OxyPlot.
+    /// </summary>
+    public class BarSeriesOxyPlotBase : UserControl
     {
         private PlotView view;
         private PlotModel model;
         private OxyColor defaultBarSeriesColor = OxyColors.Automatic;
 
-        internal Axis xAxis;
+        private Axis xAxis;
         private Axis yAxis;
 
         private StatusStrip statusStrip;
@@ -29,6 +30,16 @@ namespace Bonsai.ML.Visualizers
         /// Gets the status strip control.
         /// </summary>
         public StatusStrip StatusStrip => statusStrip;
+
+        /// <summary>
+        /// Gets the X Axis.
+        /// </summary>
+        public Axis XAxis => xAxis;
+
+        /// <summary>
+        /// Gets the Y Axis.
+        /// </summary>
+        public Axis YAxis => yAxis;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BarSeriesOxyPlotBase"/> class

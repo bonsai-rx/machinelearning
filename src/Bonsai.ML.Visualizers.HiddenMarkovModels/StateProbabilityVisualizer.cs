@@ -67,7 +67,7 @@ namespace Bonsai.ML.Visualizers
                 var paddingPercentage = 0.05;
 
                 var nStates = stateProbability.Probabilities.Length;
-                CategoryAxis categoryAxis = (CategoryAxis)Plot.xAxis;
+                CategoryAxis categoryAxis = (CategoryAxis)Plot.XAxis;
                 categoryAxis.ItemsSource = Enumerable.Range(0, nStates);
 
                 for (int i = 0; i < nStates; i++)
