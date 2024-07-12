@@ -25,7 +25,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="rx:Timer">
                 <rx:DueTime>PT0S</rx:DueTime>
-                <rx:Period>PT0S</rx:Period>
+                <rx:Period>PT1S</rx:Period>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
