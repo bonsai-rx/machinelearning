@@ -10,6 +10,7 @@ namespace Bonsai.ML.HiddenMarkovModels
     /// <summary>
     /// Represents an operator that can convert an object into a properly formatted string that is consistent with a python list.
     /// For example, a tuple (1, 2, 3) will be converted to the string "[1, 2, 3]".
+    /// Does not support nested/multidimensional enumerables, e.g. a tuple of tuples, a list of lists, etc.
     /// </summary>
     [Combinator]
     [Description("Converts an object into a properly formatted string that is consistent with a python list.")]
