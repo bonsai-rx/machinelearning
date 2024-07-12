@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Bonsai.ML.Visualizers.HiddenMarkovModels</Title>
     <Description>A package for visualizing data from the Bonsai.ML.HiddenMarkovModels package.</Description>
@@ -7,14 +6,11 @@
     <TargetFramework>net472</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.8.2" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML.Visualizers\Bonsai.ML.Visualizers.csproj" />
     <ProjectReference Include="..\Bonsai.ML.HiddenMarkovModels\Bonsai.ML.HiddenMarkovModels.csproj" />
   </ItemGroup>
-
 </Project>
