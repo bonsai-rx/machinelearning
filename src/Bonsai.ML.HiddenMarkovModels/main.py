@@ -7,6 +7,7 @@ import numpy as np
 import autograd.numpy.random as npr
 from scipy.optimize import linear_sum_assignment
 from scipy.special import logsumexp
+import pickle
 
 npr.seed(0)
 
@@ -131,6 +132,12 @@ class HiddenMarkovModel(HMM):
                             ) + m + self.observations.log_likelihoods(obs, None, None, None)).squeeze()
 
         return log_alpha - logsumexp(log_alpha)
+    
+    def save_model_to_pickle(self, path: str):
+        pickle.save(self, path)
+
+    def load_model_from_pickle(self, path: str):
+        self = pickle.load(path)
 
     def fit_async(self,
                   observation: list[float],
