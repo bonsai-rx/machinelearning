@@ -35,6 +35,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// The sequence of inferred most probable states.
         /// </summary>
         [Description("The sequence of inferred most probable states.")]
-        public long[] InferredMostProbableStates { get; set; }
+        public int[] InferredMostProbableStates { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                 var covarianceMatricesPyObj = (double[,,])observationsPyObj.GetArrayAttr("Sigmas");
                 var stdDevsPyObj = DiagonalSqrt(covarianceMatricesPyObj);
                 var batchObservationsPyObj = (double[,])pyObject.GetArrayAttr("batch_observations");
-                var inferredMostProbableStatesPyObj = (long[])pyObject.GetArrayAttr("inferred_most_probable_states");
+                var inferredMostProbableStatesPyObj = (int[])pyObject.GetArrayAttr("inferred_most_probable_states");
 
                 return new GaussianObservationsStatistics
                 {
