@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Title>Bonsai.ML.Visualizers.LinearDynamicalSystems</Title>
+    <Description>A package for the Bonsai visual programming language.</Description>
+    <PackageTags>Bonsai Rx ML Machine Learning Visualizers LinearDynamicalSystems</PackageTags>
+    <TargetFramework>net472</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.Visualizers\Bonsai.ML.Visualizers.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Vision.Design" Version="2.8.1" />
+  </ItemGroup>
+
+</Project>

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
+using Bonsai.ML.Visualizers.LinearDynamicalSystems;
 using Bonsai.ML.LinearDynamicalSystems.Kinematics;
 using OxyPlot;
 using System.Reactive;
@@ -12,7 +12,7 @@ using System.Reactive.Linq;
 
 [assembly: TypeVisualizer(typeof(ForecastVisualizer), Target = typeof(Forecast))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Visualizers.LinearDynamicalSystems
 {
     /// <summary>
     /// Provides a type visualizer to display the forecast of a Kalman Filter kinematics model.

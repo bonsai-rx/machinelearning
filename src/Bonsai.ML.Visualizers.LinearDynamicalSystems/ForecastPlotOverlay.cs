@@ -1,6 +1,6 @@
 using Bonsai.Design;
 using Bonsai;
-using Bonsai.ML.Visualizers;
+using Bonsai.ML.Visualizers.LinearDynamicalSystems;
 using Bonsai.ML.LinearDynamicalSystems;
 using Bonsai.ML.LinearDynamicalSystems.Kinematics;
 using System;
@@ -10,10 +10,10 @@ using OxyPlot;
 
 [assembly: TypeVisualizer(typeof(ForecastPlotOverlay), Target = typeof(MashupSource<KinematicStateVisualizer, ForecastVisualizer>))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Visualizers.LinearDynamicalSystems
 {
     /// <summary>
-    /// Provides a mashup visualizer to display the forecast of a Kalman Filter kinematics model overtime of a KinematicStateVisualizer.
+    /// Provides a mashup visualizer to display the forecast of a Kalman Filter kinematics model alongside the kinematic state.
     /// </summary>
     public class ForecastPlotOverlay : DialogTypeVisualizer
     {

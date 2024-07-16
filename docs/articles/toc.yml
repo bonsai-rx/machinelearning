@@ -9,3 +9,8 @@
   href: LinearDynamicalSystems/lds-installation-guide-linux.md
 - name: Getting Started
   href: LinearDynamicalSystems/lds-getting-started.md
+- name: HiddenMarkovModels
+- name: Overview
+  href: HiddenMarkovModels/hmm-overview.md
+- name: Getting Started
+  href: HiddenMarkovModels/hmm-getting-started.md

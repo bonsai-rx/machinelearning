@@ -1,17 +1,8 @@
 using System;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Reflection;
 using Bonsai;
 using Bonsai.Design;
 using Bonsai.ML.Visualizers;
-using Bonsai.ML.LinearDynamicalSystems;
-using Bonsai.ML.LinearDynamicalSystems.LinearRegression;
-using System.Drawing;
-using System.Reactive;
-using Bonsai.Reactive;
-using Bonsai.Expressions;
-using OxyPlot;
 
 [assembly: TypeVisualizer(typeof(MultidimensionalArrayVisualizer), Target = typeof(double[,]))]
 
@@ -19,7 +10,7 @@ namespace Bonsai.ML.Visualizers
 {
 
     /// <summary>
-    /// Provides a type visualizer to display the state components of a Kalman Filter kinematics model.
+    /// Provides a type visualizer to display multi dimensional array data as a heatmap.
     /// </summary>
     public class MultidimensionalArrayVisualizer : DialogTypeVisualizer
     {

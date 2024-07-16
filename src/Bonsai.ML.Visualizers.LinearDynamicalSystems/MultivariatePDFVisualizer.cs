@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Reflection;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
-using Bonsai.ML.LinearDynamicalSystems;
+using Bonsai.ML.Visualizers.LinearDynamicalSystems;
 using Bonsai.ML.LinearDynamicalSystems.LinearRegression;
-using System.Drawing;
-using System.Reactive;
-using Bonsai.Reactive;
 
 [assembly: TypeVisualizer(typeof(MultivariatePDFVisualizer), Target = typeof(MultivariatePDF))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Visualizers.LinearDynamicalSystems
 {
 
     /// <summary>
-    /// Provides a type visualizer to display the state components of a Kalman Filter kinematics model.
+    /// Provides a type visualizer to display a multivariate probability distribution as a heatmap.
     /// </summary>
     public class MultivariatePDFVisualizer : DialogTypeVisualizer
     {

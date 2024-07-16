@@ -10,7 +10,6 @@ To get started, you must install the following tools:
 - [dotnet-sdk (v8)](https://dotnet.microsoft.com/en-us/download)
 - [Git](https://git-scm.com/downloads)
 - [Bonsai-Rx Templates tool](https://www.nuget.org/packages/Bonsai.Templates)
-- [Microsoft Visual C++ Redistributable](https://aka.ms/vs/16/release/vc_redist.x64.exe)
 
 > [!WARNING]
 > Be sure to check the specific python version and dotnet-sdk version you have installed, as different version than the ones we recommend may or may not work with this guide.
@@ -32,7 +31,7 @@ python -m venv .venv
 ```
 
 > [!TIP]
-> If receive an error that says, `python cannot be found`, check to ensure that python is available on the system path. If you just installed python, it may be necessary to restart the terminal.
+> If you receive an error that says, `python cannot be found`, check to ensure that python is available on the system path. If you just installed python, it may be necessary to restart the terminal.
 
 3. Create a bonsai environment. When prompted, enter yes to run the powershell setup script.
 

@@ -9,7 +9,10 @@ using System.Collections.Generic;
 
 namespace Bonsai.ML.Visualizers
 {
-    internal class HeatMapSeriesOxyPlotBase : UserControl
+    /// <summary>
+    /// Provides a user control to display 2D data as a heatmap using OxyPlot.
+    /// </summary>
+    public class HeatMapSeriesOxyPlotBase : UserControl
     {
         private PlotView view;
         private PlotModel model;
