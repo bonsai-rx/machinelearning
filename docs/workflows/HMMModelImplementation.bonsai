@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.8.2"
+<WorkflowBuilder Version="2.8.5"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
-                 xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
+                 xmlns:p1="clr-namespace:Bonsai.ML.HiddenMarkovModels;assembly=Bonsai.ML.HiddenMarkovModels"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -27,9 +27,8 @@
       <Expression xsi:type="SubscribeSubject">
         <Name>Data</Name>
       </Expression>
-      <Expression xsi:type="scr:ExpressionTransform">
-        <scr:Name>FormatToPython</scr:Name>
-        <scr:Expression>"[" + it.Item1.ToString() + it.Item2.ToString() + "]"</scr:Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:FormatToPythonList" />
       </Expression>
       <Expression xsi:type="rx:BehaviorSubject">
         <Name>Observation</Name>
