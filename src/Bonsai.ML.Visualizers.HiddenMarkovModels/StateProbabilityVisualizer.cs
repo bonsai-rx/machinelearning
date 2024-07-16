@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
+using Bonsai.ML.Visualizers.HiddenMarkovModels;
 using Bonsai.ML.HiddenMarkovModels;
 using OxyPlot;
 using OxyPlot.Series;
@@ -12,7 +12,7 @@ using OxyPlot.Axes;
 
 [assembly: TypeVisualizer(typeof(StateProbabilityVisualizer), Target = typeof(StateProbability))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Visualizers.HiddenMarkovModels
 {
     /// <summary>
     /// Provides a type visualizer of <see cref="StateProbability"/> to display the probabilities 

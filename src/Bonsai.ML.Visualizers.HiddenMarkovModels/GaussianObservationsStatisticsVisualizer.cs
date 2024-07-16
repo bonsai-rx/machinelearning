@@ -3,14 +3,14 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
+using Bonsai.ML.Visualizers.HiddenMarkovModels;
 using Bonsai.ML.HiddenMarkovModels.Observations;
 using OxyPlot;
 using OxyPlot.Series;
 
 [assembly: TypeVisualizer(typeof(GaussianObservationStatisticsVisualizer), Target = typeof(GaussianObservationsStatistics))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Visualizers.HiddenMarkovModels
 {
     /// <summary>
     /// Provides a type visualizer of <see cref="GaussianObservationsStatistics"/> to display the means and standard 
