@@ -46,7 +46,7 @@ python3 -m venv .venv
 dotnet new bonsaienvl
 ```
 
-When prompted, enter yes to run the powershell setup script.
+When prompted, enter yes to run the setup script.
 
 ### Python Environment Setup Guide
 
