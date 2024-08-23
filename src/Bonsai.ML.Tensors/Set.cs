@@ -21,8 +21,8 @@ namespace Bonsai.ML.Tensors
         /// </summary>
         public string Index 
         { 
-            get => Helpers.IndexParser.SerializeIndexes(indexes);
-            set => indexes = Helpers.IndexParser.ParseString(value);
+            get => Helpers.IndexHelper.SerializeIndexes(indexes);
+            set => indexes = Helpers.IndexHelper.ParseString(value);
         }
 
         private TensorIndex[] indexes;
