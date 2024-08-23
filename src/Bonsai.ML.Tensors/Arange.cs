@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
+using TorchSharp;
 
 namespace Bonsai.ML.Tensors
 {
@@ -29,7 +30,7 @@ namespace Bonsai.ML.Tensors
         public int Step { get; set; } = 1;
 
         /// <summary>
-        /// Generates an observable sequence of 1-D tensors created with the <see cref="arange"/> function.
+        /// Generates an observable sequence of 1-D tensors created with the <see cref="arange(Scalar, Scalar, Scalar, ScalarType?, Device?, bool)"/> function.
         /// </summary>
         public IObservable<Tensor> Process()
         {
