@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Bonsai.ML.Tensors</Title>
+    <Description>A Bonsai package for TorchSharp tensor manipulations.</Description>
+    <PackageTags>Bonsai Rx ML Tensors TorchSharp</PackageTags>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <LangVersion>12.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.8.5" />
+    <PackageReference Include="TorchSharp" Version="0.103.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Bonsai.ML.Tensors.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+  </ItemGroup>
+</Project>
