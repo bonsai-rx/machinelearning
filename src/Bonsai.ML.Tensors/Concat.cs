@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 
@@ -23,9 +24,9 @@ namespace Bonsai.ML.Tensors
         /// </summary>
         public IObservable<Tensor> Process(params IObservable<Tensor>[] sources)
         {
-            return sources.Aggregate((current, next) => 
-                current.Zip(next, (tensor1, tensor2) => 
-                    cat(new Tensor[] { tensor1, tensor2 }, Dimension)));
+            return sources.Aggregate((current, next) =>
+                current.Zip(next, (tensor1, tensor2) =>
+                    cat([tensor1, tensor2], Dimension)));
         }
 
         /// <summary>
@@ -33,11 +34,11 @@ namespace Bonsai.ML.Tensors
         /// </summary>
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor>> source)
         {
-            return source.Select(value => 
+            return source.Select(value =>
             {
                 var tensor1 = value.Item1;
                 var tensor2 = value.Item2;
-                return cat(new Tensor[] { tensor1, tensor2 }, Dimension);
+                return cat([tensor1, tensor2], Dimension);
             });
         }
     }
