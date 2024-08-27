@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 using System.Xml.Serialization;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Sets the value of the input tensor at the specified index.

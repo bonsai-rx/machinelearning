@@ -9,7 +9,7 @@ using System.Reflection;
 using Bonsai.Expressions;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Converts the input tensor into an array of the specified element type.

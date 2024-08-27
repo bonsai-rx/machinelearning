@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using static TorchSharp.torch;
 using System.Linq;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Creates a mesh grid from an observable sequence of enumerable of 1-D tensors.
