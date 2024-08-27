@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Bonsai.ML.Torch.Tensors;
 
 namespace Bonsai.ML.Torch.Helpers
 {
