@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Moves the input tensor to the specified device.

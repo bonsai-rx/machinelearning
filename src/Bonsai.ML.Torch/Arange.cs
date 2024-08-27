@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using TorchSharp;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Creates a 1-D tensor of values within a given range given the start, end, and step.

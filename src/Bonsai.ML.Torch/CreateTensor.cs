@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 using Bonsai.Expressions;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Creates a tensor from the specified values. Uses Python-like syntax to specify the tensor values. For example, a 2x2 tensor can be created with the following values: "[[1, 2], [3, 4]]".
