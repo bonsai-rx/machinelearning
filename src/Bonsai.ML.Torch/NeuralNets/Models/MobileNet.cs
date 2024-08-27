@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Bonsai.ML.Torch.Tensors;
 using TorchSharp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
