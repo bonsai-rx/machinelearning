@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using OpenCV.Net;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Converts the input value into a tensor.

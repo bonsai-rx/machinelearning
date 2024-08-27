@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using TorchSharp;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Initializes the Torch device with the specified device type.
