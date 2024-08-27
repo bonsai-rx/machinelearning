@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.Tensors
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Converts the input tensor to the specified scalar type.
