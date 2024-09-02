@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
