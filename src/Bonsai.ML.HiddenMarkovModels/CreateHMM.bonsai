@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.8.2"
+<WorkflowBuilder Version="2.8.5"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:p1="clr-namespace:Bonsai.ML;assembly=Bonsai.ML"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
@@ -28,16 +28,16 @@
       <Expression xsi:type="ExternalizedMapping">
         <Property Name="NumStates" />
         <Property Name="Dimensions" />
-        <Property Name="ObservationsType" />
+        <Property Name="ObservationsModelType" />
         <Property Name="StateParameters" />
-        <Property Name="TransitionsType" />
+        <Property Name="TransitionsModelType" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:ModelParameters">
           <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
-          <p2:ObservationsType>Gaussian</p2:ObservationsType>
-          <p2:TransitionsType>Stationary</p2:TransitionsType>
+          <p2:ObservationsModelType>Gaussian</p2:ObservationsModelType>
+          <p2:TransitionsModelType>Stationary</p2:TransitionsModelType>
         </Combinator>
       </Expression>
       <Expression xsi:type="Combinator">
@@ -93,8 +93,8 @@
         <Combinator xsi:type="p2:ModelParameters">
           <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
-          <p2:ObservationsType>Gaussian</p2:ObservationsType>
-          <p2:TransitionsType>Stationary</p2:TransitionsType>
+          <p2:ObservationsModelType>Gaussian</p2:ObservationsModelType>
+          <p2:TransitionsModelType>Stationary</p2:TransitionsModelType>
         </Combinator>
       </Expression>
       <Expression xsi:type="WorkflowOutput" />
