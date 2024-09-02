@@ -18,6 +18,6 @@
     <EmbeddedResource Include="Bonsai.ML.HiddenMarkovModels.svg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Python\Bonsai.ML.Python.csproj" />
   </ItemGroup>
 </Project>
