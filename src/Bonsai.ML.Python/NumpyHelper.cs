@@ -8,7 +8,7 @@ using System.Text;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace Bonsai.ML
+namespace Bonsai.ML.Python
 {
     public static class NumpyHelper
     {

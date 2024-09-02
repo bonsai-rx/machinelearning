@@ -2,7 +2,7 @@ using Python.Runtime;
 using System;
 using System.Collections.Generic;
 
-namespace Bonsai.ML
+namespace Bonsai.ML.Python
 {
     public static class PythonHelper
     {
