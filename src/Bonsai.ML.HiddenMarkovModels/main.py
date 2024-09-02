@@ -39,8 +39,10 @@ class HiddenMarkovModel(HMM):
 
         if transition_kwargs is not None:
             for (key, value) in transition_kwargs.items():
-                if isinstance(value, list):
+                if isinstance(value, list) and key != "hidden_layer_sizes":
                     transition_kwargs[key] = np.array(value)
+                if key == "hidden_layer_sizes":
+                    transition_kwargs[key] = tuple(value)
 
         super(HiddenMarkovModel, self).__init__(
             K=self.num_states, 
@@ -56,13 +58,21 @@ class HiddenMarkovModel(HMM):
         
         if observation_kwargs is None:
             observation_kwargs = {}
-
+        
         self.observation_kwargs = observation_kwargs
 
         if transition_kwargs is None:
             transition_kwargs = {}
 
         self.transition_kwargs = transition_kwargs
+
+        if self.transitions_model_type == "nn_recurrent":
+            hidden_layer_sizes = np.array([len(layer) for layer in self.transitions.weights[1:]])
+            self.transitions.hidden_layer_sizes = hidden_layer_sizes
+            if "nonlinearity_type" in self.transition_kwargs:
+                self.transitions.nonlinearity_type = self.transition_kwargs["nonlinearity_type"]
+            else:
+                self.transitions.nonlinearity_type = "relu"
 
         self.log_alpha = None
         self.state_probabilities = None
@@ -189,7 +199,7 @@ class HiddenMarkovModel(HMM):
 
                 def on_completion(future):
 
-                    if self.observation == "gaussian":
+                    if self.observations_model_type == "gaussian":
                         permutation = calculate_permutation(
                             self.observation_params[0], self.params[2][0])
                         super(HiddenMarkovModel, self).permute(permutation)

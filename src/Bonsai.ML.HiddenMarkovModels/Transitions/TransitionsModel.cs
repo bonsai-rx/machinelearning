@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Bonsai.ML.Python;
+using System.Xml.Serialization;
+using System.Linq;
 
 namespace Bonsai.ML.HiddenMarkovModels.Transitions
 {
@@ -18,25 +21,39 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// The parameters that are used to define the Transitions models.
         /// </summary>
-        public virtual object[] Params { get; set; }
-
-        /// <summary>
-        /// The keyword arguments that are used to construct the Transitions models.
-        /// </summary>
-        public virtual Dictionary<string, object> Kwargs => new();
-
-        /// <summary>
-        /// Checks the constructor parameters.
-        /// </summary>
-        /// <param name="args">The constructor parameters.</param>
-        /// <returns>True if the constructor parameters are valid; otherwise, false.</returns>
-        protected virtual bool CheckConstructorArgs(params object[] args)
-        {
-            return true;
+        public virtual object[] Params 
+        { 
+            get => null; 
+            set
+            {
+                CheckParams(value);
+                UpdateParams(value);
+                UpdateString();
+            }
         }
 
         /// <summary>
-        /// Updates the keyword arguments of the observations model.
+        /// The array of keywords used to construct the Transitions models.
+        /// </summary>
+        [XmlIgnore]
+        public static string[] KwargsArray => null;
+
+        /// <summary>
+        /// The dictionary of keyword arguments that are used to construct the Transitions models.
+        /// </summary>
+        [XmlIgnore]
+        public virtual Dictionary<string, object> Kwargs => null;
+
+        /// <summary>
+        /// Checks the keyword arguments.
+        /// </summary>
+        /// <param name="kwargs">The keyword arguments.</param>
+        protected virtual void CheckKwargs(params object[] kwargs)
+        {
+        }
+
+        /// <summary>
+        /// Updates the keyword arguments of the Transitions model.
         /// </summary>
         /// <param name="kwargs">The keyword arguments.</param>
         protected virtual void UpdateKwargs(params object[] kwargs)
@@ -44,13 +61,37 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TransitionsModel"/> class.
+        /// Checks the parameters.
         /// </summary>
-        /// <param name="args">The constructor parameters.</param>
-        protected TransitionsModel(params object[] args)
+        /// <param name="params">The parameters.</param>
+        protected virtual void CheckParams(params object[] @params)
         {
-            CheckConstructorArgs(args);
-            UpdateKwargs(args);
+        }
+
+        /// <summary>
+        /// Updates the parameters of the Transitions model.
+        /// </summary>
+        /// <param name="params">The parameters.</param>
+        protected virtual void UpdateParams(params object[] @params)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new instance of the <see cref="TransitionsModel"/> class.
+        /// </summary>
+        public TransitionsModel()
+        {
+            BuildString();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TransitionsModel"/> class using keyword arguments.
+        /// </summary>
+        /// <param name="kwargs">The keyword arguments.</param>
+        public TransitionsModel(params object[] kwargs)
+        {
+            CheckKwargs(kwargs);
+            UpdateKwargs(kwargs);
             UpdateString();
         }
 
@@ -65,12 +106,42 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
                 var paramsStringBuilder = new StringBuilder();
                 paramsStringBuilder.Append(",transition_params=(");
 
-                foreach (var param in Params) {
-                    if (param is null) {
+                foreach (var param in Params) 
+                {
+                    if (param is null) 
+                    {
                         paramsStringBuilder.Clear();
                         break;
                     }
-                    var arrString = param is Array array ? NumpyHelper.NumpyParser.ParseArray(array) : param.ToString();
+
+                    var arrString = new StringBuilder();
+                    if (param is Array array) 
+                    {
+                        arrString.Append(NumpyHelper.NumpyParser.ParseArray(array));
+                    } 
+                    else if (param is IList list) 
+                    {
+                        if (list.Count == 0) 
+                        {
+                            arrString.Append("[]");
+                        }
+                        else
+                        {
+                            arrString.Append("[");
+                            foreach (var item in list) 
+                            {
+                                arrString.Append(item is Array itemArray ? NumpyHelper.NumpyParser.ParseArray(itemArray) : item.ToString());
+                                arrString.Append(",");
+                            }
+                            arrString.Remove(arrString.Length - 1, 1);
+                            arrString.Append("]");
+                        }
+                    } 
+                    else 
+                    {
+                        arrString.Append(param.ToString());
+                    }
+
                     paramsStringBuilder.Append($"{arrString},");
                 }
 

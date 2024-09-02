@@ -49,7 +49,14 @@ namespace Bonsai.ML.HiddenMarkovModels
                 transitionsParamsArray = new object[nParams];
                 for (int i = 0; i < nParams; i++)
                 {
-                    transitionsParamsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                    try
+                    {
+                        transitionsParamsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                    }
+                    catch
+                    {
+                        transitionsParamsArray[i] = JsonConvert.DeserializeObject(paramsJArray[i].ToString());
+                    }
                 }
             }
 

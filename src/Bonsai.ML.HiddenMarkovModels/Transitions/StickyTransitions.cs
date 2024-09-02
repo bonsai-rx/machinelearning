@@ -50,34 +50,38 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         public override object[] Params
         {
             get => [LogPs];
-            set
-            {
-                LogPs = (double[,])value[0];
-                UpdateString();
-            }
         }
 
         /// <inheritdoc/>
         [JsonProperty]
-        public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
+        [XmlIgnore]
+        public new Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
             ["alpha"] = Alpha,
             ["kappa"] = Kappa,
         };
 
         /// <inheritdoc/>
-        public StickyTransitions(params object[] args) : base(args)
+        [XmlIgnore]
+        public static new string[] KwargsArray => [ "alpha", "kappa" ];
+
+        /// <inheritdoc/>
+        public StickyTransitions() : base()
         {
         }
 
         /// <inheritdoc/>
-        protected override bool CheckConstructorArgs(params object[] args)
+        public StickyTransitions(params object[] kwargs) : base(kwargs)
         {
-            if (args is not null && args.Length != 2)
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckKwargs(params object[] kwargs)
+        {
+            if (kwargs is not null && kwargs.Length != 2)
             {
-                throw new ArgumentException("The StickyTransitions operator requires two constructor arguments specifying the alpha and kappa parameters.");
+                throw new ArgumentException($"The StickyTransitions operator requires exactly two constructor arguments: {nameof(Alpha)} and {nameof(Kappa)}.");
             }
-            return true;
         }
 
         /// <inheritdoc/>
@@ -95,15 +99,33 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
             };
         }
 
+        /// <inheritdoc/>
+        protected override void CheckParams(params object[] @params)
+        {
+            if (@params is not null && @params.Length != 1)
+            {
+                throw new ArgumentException($"The StickyTransitions operator requires exactly one parameter: {nameof(LogPs)}.");
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateParams(params object[] @params)
+        {
+            if (@params is not null)
+            {
+                LogPs = (double[,])@params[0];
+            }
+        }
+
         /// <summary>
         /// Returns an observable sequence of <see cref="StickyTransitions"/> objects.
         /// </summary>
         public IObservable<StickyTransitions> Process()
         {
-            return Observable.Return(
-                new StickyTransitions([Alpha, Kappa]) {
-                    Params = [LogPs]
-                });
+            return Observable.Return(new StickyTransitions([Alpha, Kappa]) 
+            {
+                Params = [LogPs]
+            });
         }
 
         /// <summary>
@@ -118,7 +140,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
                 var kappaPyObj = (int[,])pyObject.GetArrayAttr("kappa");
                 var logPsPyObj = (double[,])pyObject.GetArrayAttr("log_Ps");
 
-                return new StickyTransitions([alphaPyObj, kappaPyObj]) {
+                return new StickyTransitions([alphaPyObj, kappaPyObj]) 
+                {
                     Params = [logPsPyObj]
                 };
             });

@@ -35,10 +35,39 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         public override object[] Params
         {
             get => [LogPs];
-            set
+        }
+
+        /// <inheritdoc/>
+        public StationaryTransitions() : base()
+        {
+        }
+
+        /// <inheritdoc/>
+        public StationaryTransitions(params object[] kwargs) : base(kwargs)
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckParams(params object[] @params)
+        {
+            if (@params is not null && @params.Length != 1)
             {
-                LogPs = (double[,])value[0];
-                UpdateString();
+                throw new ArgumentException($"The StickyTransitions operator requires exactly one parameter: {nameof(LogPs)}.");
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateParams(params object[] @params)
+        {
+            LogPs = (double[,])@params[0];
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckKwargs(params object[] kwargs)
+        {
+            if (kwargs is not null && kwargs.Length != 0)
+            {
+                throw new ArgumentException($"The StationaryTransitions operator requires zero constructor arguments.");
             }
         }
 

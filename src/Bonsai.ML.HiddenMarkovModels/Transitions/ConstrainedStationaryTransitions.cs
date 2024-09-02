@@ -30,16 +30,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         [JsonProperty]
         public string TransitionMask
         {
-            get => TransitionMask;
-            set
-            {
-                try
-                {
-                    transitionMask = (int[,])NumpyHelper.NumpyParser.ParseString(value, typeof(int));
-                    TransitionMask = value;
-                }
-                finally { }
-            }
+            get => transitionMask != null ? NumpyHelper.NumpyParser.ParseArray(transitionMask) : "";
+            set => transitionMask = (int[,])NumpyHelper.NumpyParser.ParseString(value, typeof(int));
         }
 
         /// <summary>
@@ -59,47 +51,48 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         public override object[] Params
         {
             get => [LogPs];
-            set
-            {
-                LogPs = (double[,])value[0];
-                UpdateString();
-            }
         }
 
         /// <inheritdoc/>
         [JsonProperty]
-        public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
+        [XmlIgnore]
+        public new Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
-            ["transition_mask"] = transitionMask,
+            ["transition_mask"] = TransitionMask,
         };
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConstrainedStationaryTransitions"/> class.
-        /// </summary>
-        public ConstrainedStationaryTransitions (params object[] args) : base(args)
+        /// <inheritdoc/>
+        [XmlIgnore]
+        public static new string[] KwargsArray => [ "transition_mask" ];
+
+        /// <inheritdoc/>
+        public ConstrainedStationaryTransitions() : base()
         {
         }
 
         /// <inheritdoc/>
-        protected override bool CheckConstructorArgs(params object[] args)
+        public ConstrainedStationaryTransitions (params object[] kwargs) : base(kwargs)
         {
-            if (args is null || args.Length != 1)
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckKwargs(params object[] kwargs)
+        {
+            if (kwargs is null || kwargs.Length != 1)
             {
-                throw new ArgumentException("The ConstrainedStationaryTransitions operator requires a single argument specifying the number of lags.");
+                throw new ArgumentException($"The ConstrainedStationaryTransitions operator requires exactly one keyword argument: {nameof(transitionMask)}.");
             }
-            return true;
         }
 
         /// <inheritdoc/>
-        protected override void UpdateKwargs(params object[] args)
+        protected override void UpdateKwargs(params object[] kwargs)
         {
-            transitionMask = args[0] switch
+            transitionMask = kwargs[0] switch
             {
                 int[,] mask => mask,
                 long[,] mask => ConvertLongArrayToIntArray(mask),
                 _ => null
             };
-            TransitionMask = NumpyHelper.NumpyParser.ParseArray(transitionMask);
         }
 
         private static int[,] ConvertLongArrayToIntArray(long[,] longArray)
@@ -113,6 +106,24 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
                     intArray[i, j] = Convert.ToInt32(longArray[i, j]);
 
             return intArray;
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckParams(params object[] @params)
+        {
+            if (@params is not null && @params.Length != 1)
+            {
+                throw new ArgumentException($"The ConstrainedStationaryTransitions operator requires exactly one parameter: {nameof(LogPs)}.");
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateParams(params object[] @params)
+        {
+            LogPs = @params[0] switch {
+                double[,] logPs => logPs,
+                _ => null
+            };
         }
 
         /// <summary>

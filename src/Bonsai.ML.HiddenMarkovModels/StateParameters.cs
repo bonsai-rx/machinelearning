@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System;
 using System.Reactive.Linq;
+using System.Reflection;
 using Python.Runtime;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
@@ -122,29 +123,43 @@ namespace Bonsai.ML.HiddenMarkovModels
                 var transitionsModelTypePyObj = pyObject.GetAttr<string>("transitions_model_type");
                 var transitionsParamsPyObj = (Array)pyObject.GetArrayAttr("transition_params");
                 var transitionsParams = (object[])transitionsParamsPyObj;
-                var transitionsKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("transition_kwargs");
-                var transitionsConstructors = transitionsKwargsPyObj.Values.ToArray();
 
                 var transitionsModelType = TransitionsModelLookup.GetFromString(transitionsModelTypePyObj);
                 var transitionsClassType = TransitionsModelLookup.GetTransitionsClassType(transitionsModelType);
+                var transitionsKwargsProperty = transitionsClassType.GetProperty("KwargsArray");
 
-                transitions = (TransitionsModel)Activator.CreateInstance(transitionsClassType,
-                    transitionsConstructors.Length == 0 ? null : transitionsConstructors);
+                object[] transitionsConstructorArgs = null;
+                if (transitionsKwargsProperty is not null)
+                {
+                    var transitionsConstructorArray = (string[])transitionsKwargsProperty.GetValue(null);
+                    var transitionsConstructorArgsCount = transitionsConstructorArray.Length;
+                    if (transitionsConstructorArgsCount > 0)
+                    {
+                        transitionsConstructorArgs = new object[transitionsConstructorArgsCount];
+                        var transitionsPyObj = pyObject.GetAttr("transitions");
+                        for (int i = 0; i < transitionsConstructorArgsCount; i++)
+                        {
+                            transitionsConstructorArgs[i] = transitionsPyObj.GetArrayAttr(transitionsConstructorArray[i]);
+                        }
+                    }
+                }
 
+                transitions = (TransitionsModel)Activator.CreateInstance(transitionsClassType, transitionsConstructorArgs);
                 transitions.Params = transitionsParams;
 
                 var observationsModelTypePyObj = pyObject.GetAttr<string>("observations_model_type");
                 var observationsParamsPyObj = (Array)pyObject.GetArrayAttr("observation_params");
                 var observationsParams = (object[])observationsParamsPyObj;
-                var observationsKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
-                var observationsConstructors = observationsKwargsPyObj.Values.ToArray();
 
                 var observationsModelType = ObservationsModelLookup.GetFromString(observationsModelTypePyObj);
                 var observationsClassType = ObservationsModelLookup.GetObservationsClassType(observationsModelType);
 
+                var observationsKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
+                var observationsConstructors = observationsKwargsPyObj.Values.ToArray();
+
+
                 observations = (ObservationsModel)Activator.CreateInstance(observationsClassType,
                     observationsConstructors.Length == 0 ? null : observationsConstructors);
-
                 observations.Params = observationsParams;
 
                 return new StateParameters()
