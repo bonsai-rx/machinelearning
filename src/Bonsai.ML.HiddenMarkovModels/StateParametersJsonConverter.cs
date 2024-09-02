@@ -4,8 +4,7 @@ using System;
 using System.Linq;
 using Bonsai.ML.HiddenMarkovModels.Observations;
 using Bonsai.ML.HiddenMarkovModels.Transitions;
-using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
-using static Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsLookup;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -24,7 +23,7 @@ namespace Bonsai.ML.HiddenMarkovModels
             };
 
             var transitionsObj = (JObject)jo["Transitions"];
-            var transitionsType = TransitionsLookup.GetFromString(transitionsObj["TransitionsType"]?.ToString());
+            var transitionsModelType = TransitionsModelLookup.GetFromString(transitionsObj["TransitionsModelType"]?.ToString());
 
             object[] transitionsKwargsArray = null;
             object[] transitionsParamsArray = [];
@@ -41,7 +40,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 }
             }
 
-            var transitions = (TransitionsModel)Activator.CreateInstance(GetTransitionsClassType(transitionsType), transitionsKwargsArray);
+            var transitions = (TransitionsModel)Activator.CreateInstance(TransitionsModelLookup.GetTransitionsClassType(transitionsModelType), transitionsKwargsArray);
 
             if (transitionsObj.ContainsKey("Params"))
             {
@@ -58,7 +57,7 @@ namespace Bonsai.ML.HiddenMarkovModels
             result.Transitions = transitions;
             
             var observationsObj = (JObject)jo["Observations"];
-            var observationsType = ObservationsLookup.GetFromString(observationsObj["ObservationsType"]?.ToString());
+            var observationsModelType = ObservationsModelLookup.GetFromString(observationsObj["ObservationsModelType"]?.ToString());
 
             object[] observationsKwargsArray = null;
             object[] observationsParamsArray = [];
@@ -75,7 +74,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 }
             }
 
-            var observations = (ObservationsModel)Activator.CreateInstance(GetObservationsClassType(observationsType), observationsKwargsArray);
+            var observations = (ObservationsModel)Activator.CreateInstance(ObservationsModelLookup.GetObservationsClassType(observationsModelType), observationsKwargsArray);
 
             if (observationsObj.ContainsKey("Params"))
             {

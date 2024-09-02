@@ -21,11 +21,11 @@ namespace Bonsai.ML.HiddenMarkovModels
             result.Dimensions = jo["dimensions"]?.ToObject<int>() ?? result.Dimensions;
             result.StateParameters = jo["StateParameters"]?.ToObject<StateParameters>();
 
-            result.ObservationsType = result.StateParameters?.Observations?.ObservationsType 
-                ?? ObservationsLookup.GetFromString(jo["observation_type"]?.ToObject<string>());
+            result.ObservationsModelType = result.StateParameters?.Observations?.ObservationsModelType 
+                ?? ObservationsModelLookup.GetFromString(jo["observations"]?.ToObject<string>());
 
-            result.TransitionsType = result.StateParameters?.Transitions?.TransitionsType 
-                ?? TransitionsLookup.GetFromString(jo["transition_type"]?.ToObject<string>());
+            result.TransitionsModelType = result.StateParameters?.Transitions?.TransitionsModelType 
+                ?? TransitionsModelLookup.GetFromString(jo["transitions"]?.ToObject<string>());
 
             return result;
         }
@@ -48,23 +48,23 @@ namespace Bonsai.ML.HiddenMarkovModels
 
                 if (value.StateParameters.Observations == null)
                 {
-                    writer.WritePropertyName("observation_type");
-                    serializer.Serialize(writer, value.ObservationsType);
+                    writer.WritePropertyName("observations");
+                    serializer.Serialize(writer, value.ObservationsModelType);
                 }
 
                 if (value.StateParameters.Transitions == null)
                 {
-                    writer.WritePropertyName("transitions_type");
-                    serializer.Serialize(writer, value.TransitionsType);
+                    writer.WritePropertyName("transitions");
+                    serializer.Serialize(writer, value.TransitionsModelType);
                 }
             }
             else
             {
-                writer.WritePropertyName("observation_type");
-                serializer.Serialize(writer, ObservationsLookup.GetString(value.ObservationsType));
+                writer.WritePropertyName("observations");
+                serializer.Serialize(writer, ObservationsModelLookup.GetString(value.ObservationsModelType));
 
-                writer.WritePropertyName("transition_type");
-                serializer.Serialize(writer, TransitionsLookup.GetString(value.TransitionsType));
+                writer.WritePropertyName("transitions");
+                serializer.Serialize(writer, TransitionsModelLookup.GetString(value.TransitionsModelType));
             }
 
             writer.WriteEndObject();

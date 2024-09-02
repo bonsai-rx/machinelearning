@@ -18,8 +18,8 @@ class HiddenMarkovModel(HMM):
         self,
         num_states: int,
         dimensions: int,
-        observation_type: str,
-        transition_type: str,
+        observations: str,
+        transitions: str,
         initial_state_distribution: list[float] = None,
         observation_params: tuple = None,
         observation_kwargs: dict = None,
@@ -29,8 +29,8 @@ class HiddenMarkovModel(HMM):
 
         self.num_states = num_states
         self.dimensions = dimensions
-        self.observation_type = observation_type
-        self.transition_type = transition_type
+        self.observations = observations
+        self.transitions = transitions
 
         if observation_kwargs is not None:
             for (key, value) in observation_kwargs.items():
@@ -45,9 +45,9 @@ class HiddenMarkovModel(HMM):
         super(HiddenMarkovModel, self).__init__(
             K=self.num_states, 
             D=self.dimensions, 
-            observations=self.observation_type, 
+            observations=self.observations, 
             observation_kwargs=observation_kwargs,
-            transitions=transition_type,
+            transitions=transitions,
             transition_kwargs=transition_kwargs
         )
 
@@ -189,7 +189,7 @@ class HiddenMarkovModel(HMM):
 
                 def on_completion(future):
 
-                    if self.observation_type == "gaussian":
+                    if self.observation == "gaussian":
                         permutation = calculate_permutation(
                             self.observation_params[0], self.params[2][0])
                         super(HiddenMarkovModel, self).permute(permutation)
