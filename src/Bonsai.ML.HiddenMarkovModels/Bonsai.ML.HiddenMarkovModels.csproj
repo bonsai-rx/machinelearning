@@ -19,5 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML.Python\Bonsai.ML.Python.csproj" />
+    <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
   </ItemGroup>
 </Project>
