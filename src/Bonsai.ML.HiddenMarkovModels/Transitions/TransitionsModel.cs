@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsLookup;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.HiddenMarkovModels.Transitions
 {
@@ -13,23 +13,52 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// The type of Transitions model.
         /// </summary>
-        public abstract TransitionsType TransitionsType { get; }
+        public abstract TransitionsModelType TransitionsModelType { get; }
 
         /// <summary>
         /// The parameters that are used to define the Transitions models.
         /// </summary>
-        public abstract object[] Params { get; set; }
+        public virtual object[] Params { get; set; }
 
         /// <summary>
         /// The keyword arguments that are used to construct the Transitions models.
         /// </summary>
         public virtual Dictionary<string, object> Kwargs => new();
 
+        /// <summary>
+        /// Checks the constructor parameters.
+        /// </summary>
+        /// <param name="args">The constructor parameters.</param>
+        /// <returns>True if the constructor parameters are valid; otherwise, false.</returns>
+        protected virtual bool CheckConstructorArgs(params object[] args)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Updates the keyword arguments of the observations model.
+        /// </summary>
+        /// <param name="kwargs">The keyword arguments.</param>
+        protected virtual void UpdateKwargs(params object[] kwargs)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TransitionsModel"/> class.
+        /// </summary>
+        /// <param name="args">The constructor parameters.</param>
+        protected TransitionsModel(params object[] args)
+        {
+            CheckConstructorArgs(args);
+            UpdateKwargs(args);
+            UpdateString();
+        }
+
         /// <inheritdoc/>
         protected override string BuildString()
         {
             StringBuilder.Clear();
-            StringBuilder.Append($"transition_type=\"{GetString(TransitionsType)}\"");
+            StringBuilder.Append($"transitions=\"{TransitionsModelLookup.GetString(TransitionsModelType)}\"");
 
             if (Params != null && Params.Length > 0) 
             {
