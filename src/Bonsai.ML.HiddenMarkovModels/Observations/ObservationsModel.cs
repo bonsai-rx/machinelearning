@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Bonsai.ML.HiddenMarkovModels.Observations.ObservationsLookup;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
@@ -13,7 +13,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <summary>
         /// The type of observations model.
         /// </summary>
-        public abstract ObservationsType ObservationsType { get; }
+        public abstract ObservationsModelType ObservationsModelType { get; }
 
         /// <summary>
         /// The parameters that are used to define the observations models.
@@ -25,11 +25,40 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// </summary>
         public virtual Dictionary<string, object> Kwargs => new();
 
+        /// <summary>
+        /// Checks the constructor parameters.
+        /// </summary>
+        /// <param name="args">The constructor parameters.</param>
+        /// <returns>True if the constructor parameters are valid; otherwise, false.</returns>
+        protected virtual bool CheckConstructorArgs(params object[] args)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Updates the keyword arguments of the observations model.
+        /// </summary>
+        /// <param name="kwargs">The keyword arguments.</param>
+        protected virtual void UpdateKwargs(params object[] kwargs)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObservationsModel"/> class.
+        /// </summary>
+        /// <param name="args">The constructor parameters.</param>
+        protected ObservationsModel(params object[] args)
+        {
+            CheckConstructorArgs(args);
+            UpdateKwargs(args);
+            UpdateString();
+        }
+
         /// <inheritdoc/>
         protected override string BuildString()
         {
             StringBuilder.Clear();
-            StringBuilder.Append($"observation_type=\"{GetString(ObservationsType)}\"");
+            StringBuilder.Append($"observations=\"{ObservationsModelLookup.GetString(ObservationsModelType)}\"");
 
             if (Params != null && Params.Length > 0) 
             {
@@ -57,7 +86,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                 StringBuilder.Append(",observation_kwargs={");
                 foreach (var kp in Kwargs) {
                     StringBuilder.Append($"\"{kp.Key}\":{(kp.Value is null ? "None" 
-                        : kp.Value is Array ? NumpyHelper.NumpyParser.ParseArray((Array)kp.Value) 
+                        : kp.Value is Array ? NumpyHelper.NumpyParser.ParseArray((Array)kp.Value)
+                        : kp.Value is string ? $"\"{kp.Value}\""
                         : kp.Value)},");
                 }
                 StringBuilder.Remove(StringBuilder.Length - 1, 1);

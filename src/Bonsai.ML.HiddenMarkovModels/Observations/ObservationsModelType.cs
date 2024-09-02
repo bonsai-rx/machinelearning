@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents the type of observations in a hidden Markov model.
     /// </summary>
-    public enum ObservationsType
+    public enum ObservationsModelType
     {
         /// <summary>
         /// Gaussian observations.
