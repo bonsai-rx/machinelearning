@@ -1,50 +1,62 @@
 using System;
-using System.Collections.Generic;
+using Python.Runtime;
+using System.Reactive.Linq;
 using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Xml.Serialization;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.HiddenMarkovModels.Transitions
 {
     /// <summary>
-    /// Represents a constrained stationary transitions model.
+    /// Represents an operator that is used to create and transform an observable sequence
+    /// of <see cref="NeuralNetworkRecurrentTransitions"/> objects.
     /// </summary>
+    [Combinator]
+    [Description("Creates an observable sequence of NeuralNetworkRecurrentTransitions objects.")]
+    [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
     public class NeuralNetworkRecurrentTransitions : TransitionsModel
     {
-        private int[] hiddenLayerSizes = [50];
-        private readonly string nonlinearity = "relu";
-
         /// <summary>
         /// The sizes of the hidden layers.
         /// </summary>
         [XmlIgnore]
-        public int[] HiddenLayerSizes { get => hiddenLayerSizes; set {hiddenLayerSizes = value; UpdateString();} }
+        [Description("The sizes of the hidden layers.")]
+        [JsonProperty]
+        public int[] HiddenLayerSizes { get; set; } = [50];
 
         /// <summary>
-        /// The sizes of the hidden layers.
+        /// The type of nonlinearity or activation function.
         /// </summary>
-        public string Nonlinearity => nonlinearity;
+        public string Nonlinearity => "relu";
 
         /// <summary>
         /// The Log Ps of the transitions.
         /// </summary>
-        public double[,] LogPs { get; private set; } = null;
+        [XmlIgnore]
+        [Description("The log Ps of the transitions.")]
+        public double[,] LogPs { get; set; } = null;
 
         /// <summary>
-        /// The weights of the transitions.
+        /// The weights.
         /// </summary>
-        public double[,,] Weights { get; private set; } = null;
+        [XmlIgnore]
+        [Description("The weights.")]
+        public double[,,] Weights { get; set; } = null;
 
         /// <summary>
-        /// The biases of the transitions.
+        /// The biases.
         /// </summary>
-        public double[,,] Biases { get; private set; } = null;
+        [XmlIgnore]
+        [Description("The biases.")]
+        public double[,,] Biases { get; set; } = null;
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(TransitionsTypeJsonConverter))]
-        public override TransitionsType TransitionsType => TransitionsType.NeuralNetworkRecurrent;
+        [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        public override TransitionsModelType TransitionsModelType => TransitionsModelType.NeuralNetworkRecurrent;
 
         /// <inheritdoc/>
         [JsonProperty]
@@ -71,18 +83,29 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// Initializes a new instance of the <see cref="NeuralNetworkRecurrentTransitions"/> class.
         /// </summary>
-        public NeuralNetworkRecurrentTransitions(params object[] args)
+        public NeuralNetworkRecurrentTransitions (params object[] args) : base(args)
         {
-            if (args is not null && args.Length > 0)
+        }
+
+        /// <inheritdoc/>
+        protected override bool CheckConstructorArgs(params object[] args)
+        {
+            if (args is null || args.Length != 1)
             {
-                HiddenLayerSizes = args[0] switch
-                {
-                    int[] layers => layers,
-                    long[] layers => ConvertLongArrayToIntArray(layers),
-                    _ => null
-                };
-                UpdateString();
+                throw new ArgumentException("The NeuralNetworkRecurrentTransitions operator requires a single argument specifying the hidden layer sizes.");
             }
+            return true;
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateKwargs(params object[] args)
+        {
+            HiddenLayerSizes = args[0] switch
+            {
+                int[] layers => layers,
+                long[] layers => ConvertLongArrayToIntArray(layers),
+                _ => null
+            };
         }
 
         private static int[] ConvertLongArrayToIntArray(long[] longArray)
@@ -94,6 +117,37 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
                 intArray[i] = Convert.ToInt32(longArray[i]);
 
             return intArray;
+        }
+
+        /// <summary>
+        /// Returns an observable sequence of <see cref="NeuralNetworkRecurrentTransitions"/> objects.
+        /// </summary>
+        public IObservable<NeuralNetworkRecurrentTransitions> Process()
+        {
+            return Observable.Return(
+                new NeuralNetworkRecurrentTransitions(HiddenLayerSizes)
+                {
+                    Params = [LogPs, Weights, Biases]
+                });
+        }
+
+        /// <summary>
+        /// Transforms an observable sequence of <see cref="PyObject"/> into an observable sequence 
+        /// of <see cref="NeuralNetworkRecurrentTransitions"/> objects by accessing internal attributes of the <see cref="PyObject"/>.
+        /// </summary>
+        public IObservable<NeuralNetworkRecurrentTransitions> Process(IObservable<PyObject> source)
+        {
+            return Observable.Select(source, pyObject =>
+            {
+                var logPsPyObj = (double[,])pyObject.GetArrayAttr("log_Ps");
+                var weightsPyObj = (double[,])pyObject.GetArrayAttr("weights");
+                var biasesPyObj = (double[,])pyObject.GetArrayAttr("biases");
+
+                return new NeuralNetworkRecurrentTransitions()
+                {
+                    Params = [logPsPyObj, weightsPyObj, biasesPyObj]
+                };
+            });
         }
     }
 }
