@@ -29,14 +29,14 @@ flowchart LR
 Below is a simplified Bonsai workflow that implements the core logic of the package.
 
 :::workflow
-![HMM Model Implementation](~/workflows/HMMModelImplementation.bonsai)
+![HMM Implementation](~/workflows/HMMImplementation.bonsai)
 :::
 
 A `CreateRuntime` node is used to initialize a python runtime engine, which gets passed to a `BehaviorSubject` called `PythonEngine`. Bonsai's `CreateRuntime` node should automatically detect the python virtual environment if it was activated in the same terminal that was used to launch Bonsai, otherwise the path to the virtual environment can be specified in the `CreateRuntime` node by setting the `PythonHome` property.
 
 Next, the `PythonEngine` node is passed to a `LoadHMMModule` node which will load the ssm package into the python environment.
 
-Once the HMM module has been initialized, the `CreateHMMModel` node instantiates a python instance of the HMM model. Here, you can specify the initialization parameters of the model and provide a `ModelName` parameter that gets used to reference the model in other parts of the Bonsai workflow.
+Once the HMM module has been initialized, the `CreateHMM` node instantiates a python instance of the HMM model. Here, you can specify the initialization parameters of the model and provide a `ModelName` parameter that gets used to reference the model in other parts of the Bonsai workflow.
 
 It is crucial that the `Data` are formatted into a string that the model can use, namely a string representing a Python list. For example, if you pass a Tuple with 2 items as your data, then the formatter should look something like `"[" + Item1.ToString() + Item2.ToString() + "]"`. The output of this should be used as your observations into the model, so connect your data source to a `Subject` named `Data` and modify the `FormatToPython` node to fit with your data.
 
