@@ -18,8 +18,8 @@ class HiddenMarkovModel(HMM):
         self,
         num_states: int,
         dimensions: int,
-        observations: str,
-        transitions: str,
+        observations_model_type: str,
+        transitions_model_type: str,
         initial_state_distribution: list[float] = None,
         observation_params: tuple = None,
         observation_kwargs: dict = None,
@@ -29,8 +29,8 @@ class HiddenMarkovModel(HMM):
 
         self.num_states = num_states
         self.dimensions = dimensions
-        self.observations = observations
-        self.transitions = transitions
+        self.observations_model_type = observations_model_type
+        self.transitions_model_type = transitions_model_type
 
         if observation_kwargs is not None:
             for (key, value) in observation_kwargs.items():
@@ -45,9 +45,9 @@ class HiddenMarkovModel(HMM):
         super(HiddenMarkovModel, self).__init__(
             K=self.num_states, 
             D=self.dimensions, 
-            observations=self.observations, 
+            observations=self.observations_model_type, 
             observation_kwargs=observation_kwargs,
-            transitions=transitions,
+            transitions=self.transitions_model_type,
             transition_kwargs=transition_kwargs
         )
 

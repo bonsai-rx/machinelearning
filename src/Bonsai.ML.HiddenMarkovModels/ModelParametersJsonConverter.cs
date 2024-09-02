@@ -22,10 +22,10 @@ namespace Bonsai.ML.HiddenMarkovModels
             result.StateParameters = jo["StateParameters"]?.ToObject<StateParameters>();
 
             result.ObservationsModelType = result.StateParameters?.Observations?.ObservationsModelType 
-                ?? ObservationsModelLookup.GetFromString(jo["observations"]?.ToObject<string>());
+                ?? ObservationsModelLookup.GetFromString(jo["observations_model_type"]?.ToObject<string>());
 
             result.TransitionsModelType = result.StateParameters?.Transitions?.TransitionsModelType 
-                ?? TransitionsModelLookup.GetFromString(jo["transitions"]?.ToObject<string>());
+                ?? TransitionsModelLookup.GetFromString(jo["transitions_model_type"]?.ToObject<string>());
 
             return result;
         }
@@ -48,22 +48,22 @@ namespace Bonsai.ML.HiddenMarkovModels
 
                 if (value.StateParameters.Observations == null)
                 {
-                    writer.WritePropertyName("observations");
+                    writer.WritePropertyName("observations_model_type");
                     serializer.Serialize(writer, value.ObservationsModelType);
                 }
 
                 if (value.StateParameters.Transitions == null)
                 {
-                    writer.WritePropertyName("transitions");
+                    writer.WritePropertyName("transitions_model_type");
                     serializer.Serialize(writer, value.TransitionsModelType);
                 }
             }
             else
             {
-                writer.WritePropertyName("observations");
+                writer.WritePropertyName("observations_model_type");
                 serializer.Serialize(writer, ObservationsModelLookup.GetString(value.ObservationsModelType));
 
-                writer.WritePropertyName("transitions");
+                writer.WritePropertyName("transitions_model_type");
                 serializer.Serialize(writer, TransitionsModelLookup.GetString(value.TransitionsModelType));
             }
 

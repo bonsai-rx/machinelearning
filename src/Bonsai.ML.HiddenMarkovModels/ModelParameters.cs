@@ -173,8 +173,8 @@ namespace Bonsai.ML.HiddenMarkovModels
             {
                 numStates = pyObject.GetAttr<int>("num_states");
                 dimensions = pyObject.GetAttr<int>("dimensions");
-                var observationsModelTypeStrPyObj = pyObject.GetAttr<string>("observations");
-                var transitionsModelTypeStrPyObj = pyObject.GetAttr<string>("transitions");
+                var observationsModelTypeStrPyObj = pyObject.GetAttr<string>("observations_model_type");
+                var transitionsModelTypeStrPyObj = pyObject.GetAttr<string>("transitions_model_type");
 
                 observationsModelType = ObservationsModelLookup.GetFromString(observationsModelTypeStrPyObj);
                 transitionsModelType = TransitionsModelLookup.GetFromString(transitionsModelTypeStrPyObj);
@@ -201,19 +201,19 @@ namespace Bonsai.ML.HiddenMarkovModels
                 .Append($"dimensions={dimensions},");
             if (stateParameters == null || string.IsNullOrEmpty(stateParameters.ToString()))
             {
-                StringBuilder.Append($"observations=\"{ObservationsModelLookup.GetString(observationsModelType)}\",");
-                StringBuilder.Append($"transitions=\"{TransitionsModelLookup.GetString(transitionsModelType)}\"");
+                StringBuilder.Append($"observations_model_type=\"{ObservationsModelLookup.GetString(observationsModelType)}\",");
+                StringBuilder.Append($"transitions_model_type=\"{TransitionsModelLookup.GetString(transitionsModelType)}\"");
             }
             else
             {
                 StringBuilder.Append($"{stateParameters},");
                 if (stateParameters.Observations == null)
                 {
-                    StringBuilder.Append($"observations=\"{ObservationsModelLookup.GetString(observationsModelType)}\",");
+                    StringBuilder.Append($"observations_model_type=\"{ObservationsModelLookup.GetString(observationsModelType)}\",");
                 }
                 if (stateParameters.Transitions == null)
                 {
-                    StringBuilder.Append($"transitions=\"{TransitionsModelLookup.GetString(transitionsModelType)}\",");
+                    StringBuilder.Append($"transitions_model_type=\"{TransitionsModelLookup.GetString(transitionsModelType)}\",");
                 }
                 StringBuilder.Remove(StringBuilder.Length - 1, 1);
             }

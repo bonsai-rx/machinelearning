@@ -58,7 +58,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         protected override string BuildString()
         {
             StringBuilder.Clear();
-            StringBuilder.Append($"observations=\"{ObservationsModelLookup.GetString(ObservationsModelType)}\"");
+            StringBuilder.Append($"observations_model_type=\"{ObservationsModelLookup.GetString(ObservationsModelType)}\"");
 
             if (Params != null && Params.Length > 0) 
             {

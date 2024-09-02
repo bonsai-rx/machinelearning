@@ -58,7 +58,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         protected override string BuildString()
         {
             StringBuilder.Clear();
-            StringBuilder.Append($"transitions=\"{TransitionsModelLookup.GetString(TransitionsModelType)}\"");
+            StringBuilder.Append($"transitions_model_type=\"{TransitionsModelLookup.GetString(TransitionsModelType)}\"");
 
             if (Params != null && Params.Length > 0) 
             {
