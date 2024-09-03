@@ -21,10 +21,10 @@ class HiddenMarkovModel(HMM):
         observations_model_type: str,
         transitions_model_type: str,
         initial_state_distribution: list[float] = None,
-        observation_params: tuple = None,
-        observation_kwargs: dict = None,
-        transition_params: tuple = None,
-        transition_kwargs: dict = None
+        observations_params: tuple = None,
+        observations_kwargs: dict = None,
+        transitions_params: tuple = None,
+        transitions_kwargs: dict = None
     ):
 
         self.num_states = num_states
@@ -32,49 +32,49 @@ class HiddenMarkovModel(HMM):
         self.observations_model_type = observations_model_type
         self.transitions_model_type = transitions_model_type
 
-        if observation_kwargs is not None:
-            for (key, value) in observation_kwargs.items():
+        if observations_kwargs is not None:
+            for (key, value) in observations_kwargs.items():
                 if isinstance(value, list):
-                    observation_kwargs[key] = np.array(value)
+                    observations_kwargs[key] = np.array(value)
 
-        if transition_kwargs is not None:
-            for (key, value) in transition_kwargs.items():
+        if transitions_kwargs is not None:
+            for (key, value) in transitions_kwargs.items():
                 if isinstance(value, list) and key != "hidden_layer_sizes":
-                    transition_kwargs[key] = np.array(value)
+                    transitions_kwargs[key] = np.array(value)
                 if key == "hidden_layer_sizes":
-                    transition_kwargs[key] = tuple(value)
+                    transitions_kwargs[key] = tuple(value)
 
-            if "nonlinearity_type" in transition_kwargs.keys():
-                transition_kwargs["nonlinearity"] = value
-                transition_kwargs.pop(key)
+            if "nonlinearity_type" in transitions_kwargs.keys():
+                transitions_kwargs["nonlinearity"] = value
+                transitions_kwargs.pop(key)
 
         super(HiddenMarkovModel, self).__init__(
             K=self.num_states, 
             D=self.dimensions, 
             observations=self.observations_model_type, 
-            observation_kwargs=observation_kwargs,
+            observation_kwargs=observations_kwargs,
             transitions=self.transitions_model_type,
-            transition_kwargs=transition_kwargs
+            transition_kwargs=transitions_kwargs
         )
 
         self.update_params(initial_state_distribution,
-                           transition_params, observation_params)
+                           transitions_params, observations_params)
         
-        if observation_kwargs is None:
-            observation_kwargs = {}
+        if observations_kwargs is None:
+            observations_kwargs = {}
         
-        self.observation_kwargs = observation_kwargs
+        self.observations_kwargs = observations_kwargs
 
-        if transition_kwargs is None:
-            transition_kwargs = {}
+        if transitions_kwargs is None:
+            transitions_kwargs = {}
 
-        self.transition_kwargs = transition_kwargs
+        self.transitions_kwargs = transitions_kwargs
 
         if self.transitions_model_type == "nn_recurrent":
             hidden_layer_sizes = np.array([len(layer) for layer in self.transitions.weights[1:]])
             self.transitions.hidden_layer_sizes = hidden_layer_sizes
-            if "nonlinearity" in self.transition_kwargs:
-                self.transitions.nonlinearity_type = self.transition_kwargs["nonlinearity"]
+            if "nonlinearity" in self.transitions_kwargs:
+                self.transitions.nonlinearity_type = self.transitions_kwargs["nonlinearity"]
             else:
                 self.transitions.nonlinearity_type = "relu"
 
@@ -91,22 +91,22 @@ class HiddenMarkovModel(HMM):
         self.flush_data_between_batches = True
         self.inferred_most_probable_states = np.array([], dtype=int)
 
-    def update_params(self, initial_state_distribution, transition_params, observation_params):
+    def update_params(self, initial_state_distribution, transitions_params, observations_params):
         hmm_params = self.params
 
         if initial_state_distribution is not None:
             hmm_params = ((np.array(initial_state_distribution),),
                           ) + hmm_params[1:]
 
-        if transition_params is not None:
-            trans_params = tuple([np.array(param) for param in transition_params])
+        if transitions_params is not None:
+            trans_params = tuple([np.array(param) for param in transitions_params])
             if isinstance(hmm_params[1], tuple):
                 hmm_params = (hmm_params[0],) + (trans_params,) + (hmm_params[2],)
             else:
                 hmm_params = (hmm_params[0],) + trans_params + (hmm_params[2],)
 
-        if observation_params is not None:
-            obs_params = tuple([np.array(param) for param in observation_params])
+        if observations_params is not None:
+            obs_params = tuple([np.array(param) for param in observations_params])
             if isinstance(hmm_params[2], tuple):
                 hmm_params = hmm_params[:2] + (obs_params,)
             else:
@@ -117,14 +117,14 @@ class HiddenMarkovModel(HMM):
         self.initial_state_distribution = hmm_params[0][0]
 
         if isinstance(hmm_params[1], tuple):
-            self.transition_params = hmm_params[1] 
+            self.transitions_params = hmm_params[1] 
         else:
-            self.transition_params = (hmm_params[1],)
+            self.transitions_params = (hmm_params[1],)
 
         if isinstance(hmm_params[2], tuple):
-            self.observation_params = hmm_params[2] 
+            self.observations_params = hmm_params[2] 
         else:
-            self.observation_params = (hmm_params[2],)
+            self.observations_params = (hmm_params[2],)
 
     def infer_state(self, observation: list[float]):
 
@@ -184,8 +184,8 @@ class HiddenMarkovModel(HMM):
                 if vars_to_estimate is None or vars_to_estimate == {}:
                     vars_to_estimate = {
                         "initial_state_distribution": True,
-                        "transition_params": True,
-                        "observation_params": True
+                        "transitions_params": True,
+                        "observations_params": True
                     }
 
                 def calculate_permutation(mat1, mat2):
@@ -210,13 +210,13 @@ class HiddenMarkovModel(HMM):
 
                     initial_state_distribution = None if vars_to_estimate[
                         "initial_state_distribution"] else self.initial_state_distribution
-                    transition_params = None if vars_to_estimate[
-                        "transition_params"] else self.transition_params
-                    observation_params = None if vars_to_estimate[
-                        "observation_params"] else self.observation_params
+                    transitions_params = None if vars_to_estimate[
+                        "transitions_params"] else self.transitions_params
+                    observations_params = None if vars_to_estimate[
+                        "observations_params"] else self.observations_params
 
                     self.update_params(initial_state_distribution,
-                                       transition_params, observation_params)
+                                       transitions_params, observations_params)
 
                     self.is_running = False
                     self._fit_finished = True
