@@ -2,7 +2,7 @@
 namespace Bonsai.ML
 {
     /// <summary>
-    /// Bonsai LDS model reference base class
+    /// Bonsai.ML model reference base class
     /// </summary>
     public class ModelReference
     {
