@@ -46,6 +46,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
+        [Browsable(false)]
         public override object[] Params
         {
             get => [LogPs];
@@ -53,6 +54,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
+        [XmlIgnore]
         public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
             ["alpha"] = Alpha,
@@ -60,6 +62,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         };
 
         /// <inheritdoc/>
+        [XmlIgnore]
         public static new string[] KwargsArray => [ "alpha", "kappa" ];
 
         /// <inheritdoc/>

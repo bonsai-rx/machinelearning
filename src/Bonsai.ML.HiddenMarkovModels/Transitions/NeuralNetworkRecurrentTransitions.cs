@@ -68,6 +68,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
+        [Browsable(false)]
         public override object[] Params
         {
             get => [LogPs, Weights, Biases];
@@ -92,7 +93,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         }
 
         /// <inheritdoc/>
-        public NeuralNetworkRecurrentTransitions (params object[] args) : base(args)
+        public NeuralNetworkRecurrentTransitions (params object[] kwargs) : base(kwargs)
         {
         }
 

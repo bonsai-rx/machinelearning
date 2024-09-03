@@ -33,7 +33,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
-          public override object[] Params
+        [Browsable(false)]
+        public override object[] Params
         {
             get => [LogPs];
         }

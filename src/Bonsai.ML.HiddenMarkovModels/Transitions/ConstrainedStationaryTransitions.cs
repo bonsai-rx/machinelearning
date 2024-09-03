@@ -57,7 +57,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <inheritdoc/>
         [JsonProperty]
         [XmlIgnore]
-        [Browsable(false)]
         public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
             ["transition_mask"] = transitionMask,
@@ -65,7 +64,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [XmlIgnore]
-        [Browsable(false)]
         public static new string[] KwargsArray => [ "transition_mask" ];
 
         /// <inheritdoc/>
