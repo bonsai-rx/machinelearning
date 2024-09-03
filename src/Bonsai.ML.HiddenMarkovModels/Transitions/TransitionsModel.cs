@@ -5,6 +5,7 @@ using System.Text;
 using Bonsai.ML.Python;
 using System.Xml.Serialization;
 using System.Linq;
+using System.ComponentModel;
 
 namespace Bonsai.ML.HiddenMarkovModels.Transitions
 {
@@ -16,11 +17,13 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// The type of Transitions model.
         /// </summary>
+        [Browsable(false)]
         public abstract TransitionsModelType TransitionsModelType { get; }
 
         /// <summary>
         /// The parameters that are used to define the Transitions models.
         /// </summary>
+        [Browsable(false)]
         public virtual object[] Params 
         { 
             get => null; 
@@ -35,14 +38,15 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// The array of keywords used to construct the Transitions models.
         /// </summary>
-        [XmlIgnore]
+        [Browsable(false)]
         public static string[] KwargsArray => null;
 
         /// <summary>
         /// The dictionary of keyword arguments that are used to construct the Transitions models.
         /// </summary>
+        [Browsable(false)]
         [XmlIgnore]
-        public virtual Dictionary<string, object> Kwargs => null;
+        public virtual Dictionary<string, object> Kwargs => new();
 
         /// <summary>
         /// Checks the keyword arguments.
@@ -101,55 +105,48 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
             StringBuilder.Clear();
             StringBuilder.Append($"transitions_model_type=\"{TransitionsModelLookup.GetString(TransitionsModelType)}\"");
 
-            if (Params != null && Params.Length > 0) 
+            if (Params != null && Params.Length > 0 && Params.All(p => p != null)) 
             {
                 var paramsStringBuilder = new StringBuilder();
-                paramsStringBuilder.Append(",transition_params=(");
 
                 foreach (var param in Params) 
                 {
                     if (param is null) 
                     {
-                        paramsStringBuilder.Clear();
-                        break;
+                        paramsStringBuilder.Append("None");
                     }
-
-                    var arrString = new StringBuilder();
-                    if (param is Array array) 
+                    else if (param is Array array) 
                     {
-                        arrString.Append(NumpyHelper.NumpyParser.ParseArray(array));
+                        paramsStringBuilder.Append(NumpyHelper.NumpyParser.ParseArray(array));
                     } 
                     else if (param is IList list) 
                     {
                         if (list.Count == 0) 
                         {
-                            arrString.Append("[]");
+                            paramsStringBuilder.Append("[]");
                         }
                         else
                         {
-                            arrString.Append("[");
+                            paramsStringBuilder.Append("[");
                             foreach (var item in list) 
                             {
-                                arrString.Append(item is Array itemArray ? NumpyHelper.NumpyParser.ParseArray(itemArray) : item.ToString());
-                                arrString.Append(",");
+                                paramsStringBuilder.Append(item is Array itemArray ? NumpyHelper.NumpyParser.ParseArray(itemArray) : item.ToString());
+                                paramsStringBuilder.Append(",");
                             }
-                            arrString.Remove(arrString.Length - 1, 1);
-                            arrString.Append("]");
+                            paramsStringBuilder.Remove(paramsStringBuilder.Length - 1, 1);
+                            paramsStringBuilder.Append("]");
                         }
                     } 
                     else 
                     {
-                        arrString.Append(param.ToString());
+                        paramsStringBuilder.Append(param.ToString());
                     }
 
-                    paramsStringBuilder.Append($"{arrString},");
+                    paramsStringBuilder.Append(",");
                 }
 
-                if (paramsStringBuilder.Length > 0) {
-                    paramsStringBuilder.Remove(paramsStringBuilder.Length - 1, 1);
-                    paramsStringBuilder.Append(")");
-                    StringBuilder.Append(paramsStringBuilder);
-                }
+                paramsStringBuilder.Remove(paramsStringBuilder.Length - 1, 1);
+                StringBuilder.Append($",transition_params=({paramsStringBuilder})");
                 
             }
 
@@ -158,7 +155,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
                 StringBuilder.Append(",transition_kwargs={");
                 foreach (var kp in Kwargs) {
                     StringBuilder.Append($"\"{kp.Key}\":{(kp.Value is null ? "None" 
-                        : kp.Value is Array ? NumpyHelper.NumpyParser.ParseArray((Array)kp.Value) 
+                        : kp.Value is Array array ? NumpyHelper.NumpyParser.ParseArray(array)
                         : kp.Value is string ? $"\"{kp.Value}\""
                         : kp.Value)},");
                 }
