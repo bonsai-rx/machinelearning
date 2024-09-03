@@ -48,7 +48,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// The transitions model.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("transition_params")]
+        [JsonProperty("transitions_params")]
         [Description("The transitions model.")]
         [Category("ModelStateParameters")]
         public TransitionsModel Transitions
@@ -65,7 +65,7 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// The observations.
         /// </summary>
         [XmlIgnore]
-        [JsonProperty("observation_params")]
+        [JsonProperty("observations_params")]
         [Description("The observations.")]
         [Category("ModelStateParameters")]
         public ObservationsModel Observations
@@ -121,7 +121,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 var initialStateDistributionPyObj = (double[])pyObject.GetArrayAttr("initial_state_distribution");
 
                 var transitionsModelTypePyObj = pyObject.GetAttr<string>("transitions_model_type");
-                var transitionsParamsPyObj = (Array)pyObject.GetArrayAttr("transition_params");
+                var transitionsParamsPyObj = (Array)pyObject.GetArrayAttr("transitions_params");
                 var transitionsParams = (object[])transitionsParamsPyObj;
 
                 var transitionsModelType = TransitionsModelLookup.GetFromString(transitionsModelTypePyObj);
@@ -148,18 +148,31 @@ namespace Bonsai.ML.HiddenMarkovModels
                 transitions.Params = transitionsParams;
 
                 var observationsModelTypePyObj = pyObject.GetAttr<string>("observations_model_type");
-                var observationsParamsPyObj = (Array)pyObject.GetArrayAttr("observation_params");
+                var observationsParamsPyObj = (Array)pyObject.GetArrayAttr("observations_params");
                 var observationsParams = (object[])observationsParamsPyObj;
 
                 var observationsModelType = ObservationsModelLookup.GetFromString(observationsModelTypePyObj);
                 var observationsClassType = ObservationsModelLookup.GetObservationsClassType(observationsModelType);
 
-                var observationsKwargsPyObj = (Dictionary<object, object>)pyObject.GetArrayAttr("observation_kwargs");
-                var observationsConstructors = observationsKwargsPyObj.Values.ToArray();
+                var observationsKwargsProperty = observationsClassType.GetProperty("KwargsArray");
 
+                object[] observationsConstructorArgs = null;
+                if (observationsKwargsProperty is not null)
+                {
+                    var observationsConstructorKeys = (string[])observationsKwargsProperty.GetValue(null);
+                    var observationsConstructorKeysCount = observationsConstructorKeys.Length;
+                    if (observationsConstructorKeysCount > 0)
+                    {
+                        observationsConstructorArgs = new object[observationsConstructorKeysCount];
+                        var observationsPyObj = pyObject.GetAttr("observations");
+                        for (int i = 0; i < observationsConstructorKeysCount; i++)
+                        {
+                            observationsConstructorArgs[i] = observationsPyObj.GetArrayAttr(observationsConstructorKeys[i]);
+                        }
+                    }
+                }
 
-                observations = (ObservationsModel)Activator.CreateInstance(observationsClassType,
-                    observationsConstructors.Length == 0 ? null : observationsConstructors);
+                observations = (ObservationsModel)Activator.CreateInstance(observationsClassType, observationsConstructorArgs);
                 observations.Params = observationsParams;
 
                 return new StateParameters()
