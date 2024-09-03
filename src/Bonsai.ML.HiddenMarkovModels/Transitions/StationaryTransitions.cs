@@ -28,11 +28,12 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override TransitionsModelType TransitionsModelType => TransitionsModelType.Stationary;
 
         /// <inheritdoc/>
         [JsonProperty]
-        public override object[] Params
+          public override object[] Params
         {
             get => [LogPs];
         }

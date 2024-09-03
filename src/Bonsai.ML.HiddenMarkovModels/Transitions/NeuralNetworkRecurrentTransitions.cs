@@ -23,7 +23,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// The sizes of the hidden layers.
         /// </summary>
-        [XmlIgnore]
         [Description("The sizes of the hidden layers.")]
         public int[] HiddenLayerSizes { get; set; } = [50];
 
@@ -36,27 +35,28 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <summary>
         /// The Log Ps of the transitions.
         /// </summary>
-        [XmlIgnore]
         [Description("The log Ps of the transitions.")]
+        [XmlIgnore]
         public double[,] LogPs { get; set; } = null;
 
         /// <summary>
         /// The weights.
         /// </summary>
-        [XmlIgnore]
         [Description("The weights.")]
+        [XmlIgnore]
         public List<double[,]> Weights { get; set; } = null;
 
         /// <summary>
         /// The biases.
         /// </summary>
-        [XmlIgnore]
         [Description("The biases.")]
+        [XmlIgnore]
         public List<double[]> Biases { get; set; } = null;
 
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override TransitionsModelType TransitionsModelType => TransitionsModelType.NeuralNetworkRecurrent;
 
         private static readonly Dictionary<NonlinearityType, string> nonlinearityTypeLookup = new Dictionary<NonlinearityType, string>
@@ -76,7 +76,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <inheritdoc/>
         [JsonProperty]
         [XmlIgnore]
-        public new Dictionary<string, object> Kwargs => new Dictionary<string, object>
+        public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
             ["hidden_layer_sizes"] = HiddenLayerSizes,
             ["nonlinearity_type"] = nonlinearityTypeLookup[NonlinearityType],

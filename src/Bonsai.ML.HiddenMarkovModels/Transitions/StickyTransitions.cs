@@ -23,14 +23,12 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// The alpha parameter.
         /// </summary>
         [Description("The alpha parameter.")]
-        [JsonProperty]
         public double Alpha { get; set; } = 1.0;
 
         /// <summary>
         /// The kappa parameter.
         /// </summary>
         [Description("The kappa parameter.")]
-        [JsonProperty]
         public double Kappa { get; set; } = 100.0;
 
         /// <summary>
@@ -43,6 +41,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override TransitionsModelType TransitionsModelType => TransitionsModelType.Sticky;
 
         /// <inheritdoc/>
@@ -54,15 +53,13 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
-        [XmlIgnore]
-        public new Dictionary<string, object> Kwargs => new Dictionary<string, object>
+        public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
             ["alpha"] = Alpha,
             ["kappa"] = Kappa,
         };
 
         /// <inheritdoc/>
-        [XmlIgnore]
         public static new string[] KwargsArray => [ "alpha", "kappa" ];
 
         /// <inheritdoc/>

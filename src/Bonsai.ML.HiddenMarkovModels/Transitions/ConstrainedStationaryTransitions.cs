@@ -27,7 +27,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// For example, the mask [[1, 0], [1, 1]] is valid and would prohibit transitions from state 0 to state 1.
         /// </summary>
         [Description("The mask which gets applied to the transition matrix to prohibit certain transitions. It must be written in JSON format as an int[,] with the same shape as the transition matrix (nStates x nStates). For example, the mask [[1, 0], [1, 1]] is valid and would prohibit transitions from state 0 to state 1.")]
-        [JsonProperty]
         public string TransitionMask
         {
             get => transitionMask != null ? NumpyHelper.NumpyParser.ParseArray(transitionMask) : "";
@@ -44,10 +43,12 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override TransitionsModelType TransitionsModelType => TransitionsModelType.ConstrainedStationary;
 
         /// <inheritdoc/>
         [JsonProperty]
+        [Browsable(false)]
         public override object[] Params
         {
             get => [LogPs];
@@ -56,13 +57,15 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         /// <inheritdoc/>
         [JsonProperty]
         [XmlIgnore]
-        public new Dictionary<string, object> Kwargs => new Dictionary<string, object>
+        [Browsable(false)]
+        public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
-            ["transition_mask"] = TransitionMask,
+            ["transition_mask"] = transitionMask,
         };
 
         /// <inheritdoc/>
         [XmlIgnore]
+        [Browsable(false)]
         public static new string[] KwargsArray => [ "transition_mask" ];
 
         /// <inheritdoc/>
@@ -91,6 +94,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
             {
                 int[,] mask => mask,
                 long[,] mask => ConvertLongArrayToIntArray(mask),
+                bool[,] mask => ConvertBoolArrayToIntArray(mask),
                 _ => null
             };
         }
@@ -104,6 +108,19 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
                     intArray[i, j] = Convert.ToInt32(longArray[i, j]);
+
+            return intArray;
+        }
+
+        private static int[,] ConvertBoolArrayToIntArray(bool[,] boolArray)
+        {
+            int rows = boolArray.GetLength(0);
+            int cols = boolArray.GetLength(1);
+            int[,] intArray = new int[rows, cols];
+
+            for (int i = 0; i < rows; i++)
+                for (int j = 0; j < cols; j++)
+                    intArray[i, j] = Convert.ToInt32(boolArray[i, j]);
 
             return intArray;
         }
