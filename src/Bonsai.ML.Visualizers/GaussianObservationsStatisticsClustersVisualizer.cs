@@ -11,7 +11,7 @@ using OxyPlot.Axes;
 using OxyPlot.WindowsForms;
 using MathNet.Numerics.LinearAlgebra;
 
-[assembly: TypeVisualizer(typeof(GaussianObservationsClustersVisualizer), Target = typeof(GaussianObservationsStatistics))]
+[assembly: TypeVisualizer(typeof(GaussianObservationsStatisticsClustersVisualizer), Target = typeof(GaussianObservationsStatistics))]
 
 namespace Bonsai.ML.Visualizers
 {
@@ -19,7 +19,7 @@ namespace Bonsai.ML.Visualizers
     /// Provides a type visualizer of <see cref="GaussianObservationsStatistics"/> to display how the observations 
     /// cluster with respect to the mean and covariance of each state of an HMM with gaussian observations model.
     /// </summary>
-    public class GaussianObservationsClustersVisualizer : DialogTypeVisualizer
+    public class GaussianObservationsStatisticsClustersVisualizer : DialogTypeVisualizer
     {
         private PlotView view;
         private PlotModel model;
