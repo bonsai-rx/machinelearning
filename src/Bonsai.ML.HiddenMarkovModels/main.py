@@ -2,7 +2,7 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 import threading
 import asyncio
-from ssm import HMM
+from ssm import HMM, util
 import numpy as np
 import autograd.numpy.random as npr
 from scipy.optimize import linear_sum_assignment
@@ -60,23 +60,19 @@ class HiddenMarkovModel(HMM):
         self.update_params(initial_state_distribution,
                            transitions_params, observations_params)
         
-        if observations_kwargs is None:
-            observations_kwargs = {}
-        
-        self.observations_kwargs = observations_kwargs
-
-        if transitions_kwargs is None:
-            transitions_kwargs = {}
-
-        self.transitions_kwargs = transitions_kwargs
-
         if self.transitions_model_type == "nn_recurrent":
             hidden_layer_sizes = np.array([len(layer) for layer in self.transitions.weights[1:]])
             self.transitions.hidden_layer_sizes = hidden_layer_sizes
-            if "nonlinearity" in self.transitions_kwargs:
-                self.transitions.nonlinearity_type = self.transitions_kwargs["nonlinearity"]
-            else:
-                self.transitions.nonlinearity_type = "relu"
+
+            def get_nonlinearity_type(func):
+                if func == util.relu:
+                    return "relu"
+                elif func == util.logistic:
+                    return "sigmoid"
+                else:
+                    return "tanh"
+                
+            self.transitions.nonlinearity_type = get_nonlinearity_type(self.transitions.nonlinearity)
 
         self.log_alpha = None
         self.state_probabilities = None
@@ -205,7 +201,7 @@ class HiddenMarkovModel(HMM):
 
                     if self.observations_model_type == "gaussian":
                         permutation = calculate_permutation(
-                            self.observation_params[0], self.params[2][0])
+                            self.observations_params[0], self.params[2][0])
                         super(HiddenMarkovModel, self).permute(permutation)
 
                     initial_state_distribution = None if vars_to_estimate[
