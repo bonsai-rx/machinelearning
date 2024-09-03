@@ -90,7 +90,14 @@ namespace Bonsai.ML.HiddenMarkovModels
                 observationsParamsArray = new object[nParams];
                 for (int i = 0; i < nParams; i++)
                 {
-                    observationsParamsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                    try
+                    {
+                        observationsParamsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                    }
+                    catch
+                    {
+                        observationsParamsArray[i] = JsonConvert.DeserializeObject(paramsJArray[i].ToString());
+                    }
                 }
             }
 
