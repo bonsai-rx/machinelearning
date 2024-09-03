@@ -107,7 +107,7 @@
         <Combinator xsi:type="rx:CombineLatest" />
       </Expression>
       <Expression xsi:type="Format">
-        <Format>vars_to_estimate={{"initial_state_distribution":{3},"transition_params":{4},"observation_params":{5}}},batch_size={0},max_iter={1},flush_data_between_batches={2}</Format>
+        <Format>vars_to_estimate={{"initial_state_distribution":{3},"transitions_params":{4},"observations_params":{5}}},batch_size={0},max_iter={1},flush_data_between_batches={2}</Format>
         <Selector>it.Item1, it.Item2, it.Item3,it.Item4,it.Item5,it.Item6</Selector>
       </Expression>
       <Expression xsi:type="Combinator">
