@@ -29,17 +29,47 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override ObservationsModelType ObservationsModelType => ObservationsModelType.Poisson;
 
         /// <inheritdoc/>
         [JsonProperty]
         public override object[] Params
         {
-            get { return [ LogLambdas ]; }
-            set
+            get => [ LogLambdas ];
+        }
+
+        /// <inheritdoc/>
+        public PoissonObservations () : base()
+        {
+        }
+
+        /// <inheritdoc/>
+        public PoissonObservations (params object[] kwargs) : base(kwargs)
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckParams(params object[] @params)
+        {
+            if (@params is not null && @params.Length != 1)
             {
-                LogLambdas = (double[,])value[0];
-                UpdateString();
+                throw new ArgumentException($"The {nameof(PoissonObservations)} operator requires exactly one parameter: {nameof(LogLambdas)}.");
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateParams(params object[] @params)
+        {
+            LogLambdas = (double[,])@params[0];
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckKwargs(params object[] kwargs)
+        {
+            if (kwargs is null || kwargs.Length != 0)
+            {
+                throw new ArgumentException($"The {nameof(PoissonObservations)} operator requires exactly zero constructor arguments.");
             }
         }
 

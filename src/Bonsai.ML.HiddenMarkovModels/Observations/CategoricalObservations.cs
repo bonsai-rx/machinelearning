@@ -23,7 +23,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// The number of categories in the observations.
         /// </summary>
         [Description("The number of categories in the observations.")]
-        [JsonProperty]
         public int Categories { get; set; } = 2; 
 
         /// <summary>
@@ -36,52 +35,72 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override ObservationsModelType ObservationsModelType => ObservationsModelType.Categorical;
 
         /// <inheritdoc/>
         [JsonProperty]
         public override object[] Params
         {
-            get =>[ Logits ];
-            set
-            {
-                Logits = (double[,,])value[0];
-                UpdateString();
-            }
+            get => [ Logits ];
         }
 
         /// <inheritdoc/>
         [JsonProperty]
+        [XmlIgnore]
+        [Browsable(false)]
         public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
             ["C"] = Categories,
         };
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CategoricalObservations"/> class.
-        /// </summary>
-        public CategoricalObservations (params object[] args) : base(args)
+        /// <inheritdoc/>
+        [XmlIgnore]
+        [Browsable(false)]
+        public static new string[] KwargsArray => [ "C" ];
+
+        /// <inheritdoc/>
+        public CategoricalObservations() : base()
         {
         }
 
         /// <inheritdoc/>
-        protected override bool CheckConstructorArgs(params object[] args)
+        public CategoricalObservations (params object[] kwargs) : base(kwargs)
         {
-            if (args is null || args.Length != 1)
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckKwargs(params object[] kwargs)
+        {
+            if (kwargs is null || kwargs.Length != 1)
             {
-                throw new ArgumentException("The CategoricalObservations operator requires a single argument specifying the number of categories.");
+                throw new ArgumentException($"The {nameof(CategoricalObservations)} operator requires exactly one keyword argument: {nameof(Categories)}.");
             }
-            return true;
         }
 
         /// <inheritdoc/>
-        protected override void UpdateKwargs(params object[] args)
+        protected override void UpdateKwargs(params object[] kwargs)
         {
-            Categories = args[0] switch
+            Categories = kwargs[0] switch
             {
                 int c => c,
                 var c => Convert.ToInt32(c),
             };
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckParams(params object[] @params)
+        {
+            if (@params is not null && @params.Length != 1)
+            {
+                throw new ArgumentException($"The {nameof(CategoricalObservations)} operator requires exactly one parameter: {nameof(Logits)}.");
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateParams(params object[] @params)
+        {
+            Logits = (double[,,])@params[0];
         }
 
         /// <summary>

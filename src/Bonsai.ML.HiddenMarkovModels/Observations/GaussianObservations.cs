@@ -35,6 +35,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override ObservationsModelType ObservationsModelType => ObservationsModelType.Gaussian;
 
         /// <inheritdoc/>
@@ -42,11 +43,40 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         public override object[] Params
         {
             get => [ Mus, SqrtSigmas ];
-            set
+        }
+
+        /// <inheritdoc/>
+        public GaussianObservations () : base()
+        {
+        }
+
+        /// <inheritdoc/>
+        public GaussianObservations (params object[] kwargs) : base(kwargs)
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckParams(params object[] @params)
+        {
+            if (@params is not null && @params.Length != 2)
             {
-                Mus = (double[,])value[0];
-                SqrtSigmas = (double[,,])value[1];
-                UpdateString();
+                throw new ArgumentException($"The {nameof(GaussianObservations)} operator requires exactly two parameters: {nameof(Mus)} and {nameof(SqrtSigmas)}.");
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateParams(params object[] @params)
+        {
+            Mus = (double[,])@params[0];
+            SqrtSigmas = (double[,,])@params[1];
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckKwargs(params object[] kwargs)
+        {
+            if (kwargs is null || kwargs.Length != 0)
+            {
+                throw new ArgumentException($"The {nameof(GaussianObservations)} operator requires exactly zero constructor arguments.");
             }
         }
 

@@ -28,18 +28,48 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override ObservationsModelType ObservationsModelType => ObservationsModelType.Bernoulli;
 
         /// <inheritdoc/>
         [JsonProperty]
-         public override object[] Params
+        public override object[] Params
         {
-            get { return [ LogitPs ]; }
-            set 
-            { 
-                LogitPs = (double[,])value[0];
-                UpdateString();
+            get => [ LogitPs ];
+        }
+
+        /// <inheritdoc/>
+        public BernoulliObservations () : base()
+        {
+        }
+
+        /// <inheritdoc/>
+        public BernoulliObservations (params object[] kwargs) : base(kwargs)
+        {
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckParams(params object[] @params)
+        {
+            if (@params is not null && @params.Length != 1)
+            {
+                throw new ArgumentException($"The {nameof(BernoulliObservations)} operator requires exactly one parameter: {nameof(LogitPs)}.");
             }
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckKwargs(params object[] kwargs)
+        {
+            if (kwargs is null || kwargs.Length != 0)
+            {
+                throw new ArgumentException($"The {nameof(BernoulliObservations)} operator requires exactly zero constructor arguments.");
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateParams(params object[] @params)
+        {
+            LogitPs = (double[,])@params[0];
         }
 
         /// <summary>

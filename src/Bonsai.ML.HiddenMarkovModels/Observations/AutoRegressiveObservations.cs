@@ -23,7 +23,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// The lags of the observations for each state.
         /// </summary>
         [Description("The lags of the observations for each state.")]
-        [JsonProperty]
         public int Lags { get; set; } = 1;
 
         /// <summary>
@@ -57,6 +56,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         /// <inheritdoc/>
         [JsonProperty]
         [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [Browsable(false)]
         public override ObservationsModelType ObservationsModelType => ObservationsModelType.AutoRegressive;
 
         /// <inheritdoc/>
@@ -64,38 +64,37 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         public override object[] Params
         {
             get =>[ As, Bs, Vs, SqrtSigmas ];
-            set
-            {
-                As = (double[,,])value[0];
-                Bs = (double[,])value[1];
-                Vs = (double[,,])value[2];
-                SqrtSigmas = (double[,,])value[3];
-                UpdateString();
-            }
         }
 
         /// <inheritdoc/>
         [JsonProperty]
+        [XmlIgnore]
         public override Dictionary<string, object> Kwargs => new Dictionary<string, object>
         {
             ["lags"] = Lags,
         };
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AutoRegressiveObservations"/> class.
-        /// </summary>
+        /// <inheritdoc/>
+        [XmlIgnore]
+        public static new string[] KwargsArray => [ "lags" ];
+
+        /// <inheritdoc/>
+        public AutoRegressiveObservations () : base()
+        {
+        }
+
+        /// <inheritdoc/>
         public AutoRegressiveObservations (params object[] args) : base(args)
         {
         }
 
         /// <inheritdoc/>
-        protected override bool CheckConstructorArgs(params object[] args)
+        protected override void CheckKwargs(params object[] kwargs)
         {
-            if (args is null || args.Length != 1)
+            if (kwargs is null || kwargs.Length != 1)
             {
-                throw new ArgumentException("The AutoRegressiveObservations operator requires a single argument specifying the number of lags.");
+                throw new ArgumentException($"The AutoRegressiveObservations operator requires exactly one constructor argument: {nameof(Lags)}.");
             }
-            return true;
         }
 
         /// <inheritdoc/>
@@ -104,7 +103,44 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
             Lags = args[0] switch
             {
                 int lags => lags,
-                var lags => Convert.ToInt32(lags),
+                var lags => Convert.ToInt32(lags)
+            };
+        }
+
+        /// <inheritdoc/>
+        protected override void CheckParams(params object[] @params)
+        {
+            if (@params is not null && @params.Length != 4)
+            {
+                throw new ArgumentException($"The {nameof(AutoRegressiveObservations)} operator requires exactly four parameters: {nameof(As)}, {nameof(Bs)}, {nameof(Vs)}, and {nameof(SqrtSigmas)}.");
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void UpdateParams(params object[] @params)
+        {
+            As = @params[0] switch 
+            {
+                double[,,] As => As,
+                _ => null
+            };
+
+            Bs = @params[1] switch 
+            {
+                double[,] Bs => Bs,
+                _ => null
+            };
+
+            Vs = @params[2] switch 
+            {
+                double[,,] Vs => Vs,
+                _ => null
+            };
+
+            SqrtSigmas = @params[3] switch 
+            {
+                double[,,] SqrtSigmas => SqrtSigmas,
+                _ => null
             };
         }
 
