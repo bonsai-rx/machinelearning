@@ -131,15 +131,15 @@ namespace Bonsai.ML.HiddenMarkovModels
                 object[] transitionsConstructorArgs = null;
                 if (transitionsKwargsProperty is not null)
                 {
-                    var transitionsConstructorArray = (string[])transitionsKwargsProperty.GetValue(null);
-                    var transitionsConstructorArgsCount = transitionsConstructorArray.Length;
-                    if (transitionsConstructorArgsCount > 0)
+                    var transitionsConstructorKeys = (string[])transitionsKwargsProperty.GetValue(null);
+                    var transitionsConstructorKeysCount = transitionsConstructorKeys.Length;
+                    if (transitionsConstructorKeysCount > 0)
                     {
-                        transitionsConstructorArgs = new object[transitionsConstructorArgsCount];
+                        transitionsConstructorArgs = new object[transitionsConstructorKeysCount];
                         var transitionsPyObj = pyObject.GetAttr("transitions");
-                        for (int i = 0; i < transitionsConstructorArgsCount; i++)
+                        for (int i = 0; i < transitionsConstructorKeysCount; i++)
                         {
-                            transitionsConstructorArgs[i] = transitionsPyObj.GetArrayAttr(transitionsConstructorArray[i]);
+                            transitionsConstructorArgs[i] = transitionsPyObj.GetArrayAttr(transitionsConstructorKeys[i]);
                         }
                     }
                 }
