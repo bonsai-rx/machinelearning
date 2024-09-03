@@ -10,10 +10,19 @@ using System.Runtime.InteropServices;
 
 namespace Bonsai.ML.Python
 {
+    /// <summary>
+    /// Provides a set of static methods for working with NumPy arrays.
+    /// </summary>
     public static class NumpyHelper
     {
+        /// <summary>
+        /// Represents a NumPy array interface for interacting with <see cref="PyObject"/> representing NumPy arrays.
+        /// </summary>
         public class NumpyArrayInterface
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="NumpyArrayInterface"/> class.
+            /// </summary>
             public NumpyArrayInterface(PyObject obj)
             {
                 if (!IsNumPyArray(obj))
@@ -65,17 +74,35 @@ namespace Bonsai.ML.Python
                 NBytes = obj.GetAttr("nbytes").As<int>();
             }
 
+            /// <summary>
+            /// The memory address of the NumPy array data.
+            /// </summary>
             public readonly IntPtr Address;
 
+            /// <summary>
+            /// The C# data type representing the elements of the NumPy array.
+            /// </summary>
             public readonly Type DataType;
 
+            /// <summary>
+            /// The shape of the NumPy array.
+            /// </summary>
             public readonly long[] Shape;
 
+            /// <summary>
+            /// The number of bytes in the NumPy array.
+            /// </summary>
             public readonly int NBytes;
 
+            /// <summary>
+            /// A value indicating whether the NumPy array is C-style contiguous.
+            /// </summary>
             public readonly bool IsCStyleContiguous;
         }
 
+        /// <summary>
+        /// Converts a <see cref="PyObject"/> representing a NumPy array to a C# <see cref="Array"/>.
+        /// </summary>
         public static Array PyObjectToArray(PyObject array)
         {
             var info = new NumpyArrayInterface(array);
@@ -109,6 +136,9 @@ namespace Bonsai.ML.Python
             { "float64",    typeof(double)  },
         };
 
+        /// <summary>
+        /// Initializes the NumPy module and returns a reference to the module.
+        /// </summary>
         public static PyObject InitializeNumpy()
         {
             var np = Py.Import("numpy");
@@ -126,12 +156,18 @@ namespace Bonsai.ML.Python
             return np;
         }
 
+        /// <summary>
+        /// Checks if the <see cref="PyObject"/> is a type of NumPy array.
+        /// </summary>
         public static bool IsNumPyArray(PyObject obj)
         {
             dynamic numpy = np.Value;
             return numpy.ndarray.__instancecheck__(obj);
         }
 
+        /// <summary>
+        /// Gets the NumPy data type for the specified C# type.
+        /// </summary>
         public static PyObject GetNumpyDataType(Type type)
         {
             PyObject dtype;
@@ -143,6 +179,9 @@ namespace Bonsai.ML.Python
             return dtype;
         }
 
+        /// <summary>
+        /// Gets the C# data type for the specified NumPy data type.
+        /// </summary>
         public static Type GetCSharpDataType(string str)
         {
             Type type;
@@ -154,13 +193,18 @@ namespace Bonsai.ML.Python
             return type;
         }
 
+        /// <summary>
+        /// A custom type converter for NumPy data types.
+        /// </summary>
         public class NumpyDataTypes : StringConverter
         {
+            /// <inheritdoc/>
             public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
             {
                 return true;
             }
 
+            /// <inheritdoc/>
             public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
                 var dtypes = new List<string>
@@ -178,6 +222,7 @@ namespace Bonsai.ML.Python
                 return new StandardValuesCollection(dtypes);
             }
         }
+
 
         public class NumpyParser
         {
