@@ -44,6 +44,10 @@ class HiddenMarkovModel(HMM):
                 if key == "hidden_layer_sizes":
                     transition_kwargs[key] = tuple(value)
 
+            if "nonlinearity_type" in transition_kwargs.keys():
+                transition_kwargs["nonlinearity"] = value
+                transition_kwargs.pop(key)
+
         super(HiddenMarkovModel, self).__init__(
             K=self.num_states, 
             D=self.dimensions, 
@@ -69,8 +73,8 @@ class HiddenMarkovModel(HMM):
         if self.transitions_model_type == "nn_recurrent":
             hidden_layer_sizes = np.array([len(layer) for layer in self.transitions.weights[1:]])
             self.transitions.hidden_layer_sizes = hidden_layer_sizes
-            if "nonlinearity_type" in self.transition_kwargs:
-                self.transitions.nonlinearity_type = self.transition_kwargs["nonlinearity_type"]
+            if "nonlinearity" in self.transition_kwargs:
+                self.transitions.nonlinearity_type = self.transition_kwargs["nonlinearity"]
             else:
                 self.transitions.nonlinearity_type = "relu"
 
