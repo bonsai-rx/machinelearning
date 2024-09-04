@@ -8,7 +8,7 @@ The **Bonsai.ML** project is a collection of packages designed to integrate mach
     Provides common tools and functionality.
 
 - **Bonsai.ML.Python**
-    Provides common tools and functionality for packages to interface with ML Python packages.
+    Provides common tools and functionality for C# packages to interface with Python.
 
 ## Available Packages
 
