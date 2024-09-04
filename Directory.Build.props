@@ -16,12 +16,14 @@
     <RepositoryType>git</RepositoryType>
     <VersionPrefix>0.3.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <Content Include="..\..\LICENSE" PackagePath="/" />
     <Content Include="..\..\icon.png" PackagePath="/" />
     <None Include="..\..\README.md" Pack="True" PackagePath="/" />
+    <EmbeddedResource Include="..\..\elementIcon.svg" >
+      <LogicalName>$(RootNamespace).$(MSBuildProjectName).svg</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
