@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Collections.Generic;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch
@@ -36,9 +37,62 @@ namespace Bonsai.ML.Torch
         {
             return source.Select(value =>
             {
-                var tensor1 = value.Item1;
-                var tensor2 = value.Item2;
-                return cat([tensor1, tensor2], Dimension);
+                return cat([value.Item1, value.Item2], Dimension);
+            });
+        }
+
+        /// <summary>
+        /// Concatenates the input tensors along the specified dimension.
+        /// </summary>
+        public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor>> source)
+        {
+            return source.Select(value =>
+            {
+                return cat([value.Item1, value.Item2, value.Item3], Dimension);
+            });
+        }
+
+        /// <summary>
+        /// Concatenates the input tensors along the specified dimension.
+        /// </summary>
+        public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor>> source)
+        {
+            return source.Select(value =>
+            {
+                return cat([value.Item1, value.Item2, value.Item3, value.Item4], Dimension);
+            });
+        }
+
+        /// <summary>
+        /// Concatenates the input tensors along the specified dimension.
+        /// </summary>
+        public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor, Tensor>> source)
+        {
+            return source.Select(value =>
+            {
+                return cat([value.Item1, value.Item2, value.Item3, value.Item4, value.Item5], Dimension);
+            });
+        }
+
+        /// <summary>
+        /// Concatenates the input tensors along the specified dimension.
+        /// </summary>
+        public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor, Tensor, Tensor>> source)
+        {
+            return source.Select(value =>
+            {
+                return cat([value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6], Dimension);
+            });
+        }
+
+        /// <summary>
+        /// Concatenates the input tensors along the specified dimension.
+        /// </summary>
+        public IObservable<Tensor> Process(IObservable<IEnumerable<Tensor>> source)
+        {
+            return source.Select(value =>
+            {
+                return cat(value.ToList(), Dimension);
             });
         }
     }
