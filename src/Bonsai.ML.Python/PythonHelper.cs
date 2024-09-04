@@ -4,14 +4,30 @@ using System.Collections.Generic;
 
 namespace Bonsai.ML.Python
 {
+    /// <summary>
+    /// Provides a set of extension methods for working with <see cref="PyObject"/> instances.
+    /// </summary>
     public static class PythonHelper
     {
+        /// <summary>
+        /// Gets the value of the specified array attribute from the Python object.
+        /// </summary>
+        /// <param name="pyObject">The Python object.</param>
+        /// <param name="attributeName">The name of the attribute to retrieve.</param>
+        /// <returns>The array value of the specified attribute.</returns>
         public static object GetArrayAttr(this PyObject pyObject, string attributeName)
         {
             using var attr = pyObject.GetAttr(attributeName);
             return ConvertPythonObjectToCSharp(attr);
         }
 
+        /// <summary>
+        /// Gets the value of the specified attribute from the Python object.
+        /// </summary>
+        /// <typeparam name="T">The type of the attribute to retrieve.</typeparam>
+        /// <param name="pyObject">The Python object.</param>
+        /// <param name="attributeName">The name of the attribute to retrieve.</param>
+        /// <returns>The value of the specified attribute.</returns>
         public static T GetAttr<T>(this PyObject pyObject, string attributeName)
         {
             using var attr = pyObject.GetAttr(attributeName);
@@ -22,6 +38,11 @@ namespace Bonsai.ML.Python
             return attr.As<T>();
         }
 
+        /// <summary>
+        /// Converts the specified Python object to a C# object.
+        /// </summary>
+        /// <param name="pyObject">The Python object to convert.</param>
+        /// <returns>The C# object representation of the Python object.</returns>
         public static object ConvertPythonObjectToCSharp(PyObject pyObject)
         {
             if (pyObject == null || pyObject.IsNone())
