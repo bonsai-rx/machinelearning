@@ -13,5 +13,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Data\Bonsai.ML.Data.csproj" />
   </ItemGroup>
 </Project>
