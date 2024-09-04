@@ -7,7 +7,7 @@ namespace Bonsai.ML.Torch.Helpers
     /// <summary>
     /// Provides helper methods for working with tensor data types.
     /// </summary>
-    public class TensorDataTypeHelper
+    public class TensorDataTypeLookup
     {
         private static readonly Dictionary<TensorDataType, (Type Type, string StringValue)> _lookup = new Dictionary<TensorDataType, (Type, string)>
         {
