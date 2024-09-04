@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Bonsai.ML.Python;
+using Bonsai.ML.Data;
 using System.Xml.Serialization;
 using System.Linq;
 using System.Reactive.Linq;
@@ -119,7 +119,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                         paramsStringBuilder.Clear();
                         break;
                     }
-                    var arrString = param is Array array ? NumpyHelper.NumpyParser.ParseArray(array) : param.ToString();
+                    var arrString = param is Array array ? ArrayHelper.SerializeArrayToJson(array) : param.ToString();
                     paramsStringBuilder.Append($"{arrString},");
                 }
 
@@ -135,7 +135,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 StringBuilder.Append($",{ModelName}_kwargs={{");
                 foreach (var kp in Kwargs) {
                     StringBuilder.Append($"\"{kp.Key}\":{(kp.Value is null ? "None" 
-                        : kp.Value is Array ? NumpyHelper.NumpyParser.ParseArray((Array)kp.Value)
+                        : kp.Value is Array array ? ArrayHelper.SerializeArrayToJson(array)
                         : kp.Value is string ? $"\"{kp.Value}\""
                         : kp.Value)},");
                 }

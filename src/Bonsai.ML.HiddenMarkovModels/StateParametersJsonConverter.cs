@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using Bonsai.ML.HiddenMarkovModels.Observations;
 using Bonsai.ML.HiddenMarkovModels.Transitions;
-using Bonsai.ML.Python;
+using Bonsai.ML.Data;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -51,7 +51,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     try
                     {
-                        transitionsParamsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                        transitionsParamsArray[i] = ArrayHelper.ParseString(paramsJArray[i].ToString(), typeof(double));
                     }
                     catch
                     {
@@ -92,7 +92,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     try
                     {
-                        observationsParamsArray[i] = NumpyHelper.NumpyParser.ParseString(paramsJArray[i].ToString(), typeof(double));
+                        observationsParamsArray[i] = ArrayHelper.ParseString(paramsJArray[i].ToString(), typeof(double));
                     }
                     catch
                     {

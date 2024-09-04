@@ -1,15 +1,13 @@
 using System.ComponentModel;
 using System;
 using System.Reactive.Linq;
-using System.Reflection;
 using Python.Runtime;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Bonsai.ML.HiddenMarkovModels.Observations;
 using Bonsai.ML.HiddenMarkovModels.Transitions;
-using System.Collections.Generic;
-using System.Linq;
 using Bonsai.ML.Python;
+using Bonsai.ML.Data;
 
 namespace Bonsai.ML.HiddenMarkovModels
 {
@@ -191,7 +189,7 @@ namespace Bonsai.ML.HiddenMarkovModels
 
             if (InitialStateDistribution != null)
             {
-                StringBuilder.Append($"initial_state_distribution={NumpyHelper.NumpyParser.ParseArray(InitialStateDistribution)},");
+                StringBuilder.Append($"initial_state_distribution={ArrayHelper.SerializeToJson(InitialStateDistribution)},");
             }
 
             if (Transitions != null)

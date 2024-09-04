@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
+using Bonsai.ML.Data;
 using Bonsai.ML.Python;
 
 namespace Bonsai.ML.HiddenMarkovModels.Transitions
@@ -29,8 +30,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         [Description("The mask which gets applied to the transition matrix to prohibit certain transitions. It must be written in JSON format as an int[,] with the same shape as the transition matrix (nStates x nStates). For example, the mask [[1, 0], [1, 1]] is valid and would prohibit transitions from state 0 to state 1.")]
         public string TransitionMask
         {
-            get => transitionMask != null ? NumpyHelper.NumpyParser.ParseArray(transitionMask) : "";
-            set => transitionMask = (int[,])NumpyHelper.NumpyParser.ParseString(value, typeof(int));
+            get => transitionMask != null ? ArrayHelper.SerializeToJson(transitionMask) : "";
+            set => transitionMask = (int[,])ArrayHelper.ParseString(value, typeof(int));
         }
 
         /// <summary>
