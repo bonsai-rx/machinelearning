@@ -13,7 +13,8 @@ namespace Bonsai.ML.Torch.Helpers
     /// </summary>
     public static class OpenCVHelper
     {
-        private static Dictionary<ScalarType, (IplDepth IplDepth, Depth Depth)> bitDepthLookup = new Dictionary<ScalarType, (IplDepth, Depth)> {
+        private static Dictionary<ScalarType, (IplDepth IplDepth, Depth Depth)> bitDepthLookup = new Dictionary<ScalarType, (IplDepth, Depth)> 
+        {
             { ScalarType.Byte, (IplDepth.U8, Depth.U8) },
             { ScalarType.Int16, (IplDepth.S16, Depth.S16) },
             { ScalarType.Int32, (IplDepth.S32, Depth.S32) },
@@ -55,12 +56,16 @@ namespace Bonsai.ML.Torch.Helpers
             fixed (long* dimensionsPtr = dimensions)
             {
                 IntPtr tensorHandle = THSTensor_new(tensorDataPtr, deleter, (IntPtr)dimensionsPtr, dimensions.Length, (sbyte)dtype, (sbyte)dtype, 0, 0, false);
-                if (tensorHandle == IntPtr.Zero) {
+                if (tensorHandle == IntPtr.Zero) 
+                {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                     tensorHandle = THSTensor_new(tensorDataPtr, deleter, (IntPtr)dimensionsPtr, dimensions.Length, (sbyte)dtype, (sbyte)dtype, 0, 0, false);
                 }
-                if (tensorHandle == IntPtr.Zero) { CheckForErrors(); }
+                if (tensorHandle == IntPtr.Zero) 
+                {
+                    CheckForErrors(); 
+                }
                 var output = Tensor.UnsafeCreateTensor(tensorHandle);
                 return output;
             }
