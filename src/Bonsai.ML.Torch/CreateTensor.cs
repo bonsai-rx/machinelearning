@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Xml.Serialization;
 using Bonsai.Expressions;
 using static TorchSharp.torch;
+using Bonsai.ML.Data;
+using Bonsai.ML.Torch.Helpers;
 
 namespace Bonsai.ML.Torch
 {
@@ -188,7 +190,7 @@ namespace Bonsai.ML.Torch
         /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
-            var returnType = Helpers.TensorDataTypeHelper.GetTypeFromTensorDataType(scalarType);
+            var returnType = TensorDataTypeLookup.GetTypeFromTensorDataType(scalarType);
             var argTypes = arguments.Select(arg => arg.Type).ToArray();
 
             var methodInfoArgumentTypes = new Type[] {
@@ -207,7 +209,7 @@ namespace Bonsai.ML.Torch
                         .GetGenericArguments()[0]
                 ) : methods.FirstOrDefault(m => !m.IsGenericMethod);
 
-            var tensorValues = Helpers.DataHelper.ParseString(values, returnType);
+            var tensorValues = ArrayHelper.ParseString(values, returnType);
             var buildTensor = tensorValues is Array arrayValues ? BuildTensorFromArray(arrayValues, returnType) : BuildTensorFromScalarValue(tensorValues, returnType);
             var methodArguments = arguments.Count() == 0 ? [ buildTensor ] : arguments.Concat([ buildTensor ]);
 
@@ -221,8 +223,8 @@ namespace Bonsai.ML.Torch
             }
             finally
             {
-                values = Helpers.DataHelper.SerializeData(tensorValues).Replace("False", "false").Replace("True", "true");
-                scalarType = Helpers.TensorDataTypeHelper.GetTensorDataTypeFromType(returnType);
+                values = ArrayHelper.SerializeToJson(tensorValues).ToLower();
+                scalarType = TensorDataTypeLookup.GetTensorDataTypeFromType(returnType);
             }
         }
 
