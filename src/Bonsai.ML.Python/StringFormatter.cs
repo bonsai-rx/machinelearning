@@ -76,93 +76,68 @@ namespace Bonsai.ML.Python
 
             if (type.IsArray)
             {
-                return CreateArrayHandler(type);
+                return (obj, sb) =>
+                {
+                    var array = (Array)obj;
+                    sb.Append('[');
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        if (i > 0) sb.Append(", ");
+                        ConvertCSharpToPythonStringInternal(array.GetValue(i), sb);
+                    }
+                    sb.Append(']');
+                };
             }
 
             if (typeof(IList).IsAssignableFrom(type))
             {
-                return CreateListHandler(type);
+                return (obj, sb) =>
+                {
+                    var list = (IList)obj;
+                    sb.Append('[');
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (i > 0) sb.Append(", ");
+                        ConvertCSharpToPythonStringInternal(list[i], sb);
+                    }
+                    sb.Append(']');
+                };
             }
 
             if (typeof(IDictionary).IsAssignableFrom(type))
             {
-                return CreateDictionaryHandler(type);
+                return (obj, sb) =>
+                {
+                    var dict = (IDictionary)obj;
+                    sb.Append('{');
+                    bool first = true;
+                    foreach (DictionaryEntry entry in dict)
+                    {
+                        if (!first) sb.Append(", ");
+                        ConvertCSharpToPythonStringInternal(entry.Key, sb);
+                        sb.Append(": ");
+                        ConvertCSharpToPythonStringInternal(entry.Value, sb);
+                        first = false;
+                    }
+                    sb.Append('}');
+                };
             }
 
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Tuple<,>))
             {
-                return CreateTupleHandler(type);
+                var itemProperties = type.GetProperties().Where(p => p.Name.StartsWith("Item")).OrderBy(p => p.Name).ToArray();
+                return (obj, sb) =>
+                {
+                    sb.Append('(');
+                    for (int i = 0; i < itemProperties.Length; i++)
+                    {
+                        if (i > 0) sb.Append(", ");
+                        ConvertCSharpToPythonStringInternal(itemProperties[i].GetValue(obj), sb);
+                    }
+                    sb.Append(')');
+                };
             }
 
-            return CreateCustomObjectHandler(type);
-        }
-
-        private Action<object, StringBuilder> CreateArrayHandler(Type type)
-        {
-            return (obj, sb) =>
-            {
-                var array = (Array)obj;
-                sb.Append('[');
-                for (int i = 0; i < array.Length; i++)
-                {
-                    if (i > 0) sb.Append(", ");
-                    ConvertCSharpToPythonStringInternal(array.GetValue(i), sb);
-                }
-                sb.Append(']');
-            };
-        }
-
-        private Action<object, StringBuilder> CreateListHandler(Type type)
-        {
-            return (obj, sb) =>
-            {
-                var list = (IList)obj;
-                sb.Append('[');
-                for (int i = 0; i < list.Count; i++)
-                {
-                    if (i > 0) sb.Append(", ");
-                    ConvertCSharpToPythonStringInternal(list[i], sb);
-                }
-                sb.Append(']');
-            };
-        }
-
-        private Action<object, StringBuilder> CreateDictionaryHandler(Type type)
-        {
-            return (obj, sb) =>
-            {
-                var dict = (IDictionary)obj;
-                sb.Append('{');
-                bool first = true;
-                foreach (DictionaryEntry entry in dict)
-                {
-                    if (!first) sb.Append(", ");
-                    ConvertCSharpToPythonStringInternal(entry.Key, sb);
-                    sb.Append(": ");
-                    ConvertCSharpToPythonStringInternal(entry.Value, sb);
-                    first = false;
-                }
-                sb.Append('}');
-            };
-        }
-
-        private Action<object, StringBuilder> CreateTupleHandler(Type type)
-        {
-            var itemProperties = type.GetProperties().Where(p => p.Name.StartsWith("Item")).OrderBy(p => p.Name).ToArray();
-            return (obj, sb) =>
-            {
-                sb.Append('(');
-                for (int i = 0; i < itemProperties.Length; i++)
-                {
-                    if (i > 0) sb.Append(", ");
-                    ConvertCSharpToPythonStringInternal(itemProperties[i].GetValue(obj), sb);
-                }
-                sb.Append(')');
-            };
-        }
-
-        private Action<object, StringBuilder> CreateCustomObjectHandler(Type type)
-        {
             if (!typeProperties.TryGetValue(type, out var properties))
             {
                 properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
