@@ -27,7 +27,7 @@ namespace Bonsai.ML.Python
             {
                 if (!IsNumPyArray(obj))
                 {
-                    throw new Exception("object is not a numpy array");
+                    throw new ArgumentException($"Parameter: {nameof(obj)} is not a numpy array.");
                 }
                 var meta = obj.GetAttr("__array_interface__");
                 IsCStyleContiguous = meta["strides"] == null;
@@ -68,7 +68,7 @@ namespace Bonsai.ML.Python
                         DataType = typeof(ulong);
                         break;
                     default:
-                        throw new Exception($"Type '{dtype}' not supported");
+                        throw new ArgumentException($"Type '{nameof(dtype)}' is not currently supported.");
                 }
                 Shape = obj.GetAttr("shape").As<long[]>();
                 NBytes = obj.GetAttr("nbytes").As<int>();
@@ -174,7 +174,7 @@ namespace Bonsai.ML.Python
             np_dtypes.TryGetValue(type, out dtype);
             if (dtype == null)
             {
-                throw new Exception($"type '{type}' not supported.");
+                throw new ArgumentException($"Argument: '{nameof(type)}' is not currently supported.");
             }
             return dtype;
         }
@@ -188,7 +188,7 @@ namespace Bonsai.ML.Python
             csharp_dtypes.TryGetValue(str, out type);
             if (type == null)
             {
-                throw new Exception($"type '{type}' not supported.");
+                throw new ArgumentException($"Could not determine data type from argument: '{nameof(str)}'. Data type is either incorrect or not supported.");
             }
             return type;
         }
