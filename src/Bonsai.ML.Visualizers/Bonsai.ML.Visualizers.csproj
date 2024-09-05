@@ -16,5 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.HiddenMarkovModels\Bonsai.ML.HiddenMarkovModels.csproj" />
   </ItemGroup>
 </Project>
