@@ -10,7 +10,7 @@ flowchart LR
 
     A(["Create Python Runtime"])
     B(["Load HMM Module"])
-    C(["Create HMM Model"])
+    C(["Create HMM"])
     D(["Generate Observations"])
     E(["Infer Hidden State"])
 
