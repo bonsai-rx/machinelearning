@@ -28,8 +28,13 @@ namespace Bonsai.ML.Visualizers
         private ToolStripLabel renderMethodLabel;
         private int _renderMethodSelectedIndex;
         private HeatMapRenderMethod renderMethod = HeatMapRenderMethod.Bitmap;
-
         private StatusStrip statusStrip;
+
+        private ToolStripTextBox maxValueTextBox;
+        private ToolStripLabel maxValueLabel;
+
+        private ToolStripTextBox minValueTextBox;
+        private ToolStripLabel minValueLabel;
 
         private int _numColors = 100;
 
@@ -91,22 +96,91 @@ namespace Bonsai.ML.Visualizers
 
             InitializeColorPalette();
             InitializeRenderMethod();
+            InitializeColorAxisValues();
 
             statusStrip = new StatusStrip
             {
-                Visible = false
+                Visible = false,
             };
 
-            statusStrip.Items.AddRange(new ToolStripItem[] {
+            var toolStripItems = new ToolStripItem[] {
                 paletteLabel,
                 paletteComboBox,
                 renderMethodLabel,
-                renderMethodComboBox
-            });
+                renderMethodComboBox,
+                maxValueLabel,
+                maxValueTextBox,
+                minValueLabel,
+                minValueTextBox
+            };
+
+            ToolStripDropDownButton visualizerPropertiesButton = new ToolStripDropDownButton("Visualizer Properties");
+
+            foreach (var item in toolStripItems)
+            {
+                visualizerPropertiesButton.DropDownItems.Add(item);
+            }
+
+            statusStrip.Items.Add(visualizerPropertiesButton);
 
             Controls.Add(statusStrip);
             view.MouseClick += new MouseEventHandler(onMouseClick);
             AutoScaleDimensions = new SizeF(6F, 13F);
+        }
+
+        private void InitializeColorAxisValues()
+        {
+            maxValueLabel = new ToolStripLabel
+            {
+                Text = "Maximum Value:",
+                AutoSize = true
+            };
+
+            maxValueTextBox = new ToolStripTextBox()
+            {
+                Name = "maxValue",
+                AutoSize = true,
+                Text = "auto",
+            };
+
+            maxValueTextBox.TextChanged += (sender, e) =>
+            {
+                if (double.TryParse(maxValueTextBox.Text, out double maxValue))
+                {
+                    colorAxis.Maximum = maxValue;
+                }
+                else
+                {
+                    colorAxis.Maximum = heatMapSeries.MaxValue;
+                }
+                UpdatePlot();
+            };
+
+            minValueLabel = new ToolStripLabel
+            {
+                Text = "Minimum Value:",
+                AutoSize = true
+            };
+
+            minValueTextBox = new ToolStripTextBox()
+            {
+                Name = "minValue",
+                AutoSize = true,
+                Text = "auto",
+            };
+
+            minValueTextBox.TextChanged += (sender, e) =>
+            {
+                if (double.TryParse(minValueTextBox.Text, out double minValue))
+                {
+                    colorAxis.Minimum = minValue;
+                }
+                else
+                {
+                    colorAxis.Minimum = heatMapSeries.MinValue;
+                }
+                UpdatePlot();
+            };
         }
 
         private void InitializeColorPalette()
@@ -119,8 +193,7 @@ namespace Bonsai.ML.Visualizers
 
             paletteComboBox = new ToolStripComboBox()
             {
-                Name = "palette",
-                AutoSize = true,
+                Name = "palette"
             };
 
             foreach (var value in Enum.GetValues(typeof(ColorPalette)))
@@ -162,8 +235,7 @@ namespace Bonsai.ML.Visualizers
 
             renderMethodComboBox = new ToolStripComboBox()
             {
-                Name = "renderMethod",
-                AutoSize = true,
+                Name = "renderMethod"
             };
 
             foreach (var value in Enum.GetValues(typeof(HeatMapRenderMethod)))
