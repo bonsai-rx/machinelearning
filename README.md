@@ -7,6 +7,9 @@ The **Bonsai.ML** project is a collection of packages designed to integrate mach
 - **Bonsai.ML**
     Provides common tools and functionality.
 
+- **Bonsai.ML.Design**
+    Provides common tools and functionality for visualizers and editor features.
+
 - **Bonsai.ML.Data**
     Provides common tools and functionality for working with data.
 
@@ -24,6 +27,9 @@ Facilitates inference using linear dynamical systems (LDS). It interfaces with t
 - **Bonsai.ML.LinearDynamicalSystems.LinearRegression** 
     Utilizes the Kalman Filter to perform online Bayesian linear regression.
 
+### Bonsai.ML.LinearDynamicalSystems.Design
+Visualizers and editor features for the LinearDynamicalSystems package.
+
 ### Bonsai.ML.HiddenMarkovModels
 Facilitates inference using Hidden Markov Models (HMMs). It interfaces with the [ssm](https://github.com/lindermanlab/ssm) package using the [Bonsai - Python Scripting](https://github.com/bonsai-rx/python-scripting) library.
 
@@ -32,15 +38,9 @@ Facilitates inference using Hidden Markov Models (HMMs). It interfaces with the 
 
 - **Bonsai.ML.HiddenMarkovModels.Transitions**
     Provides functionality for specifying different types of transition models.
-  
-### Bonsai.ML.Visualizers
-Graphing and plotting library for visualizing data.
 
-- **Bonsai.ML.Visualizers.LinearDynamicalSystems**
-    Visualizers specific to the LinearDynamicalSystems package.
-
-- **Bonsai.ML.Visualizers.HiddenMarkovModels**
-    Visualizers specific to the HiddenMarkovModels package.
+### Bonsai.ML.HiddenMarkovModels.Design
+Visualizers and editor feaures for the HiddenMarkovModels package.
 
 > [!NOTE]
 > Bonsai.ML packages can be installed through Bonsai's integrated package manager and are generally ready for immediate use. However, some packages may require additional installation steps. Refer to the specific package section for detailed installation guides and documentation.
