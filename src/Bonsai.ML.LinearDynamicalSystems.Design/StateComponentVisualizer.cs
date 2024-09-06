@@ -3,16 +3,16 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers.LinearDynamicalSystems;
-using Bonsai.ML.LinearDynamicalSystems;
+using Bonsai.ML.Design;
 using OxyPlot;
 using System.Reactive;
 using OxyPlot.Series;
 using System.Linq;
 
-[assembly: TypeVisualizer(typeof(StateComponentVisualizer), Target = typeof(StateComponent))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.StateComponentVisualizer), 
+    Target = typeof(Bonsai.ML.LinearDynamicalSystems.StateComponent))]
 
-namespace Bonsai.ML.Visualizers.LinearDynamicalSystems
+namespace Bonsai.ML.LinearDynamicalSystems.Design
 {
     /// <summary>
     /// Provides a type visualizer to display the state components of a Kalman Filter kinematics model.

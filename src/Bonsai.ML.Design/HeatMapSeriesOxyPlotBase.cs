@@ -7,7 +7,7 @@ using System;
 using OxyPlot.Axes;
 using System.Collections.Generic;
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Design
 {
     /// <summary>
     /// Provides a user control to display 2D data as a heatmap using OxyPlot.
@@ -43,12 +43,24 @@ namespace Bonsai.ML.Visualizers
         /// </summary>
         public event EventHandler PaletteComboBoxValueChanged;
 
+        /// <summary>
+        /// Gets the palette combobox.
+        /// </summary>
         public ToolStripComboBox PaletteComboBox => paletteComboBox;
 
+        /// <summary>
+        /// Event handler which can be used to hook into events generated when the render method combobox values have changed.
+        /// </summary>
         public event EventHandler RenderMethodComboBoxValueChanged;
 
+        /// <summary>
+        /// Gets the render method combobox.
+        /// </summary>
         public ToolStripComboBox RenderMethodComboBox => renderMethodComboBox;
 
+        /// <summary>
+        /// Gets the status strip control.
+        /// </summary>
         public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
@@ -273,6 +285,23 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
+        /// <summary>
+        /// Method to update the heatmap series with new data.
+        /// </summary>
+        /// <param name="data">The data to be displayed.</param>
+        public void UpdateHeatMapSeries(double[,] data)
+        {
+            heatMapSeries.Data = data;
+        }
+
+        /// <summary>
+        /// Method to update the heatmap series with new data.
+        /// </summary>
+        /// <param name="x0">The minimum x value.</param>
+        /// <param name="x1">The maximum x value.</param>
+        /// <param name="y0">The minimum y value.</param>
+        /// <param name="y1">The maximum y value.</param>
+        /// <param name="data">The data to be displayed.</param>
         public void UpdateHeatMapSeries(double x0, double x1, double y0, double y1, double[,] data)
         {
             heatMapSeries.X0 = x0;
@@ -282,6 +311,9 @@ namespace Bonsai.ML.Visualizers
             heatMapSeries.Data = data;
         }
 
+        /// <summary>
+        /// Method to update the plot.
+        /// </summary>
         public void UpdatePlot()
         {
             model.InvalidatePlot(true);
@@ -289,20 +321,20 @@ namespace Bonsai.ML.Visualizers
 
         private static readonly Dictionary<ColorPalette, Func<int, OxyPalette>> paletteLookup = new Dictionary<ColorPalette, Func<int, OxyPalette>>
         {
-            { ColorPalette.Cividis, (numColors) => OxyPalettes.Cividis(numColors) },
-            { ColorPalette.Inferno, (numColors) => OxyPalettes.Inferno(numColors) },
-            { ColorPalette.Viridis, (numColors) => OxyPalettes.Viridis(numColors) },
-            { ColorPalette.Magma, (numColors) => OxyPalettes.Magma(numColors) },
-            { ColorPalette.Plasma, (numColors) => OxyPalettes.Plasma(numColors) },
-            { ColorPalette.BlackWhiteRed, (numColors) => OxyPalettes.BlackWhiteRed(numColors) },
-            { ColorPalette.BlueWhiteRed, (numColors) => OxyPalettes.BlueWhiteRed(numColors) },
-            { ColorPalette.Cool, (numColors) => OxyPalettes.Cool(numColors) },
-            { ColorPalette.Gray, (numColors) => OxyPalettes.Gray(numColors) },
-            { ColorPalette.Hot, (numColors) => OxyPalettes.Hot(numColors) },
-            { ColorPalette.Hue, (numColors) => OxyPalettes.Hue(numColors) },
-            { ColorPalette.HueDistinct, (numColors) => OxyPalettes.HueDistinct(numColors) },
-            { ColorPalette.Jet, (numColors) => OxyPalettes.Jet(numColors) },
-            { ColorPalette.Rainbow, (numColors) => OxyPalettes.Rainbow(numColors) },
+            { ColorPalette.Cividis, OxyPalettes.Cividis },
+            { ColorPalette.Inferno, OxyPalettes.Inferno },
+            { ColorPalette.Viridis, OxyPalettes.Viridis },
+            { ColorPalette.Magma, OxyPalettes.Magma },
+            { ColorPalette.Plasma, OxyPalettes.Plasma },
+            { ColorPalette.BlackWhiteRed, OxyPalettes.BlackWhiteRed },
+            { ColorPalette.BlueWhiteRed, OxyPalettes.BlueWhiteRed },
+            { ColorPalette.Cool, OxyPalettes.Cool },
+            { ColorPalette.Gray, OxyPalettes.Gray },
+            { ColorPalette.Hot, OxyPalettes.Hot },
+            { ColorPalette.Hue, OxyPalettes.Hue },
+            { ColorPalette.HueDistinct, OxyPalettes.HueDistinct },
+            { ColorPalette.Jet, OxyPalettes.Jet },
+            { ColorPalette.Rainbow, OxyPalettes.Rainbow },
         };
     }
 }

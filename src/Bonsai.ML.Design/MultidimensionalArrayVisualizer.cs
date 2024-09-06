@@ -1,17 +1,13 @@
 using System;
 using System.Windows.Forms;
-using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
 
-[assembly: TypeVisualizer(typeof(MultidimensionalArrayVisualizer), Target = typeof(double[,]))]
-
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Design
 {
-
     /// <summary>
     /// Provides a type visualizer to display multi dimensional array data as a heatmap.
     /// </summary>
+    [TypeVisualizer(typeof(MultidimensionalArrayVisualizer), Target = typeof(double[,]))]
     public class MultidimensionalArrayVisualizer : DialogTypeVisualizer
     {
         /// <summary>

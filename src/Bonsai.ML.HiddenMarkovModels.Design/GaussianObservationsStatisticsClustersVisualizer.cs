@@ -3,19 +3,19 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers.HiddenMarkovModels;
-using Bonsai.ML.HiddenMarkovModels.Observations;
+using Bonsai.ML.Design;
 using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Axes;
 using OxyPlot.WindowsForms;
 
-[assembly: TypeVisualizer(typeof(GaussianObservationsStatisticsClustersVisualizer), Target = typeof(GaussianObservationsStatistics))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationsStatisticsClustersVisualizer),
+    Target = typeof(Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservationsStatistics))]
 
-namespace Bonsai.ML.Visualizers.HiddenMarkovModels
+namespace Bonsai.ML.HiddenMarkovModels.Design
 {
     /// <summary>
-    /// Provides a type visualizer of <see cref="GaussianObservationsStatistics"/> to display how the observations 
+    /// Provides a type visualizer of <see cref="Observations.GaussianObservationsStatistics"/> to display how the observations 
     /// cluster with respect to the mean and covariance of each state of an HMM with gaussian observations model.
     /// </summary>
     public class GaussianObservationsStatisticsClustersVisualizer : DialogTypeVisualizer
@@ -147,7 +147,7 @@ namespace Bonsai.ML.Visualizers.HiddenMarkovModels
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            if (value is GaussianObservationsStatistics gaussianObservationsStatistics)
+            if (value is Observations.GaussianObservationsStatistics gaussianObservationsStatistics)
             {
               
                 var statesCount = gaussianObservationsStatistics.Means.GetLength(0);

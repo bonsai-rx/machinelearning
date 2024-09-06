@@ -7,7 +7,7 @@ using System;
 using OxyPlot.Axes;
 using System.Collections;
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Design
 {
     /// <summary>
     /// Provides a user control to display time series data using OxyPlot.

@@ -1,4 +1,4 @@
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Design
 {
     internal enum ColorPalette
     {

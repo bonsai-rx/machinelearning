@@ -5,7 +5,7 @@ using OxyPlot.WindowsForms;
 using System.Drawing;
 using OxyPlot.Axes;
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Design
 {
     /// <summary>
     /// Provides a user control to display data as a bar plot using OxyPlot.

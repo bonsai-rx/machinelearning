@@ -2,14 +2,13 @@
 using System.Windows.Forms;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers.LinearDynamicalSystems;
-using Bonsai.ML.LinearDynamicalSystems.LinearRegression;
+using Bonsai.ML.Design;
 
-[assembly: TypeVisualizer(typeof(MultivariatePDFVisualizer), Target = typeof(MultivariatePDF))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.MultivariatePDFVisualizer), 
+    Target = typeof(Bonsai.ML.LinearDynamicalSystems.LinearRegression.MultivariatePDF))]
 
-namespace Bonsai.ML.Visualizers.LinearDynamicalSystems
+namespace Bonsai.ML.LinearDynamicalSystems.Design
 {
-
     /// <summary>
     /// Provides a type visualizer to display a multivariate probability distribution as a heatmap.
     /// </summary>
@@ -48,7 +47,7 @@ namespace Bonsai.ML.Visualizers.LinearDynamicalSystems
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            var pdf = (MultivariatePDF)value;
+            var pdf = (LinearRegression.MultivariatePDF)value;
             Plot.UpdateHeatMapSeries(
                 pdf.GridParameters.X0 - (1 / 2 * pdf.GridParameters.XSteps),
                 pdf.GridParameters.X1 - (1 / 2 * pdf.GridParameters.XSteps),

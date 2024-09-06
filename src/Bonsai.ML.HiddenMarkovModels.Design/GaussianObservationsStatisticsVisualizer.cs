@@ -3,17 +3,17 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers.HiddenMarkovModels;
-using Bonsai.ML.HiddenMarkovModels.Observations;
+using Bonsai.ML.Design;
 using OxyPlot;
 using OxyPlot.Series;
 
-[assembly: TypeVisualizer(typeof(GaussianObservationStatisticsVisualizer), Target = typeof(GaussianObservationsStatistics))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationStatisticsVisualizer),
+    Target = typeof(Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservationsStatistics))]
 
-namespace Bonsai.ML.Visualizers.HiddenMarkovModels
+namespace Bonsai.ML.HiddenMarkovModels.Design
 {
     /// <summary>
-    /// Provides a type visualizer of <see cref="GaussianObservationsStatistics"/> to display the means and standard 
+    /// Provides a type visualizer of <see cref="Observations.GaussianObservationsStatistics"/> to display the means and standard 
     /// deviations of each state of an HMM with gaussian observations model.
     /// </summary>
     public class GaussianObservationStatisticsVisualizer : DialogTypeVisualizer
@@ -21,7 +21,7 @@ namespace Bonsai.ML.Visualizers.HiddenMarkovModels
         
         private BarSeriesOxyPlotBase Plot;
         private List<ErrorBarSeries> allBarSeries = null;
-        private GaussianObservationsStatistics shown = null;
+        private Observations.GaussianObservationsStatistics shown = null;
         
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -49,7 +49,7 @@ namespace Bonsai.ML.Visualizers.HiddenMarkovModels
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            if (value is GaussianObservationsStatistics statistics && statistics != shown)
+            if (value is Observations.GaussianObservationsStatistics statistics && statistics != shown)
             {
                 if (statistics.Means == null || statistics.StdDevs == null)
                 {
