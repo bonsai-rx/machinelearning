@@ -113,6 +113,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
             {
                 int[] layers => layers,
                 long[] layers => layers.Select(Convert.ToInt32).ToArray(),
+                IEnumerable<object> layers => layers.Select(Convert.ToInt32).ToArray(),
                 _ => null
             };
             try
@@ -130,7 +131,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
                     throw new ArgumentException($"The NeuralNetworkRecurrentTransitions operator requires a valid nonlinearity type. The provided value was: {kwargs[1]} which is neither a valid NonlinearityType nor a valid string representation of a nonlinearity type.");
                 }
             }
-
         }
 
         /// <inheritdoc/>
@@ -154,12 +154,14 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
             Weights = @params[1] switch 
             {
                 List<object> weights => weights.Select(weight => (double[,])weight).ToList(),
+                IEnumerable<object> weights => weights.Select(weight => weight as double[,]).ToList(),
                 _ => null
             };
 
             Biases = @params[2] switch 
             {
                 List<object> biases => biases.Select(bias => (double[])bias).ToList(),
+                IEnumerable<object> biases => biases.Select(bias => bias as double[]).ToList(),
                 _ => null
             };
         }
