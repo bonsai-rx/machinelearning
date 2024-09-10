@@ -49,14 +49,8 @@ namespace Bonsai.ML.HiddenMarkovModels
                 transitionsParamsArray = new object[nParams];
                 for (int i = 0; i < nParams; i++)
                 {
-                    try
-                    {
-                        transitionsParamsArray[i] = ArrayHelper.ParseString(paramsJArray[i].ToString(), typeof(double));
-                    }
-                    catch
-                    {
-                        transitionsParamsArray[i] = JsonConvert.DeserializeObject(paramsJArray[i].ToString());
-                    }
+                    transitionsParamsArray[i] = ArrayHelper.ParseToken(paramsJArray[i], typeof(double));
+
                 }
             }
 
@@ -90,14 +84,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 observationsParamsArray = new object[nParams];
                 for (int i = 0; i < nParams; i++)
                 {
-                    try
-                    {
-                        observationsParamsArray[i] = ArrayHelper.ParseString(paramsJArray[i].ToString(), typeof(double));
-                    }
-                    catch
-                    {
-                        observationsParamsArray[i] = JsonConvert.DeserializeObject(paramsJArray[i].ToString());
-                    }
+                    observationsParamsArray[i] = ArrayHelper.ParseToken(paramsJArray[i], typeof(double));
                 }
             }
 
