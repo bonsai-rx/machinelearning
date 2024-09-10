@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Bonsai.ML.Data;
+using Bonsai.ML.Python;
 using System.Xml.Serialization;
 using System.Linq;
 using System.Reactive.Linq;
@@ -115,12 +117,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 paramsStringBuilder.Append($",{ModelName}_params=(");
 
                 foreach (var param in Params) {
-                    if (param is null) {
-                        paramsStringBuilder.Clear();
-                        break;
-                    }
-                    var arrString = param is Array array ? ArrayHelper.SerializeArrayToJson(array) : param.ToString();
-                    paramsStringBuilder.Append($"{arrString},");
+                    paramsStringBuilder.Append(StringFormatter.FormatToPython(param));
                 }
 
                 if (paramsStringBuilder.Length > 0) {
@@ -132,15 +129,8 @@ namespace Bonsai.ML.HiddenMarkovModels
 
             if (Kwargs is not null && Kwargs.Count > 0)
             {
-                StringBuilder.Append($",{ModelName}_kwargs={{");
-                foreach (var kp in Kwargs) {
-                    StringBuilder.Append($"\"{kp.Key}\":{(kp.Value is null ? "None" 
-                        : kp.Value is Array array ? ArrayHelper.SerializeArrayToJson(array)
-                        : kp.Value is string ? $"\"{kp.Value}\""
-                        : kp.Value)},");
-                }
-                StringBuilder.Remove(StringBuilder.Length - 1, 1);
-                StringBuilder.Append("}");   
+                StringBuilder.Append($",{ModelName}_kwargs=");
+                StringBuilder.Append(StringFormatter.FormatToPython(Kwargs));
             }
 
             var result = StringBuilder.ToString();
