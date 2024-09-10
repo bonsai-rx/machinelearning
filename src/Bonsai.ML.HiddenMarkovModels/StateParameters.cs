@@ -189,7 +189,7 @@ namespace Bonsai.ML.HiddenMarkovModels
 
             if (InitialStateDistribution != null)
             {
-                StringBuilder.Append($"initial_state_distribution={ArrayHelper.SerializeToJson(InitialStateDistribution)},");
+                StringBuilder.Append($"initial_state_distribution={StringFormatter.FormatToPython(InitialStateDistribution)},");
             }
 
             if (Transitions != null)
