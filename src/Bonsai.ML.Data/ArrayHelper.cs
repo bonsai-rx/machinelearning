@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -37,7 +38,7 @@ namespace Bonsai.ML.Data
         public static string SerializeArrayToJson(Array array)
         {
             StringBuilder sb = new StringBuilder();
-            SerializeArrayRecursive(array, sb, [0]);
+            SerializeArrayRecursive(array, sb, []);
             return sb.ToString();
         }
 
@@ -69,36 +70,91 @@ namespace Bonsai.ML.Data
 
         private static bool IsValidJson(string input)
         {
-            int squareBrackets = 0;
-            foreach (char c in input)
+            try
             {
-                if (c == '[') squareBrackets++;
-                else if (c == ']') squareBrackets--;
+                JToken.Parse(input);
+                return true;
             }
-            return squareBrackets == 0;
+            catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
-        /// Parses the input JSON string into an object of the specified type. If the input is a JSON array, the method will attempt to parse it into an array of the specified type. 
+        /// Parses the input string into an object of the specified type. If the input is a JSON array, the method will attempt to parse it into a list or array of the specified type. 
         /// </summary>
-        /// <param name="input">The JSON string to parse.</param>
+        /// <param name="input">The string to parse.</param>
         /// <param name="dtype">The data type of the object.</param>
-        /// <returns>An object of the specified type containing the parsed JSON data.</returns>
-        public static object ParseString(string input, Type dtype = null)
+        /// <returns>An object of the specified type containing the parsed data.</returns>
+        public static object ParseString(string input, Type dtype)
         {
             if (!IsValidJson(input))
             {
                 throw new ArgumentException($"Parameter: {nameof(input)} is not valid JSON.");
             }
-            var obj = JsonConvert.DeserializeObject<JToken>(input);
-            int depth = ParseDepth(obj);
-            if (depth == 0)
+
+            var token = JsonConvert.DeserializeObject<JToken>(input);
+            
+            if (token is JValue value)
             {
-                return Convert.ChangeType(input, dtype);
+                return Convert.ChangeType(value, dtype);
             }
-            int[] dimensions = ParseDimensions(obj, depth);
+
+            var output = ParseToken(token, dtype);
+            Console.WriteLine("Output: " + output);
+
+            return output;
+        }
+
+        /// <summary>
+        /// Parses the input token into an object of the specified type. If the input is a JSON array, the method will attempt to parse it into a list or array of the specified type.
+        /// </summary>
+        /// <param name="token">The token to parse.</param>
+        /// <param name="dtype">The data type of the object.</param>
+        /// <returns>An object of the specified type containing the parsed data.</returns>
+        public static object ParseToken(JToken token, Type dtype)
+        {
+            if (token is JValue value)
+            {
+                return Convert.ChangeType(value, dtype);
+            }
+            else if (token is JArray)
+            {
+                if (token[0] is JValue)
+                {
+                    if (token.All(item => item is JValue))
+                    {
+                        int depth = ParseDepth(token);
+                        return ParseArray(token, dtype, depth);
+                    }
+                    return CreateList(token, dtype);
+                }
+                else
+                {
+                    var subArrayDimensions = token.Cast<JArray>().Select(value => {
+                        var depth = ParseDepth(value);
+                        return ParseDimensions(value, depth);
+                    }).ToList();
+
+                    if (subArrayDimensions.All(s => s.SequenceEqual(subArrayDimensions[0])))
+                    {
+                        return ParseArray(token, dtype, subArrayDimensions[0].Count());
+                    }
+                    return CreateList(token, dtype);
+                }
+            }
+            else
+            {
+                throw new ArgumentException($"Error parsing parameter: {nameof(token)}. JSON input is not supported.");
+            }
+        }
+
+        private static object ParseArray(JToken token, Type dtype, int depth)
+        {
+            int[] dimensions = ParseDimensions(token, depth);
             var resultArray = Array.CreateInstance(dtype, dimensions);
-            PopulateArray(obj, resultArray, [0], dtype);
+            PopulateArray(token, resultArray, [], dtype);
             return resultArray;
         }
 
@@ -113,26 +169,25 @@ namespace Bonsai.ML.Data
 
         private static int[] ParseDimensions(JToken token, int depth, int currentLevel = 0)
         {
-            if (depth == 0 || !(token is JArray))
+            if (depth == 0 || token is not JArray)
             {
                 return [0];
             }
 
-            List<int> dimensions = new List<int>();
-            JToken current = token;
+            List<int> dimensions = [];
+            var current = token;
 
-            while (current != null && current is JArray)
+            while (current != null && current is JArray currentArray)
             {
-                JArray currentArray = current as JArray;
                 dimensions.Add(currentArray.Count);
                 if (currentArray.Count > 0)
                 {
-                    if (currentArray.Any(item => !(item is JArray)) && currentArray.Any(item => item is JArray) || currentArray.All(item => item is JArray) && currentArray.Any(item => ((JArray)item).Count != ((JArray)currentArray.First()).Count))
+                    if (currentArray.Any(item => item is not JArray) && currentArray.Any(item => item is JArray) || currentArray.All(item => item is JArray) && currentArray.Any(item => ((JArray)item).Count != ((JArray)currentArray.First()).Count))
                     {
                         throw new ArgumentException($"Error parsing parameter: {nameof(token)}. Array dimensions are inconsistent.");
                     }
 
-                    if (!(currentArray.First() is JArray))
+                    if (currentArray.First() is not JArray)
                     {
                         if (!currentArray.All(item => double.TryParse(item.ToString(), out _)) && !currentArray.All(item => bool.TryParse(item.ToString(), out _)))
                         {
@@ -140,7 +195,6 @@ namespace Bonsai.ML.Data
                         }
                     }
                 }
-
                 current = currentArray.Count > 0 ? currentArray[0] : null;
             }
 
@@ -178,6 +232,50 @@ namespace Bonsai.ML.Data
             {
                 var values = Convert.ChangeType(token, dtype);
                 array.SetValue(values, indices);
+            }
+        }
+
+        private static object CreateList(JToken token, Type dtype)
+        {
+            var listType = typeof(List<>).MakeGenericType(DetermineListType(token, dtype));
+            var list = (IList)Activator.CreateInstance(listType);
+            
+            foreach (var item in token)
+            {
+                var result = ParseToken(item, dtype);
+                list.Add(result);
+            }
+            
+            return list;
+        }
+
+        private static Type DetermineListType(JToken token, Type type)
+        {
+            if (token.All(item => item is JValue))
+            {
+                return type;
+            }
+            else if (token.All(item => item is JArray))
+            {
+                var subArrayDepth = token.Cast<JArray>().Select(value => ParseDepth(value)).ToList();
+
+                if (subArrayDepth.All(s => s == subArrayDepth[0]))
+                {
+                    var rank = subArrayDepth[0];
+                    if (rank > 1)
+                    {
+                        return type.MakeArrayType(rank);
+                    }
+                    return type.MakeArrayType();
+                }
+                else
+                {
+                    return typeof(List<>).MakeGenericType(DetermineListType(token[0], type));
+                }
+            }
+            else
+            {
+                return typeof(object);
             }
         }
     }
