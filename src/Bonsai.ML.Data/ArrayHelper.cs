@@ -14,75 +14,8 @@ namespace Bonsai.ML.Data
     public static class ArrayHelper
     {
         /// <summary>
-        /// Serializes the input data into a JSON string representation.
-        /// </summary>
-        /// <param name="data">The data to serialize.</param>
-        /// <returns>A JSON string representation of the input data.</returns>
-        public static string SerializeToJson(object data)
-        {
-            if (data is Array array)
-            {
-                return SerializeArrayToJson(array);
-            }
-            else
-            {
-                return JsonConvert.SerializeObject(data);
-            }
-        }
-
-        /// <summary>
-        /// Serializes the input array into a JSON string representation.
-        /// </summary>
-        /// <param name="array">The array to serialize.</param>
-        /// <returns>A JSON string representation of the input array.</returns>
-        public static string SerializeArrayToJson(Array array)
-        {
-            StringBuilder sb = new StringBuilder();
-            SerializeArrayRecursive(array, sb, []);
-            return sb.ToString();
-        }
-
-        private static void SerializeArrayRecursive(Array array, StringBuilder sb, int[] indices)
-        {
-            if (indices.Length < array.Rank)
-            {
-                sb.Append("[");
-                int length = array.GetLength(indices.Length);
-                for (int i = 0; i < length; i++)
-                {
-                    int[] newIndices = new int[indices.Length + 1];
-                    indices.CopyTo(newIndices, 0);
-                    newIndices[indices.Length] = i;
-                    SerializeArrayRecursive(array, sb, newIndices);
-                    if (i < length - 1)
-                    {
-                        sb.Append(", ");
-                    }
-                }
-                sb.Append("]");
-            }
-            else
-            {
-                object value = array.GetValue(indices);
-                sb.Append(value.ToString());
-            }
-        }
-
-        private static bool IsValidJson(string input)
-        {
-            try
-            {
-                JToken.Parse(input);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Parses the input string into an object of the specified type. If the input is a JSON array, the method will attempt to parse it into a list or array of the specified type. 
+        /// Parses the input string into an object of the specified type. 
+        /// If the input is a JSON array, the method will attempt to parse it into a list or array of the specified type. 
         /// </summary>
         /// <param name="input">The string to parse.</param>
         /// <param name="dtype">The data type of the object.</param>
@@ -107,8 +40,22 @@ namespace Bonsai.ML.Data
             return output;
         }
 
+        private static bool IsValidJson(string input)
+        {
+            try
+            {
+                JToken.Parse(input);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         /// <summary>
-        /// Parses the input token into an object of the specified type. If the input is a JSON array, the method will attempt to parse it into a list or array of the specified type.
+        /// Parses the input token into an object of the specified type. 
+        /// If the input is a JSON array, the method will attempt to parse it into a list or array of the specified type.
         /// </summary>
         /// <param name="token">The token to parse.</param>
         /// <param name="dtype">The data type of the object.</param>
