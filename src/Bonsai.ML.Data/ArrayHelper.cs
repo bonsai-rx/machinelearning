@@ -35,7 +35,6 @@ namespace Bonsai.ML.Data
             }
 
             var output = ParseToken(token, dtype);
-            Console.WriteLine("Output: " + output);
 
             return output;
         }
