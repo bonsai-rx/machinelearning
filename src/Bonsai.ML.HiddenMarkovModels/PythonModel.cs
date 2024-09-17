@@ -111,20 +111,15 @@ namespace Bonsai.ML.HiddenMarkovModels
             // StringBuilder.Clear();
             StringBuilder.Append($"{ModelName}_model_type=\"{ModelType}\"");
 
-            if (Params != null && Params.Length > 0 && Params.All(p => p != null)) 
+            if (Params is not null && Params.Length > 0 && Params.All(param => param is not null)) 
             {
-                var paramsStringBuilder = new StringBuilder();
-                paramsStringBuilder.Append($",{ModelName}_params=(");
+                StringBuilder.Append($",{ModelName}_params=(");
 
                 foreach (var param in Params) {
-                    paramsStringBuilder.Append(StringFormatter.FormatToPython(param));
+                    StringBuilder.Append(StringFormatter.FormatToPython(param));
+                    StringBuilder.Append(",");
                 }
-
-                if (paramsStringBuilder.Length > 0) {
-                    paramsStringBuilder.Remove(paramsStringBuilder.Length - 1, 1);
-                    paramsStringBuilder.Append(")");
-                    StringBuilder.Append(paramsStringBuilder);
-                }
+                StringBuilder.Append(")");
             }
 
             if (Kwargs is not null && Kwargs.Count > 0)
