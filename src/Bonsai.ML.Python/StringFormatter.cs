@@ -16,6 +16,9 @@ namespace Bonsai.ML.Python
         private readonly Dictionary<Type, PropertyInfo[]> typeProperties;
         private readonly StringBuilder sb;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringFormatter"/> class.
+        /// </summary>
         public StringFormatter()
         {
             typeHandlers = new Dictionary<Type, Action<object, StringBuilder, int>>();
