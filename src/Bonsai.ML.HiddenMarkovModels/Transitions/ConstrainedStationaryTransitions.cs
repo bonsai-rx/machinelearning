@@ -20,7 +20,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
     [JsonObject(MemberSerialization.OptIn)]
     public class ConstrainedStationaryTransitions : TransitionsModel
     {
-        private int[,] transitionMask = null;
+        private int[,] transitionMask = new int[,] { { 1, 1 }, { 1, 1 } };
 
         /// <summary>
         /// The mask which gets applied to the transition matrix to prohibit certain transitions. 
@@ -30,7 +30,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         [Description("The mask which gets applied to the transition matrix to prohibit certain transitions. It must be written in JSON format as an int[,] with the same shape as the transition matrix (nStates x nStates). For example, the mask [[1, 0], [1, 1]] is valid and would prohibit transitions from state 0 to state 1.")]
         public string TransitionMask
         {
-            get => transitionMask != null ? StringFormatter.FormatToPython(transitionMask) : "";
+            get => transitionMask != null ? StringFormatter.FormatToPython(transitionMask) : "[[1, 1], [1, 1]]";
             set => transitionMask = (int[,])ArrayHelper.ParseString(value, typeof(int));
         }
 
