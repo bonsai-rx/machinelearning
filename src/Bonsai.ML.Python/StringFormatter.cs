@@ -31,11 +31,24 @@ namespace Bonsai.ML.Python
         public string Format(object obj)
         {
             sb.Clear();
-            ConvertCSharpToPythonStringInternal(obj, sb, 0);
+            ConvertToPythonString(obj, sb, 0);
             return sb.ToString();
         }
 
-        private void ConvertCSharpToPythonStringInternal(object obj, StringBuilder sb, int depth)
+        /// <summary>
+        /// Formats the specified object into a string that is consistent with Python syntax.
+        /// </summary>
+        /// <param name="obj">The object to format.</param>
+        /// <returns>A string that is consistent with Python syntax.</returns>
+        public static string FormatToPython(object obj)
+        {
+            var sb = new StringBuilder();
+            var formatter = new StringFormatter();
+            formatter.ConvertToPythonString(obj, sb, 0);
+            return sb.ToString();
+        }
+
+        private void ConvertToPythonString(object obj, StringBuilder sb, int depth)
         {
             if (obj == null)
             {
@@ -57,45 +70,90 @@ namespace Bonsai.ML.Python
         private Action<object, StringBuilder, int> CreateTypeHandler(Type type)
         {
             if (type == typeof(string) || type == typeof(char))
+            {
                 return (obj, sb, _) => sb.Append('"').Append(obj).Append('"');
+            }
 
             if (type == typeof(bool))
+            {
                 return (obj, sb, _) => sb.Append(((bool)obj).ToString().ToLower());
+            }
 
             if (type == typeof(int) || type == typeof(double) || type == typeof(float) || type == typeof(long) || type == typeof(short) || type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong) || type == typeof(sbyte) || type == typeof(decimal))
+            {
                 return (obj, sb, _) => sb.Append(obj);
+            }
 
             if (type.IsArray)
-                return CreateArrayHandler(type);
+            {
+                return CreateArrayHandler();
+            }
 
             if (typeof(IList).IsAssignableFrom(type))
-                return CreateListHandler(type);
+            {
+                return CreateListHandler();
+            }
 
             if (typeof(IDictionary).IsAssignableFrom(type))
-                return CreateDictionaryHandler(type);
+            {
+                return CreateDictionaryHandler();
+            }
 
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Tuple<,>))
+            {
                 return CreateTupleHandler(type);
+            }
 
             return CreateCustomObjectHandler(type);
         }
 
-        private Action<object, StringBuilder, int> CreateArrayHandler(Type type)
+        private Action<object, StringBuilder, int> CreateArrayHandler()
         {
             return (obj, sb, depth) =>
             {
                 var array = (Array)obj;
-                sb.Append('[');
-                for (int i = 0; i < array.Length; i++)
+                if (array.Rank == 1)
                 {
-                    if (i > 0) sb.Append(", ");
-                    ConvertCSharpToPythonStringInternal(array.GetValue(i), sb, depth + 1);
+                    sb.Append('[');
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        if (i > 0) 
+                        {
+                            sb.Append(", ");
+                        }
+                        ConvertToPythonString(array.GetValue(i), sb, depth + 1);
+                    }
+                    sb.Append(']');
                 }
-                sb.Append(']');
+                else
+                {
+                    SerializeMultiDimensionalArray(array, new int[array.Rank], 0, sb, depth);
+                }
             };
         }
 
-        private Action<object, StringBuilder, int> CreateListHandler(Type type)
+        private void SerializeMultiDimensionalArray(Array array, int[] indices, int dimension, StringBuilder sb, int depth)
+        {
+            if (dimension == array.Rank)
+            {
+                ConvertToPythonString(array.GetValue(indices), sb, depth + 1);
+                return;
+            }
+
+            sb.Append('[');
+            for (int i = 0; i < array.GetLength(dimension); i++)
+            {
+                if (i > 0) 
+                {
+                    sb.Append(", ");
+                }
+                indices[dimension] = i;
+                SerializeMultiDimensionalArray(array, indices, dimension + 1, sb, depth + 1);
+            }
+            sb.Append(']');
+        }
+
+        private Action<object, StringBuilder, int> CreateListHandler()
         {
             return (obj, sb, depth) =>
             {
@@ -103,14 +161,17 @@ namespace Bonsai.ML.Python
                 sb.Append('[');
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (i > 0) sb.Append(", ");
-                    ConvertCSharpToPythonStringInternal(list[i], sb, depth + 1);
+                    if (i > 0) 
+                    {
+                        sb.Append(", ");
+                    }
+                    ConvertToPythonString(list[i], sb, depth + 1);
                 }
                 sb.Append(']');
             };
         }
 
-        private Action<object, StringBuilder, int> CreateDictionaryHandler(Type type)
+        private Action<object, StringBuilder, int> CreateDictionaryHandler()
         {
             return (obj, sb, depth) =>
             {
@@ -119,11 +180,17 @@ namespace Bonsai.ML.Python
                 bool first = true;
                 foreach (DictionaryEntry entry in dict)
                 {
-                    if (!first) sb.Append(", ");
-                    ConvertCSharpToPythonStringInternal(entry.Key, sb, depth + 1);
+                    if (!first)
+                    {
+                        sb.Append(", ");
+                    }
+                    else
+                    {
+                        first = false;
+                    }
+                    ConvertToPythonString(entry.Key, sb, depth + 1);
                     sb.Append(": ");
-                    ConvertCSharpToPythonStringInternal(entry.Value, sb, depth + 1);
-                    first = false;
+                    ConvertToPythonString(entry.Value, sb, depth + 1);
                 }
                 sb.Append('}');
             };
@@ -137,8 +204,11 @@ namespace Bonsai.ML.Python
                 sb.Append('(');
                 for (int i = 0; i < itemProperties.Length; i++)
                 {
-                    if (i > 0) sb.Append(", ");
-                    ConvertCSharpToPythonStringInternal(itemProperties[i].GetValue(obj), sb, depth + 1);
+                    if (i > 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    ConvertToPythonString(itemProperties[i].GetValue(obj), sb, depth + 1);
                 }
                 sb.Append(')');
             };
@@ -157,9 +227,12 @@ namespace Bonsai.ML.Python
                 sb.Append('{');
                 for (int i = 0; i < properties.Length; i++)
                 {
-                    if (i > 0) sb.Append(", ");
+                    if (i > 0)
+                    {
+                        sb.Append(", ");
+                    }
                     sb.Append('"').Append(properties[i].Name).Append("\": ");
-                    ConvertCSharpToPythonStringInternal(properties[i].GetValue(obj), sb, depth + 1);
+                    ConvertToPythonString(properties[i].GetValue(obj), sb, depth + 1);
                 }
                 sb.Append('}');
             };
