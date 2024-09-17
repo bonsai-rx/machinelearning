@@ -50,7 +50,6 @@ namespace Bonsai.ML.HiddenMarkovModels
                 for (int i = 0; i < nParams; i++)
                 {
                     transitionsParamsArray[i] = ArrayHelper.ParseToken(paramsJArray[i], typeof(double));
-
                 }
             }
 
