@@ -54,7 +54,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         {
             if (@params is not null && @params.Length != 1)
             {
-                throw new ArgumentException($"The StickyTransitions operator requires exactly one parameter: {nameof(LogPs)}.");
+                throw new ArgumentException($"The StationaryTransitions operator requires exactly one parameter: {nameof(LogPs)}.");
             }
         }
 
