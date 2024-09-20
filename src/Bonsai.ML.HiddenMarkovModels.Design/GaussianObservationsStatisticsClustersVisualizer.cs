@@ -3,20 +3,19 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
-using Bonsai.ML.HiddenMarkovModels.Observations;
+using Bonsai.ML.Design;
 using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Axes;
 using OxyPlot.WindowsForms;
-using MathNet.Numerics.LinearAlgebra;
 
-[assembly: TypeVisualizer(typeof(GaussianObservationsStatisticsClustersVisualizer), Target = typeof(GaussianObservationsStatistics))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationsStatisticsClustersVisualizer),
+    Target = typeof(Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservationsStatistics))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.HiddenMarkovModels.Design
 {
     /// <summary>
-    /// Provides a type visualizer of <see cref="GaussianObservationsStatistics"/> to display how the observations 
+    /// Provides a type visualizer of <see cref="Observations.GaussianObservationsStatistics"/> to display how the observations 
     /// cluster with respect to the mean and covariance of each state of an HMM with gaussian observations model.
     /// </summary>
     public class GaussianObservationsStatisticsClustersVisualizer : DialogTypeVisualizer
@@ -148,7 +147,7 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            if (value is GaussianObservationsStatistics gaussianObservationsStatistics)
+            if (value is Observations.GaussianObservationsStatistics gaussianObservationsStatistics)
             {
               
                 var statesCount = gaussianObservationsStatistics.Means.GetLength(0);
@@ -245,40 +244,20 @@ namespace Bonsai.ML.Visualizers
                     var yVar = gaussianObservationsStatistics.CovarianceMatrices[i, dimension2SelectedIndex, dimension2SelectedIndex];
                     var xyCov = gaussianObservationsStatistics.CovarianceMatrices[i, dimension2SelectedIndex, dimension1SelectedIndex];
 
-                    var covariance = Matrix<double>.Build.DenseOfArray(new double[,] {
-                        {
-                            xVar,
-                            xyCov
-                        },
-                        {
-                            xyCov,
-                            yVar
-                        },
-                    });
-
-                    var evd = covariance.Evd();
-                    var evals = evd.EigenValues.Real();
-                    evals = evals.PointwiseAbsoluteMaximum(0);
-                    var evecs = evd.EigenVectors;
-
-                    double angle = Math.Atan2(evecs[1, 0], evecs[0, 0]);
+                    var ellipseParameters = EllipseHelper.GetEllipseParameters(xVar, yVar, xyCov);
 
                     for (int j = 1; j < 4; j++)
                     {
-
-                        var majorAxis = j * Math.Sqrt(evals[0]);
-                        var minorAxis = j * Math.Sqrt(evals[1]);
-
                         var points = new List<DataPoint>();
                         int numPoints = 100;
                         for (int k = 0; k < numPoints + 1; k++)
                         {
                             double theta = 2 * Math.PI * k / numPoints;
-                            double x = majorAxis * Math.Cos(theta);
-                            double y = minorAxis * Math.Sin(theta);
+                            double x = j * ellipseParameters.MajorAxis * Math.Cos(theta);
+                            double y = j * ellipseParameters.MinorAxis * Math.Sin(theta);
 
-                            double xRot = x * Math.Cos(angle) - y * Math.Sin(angle);
-                            double yRot = x * Math.Sin(angle) + y * Math.Cos(angle);
+                            double xRot = x * Math.Cos(ellipseParameters.Angle) - y * Math.Sin(ellipseParameters.Angle);
+                            double yRot = x * Math.Sin(ellipseParameters.Angle) + y * Math.Cos(ellipseParameters.Angle);
 
                             points.Add(new DataPoint(xMean + xRot, yMean + yRot));
                         }

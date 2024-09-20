@@ -3,16 +3,15 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
-using Bonsai.ML.LinearDynamicalSystems.Kinematics;
 using OxyPlot;
 using System.Reactive;
 using System.Linq;
 using System.Reactive.Linq;
 
-[assembly: TypeVisualizer(typeof(ForecastVisualizer), Target = typeof(Forecast))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.ForecastVisualizer),
+    Target = typeof(Bonsai.ML.LinearDynamicalSystems.Kinematics.Forecast))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.LinearDynamicalSystems.Design
 {
     /// <summary>
     /// Provides a type visualizer to display the forecast of a Kalman Filter kinematics model.
@@ -22,14 +21,14 @@ namespace Bonsai.ML.Visualizers
 
         private int rowCount = 3;
         private int columnCount = 2;
-        private string[] labels = new string[] { 
+        private string[] labels = [ 
             "Forecast Position X", 
             "Forecast Position Y", 
             "Forecast Velocity X", 
             "Forecast Velocity Y", 
             "Forecast Acceleration X", 
             "Forecast Acceleration Y" 
-        };
+        ];
 
         private List<StateComponentVisualizer> componentVisualizers = new();
         private TableLayoutPanel container;
@@ -88,7 +87,7 @@ namespace Bonsai.ML.Visualizers
             if (values.Count == 0) return;
             var latestForecast = values.Last();
             var timestamp = latestForecast.Timestamp;
-            var forecast = (Forecast)latestForecast.Value;
+            var forecast = (Kinematics.Forecast)latestForecast.Value;
             var futureTime = timestamp;
 
             List<Timestamped<object>> positionX = new();

@@ -1,7 +1,5 @@
-using Bonsai.Design;
 using Bonsai;
-using Bonsai.ML.LinearDynamicalSystems.Kinematics;
-using Bonsai.ML.Visualizers;
+using Bonsai.Design;
 using System.Collections.Generic;
 using System;
 using System.Windows.Forms;
@@ -9,32 +7,32 @@ using System.Reactive.Linq;
 using System.Linq;
 using System.Reactive;
 
-[assembly: TypeVisualizer(typeof(KinematicStateVisualizer), Target = typeof(KinematicState))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.KinematicStateVisualizer), 
+    Target = typeof(Bonsai.ML.LinearDynamicalSystems.Kinematics.KinematicState))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.LinearDynamicalSystems.Design
 {
-
     /// <summary>
     /// Provides a type visualizer to display the state components of a Kalman Filter Kinematics model.
     /// </summary>
     public class KinematicStateVisualizer : MashupVisualizer
     {
         private TableLayoutPanel container;
-        private int updateFrequency = 1000 / 50;
+        private int updateFrequency = 20;
         private bool resetAxes = true;
         private int rowCount = 3;
         private int columnCount = 2;
 
         internal List<StateComponentVisualizer> ComponentVisualizers { get; private set; } = new();
 
-        internal string[] Labels = new string[] { 
+        internal string[] Labels = [
             "Position X", 
             "Position Y", 
             "Velocity X", 
             "Velocity Y", 
             "Acceleration X", 
             "Acceleration Y" 
-        };
+        ];
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -97,12 +95,12 @@ namespace Bonsai.ML.Visualizers
 
             foreach (var value in values)
             {
-                positionX.Add(new Timestamped<object>(((KinematicState)value.Value).Position.X, value.Timestamp));
-                positionY.Add(new Timestamped<object>(((KinematicState)value.Value).Position.Y, value.Timestamp));
-                velocityX.Add(new Timestamped<object>(((KinematicState)value.Value).Velocity.X, value.Timestamp));
-                velocityY.Add(new Timestamped<object>(((KinematicState)value.Value).Velocity.Y, value.Timestamp));
-                accelerationX.Add(new Timestamped<object>(((KinematicState)value.Value).Acceleration.X, value.Timestamp));
-                accelerationY.Add(new Timestamped<object>(((KinematicState)value.Value).Acceleration.Y, value.Timestamp));
+                positionX.Add(new Timestamped<object>(((Kinematics.KinematicState)value.Value).Position.X, value.Timestamp));
+                positionY.Add(new Timestamped<object>(((Kinematics.KinematicState)value.Value).Position.Y, value.Timestamp));
+                velocityX.Add(new Timestamped<object>(((Kinematics.KinematicState)value.Value).Velocity.X, value.Timestamp));
+                velocityY.Add(new Timestamped<object>(((Kinematics.KinematicState)value.Value).Velocity.Y, value.Timestamp));
+                accelerationX.Add(new Timestamped<object>(((Kinematics.KinematicState)value.Value).Acceleration.X, value.Timestamp));
+                accelerationY.Add(new Timestamped<object>(((Kinematics.KinematicState)value.Value).Acceleration.Y, value.Timestamp));
             }
 
             ComponentVisualizers[0].ShowDataBuffer(positionX, resetAxes);

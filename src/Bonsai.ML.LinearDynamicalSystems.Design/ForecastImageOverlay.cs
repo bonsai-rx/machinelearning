@@ -1,17 +1,16 @@
+using Bonsai;
 using Bonsai.Design;
 using Bonsai.Vision.Design;
-using Bonsai;
-using Bonsai.ML.Visualizers;
-using Bonsai.ML.LinearDynamicalSystems.Kinematics;
+using Bonsai.ML.Design;
 using System;
 using System.Collections.Generic;
 using OpenCV.Net;
-using MathNet.Numerics.LinearAlgebra;
 using OxyPlot;
 
-[assembly: TypeVisualizer(typeof(ForecastImageOverlay), Target = typeof(MashupSource<ImageMashupVisualizer, ForecastVisualizer>))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.ForecastImageOverlay),
+    Target = typeof(Bonsai.ML.LinearDynamicalSystems.Kinematics.Forecast))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.LinearDynamicalSystems.Design
 {
     /// <summary>
     /// Provides a mashup visualizer to display the forecast of a Kalman Filter kinematics model overtime of an ImageMashupVisualizer.
@@ -33,8 +32,8 @@ namespace Bonsai.ML.Visualizers
             overlay = new IplImage(size, depth, channels);
             var alpha = 0.1;
 
-            Forecast forecast = (Forecast)value;
-            List<ForecastResult> forecastResults = forecast.ForecastResults;
+            Kinematics.Forecast forecast = (Kinematics.Forecast)value;
+            List<Kinematics.ForecastResult> forecastResults = forecast.ForecastResults;
 
             for (int i = 0; i < forecastResults.Count; i++)
             {
@@ -50,26 +49,17 @@ namespace Bonsai.ML.Visualizers
                 double yVar = kinematicState.Position.Y.Variance;
                 double xyCov = kinematicState.Position.Covariance;
 
-                var covariance = Matrix<double>.Build.DenseOfArray(new double[,] {
-                    { xVar, xyCov },
-                    { xyCov, yVar }
-                });
-
-                var evd = covariance.Evd();
-                var evals = evd.EigenValues.Real();
-                var evecs = evd.EigenVectors;
-
-                double angle = Math.Atan2(evecs[1, 0], evecs[0, 0]) * 180 / Math.PI;
+                EllipseParameters ellipseParameters = EllipseHelper.GetEllipseParameters(xVar, yVar, xyCov);
 
                 Size axes = new Size
                 {
-                    Width = (int)(2 * Math.Sqrt(evals[0])),
-                    Height = (int)(2 * Math.Sqrt(evals[1]))
+                    Width = (int)(2 * ellipseParameters.MajorAxis),
+                    Height = (int)(2 * ellipseParameters.MinorAxis)
                 };
 
                 OxyColor color = OxyColors.Yellow;
 
-                CV.Ellipse(overlay, center, axes, angle, 0, 360, new Scalar(color.B, color.G, color.R, color.A), -1);
+                CV.Ellipse(overlay, center, axes, ellipseParameters.Angle, 0, 360, new Scalar(color.B, color.G, color.R, color.A), -1);
             }
 
             CV.AddWeighted(image, 1 - alpha, overlay, alpha, 1, image);

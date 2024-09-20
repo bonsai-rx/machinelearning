@@ -1,21 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Title>Bonsai.ML.Visualizers</Title>
+    <Title>Bonsai.ML.Design</Title>
     <Description>A package for the Bonsai visual programming language.</Description>
-    <PackageTags>Bonsai Rx ML Machine Learning Visualizers</PackageTags>
+    <PackageTags>Bonsai Rx ML Machine Learning Design</PackageTags>
     <TargetFrameworks>net472</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Bonsai.Core" Version="2.8.1" />
     <PackageReference Include="Bonsai.Design" Version="2.8.0" />
-    <PackageReference Include="Bonsai.Vision.Design" Version="2.8.1" />
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="OxyPlot.Core" Version="2.1.2" />
     <PackageReference Include="OxyPlot.WindowsForms" Version="2.1.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj" />
-    <ProjectReference Include="..\Bonsai.ML.HiddenMarkovModels\Bonsai.ML.HiddenMarkovModels.csproj" />
   </ItemGroup>
 </Project>

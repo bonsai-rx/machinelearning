@@ -7,9 +7,12 @@ using System;
 using OxyPlot.Axes;
 using System.Collections;
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Design
 {
-    internal class TimeSeriesOxyPlotBase : UserControl
+    /// <summary>
+    /// Provides a user control to display time series data using OxyPlot.
+    /// </summary>
+    public class TimeSeriesOxyPlotBase : UserControl
     {
         private readonly PlotView view;
         private readonly PlotModel model;

@@ -1,25 +1,14 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Reflection;
-using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
-using Bonsai.ML.LinearDynamicalSystems;
-using Bonsai.ML.LinearDynamicalSystems.LinearRegression;
-using System.Drawing;
-using System.Reactive;
-using Bonsai.Reactive;
 
-[assembly: TypeVisualizer(typeof(MultivariatePDFVisualizer), Target = typeof(MultivariatePDF))]
-
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Design
 {
-
     /// <summary>
-    /// Provides a type visualizer to display the state components of a Kalman Filter kinematics model.
+    /// Provides a type visualizer to display multi dimensional array data as a heatmap.
     /// </summary>
-    public class MultivariatePDFVisualizer : DialogTypeVisualizer
+    [TypeVisualizer(typeof(MultidimensionalArrayVisualizer), Target = typeof(double[,]))]
+    public class MultidimensionalArrayVisualizer : DialogTypeVisualizer
     {
         /// <summary>
         /// Gets or sets the selected index of the color palette to use.
@@ -54,14 +43,17 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            var pdf = (MultivariatePDF)value;
+            var mdarray = (double[,])value;
+            var shape = new int[] {mdarray.GetLength(0), mdarray.GetLength(1)};
+
             Plot.UpdateHeatMapSeries(
-                pdf.GridParameters.X0 - (1 / 2 * pdf.GridParameters.XSteps),
-                pdf.GridParameters.X1 - (1 / 2 * pdf.GridParameters.XSteps),
-                pdf.GridParameters.Y0 - (1 / 2 * pdf.GridParameters.YSteps),
-                pdf.GridParameters.Y1 - (1 / 2 * pdf.GridParameters.YSteps),
-                pdf.Values
+                -0.5,
+                shape[0] - 0.5,
+                -0.5,
+                shape[1] - 0.5,
+                mdarray
             );
+
             Plot.UpdatePlot();
         }
 

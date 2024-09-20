@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Bonsai.ML.HiddenMarkovModels.Design</Title>
+    <Description>A package for visualizing data from the Bonsai.ML.HiddenMarkovModels package.</Description>
+    <PackageTags>Bonsai Rx ML Machine Learning Hidden Markov Models Design</PackageTags>
+    <TargetFramework>net472</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.8.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.Design\Bonsai.ML.Design.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.HiddenMarkovModels\Bonsai.ML.HiddenMarkovModels.csproj" />
+  </ItemGroup>
+</Project>

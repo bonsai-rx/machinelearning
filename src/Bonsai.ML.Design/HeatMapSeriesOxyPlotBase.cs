@@ -7,9 +7,12 @@ using System;
 using OxyPlot.Axes;
 using System.Collections.Generic;
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.Design
 {
-    internal class HeatMapSeriesOxyPlotBase : UserControl
+    /// <summary>
+    /// Provides a user control to display 2D data as a heatmap using OxyPlot.
+    /// </summary>
+    public class HeatMapSeriesOxyPlotBase : UserControl
     {
         private PlotView view;
         private PlotModel model;
@@ -25,8 +28,13 @@ namespace Bonsai.ML.Visualizers
         private ToolStripLabel renderMethodLabel;
         private int _renderMethodSelectedIndex;
         private HeatMapRenderMethod renderMethod = HeatMapRenderMethod.Bitmap;
-
         private StatusStrip statusStrip;
+
+        private ToolStripTextBox maxValueTextBox;
+        private ToolStripLabel maxValueLabel;
+
+        private ToolStripTextBox minValueTextBox;
+        private ToolStripLabel minValueLabel;
 
         private int _numColors = 100;
 
@@ -35,12 +43,24 @@ namespace Bonsai.ML.Visualizers
         /// </summary>
         public event EventHandler PaletteComboBoxValueChanged;
 
+        /// <summary>
+        /// Gets the palette combobox.
+        /// </summary>
         public ToolStripComboBox PaletteComboBox => paletteComboBox;
 
+        /// <summary>
+        /// Event handler which can be used to hook into events generated when the render method combobox values have changed.
+        /// </summary>
         public event EventHandler RenderMethodComboBoxValueChanged;
 
+        /// <summary>
+        /// Gets the render method combobox.
+        /// </summary>
         public ToolStripComboBox RenderMethodComboBox => renderMethodComboBox;
 
+        /// <summary>
+        /// Gets the status strip control.
+        /// </summary>
         public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
@@ -88,22 +108,91 @@ namespace Bonsai.ML.Visualizers
 
             InitializeColorPalette();
             InitializeRenderMethod();
+            InitializeColorAxisValues();
 
             statusStrip = new StatusStrip
             {
-                Visible = false
+                Visible = false,
             };
 
-            statusStrip.Items.AddRange(new ToolStripItem[] {
+            var toolStripItems = new ToolStripItem[] {
                 paletteLabel,
                 paletteComboBox,
                 renderMethodLabel,
-                renderMethodComboBox
-            });
+                renderMethodComboBox,
+                maxValueLabel,
+                maxValueTextBox,
+                minValueLabel,
+                minValueTextBox
+            };
+
+            ToolStripDropDownButton visualizerPropertiesButton = new ToolStripDropDownButton("Visualizer Properties");
+
+            foreach (var item in toolStripItems)
+            {
+                visualizerPropertiesButton.DropDownItems.Add(item);
+            }
+
+            statusStrip.Items.Add(visualizerPropertiesButton);
 
             Controls.Add(statusStrip);
             view.MouseClick += new MouseEventHandler(onMouseClick);
             AutoScaleDimensions = new SizeF(6F, 13F);
+        }
+
+        private void InitializeColorAxisValues()
+        {
+            maxValueLabel = new ToolStripLabel
+            {
+                Text = "Maximum Value:",
+                AutoSize = true
+            };
+
+            maxValueTextBox = new ToolStripTextBox()
+            {
+                Name = "maxValue",
+                AutoSize = true,
+                Text = "auto",
+            };
+
+            maxValueTextBox.TextChanged += (sender, e) =>
+            {
+                if (double.TryParse(maxValueTextBox.Text, out double maxValue))
+                {
+                    colorAxis.Maximum = maxValue;
+                }
+                else
+                {
+                    colorAxis.Maximum = heatMapSeries.MaxValue;
+                }
+                UpdatePlot();
+            };
+
+            minValueLabel = new ToolStripLabel
+            {
+                Text = "Minimum Value:",
+                AutoSize = true
+            };
+
+            minValueTextBox = new ToolStripTextBox()
+            {
+                Name = "minValue",
+                AutoSize = true,
+                Text = "auto",
+            };
+
+            minValueTextBox.TextChanged += (sender, e) =>
+            {
+                if (double.TryParse(minValueTextBox.Text, out double minValue))
+                {
+                    colorAxis.Minimum = minValue;
+                }
+                else
+                {
+                    colorAxis.Minimum = heatMapSeries.MinValue;
+                }
+                UpdatePlot();
+            };
         }
 
         private void InitializeColorPalette()
@@ -116,8 +205,7 @@ namespace Bonsai.ML.Visualizers
 
             paletteComboBox = new ToolStripComboBox()
             {
-                Name = "palette",
-                AutoSize = true,
+                Name = "palette"
             };
 
             foreach (var value in Enum.GetValues(typeof(ColorPalette)))
@@ -159,8 +247,7 @@ namespace Bonsai.ML.Visualizers
 
             renderMethodComboBox = new ToolStripComboBox()
             {
-                Name = "renderMethod",
-                AutoSize = true,
+                Name = "renderMethod"
             };
 
             foreach (var value in Enum.GetValues(typeof(HeatMapRenderMethod)))
@@ -198,6 +285,23 @@ namespace Bonsai.ML.Visualizers
             }
         }
 
+        /// <summary>
+        /// Method to update the heatmap series with new data.
+        /// </summary>
+        /// <param name="data">The data to be displayed.</param>
+        public void UpdateHeatMapSeries(double[,] data)
+        {
+            heatMapSeries.Data = data;
+        }
+
+        /// <summary>
+        /// Method to update the heatmap series with new data.
+        /// </summary>
+        /// <param name="x0">The minimum x value.</param>
+        /// <param name="x1">The maximum x value.</param>
+        /// <param name="y0">The minimum y value.</param>
+        /// <param name="y1">The maximum y value.</param>
+        /// <param name="data">The data to be displayed.</param>
         public void UpdateHeatMapSeries(double x0, double x1, double y0, double y1, double[,] data)
         {
             heatMapSeries.X0 = x0;
@@ -207,6 +311,9 @@ namespace Bonsai.ML.Visualizers
             heatMapSeries.Data = data;
         }
 
+        /// <summary>
+        /// Method to update the plot.
+        /// </summary>
         public void UpdatePlot()
         {
             model.InvalidatePlot(true);
@@ -214,20 +321,20 @@ namespace Bonsai.ML.Visualizers
 
         private static readonly Dictionary<ColorPalette, Func<int, OxyPalette>> paletteLookup = new Dictionary<ColorPalette, Func<int, OxyPalette>>
         {
-            { ColorPalette.Cividis, (numColors) => OxyPalettes.Cividis(numColors) },
-            { ColorPalette.Inferno, (numColors) => OxyPalettes.Inferno(numColors) },
-            { ColorPalette.Viridis, (numColors) => OxyPalettes.Viridis(numColors) },
-            { ColorPalette.Magma, (numColors) => OxyPalettes.Magma(numColors) },
-            { ColorPalette.Plasma, (numColors) => OxyPalettes.Plasma(numColors) },
-            { ColorPalette.BlackWhiteRed, (numColors) => OxyPalettes.BlackWhiteRed(numColors) },
-            { ColorPalette.BlueWhiteRed, (numColors) => OxyPalettes.BlueWhiteRed(numColors) },
-            { ColorPalette.Cool, (numColors) => OxyPalettes.Cool(numColors) },
-            { ColorPalette.Gray, (numColors) => OxyPalettes.Gray(numColors) },
-            { ColorPalette.Hot, (numColors) => OxyPalettes.Hot(numColors) },
-            { ColorPalette.Hue, (numColors) => OxyPalettes.Hue(numColors) },
-            { ColorPalette.HueDistinct, (numColors) => OxyPalettes.HueDistinct(numColors) },
-            { ColorPalette.Jet, (numColors) => OxyPalettes.Jet(numColors) },
-            { ColorPalette.Rainbow, (numColors) => OxyPalettes.Rainbow(numColors) },
+            { ColorPalette.Cividis, OxyPalettes.Cividis },
+            { ColorPalette.Inferno, OxyPalettes.Inferno },
+            { ColorPalette.Viridis, OxyPalettes.Viridis },
+            { ColorPalette.Magma, OxyPalettes.Magma },
+            { ColorPalette.Plasma, OxyPalettes.Plasma },
+            { ColorPalette.BlackWhiteRed, OxyPalettes.BlackWhiteRed },
+            { ColorPalette.BlueWhiteRed, OxyPalettes.BlueWhiteRed },
+            { ColorPalette.Cool, OxyPalettes.Cool },
+            { ColorPalette.Gray, OxyPalettes.Gray },
+            { ColorPalette.Hot, OxyPalettes.Hot },
+            { ColorPalette.Hue, OxyPalettes.Hue },
+            { ColorPalette.HueDistinct, OxyPalettes.HueDistinct },
+            { ColorPalette.Jet, OxyPalettes.Jet },
+            { ColorPalette.Rainbow, OxyPalettes.Rainbow },
         };
     }
 }

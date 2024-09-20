@@ -1,27 +1,18 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using System.Reflection;
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.ML.Visualizers;
-using Bonsai.ML.LinearDynamicalSystems;
-using Bonsai.ML.LinearDynamicalSystems.LinearRegression;
-using System.Drawing;
-using System.Reactive;
-using Bonsai.Reactive;
-using Bonsai.Expressions;
-using OxyPlot;
+using Bonsai.ML.Design;
 
-[assembly: TypeVisualizer(typeof(MultidimensionalArrayVisualizer), Target = typeof(double[,]))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.MultivariatePDFVisualizer), 
+    Target = typeof(Bonsai.ML.LinearDynamicalSystems.LinearRegression.MultivariatePDF))]
 
-namespace Bonsai.ML.Visualizers
+namespace Bonsai.ML.LinearDynamicalSystems.Design
 {
-
     /// <summary>
-    /// Provides a type visualizer to display the state components of a Kalman Filter kinematics model.
+    /// Provides a type visualizer to display a multivariate probability distribution as a heatmap.
     /// </summary>
-    public class MultidimensionalArrayVisualizer : DialogTypeVisualizer
+    public class MultivariatePDFVisualizer : DialogTypeVisualizer
     {
         /// <summary>
         /// Gets or sets the selected index of the color palette to use.
@@ -56,17 +47,14 @@ namespace Bonsai.ML.Visualizers
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            var mdarray = (double[,])value;
-            var shape = new int[] {mdarray.GetLength(0), mdarray.GetLength(1)};
-
+            var pdf = (LinearRegression.MultivariatePDF)value;
             Plot.UpdateHeatMapSeries(
-                -0.5,
-                shape[0] - 0.5,
-                -0.5,
-                shape[1] - 0.5,
-                mdarray
+                pdf.GridParameters.X0 - (1 / 2 * pdf.GridParameters.XSteps),
+                pdf.GridParameters.X1 - (1 / 2 * pdf.GridParameters.XSteps),
+                pdf.GridParameters.Y0 - (1 / 2 * pdf.GridParameters.YSteps),
+                pdf.GridParameters.Y1 - (1 / 2 * pdf.GridParameters.YSteps),
+                pdf.Values
             );
-
             Plot.UpdatePlot();
         }
 
