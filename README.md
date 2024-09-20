@@ -40,7 +40,7 @@ Facilitates inference using Hidden Markov Models (HMMs). It interfaces with the 
     Provides functionality for specifying different types of transition models.
 
 ### Bonsai.ML.HiddenMarkovModels.Design
-Visualizers and editor feaures for the HiddenMarkovModels package.
+Visualizers and editor features for the HiddenMarkovModels package.
 
 > [!NOTE]
 > Bonsai.ML packages can be installed through Bonsai's integrated package manager and are generally ready for immediate use. However, some packages may require additional installation steps. Refer to the specific package section for detailed installation guides and documentation.
