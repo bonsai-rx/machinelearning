@@ -2,10 +2,6 @@ using System;
 using Python.Runtime;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Bonsai.ML.Python
