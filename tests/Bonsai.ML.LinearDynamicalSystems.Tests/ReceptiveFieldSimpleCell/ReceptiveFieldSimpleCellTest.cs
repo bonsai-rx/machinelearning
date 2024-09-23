@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Tests.ReceptiveFieldSimpleCell;
 
+/// <summary>
+/// Tests for the ReceptiveFieldSimpleCell workflow.
+/// </summary>
 [TestClass]
 public class ReceptiveFieldSimpleCellTest
 {
@@ -107,18 +110,10 @@ public class ReceptiveFieldSimpleCellTest
         finally { Environment.CurrentDirectory = currentDirectory; }
     }
 
-    private string GetJsonData(string jsonFileName)
-    {
-        string jsonString = File.ReadAllText(jsonFileName);
-        State state = JsonConvert.DeserializeObject<State>(jsonString);
-        string jsonState = JsonConvert.SerializeObject(state);
-        return jsonState;
-    }
-
     private State GetStateFromJson(string jsonFileName)
     {
         string jsonString = File.ReadAllText(jsonFileName);
-        State state = JsonConvert.DeserializeObject<State>(jsonString);
+        State state = JsonConvert.DeserializeObject<State>(jsonString) ?? new State();
         return state;
     }
 
@@ -164,6 +159,9 @@ public class ReceptiveFieldSimpleCellTest
         return true;
     }
 
+    /// <summary>
+    /// Setup for the test.
+    /// </summary>
     [TestInitialize]
     [DeploymentItem("run_python_test.py")]
     [DeploymentItem("receptive_field.py")]
@@ -177,6 +175,9 @@ public class ReceptiveFieldSimpleCellTest
         await RunBonsaiWorkflow(basePath);
     }
 
+    /// <summary>
+    /// Compares the results from the Python script and the Bonsai workflow.
+    /// </summary>
     [TestMethod]
     public void CompareResults()
     {
@@ -184,6 +185,9 @@ public class ReceptiveFieldSimpleCellTest
         Assert.IsTrue(result);
     }
 
+    /// <summary>
+    /// Cleanup after the test.
+    /// </summary>
     [TestCleanup]
     public void Cleanup()
     {
