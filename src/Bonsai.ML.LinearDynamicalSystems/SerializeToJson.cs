@@ -115,6 +115,17 @@ namespace Bonsai.ML.LinearDynamicalSystems
             return Process<KinematicComponent>(source);
         }
 
+        /// <summary>
+        /// Serializes each <see cref="LinearRegression.KFModelParameters"/> object in the sequence to
+        /// a JSON string.
+        /// </summary>
+        /// <param name="source">
+        /// A sequence of <see cref="LinearRegression.KFModelParameters"/> objects.
+        /// </param>
+        /// <returns>
+        /// A sequence of JSON strings representing the corresponding
+        /// <see cref="LinearRegression.KFModelParameters"/> object.
+        /// </returns>
         public IObservable<string> Process(IObservable<LinearRegression.KFModelParameters> source)
         {
             return Process<LinearRegression.KFModelParameters>(source);
