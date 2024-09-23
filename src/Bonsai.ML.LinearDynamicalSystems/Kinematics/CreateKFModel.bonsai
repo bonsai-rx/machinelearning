@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WorkflowBuilder Version="2.8.1"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xmlns:p1="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
+                 xmlns:p1="clr-namespace:Bonsai.ML;assembly=Bonsai.ML"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:p2="clr-namespace:Bonsai.ML.LinearDynamicalSystems.Kinematics;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
@@ -12,9 +12,7 @@
         <Property Name="Name" Category="ModelReference" />
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:CreateModelReference">
-          <p1:Name>model</p1:Name>
-        </Combinator>
+        <Combinator xsi:type="p1:CreateModelReference" />
       </Expression>
       <Expression xsi:type="rx:BehaviorSubject">
         <Name>model</Name>

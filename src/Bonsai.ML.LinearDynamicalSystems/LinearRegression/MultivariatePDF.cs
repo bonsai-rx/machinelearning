@@ -3,6 +3,7 @@ using System;
 using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
 {
@@ -35,7 +36,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             return Observable.Select(source, pyObject =>
             {
                 var gridParameters = GridParameters.ConvertPyObject(pyObject);
-                var values = (double[,])pyObject.GetArrayAttribute("pdf_values");
+                var values = (double[,])pyObject.GetArrayAttr("pdf_values");
                 return new MultivariatePDF {
                     GridParameters = gridParameters,
                     Values = values

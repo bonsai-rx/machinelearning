@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Newtonsoft.Json;
 using System;
 using System.Reactive.Linq;
+using Bonsai.ML.Python;
 using Python.Runtime;
 using System.Xml.Serialization;
 
@@ -105,7 +106,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             set
             {
                 _x = value;
-                _xString = _x == null ? "None" : NumpyHelper.NumpyParser.ParseArray(_x);
+                _xString = _x == null ? "None" : StringFormatter.FormatToPython(_x);
             }
         }
 
@@ -125,7 +126,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             set
             {
                 _p = value;
-                _pString = _p == null ? "None" : NumpyHelper.NumpyParser.ParseArray(_p);
+                _pString = _p == null ? "None" : StringFormatter.FormatToPython(_p);
             }
         }
 
@@ -188,10 +189,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
                     P = _p
                 });
         }
-    
+
+        /// <inheritdoc/>
         public override string ToString()
         {
-
             return $"likelihood_precision_coef={_likelihood_precision_coefString}, prior_precision_coef={_prior_precision_coefString}, n_features={_n_featuresString}, x={_xString}, P={_pString}";
         }
     }

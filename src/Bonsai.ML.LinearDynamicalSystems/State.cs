@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using Python.Runtime;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.LinearDynamicalSystems
 {
@@ -65,8 +66,8 @@ namespace Bonsai.ML.LinearDynamicalSystems
         {
             return Observable.Select(source, pyObject =>
             {
-                var xPyObj = (double[,])pyObject.GetArrayAttribute("x");
-                var PPyObj = (double[,])pyObject.GetArrayAttribute("P");
+                var xPyObj = (double[,])pyObject.GetArrayAttr("x");
+                var PPyObj = (double[,])pyObject.GetArrayAttr("P");
 
                 return new State {
                     X = xPyObj,
