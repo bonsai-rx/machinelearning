@@ -3,6 +3,7 @@ using System;
 using System.Reactive.Linq;
 using Newtonsoft.Json;
 using Python.Runtime;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
 {
