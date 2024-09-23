@@ -1,12 +1,11 @@
 using System;
-using System.Reactive;
 using System.Reactive.Linq;
-using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using Newtonsoft.Json;
 using Python.Runtime;
 using System.Collections.Generic;
+using Bonsai.ML.Python;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
 {
