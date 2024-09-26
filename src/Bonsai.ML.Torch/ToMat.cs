@@ -22,7 +22,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Mat> Process(IObservable<Tensor> source)
         {
-            return source.Select(Helpers.OpenCVHelper.ToMat);
+            return source.Select(OpenCVHelper.ToMat);
         }
     }
 }
