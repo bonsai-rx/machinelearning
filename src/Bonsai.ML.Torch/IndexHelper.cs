@@ -1,7 +1,7 @@
 using System;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.Helpers
+namespace Bonsai.ML.Torch
 {
     /// <summary>
     /// Provides helper methods to parse tensor indexes.
@@ -13,7 +13,7 @@ namespace Bonsai.ML.Torch.Helpers
         /// Parses the input string into an array of tensor indexes.
         /// </summary>
         /// <param name="input"></param>
-        public static TensorIndex[] ParseString(string input)
+        public static TensorIndex[] Parse(string input)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -83,7 +83,7 @@ namespace Bonsai.ML.Torch.Helpers
         /// </summary>
         /// <param name="indexes"></param>
         /// <returns></returns>
-        public static string SerializeIndexes(TensorIndex[] indexes)
+        public static string Serialize(TensorIndex[] indexes)
         {
             return string.Join(", ", indexes);
         }
