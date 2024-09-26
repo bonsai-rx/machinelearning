@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using Bonsai.Expressions;
 using static TorchSharp.torch;
 using Bonsai.ML.Data;
+using Bonsai.ML.Python;
 using Bonsai.ML.Torch.Helpers;
 
 namespace Bonsai.ML.Torch
@@ -45,7 +46,7 @@ namespace Bonsai.ML.Torch
             get => values;
             set
             {
-                values = value.Replace("False", "false").Replace("True", "true");
+                values = value.ToLower();
             }
         }
 
@@ -55,18 +56,20 @@ namespace Bonsai.ML.Torch
         /// The device on which to create the tensor.
         /// </summary>
         [XmlIgnore]
-        public Device Device { get => device; set => device = value; }
+        public Device Device
+        {
+            get => device;
+            set => device = value;
+        }
 
         private Device device = null;
 
         private Expression BuildTensorFromArray(Array arrayValues, Type returnType)
         {
             var rank = arrayValues.Rank;
-            var lengths = new int[rank];
-            for (int i = 0; i < rank; i++)
-            {
-                lengths[i] = arrayValues.GetLength(i);
-            }
+            var lengths = Enumerable.Range(0, rank)
+                .Select(arrayValues.GetLength)
+                .ToArray();
 
             var arrayCreationExpression = Expression.NewArrayBounds(returnType, lengths.Select(len => Expression.Constant(len)).ToArray());
             var arrayVariable = Expression.Variable(arrayCreationExpression.Type, "array");
@@ -89,7 +92,7 @@ namespace Bonsai.ML.Torch
             }
 
             var tensorDataInitializationBlock = Expression.Block(
-                arrayVariable,
+                [arrayVariable],
                 assignArray,
                 Expression.Block(assignments),
                 arrayVariable
@@ -108,7 +111,7 @@ namespace Bonsai.ML.Torch
             var tensorAssignment = Expression.Call(
                 tensorCreationMethodInfo,
                 tensorDataInitializationBlock,
-                Expression.Constant(scalarType, typeof(ScalarType?)),
+                Expression.Constant((ScalarType)scalarType, typeof(ScalarType?)),
                 Expression.Constant(device, typeof(Device)),
                 Expression.Constant(false, typeof(bool)),
                 Expression.Constant(null, typeof(string).MakeArrayType())
@@ -118,7 +121,7 @@ namespace Bonsai.ML.Torch
             var assignTensor = Expression.Assign(tensorVariable, tensorAssignment);
 
             var buildTensor = Expression.Block(
-                tensorVariable,
+                [tensorVariable],
                 assignTensor,
                 tensorVariable
             );
@@ -132,7 +135,7 @@ namespace Bonsai.ML.Torch
             var assignValue = Expression.Assign(valueVariable, Expression.Constant(scalarValue, returnType));
 
             var tensorDataInitializationBlock = Expression.Block(
-                valueVariable,
+                [valueVariable],
                 assignValue,
                 valueVariable
             );
@@ -145,10 +148,10 @@ namespace Bonsai.ML.Torch
                 ]
             );
 
-            var tensorCreationMethodArguments = new Expression[] {
-                Expression.Constant(device, typeof(Device) ),
-                Expression.Constant(false, typeof(bool) )
-            };
+            Expression[] tensorCreationMethodArguments = [
+                Expression.Constant(device, typeof(Device)),
+                Expression.Constant(false, typeof(bool))
+            ];
 
             if (tensorCreationMethodInfo == null)
             {
@@ -193,9 +196,7 @@ namespace Bonsai.ML.Torch
             var returnType = TensorDataTypeLookup.GetTypeFromTensorDataType(scalarType);
             var argTypes = arguments.Select(arg => arg.Type).ToArray();
 
-            var methodInfoArgumentTypes = new Type[] {
-                typeof(Tensor)
-            };
+            Type[] methodInfoArgumentTypes = [typeof(Tensor)];
 
             var methods = typeof(CreateTensor).GetMethods(BindingFlags.Public | BindingFlags.Instance)
                                     .Where(m => m.Name == "Process")
@@ -211,7 +212,7 @@ namespace Bonsai.ML.Torch
 
             var tensorValues = ArrayHelper.ParseString(values, returnType);
             var buildTensor = tensorValues is Array arrayValues ? BuildTensorFromArray(arrayValues, returnType) : BuildTensorFromScalarValue(tensorValues, returnType);
-            var methodArguments = arguments.Count() == 0 ? [ buildTensor ] : arguments.Concat([ buildTensor ]);
+            var methodArguments = arguments.Count() == 0 ? [buildTensor] : arguments.Concat([buildTensor]);
 
             try
             {
@@ -223,7 +224,7 @@ namespace Bonsai.ML.Torch
             }
             finally
             {
-                values = ArrayHelper.SerializeToJson(tensorValues).ToLower();
+                values = StringFormatter.FormatToPython(tensorValues).ToLower();
                 scalarType = TensorDataTypeLookup.GetTensorDataTypeFromType(returnType);
             }
         }
