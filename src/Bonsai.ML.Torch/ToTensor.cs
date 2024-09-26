@@ -118,7 +118,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<IplImage> source)
         {
-            return source.Select(Helpers.OpenCVHelper.ToTensor);
+            return source.Select(OpenCVHelper.ToTensor);
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Mat> source)
         {
-            return source.Select(Helpers.OpenCVHelper.ToTensor);
+            return source.Select(OpenCVHelper.ToTensor);
         }
     }
 }
