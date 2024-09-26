@@ -26,5 +26,17 @@ namespace Bonsai.ML.Torch
         {
             return Observable.Defer(() => Observable.Return(ones(Size)));
         }
+
+        /// <summary>
+        /// Generates an observable sequence of tensors filled with zeros for each element of the input sequence.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public IObservable<Tensor> Process<T>(IObservable<T> source)
+        {
+            return source.Select(value => {
+                return ones(Size);
+            });
+        }
     }
 }
