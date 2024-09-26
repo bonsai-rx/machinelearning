@@ -26,7 +26,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            var index = Helpers.IndexHelper.ParseString(Indexes);
+            var index = IndexHelper.Parse(Indexes);
             return source.Select(tensor => {
                 return tensor.index(index);
             });
