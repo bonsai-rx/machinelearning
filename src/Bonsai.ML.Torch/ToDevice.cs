@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch
@@ -17,6 +18,7 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The device to which the input tensor should be moved.
         /// </summary>
+        [XmlIgnore]
         public Device Device { get; set; }
 
         /// <summary>
