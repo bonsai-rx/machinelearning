@@ -48,6 +48,9 @@ Visualizers and editor features for the HiddenMarkovModels package.
 ## Development Roadmap
 The ultimate goal of the `Bonsai.ML` project is to bring powerful machine learning tools into Bonsai to enable intelligent experimental control. To achieve this, our plan is to incorporate several different packages, models, frameworks, and language integrations. You can follow our progress by going to the [bonsai ML development roadmap](https://github.com/users/joacorapela/projects/2).
 
+## Feedback and Contributions
+`Bonsai.ML` is an open-source project and we welcome contributions and feedback from the community. If you have any comments or questions, or require assistance, please feel free to open an issue on the [GitHub repo](https://github.com/bonsai-rx/machinelearning). If you would like to contribute to the project, please see the [bonsai contributor guidelines](https://bonsai-rx.org/contribute/) and open a discussion on GitHub.
+
 ## Acknowledgments
 
 Development of the Bonsai.ML package is supported by the Biotechnology and Biological Sciences Research Council [grant number BB/W019132/1].
