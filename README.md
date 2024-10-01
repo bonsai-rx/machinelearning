@@ -45,6 +45,9 @@ Visualizers and editor features for the HiddenMarkovModels package.
 > [!NOTE]
 > Bonsai.ML packages can be installed through Bonsai's integrated package manager and are generally ready for immediate use. However, some packages may require additional installation steps. Refer to the specific package section for detailed installation guides and documentation.
 
+## Development Roadmap
+The ultimate goal of the `Bonsai.ML` project is to bring powerful machine learning tools into Bonsai to enable intelligent experimental control. To achieve this, our plan is to incorporate several different packages, models, frameworks, and language integrations. You can follow our progress by going to the [bonsai ML development roadmap](https://github.com/users/joacorapela/projects/2).
+
 ## Acknowledgments
 
 Development of the Bonsai.ML package is supported by the Biotechnology and Biological Sciences Research Council [grant number BB/W019132/1].
