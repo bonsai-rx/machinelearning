@@ -6,7 +6,6 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
     <PackageProjectUrl>https://bonsai-rx.org/machinelearning</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bonsai-rx/machinelearning.git</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -17,6 +16,12 @@
     <VersionPrefix>0.4.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <LangVersion>12.0</LangVersion>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
+    <BaseOutputPath>$(ArtifactsPath)/build/</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(ArtifactsPath)/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    <OutputPath Condition="'$(OutputPath)' == ''">$(BaseOutputPath)/</OutputPath>
+    <IntermediateOutputPath Condition="'$(IntermediateOutputPath)' == ''">$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+    <PackageOutputPath>$(ArtifactsPath)/packages/$(Configuration)/</PackageOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="..\..\LICENSE" PackagePath="/" />
