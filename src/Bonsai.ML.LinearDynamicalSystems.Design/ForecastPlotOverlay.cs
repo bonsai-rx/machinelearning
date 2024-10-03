@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using OxyPlot.Series;
 using OxyPlot;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.ForecastImageOverlay),
+[assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.ForecastPlotOverlay),
     Target = typeof(MashupSource<Bonsai.ML.LinearDynamicalSystems.Design.KinematicStateVisualizer, Bonsai.ML.LinearDynamicalSystems.Design.ForecastVisualizer>))]
 
 namespace Bonsai.ML.LinearDynamicalSystems.Design
