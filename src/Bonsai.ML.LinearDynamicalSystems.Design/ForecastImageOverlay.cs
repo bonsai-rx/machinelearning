@@ -8,7 +8,7 @@ using OpenCV.Net;
 using OxyPlot;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.LinearDynamicalSystems.Design.ForecastImageOverlay),
-    Target = typeof(Bonsai.ML.LinearDynamicalSystems.Kinematics.Forecast))]
+    Target = typeof(MashupSource<ImageMashupVisualizer, Bonsai.ML.LinearDynamicalSystems.Design.ForecastVisualizer>))]
 
 namespace Bonsai.ML.LinearDynamicalSystems.Design
 {
