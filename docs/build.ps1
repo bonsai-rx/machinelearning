@@ -1,4 +1,5 @@
-.\bonsai\modules\Export-Image.ps1 "..\src\Bonsai.ML.Visualizers\bin\Release\net472"
+$projectFolders = Get-ChildItem "..\src\Bonsai.ML.*\bin\Release\net472" -Directory | Select-Object -Expand FullName
+.\bonsai\modules\Export-Image.ps1 $projectFolders
 $exampleEnvironments = Get-ChildItem -Directory -Recurse -Filter ".bonsai" -Path "examples"
 foreach ($environment in $exampleEnvironments)
 {
