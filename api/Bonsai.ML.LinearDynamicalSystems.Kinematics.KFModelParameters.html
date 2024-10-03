@@ -1,0 +1,722 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class KFModelParameters | Bonsai.ML </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class KFModelParameters | Bonsai.ML ">
+      
+      <meta name="description" content="Model parameters for a Kalman Filter Kinematics python class">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/bonsai-rx/machinelearning/new/main/apidoc/new?filename=Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters.md&amp;value=---%0Auid%3A%20Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Bonsai - ML">
+            Bonsai - ML
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters">
+
+
+
+  <h1 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters" class="text-break">
+Class KFModelParameters  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Bonsai.html">Bonsai</a>.<a class="xref" href="Bonsai.ML.html">ML</a>.<a class="xref" href="Bonsai.ML.LinearDynamicalSystems.html">LinearDynamicalSystems</a>.<a class="xref" href="Bonsai.ML.LinearDynamicalSystems.Kinematics.html">Kinematics</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Bonsai.ML.LinearDynamicalSystems.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Model parameters for a Kalman Filter Kinematics python class</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Combinator]
+[WorkflowElementCategory(ElementCategory.Source)]
+public class KFModelParameters</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">KFModelParameters</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters__ctor_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.#ctor*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters__ctor" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.#ctor">
+  KFModelParameters()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.html">KFModelParameters</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KFModelParameters()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Acc_x0_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Acc_x0*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Acc_x0" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Acc_x0">
+  Acc_x0
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>x acceleration at time 0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;acc_x0&quot;)]
+public double Acc_x0 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Acc_y0_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Acc_y0*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Acc_y0" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Acc_y0">
+  Acc_y0
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>x velocity at time 0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;acc_y0&quot;)]
+public double Acc_y0 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Fps_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Fps*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Fps" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Fps">
+  Fps
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L236"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>frames per second</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;fps&quot;)]
+public int Fps { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Pos_x0_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Pos_x0*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Pos_x0" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Pos_x0">
+  Pos_x0
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>x position at time 0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;pos_x0&quot;)]
+public double Pos_x0 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Pos_y0_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Pos_y0*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Pos_y0" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Pos_y0">
+  Pos_y0
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>y position at time 0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;pos_y0&quot;)]
+public double Pos_y0 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Sigma_a_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Sigma_a*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Sigma_a" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Sigma_a">
+  Sigma_a
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>covariance of a</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;sigma_a&quot;)]
+public double Sigma_a { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Sigma_x_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Sigma_x*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Sigma_x" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Sigma_x">
+  Sigma_x
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>covariance of x</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;sigma_x&quot;)]
+public double Sigma_x { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Sigma_y_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Sigma_y*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Sigma_y" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Sigma_y">
+  Sigma_y
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>covariance of y</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;sigma_y&quot;)]
+public double Sigma_y { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Sqrt_diag_V0_value_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Sqrt_diag_V0_value*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Sqrt_diag_V0_value" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Sqrt_diag_V0_value">
+  Sqrt_diag_V0_value
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L218"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>v0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;sqrt_diag_V0_value&quot;)]
+public double Sqrt_diag_V0_value { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Vel_x0_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Vel_x0*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Vel_x0" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Vel_x0">
+  Vel_x0
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>x velocity at time 0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;vel_x0&quot;)]
+public double Vel_x0 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Vel_y0_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Vel_y0*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Vel_y0" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Vel_y0">
+  Vel_y0
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>y velocity at time 0</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty(&quot;vel_y0&quot;)]
+public double Vel_y0 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Process_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Process*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Process" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Process">
+  Process()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L266"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Generates parameters for a Kalman Filter Kinematics Model</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IObservable&lt;KFModelParameters&gt; Process()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iobservable-1">IObservable</a>&lt;<a class="xref" href="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.html">KFModelParameters</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Process_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Process*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Process_System_IObservable_Python_Runtime_PyObject__" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Process(System.IObservable{Python.Runtime.PyObject})">
+  Process(IObservable&lt;PyObject&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L287"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the model parameters from a PyObject of a Kalman Filter Kinematics Model</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IObservable&lt;KFModelParameters&gt; Process(IObservable&lt;PyObject&gt; source)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>source</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iobservable-1">IObservable</a>&lt;<span class="xref">PyObject</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iobservable-1">IObservable</a>&lt;<a class="xref" href="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.html">KFModelParameters</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Process_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Process*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_Process__1_System_IObservable___0__" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.Process``1(System.IObservable{``0})">
+  Process&lt;TSource&gt;(IObservable&lt;TSource&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L322"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Generates parameters for a Kalman Filter Kinematics Model on each input</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IObservable&lt;KFModelParameters&gt; Process&lt;TSource&gt;(IObservable&lt;TSource&gt; source)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>source</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iobservable-1">IObservable</a>&lt;TSource&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iobservable-1">IObservable</a>&lt;<a class="xref" href="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.html">KFModelParameters</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TSource</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_ToString_" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.ToString*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_Kinematics_KFModelParameters_ToString" data-uid="Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L341"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that represents the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/Kinematics/KFModelParameters.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          &copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href="https://dotnet.github.io/docfx">docfx</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.8.1"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:CreateRuntime" />
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>PythonEngine</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>PythonEngine</Name>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:LoadLDSModule.bonsai" />
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:Kinematics.CreateKFModel.bonsai">
+        <ModelName>model</ModelName>
+        <Fps>60</Fps>
+        <Pos_x0>0</Pos_x0>
+        <Pos_y0>0</Pos_y0>
+        <Vel_x0>0</Vel_x0>
+        <Vel_y0>0</Vel_y0>
+        <Acc_x0>0</Acc_x0>
+        <Acc_y0>0</Acc_y0>
+        <Sigma_a>10000</Sigma_a>
+        <Sigma_x>100</Sigma_x>
+        <Sigma_y>100</Sigma_y>
+        <Sqrt_diag_V0_value>0.001</Sqrt_diag_V0_value>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>BehaviorData</Name>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:Kinematics.CreateObservation2D.bonsai" />
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>Observation</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>Observation</Name>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:Kinematics.PerformInference.bonsai">
+        <ModelName>model</ModelName>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>InferredKinematics</Name>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+      <Edge From="6" To="7" Label="Source1" />
+      <Edge From="8" To="9" Label="Source1" />
+      <Edge From="9" To="10" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

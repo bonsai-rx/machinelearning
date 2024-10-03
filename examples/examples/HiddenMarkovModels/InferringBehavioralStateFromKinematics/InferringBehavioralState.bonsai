@@ -1,0 +1,586 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.8.5"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:cv="clr-namespace:Bonsai.Vision;assembly=Bonsai.Vision"
+                 xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
+                 xmlns:p1="clr-namespace:Bonsai.ML.Python;assembly=Bonsai.ML.Python"
+                 xmlns:gui="clr-namespace:Bonsai.Gui;assembly=Bonsai.Gui"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:CreateRuntime" />
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>RuntimeEngine</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:GetRuntime" />
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.HiddenMarkovModels:LoadHMMModule.bonsai" />
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:LoadLDSModule.bonsai" />
+      <Expression xsi:type="GroupWorkflow">
+        <Name>MouseTracking</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="FileName" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="cv:FileCapture">
+                <cv:FileName>../../../datasets/ForagingMouseExampleVid.avi</cv:FileName>
+                <cv:PlaybackRate>0</cv:PlaybackRate>
+                <cv:StartPosition>0</cv:StartPosition>
+                <cv:PositionUnits>Frames</cv:PositionUnits>
+                <cv:Loop>false</cv:Loop>
+                <cv:Playing>true</cv:Playing>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>Image</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="cv:Grayscale" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="cv:CropPolygon">
+                <cv:Regions>
+                  <cv:ArrayOfPoint>
+                    <cv:Point>
+                      <cv:X>1</cv:X>
+                      <cv:Y>1</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>0</cv:X>
+                      <cv:Y>1</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>0</cv:X>
+                      <cv:Y>0</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>1</cv:X>
+                      <cv:Y>0</cv:Y>
+                    </cv:Point>
+                  </cv:ArrayOfPoint>
+                  <cv:ArrayOfPoint>
+                    <cv:Point>
+                      <cv:X>796</cv:X>
+                      <cv:Y>597</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>799</cv:X>
+                      <cv:Y>597</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>799</cv:X>
+                      <cv:Y>599</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>796</cv:X>
+                      <cv:Y>599</cv:Y>
+                    </cv:Point>
+                  </cv:ArrayOfPoint>
+                  <cv:ArrayOfPoint>
+                    <cv:Point>
+                      <cv:X>207</cv:X>
+                      <cv:Y>502</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>172</cv:X>
+                      <cv:Y>455</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>152</cv:X>
+                      <cv:Y>416</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>137</cv:X>
+                      <cv:Y>364</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>133</cv:X>
+                      <cv:Y>325</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>133</cv:X>
+                      <cv:Y>301</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>118</cv:X>
+                      <cv:Y>300</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>118</cv:X>
+                      <cv:Y>320</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>76</cv:X>
+                      <cv:Y>318</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>83</cv:X>
+                      <cv:Y>264</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>122</cv:X>
+                      <cv:Y>269</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>119</cv:X>
+                      <cv:Y>289</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>134</cv:X>
+                      <cv:Y>290</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>138</cv:X>
+                      <cv:Y>260</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>154</cv:X>
+                      <cv:Y>206</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>183</cv:X>
+                      <cv:Y>151</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>220</cv:X>
+                      <cv:Y>107</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>255</cv:X>
+                      <cv:Y>81</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>295</cv:X>
+                      <cv:Y>60</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>342</cv:X>
+                      <cv:Y>43</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>382</cv:X>
+                      <cv:Y>36</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>421</cv:X>
+                      <cv:Y>34</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>468</cv:X>
+                      <cv:Y>42</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>522</cv:X>
+                      <cv:Y>59</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>572</cv:X>
+                      <cv:Y>87</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>609</cv:X>
+                      <cv:Y>118</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>638</cv:X>
+                      <cv:Y>154</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>666</cv:X>
+                      <cv:Y>205</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>685</cv:X>
+                      <cv:Y>259</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>690</cv:X>
+                      <cv:Y>318</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>684</cv:X>
+                      <cv:Y>369</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>669</cv:X>
+                      <cv:Y>417</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>642</cv:X>
+                      <cv:Y>467</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>611</cv:X>
+                      <cv:Y>507</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>578</cv:X>
+                      <cv:Y>537</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>530</cv:X>
+                      <cv:Y>564</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>475</cv:X>
+                      <cv:Y>583</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>419</cv:X>
+                      <cv:Y>591</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>366</cv:X>
+                      <cv:Y>587</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>316</cv:X>
+                      <cv:Y>574</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>273</cv:X>
+                      <cv:Y>555</cv:Y>
+                    </cv:Point>
+                    <cv:Point>
+                      <cv:X>242</cv:X>
+                      <cv:Y>533</cv:Y>
+                    </cv:Point>
+                  </cv:ArrayOfPoint>
+                </cv:Regions>
+                <cv:MaskType>ToZero</cv:MaskType>
+                <cv:FillValue>
+                  <cv:Val0>255</cv:Val0>
+                  <cv:Val1>255</cv:Val1>
+                  <cv:Val2>255</cv:Val2>
+                  <cv:Val3>255</cv:Val3>
+                </cv:FillValue>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="cv:Threshold">
+                <cv:ThresholdValue>65</cv:ThresholdValue>
+                <cv:MaxValue>255</cv:MaxValue>
+                <cv:ThresholdType>BinaryInv</cv:ThresholdType>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="cv:FindContours">
+                <cv:Mode>External</cv:Mode>
+                <cv:Method>ChainApproxNone</cv:Method>
+                <cv:Offset>
+                  <cv:X>0</cv:X>
+                  <cv:Y>0</cv:Y>
+                </cv:Offset>
+                <cv:MinArea>20</cv:MinArea>
+                <cv:MaxArea xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="cv:BinaryRegionAnalysis" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="cv:LargestBinaryRegion" />
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Centroid</Selector>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="10" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:Kinematics.CreateObservation2D.bonsai" />
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>Centroid</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>Centroid</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Take">
+          <rx:Count>1</rx:Count>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="InputMapping">
+        <PropertyMappings>
+          <Property Name="Pos_x0" Selector="X" />
+          <Property Name="Pos_y0" Selector="Y" />
+        </PropertyMappings>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:Kinematics.CreateKFModel.bonsai">
+        <Name>KFmodel</Name>
+        <Fps>60</Fps>
+        <Pos_x0>668.08917236328125</Pos_x0>
+        <Pos_y0>408.89923095703125</Pos_y0>
+        <Vel_x0>0</Vel_x0>
+        <Vel_y0>0</Vel_y0>
+        <Acc_x0>0</Acc_x0>
+        <Acc_y0>0</Acc_y0>
+        <Sigma_a>13293.642985819602</Sigma_a>
+        <Sigma_x>17.614123081439104</Sigma_x>
+        <Sigma_y>17.614123081439104</Sigma_y>
+        <Sqrt_diag_V0_value>0.00093385538054207261</Sqrt_diag_V0_value>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>KFParameters</Name>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.HiddenMarkovModels:CreateHMM.bonsai">
+        <Name>hmm</Name>
+        <NumStates>6</NumStates>
+        <Dimensions>2</Dimensions>
+        <ObservationsModelType>Gaussian</ObservationsModelType>
+        <TransitionsModelType>Stationary</TransitionsModelType>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>HMMParameters</Name>
+      </Expression>
+      <Expression xsi:type="rx:Defer">
+        <Name>PerformKFInference</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Centroid</Name>
+            </Expression>
+            <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:Kinematics.PerformInference.bonsai">
+              <Name>KFmodel</Name>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>KinematicState</Name>
+      </Expression>
+      <Expression xsi:type="rx:SelectMany">
+        <Name>FeatureExtraction</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KinematicState</Name>
+            </Expression>
+            <Expression xsi:type="scr:ExpressionTransform">
+              <scr:Expression>Math.Sqrt(Math.Pow(it.Velocity.X.Mean, 2) + Math.Pow(it.Velocity.Y.Mean, 2))</scr:Expression>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KinematicState</Name>
+            </Expression>
+            <Expression xsi:type="scr:ExpressionTransform">
+              <scr:Expression>Math.Sqrt(Math.Pow(it.Acceleration.X.Mean, 2) + Math.Pow(it.Acceleration.Y.Mean, 2))</scr:Expression>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:FormatToPython" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Take">
+                <rx:Count>1</rx:Count>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="4" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source2" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>HMMObservation</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>HMMFitFinished</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:WithLatestFrom" />
+      </Expression>
+      <Expression xsi:type="rx:SelectMany">
+        <Name>InferHMMState</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>HMMObservation</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Take">
+                <rx:Count>1</rx:Count>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.HiddenMarkovModels:InferState.bonsai">
+              <Name>hmm</Name>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>HMMStateProbabilities</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>HMMParameters</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:SubscribeWhen" />
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>KFParameters</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:SubscribeWhen" />
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>HMMObservation</Name>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.HiddenMarkovModels:RunFitAsync.bonsai">
+        <BatchSize>1000</BatchSize>
+        <Name>hmm</Name>
+        <NumIterations>50</NumIterations>
+        <FlushDataBetweenBatches>true</FlushDataBetweenBatches>
+        <InitialStateDistribution>true</InitialStateDistribution>
+        <TransitionParams>true</TransitionParams>
+        <ObservationParams>true</ObservationParams>
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.HiddenMarkovModels:CheckFitFinished.bonsai">
+        <Name>hmm</Name>
+        <TimerFrequency>PT1S</TimerFrequency>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Take">
+          <rx:Count>1</rx:Count>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>HMMFitFinished</Name>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>BehavioralStateVisualizer</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="GroupWorkflow">
+              <Name>ImageVisualizer</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="SubscribeSubject">
+                    <Name>KinematicState</Name>
+                  </Expression>
+                  <Expression xsi:type="InputMapping">
+                    <PropertyMappings>
+                      <Property Name="X" Selector="Position.X.Mean" />
+                      <Property Name="Y" Selector="Position.Y.Mean" />
+                    </PropertyMappings>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="cv:CreatePoint2f">
+                      <cv:X>682.937134</cv:X>
+                      <cv:Y>341.0978</cv:Y>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="VisualizerMapping" />
+                  <Expression xsi:type="SubscribeSubject">
+                    <Name>Image</Name>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="4" Label="Source1" />
+                  <Edge From="4" To="5" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="VisualizerMapping" />
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KinematicState</Name>
+            </Expression>
+            <Expression xsi:type="VisualizerMapping" />
+            <Expression xsi:type="SubscribeSubject">
+              <Name>HMMStateProbabilities</Name>
+            </Expression>
+            <Expression xsi:type="VisualizerMapping" />
+            <Expression xsi:type="gui:TableLayoutPanelBuilder">
+              <gui:Enabled>true</gui:Enabled>
+              <gui:Visible>true</gui:Visible>
+              <gui:ColumnCount>3</gui:ColumnCount>
+              <gui:RowCount>1</gui:RowCount>
+              <gui:ColumnStyles />
+              <gui:RowStyles />
+              <gui:CellSpans />
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="6" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="6" Label="Source2" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source3" />
+            <Edge From="6" To="7" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+      <Edge From="6" To="7" Label="Source1" />
+      <Edge From="8" To="9" Label="Source1" />
+      <Edge From="9" To="10" Label="Source1" />
+      <Edge From="10" To="11" Label="Source1" />
+      <Edge From="11" To="12" Label="Source1" />
+      <Edge From="13" To="14" Label="Source1" />
+      <Edge From="15" To="16" Label="Source1" />
+      <Edge From="16" To="17" Label="Source1" />
+      <Edge From="17" To="18" Label="Source1" />
+      <Edge From="18" To="20" Label="Source1" />
+      <Edge From="19" To="20" Label="Source2" />
+      <Edge From="20" To="21" Label="Source1" />
+      <Edge From="21" To="22" Label="Source1" />
+      <Edge From="22" To="24" Label="Source1" />
+      <Edge From="23" To="24" Label="Source2" />
+      <Edge From="24" To="26" Label="Source1" />
+      <Edge From="25" To="26" Label="Source2" />
+      <Edge From="27" To="28" Label="Source1" />
+      <Edge From="28" To="29" Label="Source1" />
+      <Edge From="29" To="30" Label="Source1" />
+      <Edge From="30" To="31" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

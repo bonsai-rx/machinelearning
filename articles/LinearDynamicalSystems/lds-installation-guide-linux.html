@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Installation Guide - Linux | Bonsai.ML </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Installation Guide - Linux | Bonsai.ML ">
+      
+      
+      <link rel="icon" href="../../favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/bonsai-rx/machinelearning/blob/main/docs/articles/LinearDynamicalSystems/lds-installation-guide-linux.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../logo.svg" alt="Bonsai - ML">
+            Bonsai - ML
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="installation-guide---linux">Installation Guide - Linux</h1>
+
+<p>This guide is meant for users to install the package from scratch. To use this package to run the examples, you must install the additional Bonsai packages required to run each <a href="../../examples/README.html">Example</a>. Some familiarity with the terminal is necessary.</p>
+<h2 id="notes-on-installing-bonsai-on-linux-ubuntu">Notes on Installing Bonsai on Linux (Ubuntu)</h2>
+<p>Bonsai on Linux is not as straightforward as installing on Windows and is still being actively tested and optimized. Currently, Bonsai support has only been tested on Ubuntu 22.04. If you wish to try Bonsai on Linux, be sure to read the <a href="https://github.com/orgs/bonsai-rx/discussions/1101">Linux Installation Guide</a> for important information regarding how to install underlying Bonsai packge dependencies, such as OpenGL, OpenAL, OpenCV, etc., for use in Bonsai workflows.</p>
+<h3 id="dependencies">Dependencies</h3>
+<p>To get started, you must install the following tools:</p>
+<ul>
+<li><a href="https://www.python.org/downloads/">Python (v3.10.12)</a></li>
+<li><a href="https://dotnet.microsoft.com/en-us/download">dotnet-sdk (v8)</a></li>
+<li><a href="https://git-scm.com/downloads">Git</a></li>
+<li><a href="https://github.com/ncguilbeault/bonsai-linux-environment-template">Bonsai-Rx Linux Environment Template</a></li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Be sure to check the python version and dotnet-sdk version to make sure you have the correct version of the tool installed, otherwise the steps in this guide may not work.</p>
+</div>
+<h3 id="creating-virtual-environments">Creating Virtual Environments</h3>
+<ol>
+<li>Create a folder for your project</li>
+</ol>
+<pre><code class="lang-cmd">cd ~/Desktop
+mkdir LinearDynamicalSystems
+cd LinearDynamicalSystems
+</code></pre>
+<ol start="2">
+<li>Create a python virtual environment.</li>
+</ol>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>This step uses the virtual env package from python to create a virtual environment. If you run into an error during this step, you may have to install the python virtual env package with <code>sudo apt install python3.10-venv</code>.</p>
+</div>
+<pre><code class="lang-cmd">python3 -m venv .venv
+</code></pre>
+<ol start="3">
+<li>Create a bonsai environment.</li>
+</ol>
+<div class="NOTE">
+<h5>Note</h5>
+<p>This step uses the <a href="https://github.com/ncguilbeault/bonsai-linux-environment-template">bonsai linux environment template tool</a> for easy creation of linux environments</p>
+</div>
+<pre><code class="lang-cmd">dotnet new bonsaienvl
+</code></pre>
+<p>When prompted, enter yes to run the setup script.</p>
+<h3 id="python-environment-setup-guide">Python Environment Setup Guide</h3>
+<ol>
+<li>Activate the python environment</li>
+</ol>
+<pre><code class="lang-cmd">source .venv/bin/activate
+</code></pre>
+<ol start="2">
+<li>Install the lds_python package</li>
+</ol>
+<pre><code class="lang-cmd">pip install lds_python@git+https://github.com/joacorapela/lds_python@f761c201f3df883503ecb67acef35ba846e3524c
+</code></pre>
+<p>If you encounter errors during installation of the lds_python package, you will have to diagnose the issue and install the correct package dependencies manually.</p>
+<ol start="3">
+<li>Check that the lds_python package has been installed correctly. Launch a python IDE:</li>
+</ol>
+<pre><code class="lang-cmd">python
+</code></pre>
+<ol start="4">
+<li>Check that you can correctly import the package:</li>
+</ol>
+<pre><code class="lang-python">import lds
+</code></pre>
+<p>If no errors appear when <code>import lds</code> is called in python, your python environment is ready. Exit python with the following command and move onto the next step:</p>
+<pre><code class="lang-python">exit()
+</code></pre>
+<h3 id="bonsai-environment-setup-guide">Bonsai Environment Setup Guide</h3>
+<ol>
+<li>Activate the bonsai environment and launch bonsai:</li>
+</ol>
+<pre><code class="lang-cmd">source .bonsai/activate
+bonsai
+</code></pre>
+<ol start="2">
+<li>Open Bonsai's <code>Package Manager</code> from the startup menu and install the <code>Bonsai.ML.LinearDynamicalSystems</code> bonsai package from the menu. When installing the package, make sure to enter <code>Accept</code> on the prompts when asked to accept <em>Terms and Conditions</em> during installation.</li>
+</ol>
+<p>You will now have access to <code>Bonsai.ML.LinearDynamicalSystems</code> modules from the Bonsai toolbox.</p>
+<p>If all of these steps worked for you, head to the section on <a href="lds-getting-started.html">Getting Started</a>.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/bonsai-rx/machinelearning/blob/main/docs/articles/LinearDynamicalSystems/lds-installation-guide-linux.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          &copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href="https://dotnet.github.io/docfx">docfx</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

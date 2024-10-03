@@ -1,0 +1,766 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class NeuralNetworkRecurrentTransitions | Bonsai.ML </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class NeuralNetworkRecurrentTransitions | Bonsai.ML ">
+      
+      <meta name="description" content="Represents an operator that is used to create and transform an observable sequence of  objects.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/bonsai-rx/machinelearning/new/main/apidoc/new?filename=Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions.md&amp;value=---%0Auid%3A%20Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Bonsai - ML">
+            Bonsai - ML
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions">
+
+
+
+  <h1 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions" class="text-break">
+Class NeuralNetworkRecurrentTransitions  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Bonsai.html">Bonsai</a>.<a class="xref" href="Bonsai.ML.html">ML</a>.<a class="xref" href="Bonsai.ML.HiddenMarkovModels.html">HiddenMarkovModels</a>.<a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.html">Transitions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Bonsai.ML.HiddenMarkovModels.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents an operator that is used to create and transform an observable sequence
+of <a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.html">NeuralNetworkRecurrentTransitions</a> objects.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Combinator]
+[WorkflowElementCategory(ElementCategory.Source)]
+[JsonObject(MemberSerialization.OptIn)]
+public class NeuralNetworkRecurrentTransitions : TransitionsModel</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Bonsai.ML.HiddenMarkovModels.PythonStringBuilder.html">PythonStringBuilder</a></div>
+      <div><a class="xref" href="Bonsai.ML.HiddenMarkovModels.PythonModel.html">PythonModel</a></div>
+      <div><a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModel.html">TransitionsModel</a></div>
+      <div><span class="xref">NeuralNetworkRecurrentTransitions</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModel.html#Bonsai_ML_HiddenMarkovModels_Transitions_TransitionsModel_ModelName">TransitionsModel.ModelName</a>
+    </div>
+    <div>
+      <a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModel.html#Bonsai_ML_HiddenMarkovModels_Transitions_TransitionsModel_ModelType">TransitionsModel.ModelType</a>
+    </div>
+    <div>
+      <a class="xref" href="Bonsai.ML.HiddenMarkovModels.PythonModel.html#Bonsai_ML_HiddenMarkovModels_PythonModel_BuildString">PythonModel.BuildString()</a>
+    </div>
+    <div>
+      <a class="xref" href="Bonsai.ML.HiddenMarkovModels.PythonStringBuilder.html#Bonsai_ML_HiddenMarkovModels_PythonStringBuilder_StringBuilder">PythonStringBuilder.StringBuilder</a>
+    </div>
+    <div>
+      <a class="xref" href="Bonsai.ML.HiddenMarkovModels.PythonStringBuilder.html#Bonsai_ML_HiddenMarkovModels_PythonStringBuilder_UpdateString">PythonStringBuilder.UpdateString()</a>
+    </div>
+    <div>
+      <a class="xref" href="Bonsai.ML.HiddenMarkovModels.PythonStringBuilder.html#Bonsai_ML_HiddenMarkovModels_PythonStringBuilder_ToString">PythonStringBuilder.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions__ctor_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.#ctor*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions__ctor" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.#ctor">
+  NeuralNetworkRecurrentTransitions()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructs a new instance of the <a class="xref" href="Bonsai.ML.HiddenMarkovModels.PythonModel.html">PythonModel</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public NeuralNetworkRecurrentTransitions()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions__ctor_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.#ctor*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions__ctor_System_Object___" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.#ctor(System.Object[])">
+  NeuralNetworkRecurrentTransitions(params object[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Bonsai.ML.HiddenMarkovModels.PythonModel.html">PythonModel</a> class using keyword arguments.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public NeuralNetworkRecurrentTransitions(params object[] kwargs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>kwargs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd><p>The keyword arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Biases_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Biases*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Biases" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Biases">
+  Biases
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The biases.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;double[]&gt; Biases { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>[]&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_HiddenLayerSizes_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.HiddenLayerSizes*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_HiddenLayerSizes" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.HiddenLayerSizes">
+  HiddenLayerSizes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The sizes of the hidden layers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int[] HiddenLayerSizes { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Kwargs_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Kwargs*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Kwargs" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Kwargs">
+  Kwargs
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The dictionary of keyword arguments that are used to construct the model.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty]
+public override Dictionary&lt;string, object&gt; Kwargs { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2">Dictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_KwargsArray_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.KwargsArray*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_KwargsArray" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.KwargsArray">
+  KwargsArray
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string[] KwargsArray { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_LogPs_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.LogPs*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_LogPs" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.LogPs">
+  LogPs
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The Log Ps of the transitions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double[,] LogPs { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>[,]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_NonlinearityType_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.NonlinearityType*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_NonlinearityType" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.NonlinearityType">
+  NonlinearityType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The type of nonlinearity or activation function.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public NonlinearityType NonlinearityType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.NonlinearityType.html">NonlinearityType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Params_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Params*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Params" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Params">
+  Params
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The parameters that are used to define the model.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty]
+[Browsable(false)]
+public override object[] Params { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_TransitionsModelType_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.TransitionsModelType*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_TransitionsModelType" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.TransitionsModelType">
+  TransitionsModelType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The type of Transitions model.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonProperty]
+[JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+[Browsable(false)]
+public override TransitionsModelType TransitionsModelType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModelType.html">TransitionsModelType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Weights_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Weights*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Weights" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Weights">
+  Weights
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The weights.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;double[,]&gt; Weights { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>[,]&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_CheckKwargs_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.CheckKwargs*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_CheckKwargs_System_Object___" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.CheckKwargs(System.Object[])">
+  CheckKwargs(params object[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the keyword arguments are valid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void CheckKwargs(params object[] kwargs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>kwargs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd><p>The keyword arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_CheckParams_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.CheckParams*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_CheckParams_System_Object___" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.CheckParams(System.Object[])">
+  CheckParams(params object[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the parameters are valid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void CheckParams(params object[] @params)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>params</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd><p>The parameters.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Process_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Process*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Process" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Process">
+  Process()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns an observable sequence of <a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.html">NeuralNetworkRecurrentTransitions</a> objects.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IObservable&lt;NeuralNetworkRecurrentTransitions&gt; Process()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iobservable-1">IObservable</a>&lt;<a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.html">NeuralNetworkRecurrentTransitions</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Process_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Process*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_Process_System_IObservable_Python_Runtime_PyObject__" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.Process(System.IObservable{Python.Runtime.PyObject})">
+  Process(IObservable&lt;PyObject&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transforms an observable sequence of <span class="xref">Python.Runtime.PyObject</span> into an observable sequence
+of <a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.html">NeuralNetworkRecurrentTransitions</a> objects by accessing internal attributes of the <span class="xref">Python.Runtime.PyObject</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IObservable&lt;NeuralNetworkRecurrentTransitions&gt; Process(IObservable&lt;PyObject&gt; source)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>source</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iobservable-1">IObservable</a>&lt;<span class="xref">PyObject</span>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iobservable-1">IObservable</a>&lt;<a class="xref" href="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.html">NeuralNetworkRecurrentTransitions</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_UpdateKwargs_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.UpdateKwargs*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_UpdateKwargs_System_Object___" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.UpdateKwargs(System.Object[])">
+  UpdateKwargs(params object[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the kwargs dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void UpdateKwargs(params object[] kwargs)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>kwargs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd><p>The keyword arguments.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_UpdateParams_" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.UpdateParams*"></a>
+
+  <h3 id="Bonsai_ML_HiddenMarkovModels_Transitions_NeuralNetworkRecurrentTransitions_UpdateParams_System_Object___" data-uid="Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.UpdateParams(System.Object[])">
+  UpdateParams(params object[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void UpdateParams(params object[] @params)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>params</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a>[]</dt>
+    <dd><p>The parameters.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.HiddenMarkovModels/Transitions/NeuralNetworkRecurrentTransitions.cs/#L17" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          &copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href="https://dotnet.github.io/docfx">docfx</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

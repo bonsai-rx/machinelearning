@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.8.5"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:io="clr-namespace:Bonsai.IO;assembly=Bonsai.System"
+                 xmlns:p1="clr-namespace:Bonsai.ML.HiddenMarkovModels;assembly=Bonsai.ML.HiddenMarkovModels"
+                 xmlns:p2="clr-namespace:Bonsai.ML;assembly=Bonsai.ML"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:CreateRuntime" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:GetRuntime" />
+      </Expression>
+      <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.HiddenMarkovModels:LoadHMMModule.bonsai" />
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="py:GetRuntime" />
+      </Expression>
+      <Expression xsi:type="rx:SelectMany">
+        <Name>LoadStateParameters</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="Path" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="io:ReadAllText">
+                <io:Path>hmm_config.json</io:Path>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="p1:DeserializeFromJson">
+              <p1:Type xsi:type="TypeMapping" TypeArguments="p1:ModelParameters" />
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="InputMapping">
+        <PropertyMappings>
+          <Property Name="StateParameters" Selector="StateParameters" />
+          <Property Name="NumStates" Selector="NumStates" />
+          <Property Name="Dimensions" Selector="Dimensions" />
+        </PropertyMappings>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>HiddenMarkovModels:CreateHMM</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="Name" Category="ModelReference" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:CreateModelReference">
+                <p2:Name>hmm</p2:Name>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>hmm</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Name</Selector>
+            </Expression>
+            <Expression xsi:type="WorkflowInput">
+              <Name>Source1</Name>
+            </Expression>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="NumStates" />
+              <Property Name="Dimensions" />
+              <Property Name="ObservationsModelType" />
+              <Property Name="StateParameters" />
+              <Property Name="TransitionsModelType" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ModelParameters">
+                <p1:NumStates>2</p1:NumStates>
+                <p1:Dimensions>2</p1:Dimensions>
+                <p1:ObservationsModelType>AutoRegressive</p1:ObservationsModelType>
+                <p1:TransitionsModelType>ConstrainedStationary</p1:TransitionsModelType>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="py:ObserveOnGIL" />
+            </Expression>
+            <Expression xsi:type="Format">
+              <Format>{0}=HiddenMarkovModel({1})</Format>
+              <Selector>Item1,Item2</Selector>
+            </Expression>
+            <Expression xsi:type="InputMapping">
+              <PropertyMappings>
+                <Property Name="Script" Selector="it" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>HMMModule</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Module" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="py:Exec">
+                <py:Script>hmm=HiddenMarkovModel(num_states=2,dimensions=2,initial_state_distribution=[-0.693147180559945, -0.693147180559945],transitions_model_type="constrained",transitions_params=([[-0.0359314600911901, -3.34405397762551], [-3.50931805592199, -0.0303739630913149]],),transitions_kwargs={"transition_mask": [[1, 1], [1, 1]]},observations_model_type="autoregressive",observations_params=([[[0.0456379314714268, 0.798697176163162], [-0.798697176163162, 0.0456379314714267]], [[0.0932853159677839, 0.794542541230355], [-0.794542541230355, 0.0932853159677839]]],[[1.86755799014997, -0.977277879876411], [0.950088417525589, -0.151357208297698]],[[[], []], [[], []]],[[[0.313067701650901, -0.854095739301725], [-2.55298981583408, 0.653618595440361]], [[0.864436198859506, -0.742165020406442], [2.26975462398761, -1.45436567459876]]],),observations_kwargs={"lags": 1})</py:Script>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="InputMapping">
+              <PropertyMappings>
+                <Property Name="VariableName" Selector="Item2" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>HMMModule</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Module" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="py:Get">
+                <py:VariableName>hmm</py:VariableName>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ModelParameters">
+                <p1:NumStates>2</p1:NumStates>
+                <p1:Dimensions>2</p1:Dimensions>
+                <p1:ObservationsModelType>AutoRegressive</p1:ObservationsModelType>
+                <p1:TransitionsModelType>ConstrainedStationary</p1:TransitionsModelType>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="0" To="2" Label="Source2" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="7" Label="Source1" />
+            <Edge From="3" To="14" Label="Source2" />
+            <Edge From="4" To="6" Label="Source1" />
+            <Edge From="5" To="6" Label="Source2" />
+            <Edge From="5" To="19" Label="Source2" />
+            <Edge From="6" To="7" Label="Source2" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="10" Label="Source1" />
+            <Edge From="10" To="13" Label="Source1" />
+            <Edge From="11" To="12" Label="Source1" />
+            <Edge From="12" To="13" Label="Source2" />
+            <Edge From="13" To="14" Label="Source1" />
+            <Edge From="14" To="15" Label="Source1" />
+            <Edge From="15" To="18" Label="Source1" />
+            <Edge From="16" To="17" Label="Source1" />
+            <Edge From="17" To="18" Label="Source2" />
+            <Edge From="18" To="19" Label="Source1" />
+            <Edge From="19" To="20" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="1" To="2" Label="Source1" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

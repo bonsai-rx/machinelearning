@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Optimizing Model Parameters for Foraging Mouse Example | Bonsai.ML </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Optimizing Model Parameters for Foraging Mouse Example | Bonsai.ML ">
+      
+      
+      <link rel="icon" href="../../../../../favicon.ico">
+      <link rel="stylesheet" href="../../../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../../../toc.html">
+      <meta name="docfx:tocrel" content="../../../../docs/toc.html">
+      
+      <meta name="docfx:rel" content="../../../../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/bonsai-rx/machinelearning/blob/main/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/README.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../../../index.html">
+            <img id="logo" class="svg" src="../../../../../logo.svg" alt="Bonsai - ML">
+            Bonsai - ML
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="optimizing-model-parameters-for-foraging-mouse-example">Optimizing Model Parameters for Foraging Mouse Example</h1>
+
+<p>The code for this repo can be found <a href="https://github.com/bonsai-rx/machinelearning-examples/tree/main/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse">here</a>.</p>
+<p>In the following example, you can see how the parameters of the Kalman Filter can be automatically optimized to infer the kinematics of a mouse behaving in a foraging arena. This example is an extension to the <a href="https://github.com/bonsai-rx/machinelearning-examples/tree/main/examples/LinearDynamicalSystems/Kinematics/ForagingMouse">Foraging Mouse example</a> in which the parameters of the model are optimized by learning the parameters of the model over small batches of training data.</p>
+<h3 id="dependencies">Dependencies</h3>
+<p>If you used the environment bootstrapping method, you dont have to worry about the package dependencies, as these should be already installed. However, if creating a new environment or integrating into an existing one, you will need to install the following packages:</p>
+<ul>
+<li>Bonsai - Core v2.8.1</li>
+<li>Bonsai - Design v2.8.0</li>
+<li>Bonsai - Editor v2.8.0</li>
+<li>Bonsai - ML v0.2.0</li>
+<li>Bonsai - ML LinearDynamicalSystems v0.2.0</li>
+<li>Bonsai - ML Visualizers v0.2.0</li>
+<li>Bonsai - Scripting v2.8.0</li>
+<li>Bonsai - Scripting Python v0.2.0</li>
+<li>Bonsai - Vision v2.8.1</li>
+<li>Bonsai - Vision Design v2.8.1</li>
+</ul>
+<h3 id="dataset">Dataset</h3>
+<p>The video for this example was generously provided by the Sainsbury Wellcome Centre Foraging Behaviour Working Group. (2023). Aeon: An open-source platform to study the neural basis of ethological behaviours over naturalistic timescales, <a href="https://doi.org/10.5281/zenodo.8413142">https://doi.org/10.5281/zenodo.8413142</a></p>
+<p>You can download the <code>ForagingMouseExampleVid.avi</code> video file here: <a href="https://doi.org/10.5281/zenodo.10629221">https://doi.org/10.5281/zenodo.10629221</a>. The workflow expects the video to be placed into the <code>datasets</code> folder but if you prefer to keep the video elsewhere, simply change the <code>Filename</code> property of the <code>MouseTracking</code> group node to point to the correct location.</p>
+<h3 id="workflow">Workflow</h3>
+<p>Below is the workflow. It is similar to the workflow that was used to infer the kinematics of a mouse during foraging (see example here)[https://github.com/bonsai-rx/machinelearning-examples/tree/main/examples/LinearDynamicalSystems/Kinematics/ForagingMouse] with the addition of a few nodes that will run optimization of the models parameters over small batches of data that are collected continuously.</p>
+<div class="workflow"><p><img src="ModelOptimizationForagingMouse.bonsai" alt="Model Optimization for Mouse Foraging Behaviour"></p>
+</div>
+<p>You can find specific information about the tracking workflow and model inference workflow by going to the Foraging Mouse example. In addition to the tracking workflow and model inference, only a few nodes are needed to perform optimization of the models parameters. There is a specific branch of the workflow where the <code>Observation</code> subject is subscribed to after the <code>ModelParams</code> fires, and gets passed to a <code>RunOptimization</code> node. This node has a number of properties which me be useful, such as the batch size of the training data, which parameters to optimize, etc. Once the data buffer is full, the model runs optimization asynchronously. You should see in the beginning that the model will tend to overshoot the position of the mouse, since the parameters are not well adjusted. Over time, the output of the model will improve and the inference of the model will more closely track the position of the mouse with multiple learning iterations.</p>
+<p>The easiest way to observe the effects that optimizing the models parameters has on the models output is to compare the outputs between a model that undergoes optimization and an identical model that retains its initial parameters. With each iteration, the optimized model will diverge from the unoptimized model and more closely track the position of the mouse. This is what you would see:</p>
+<p><img src="ComparingModelOutputs.gif" alt="Comparing Optimized Model with Unoptimized Model"></p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/bonsai-rx/machinelearning/blob/main/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/README.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          &copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href="https://dotnet.github.io/docfx">docfx</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

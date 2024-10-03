@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Bonsai - Machine Learning | Bonsai.ML </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Bonsai - Machine Learning | Bonsai.ML ">
+      
+      
+      <link rel="icon" href="favicon.ico">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="articles/toc.html">
+      
+      <meta name="docfx:rel" content="">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/bonsai-rx/machinelearning/blob/main/docs/index.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="logo.svg" alt="Bonsai - ML">
+            Bonsai - ML
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="bonsai---machine-learning">Bonsai - Machine Learning</h1>
+
+<p>The <strong>Bonsai.ML</strong> project is a collection of packages designed to integrate machine learning algorithms with Bonsai. This document provides an overview of the available packages and their functionalities.</p>
+<h2 id="core-packages">Core Packages</h2>
+<ul>
+<li><p><strong>Bonsai.ML</strong>
+Provides common tools and functionality.</p>
+</li>
+<li><p><strong>Bonsai.ML.Design</strong>
+Provides common tools and functionality for visualizers and editor features.</p>
+</li>
+<li><p><strong>Bonsai.ML.Data</strong>
+Provides common tools and functionality for working with data.</p>
+</li>
+<li><p><strong>Bonsai.ML.Python</strong>
+Provides common tools and functionality for C# packages to interface with Python.</p>
+</li>
+</ul>
+<h2 id="available-packages">Available Packages</h2>
+<h3 id="bonsaimllineardynamicalsystems">Bonsai.ML.LinearDynamicalSystems</h3>
+<p>Facilitates inference using linear dynamical systems (LDS). It interfaces with the <a href="https://github.com/joacorapela/lds_python">lds_python</a> package using the <a href="https://github.com/bonsai-rx/python-scripting">Bonsai - Python Scripting</a> library.</p>
+<ul>
+<li><p><strong>Bonsai.ML.LinearDynamicalSystems.Kinematics</strong>
+Supports the use of the Kalman Filter for inferring kinematic data.</p>
+</li>
+<li><p><strong>Bonsai.ML.LinearDynamicalSystems.LinearRegression</strong>
+Utilizes the Kalman Filter to perform online Bayesian linear regression.</p>
+</li>
+</ul>
+<h3 id="bonsaimllineardynamicalsystemsdesign">Bonsai.ML.LinearDynamicalSystems.Design</h3>
+<p>Visualizers and editor features for the LinearDynamicalSystems package.</p>
+<h3 id="bonsaimlhiddenmarkovmodels">Bonsai.ML.HiddenMarkovModels</h3>
+<p>Facilitates inference using Hidden Markov Models (HMMs). It interfaces with the <a href="https://github.com/lindermanlab/ssm">ssm</a> package using the <a href="https://github.com/bonsai-rx/python-scripting">Bonsai - Python Scripting</a> library.</p>
+<ul>
+<li><p><strong>Bonsai.ML.HiddenMarkovModels.Observations</strong>
+Provides functionality for specifying different types of observations.</p>
+</li>
+<li><p><strong>Bonsai.ML.HiddenMarkovModels.Transitions</strong>
+Provides functionality for specifying different types of transition models.</p>
+</li>
+</ul>
+<h3 id="bonsaimlhiddenmarkovmodelsdesign">Bonsai.ML.HiddenMarkovModels.Design</h3>
+<p>Visualizers and editor features for the HiddenMarkovModels package.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Bonsai.ML packages can be installed through Bonsai's integrated package manager and are generally ready for immediate use. However, some packages may require additional installation steps. Refer to the specific package section for detailed installation guides and documentation.</p>
+</div>
+<h2 id="acknowledgments">Acknowledgments</h2>
+<p>Development of the Bonsai.ML package is supported by the Biotechnology and Biological Sciences Research Council [grant number BB/W019132/1].</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/bonsai-rx/machinelearning/blob/main/docs/index.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          &copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href="https://dotnet.github.io/docfx">docfx</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

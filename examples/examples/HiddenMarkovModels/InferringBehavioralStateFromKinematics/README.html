@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Inferring Behavioral State From Kinematics Example | Bonsai.ML </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Inferring Behavioral State From Kinematics Example | Bonsai.ML ">
+      
+      
+      <link rel="icon" href="../../../../favicon.ico">
+      <link rel="stylesheet" href="../../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../../toc.html">
+      <meta name="docfx:tocrel" content="../../../docs/toc.html">
+      
+      <meta name="docfx:rel" content="../../../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/bonsai-rx/machinelearning/blob/main/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/README.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../../index.html">
+            <img id="logo" class="svg" src="../../../../logo.svg" alt="Bonsai - ML">
+            Bonsai - ML
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="inferring-behavioral-state-from-kinematics-example">Inferring Behavioral State From Kinematics Example</h1>
+
+<p>The code for this repo can be found <a href="https://github.com/bonsai-rx/machinelearning-examples/tree/main/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics">here</a>.</p>
+<p>In the following example, you can see how the Hidden Markov Model (HMM) can be used to infer the underlying hidden state of a mouse that is freely moving and foraging in an open field arena.</p>
+<h3 id="dependencies">Dependencies</h3>
+<p>If you used the bootstrapping method, you don't have to worry about the package dependencies, as these should be already installed. However, if creating a new environment or integrating into an existing one, you will need to install the following packages:</p>
+<ul>
+<li>Bonsai - Core v2.8.1</li>
+<li>Bonsai - Design v2.8.0</li>
+<li>Bonsai - Editor v2.8.0</li>
+<li>Bonsai - Expression Scripting v2.8.0</li>
+<li>Bonsai - Gui v0.1.0</li>
+<li>Bonsai - ML Hidden Markov Models v0.2.0</li>
+<li>Bonsai - ML Linear Dynamical Systems v0.2.0</li>
+<li>Bonsai - ML Visualizers Hidden Markov Models v0.2.0</li>
+<li>Bonsai - ML Visualizers Linear Dynamical Systems v0.2.0</li>
+<li>Bonsai - Numerics v0.9.0</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>This example builds on the <a href="../../LinearDynamicalSystems/Kinematics/ForagingMouse/README.html">LDS Kinematics Foraging Mouse example</a> and requires both the <em>Bonsai.ML.LinearDynamicalSystems</em> package and the <em>Bonsai.ML.HiddenMarkovModels</em> package. See the installation guide to ensure both packages are installed and working correctly.</p>
+</div>
+<h3 id="workflow">Workflow</h3>
+<p>Below is the workflow.</p>
+<div class="workflow"><p><img src="InferringBehavioralState.bonsai" alt="Hidden Markov Models - Inferring Behavioral State"></p>
+</div>
+<p>In this example, a Hidden Markov Model (HMM) is used to infer the hidden behavioral state of a foraging mouse. The workflow creates a python runtime (<code>CreateRuntime</code>), and then loads both the HMM module (<code>LoadHMMModule</code>) and the LDS module (<code>LoadLDSModule</code>). The <code>MouseTracking</code> group workflow performs image processing to calculate the mouse's <code>Centroid</code> position. The <code>Centroid</code> is used with <code>InputMapping</code> to initialize a Kalman Filter (KF) Kinematics model (<code>CreateKFModel</code>) with the initial parameters <code>Position_x0</code> and <code>Position_y0</code> set to the X and Y values of the <code>Centroid</code>. We set the other parameters of the KF model to be the parameters that we think will best track the animal, though these parameters can also be learned online <a href="../../LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/README.html">see the ModelOptimizationForagingMouse example</a>.</p>
+<p>We are going to use the absolute velocity and acceleration of the animal as observations to the HMM model. We are going to use 6 hidden states for our model. When we initialize our HMM using the <code>CreateHMM</code> node, we set the <code>Dimensions</code> to 2, for the number of features of our observations, and the <code>NumStates</code> to 6, for the number of hidden behavioral states. The <code>Observations</code> and <code>Transitions</code> parameters will be left to their default values, <code>Gaussian</code> and <code>Stationary</code>, respectively.</p>
+<p>Inside of the <code>PerformKFInference</code> node, the <code>Centroid</code> is passed to the Kalman Filter model to <code>PerformInference</code>. The KF model takes the centroid position and infers the full <code>KinematicState</code> (Position, Velocity, and Acceleration for both X and Y dimensions). We perform <code>FeatureExtraction</code> on the <code>KinematicState</code> to transform the full <code>KinematicState</code> into just the absolute velocity and acceleration of the animal, giving us our <code>HMMObservation</code>. The <code>WithLatestFrom</code> node allows us to control when the HMM will start performing state inference when the <code>HMMFitFinished</code> node has emitted a value.</p>
+<p>The <code>HMMObservations</code> are fed to the HMM model to asynchronously fit the HMM to the data (<code>RunFitAsync</code>). This process takes some time for observations to accumulate and for the model fitting process to complete. The procedure waits for 1000 observations to be received before fitting to the batch of data. Once the batch has been filled, the model will begin the fitting procedure, and the workflow enters the <code>CheckFitFinished</code> state to test periodically whether or not the HMM fitting procedure has completed. Once completed, the sequence completes with <code>Take</code>, and an event is emitted to the <code>HMMFitFinished</code> node.</p>
+<p>Once the <code>HMMFitFinished</code> node emits a value, the <code>WithLatestFrom</code> node emits a value and the workflow enters the <code>InferHMMState</code> node. Inside of this node, the HMM model infers the probability of being in each state given the last <code>HMMObservation</code>, which gets passed to the <code>HMMStateProbabilities</code>.</p>
+<p>The <code>BehavioralStateVisualizer</code> group node displays a table of visualizers. The left image shows the original video of the freely moving mouse, along with the KF model's inferred X and Y position. In the middle, the <code>KinematicState</code> is shown as a 3x2 table layout panel, representing the inferred position, velocity, and acceleration along the X and Y dimensions. The graph on the right initially shows nothing, since during the first minute or so the HMM model is accumulating data in a batch. When the batch is full, the model fits to the data and begins running online inference of behavioral state. At this point, the graph will show the state probabilities given the latest observation.</p>
+<p>This is how it looks:</p>
+<p><img src="InferredBehavioralState.gif" alt="InferredBehavioralState"></p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/bonsai-rx/machinelearning/blob/main/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/README.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          &copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href="https://dotnet.github.io/docfx">docfx</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1441 @@
+{
+  "source_base_path": "D:/a/machinelearning/machinelearning/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.CreateModelReference.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.CreateModelReference.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Data.ArrayHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Data.ArrayHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Data.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Data.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Design.BarSeriesOxyPlotBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Design.BarSeriesOxyPlotBase.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Design.EllipseHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Design.EllipseHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Design.EllipseParameters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Design.EllipseParameters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Design.HeatMapSeriesOxyPlotBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Design.HeatMapSeriesOxyPlotBase.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Design.MultidimensionalArrayVisualizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Design.MultidimensionalArrayVisualizer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Design.TimeSeriesOxyPlotBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Design.TimeSeriesOxyPlotBase.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Design.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Design.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.DeserializeFromJson.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.DeserializeFromJson.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationStatisticsVisualizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationStatisticsVisualizer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationsStatisticsClustersVisualizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationsStatisticsClustersVisualizer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Design.StateProbabilityVisualizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Design.StateProbabilityVisualizer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Design.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Design.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.ModelParameters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.ModelParameters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.ModelParametersJsonConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.ModelParametersJsonConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.AutoRegressiveObservations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.AutoRegressiveObservations.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.BernoulliObservations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.BernoulliObservations.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.CategoricalObservations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.CategoricalObservations.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ExponentialObservations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ExponentialObservations.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservations.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservationsStatistics.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservationsStatistics.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ObservationsModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ObservationsModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ObservationsModelLookup.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ObservationsModelLookup.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ObservationsModelType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ObservationsModelType.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ObservationsModelTypeJsonConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.ObservationsModelTypeJsonConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.PoissonObservations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.PoissonObservations.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Observations.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.PythonModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.PythonModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.PythonStringBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.PythonStringBuilder.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.SerializeToJson.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.SerializeToJson.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.StateParameters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.StateParameters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.StateParametersJsonConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.StateParametersJsonConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.StateProbability.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.StateProbability.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.ConstrainedStationaryTransitions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.ConstrainedStationaryTransitions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.NeuralNetworkRecurrentTransitions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.NonlinearityType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.NonlinearityType.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.StationaryTransitions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.StationaryTransitions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.StickyTransitions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.StickyTransitions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModelLookup.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModelLookup.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModelType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModelType.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModelTypeJsonConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.TransitionsModelTypeJsonConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.Transitions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.HiddenMarkovModels.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.HiddenMarkovModels.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.ForecastImageOverlay.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.ForecastImageOverlay.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.ForecastPlotOverlay.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.ForecastPlotOverlay.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.ForecastVisualizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.ForecastVisualizer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.KinematicStateVisualizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.KinematicStateVisualizer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.MultivariatePDFVisualizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.MultivariatePDFVisualizer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.StateComponentVisualizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.StateComponentVisualizer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Design.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.Forecast.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.Forecast.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.ForecastResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.ForecastResult.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.KFModelParameters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.KinematicComponent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.KinematicComponent.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.KinematicState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.KinematicState.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.Observation2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.Observation2D.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Kinematics.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.LinearRegression.GridParameters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.LinearRegression.GridParameters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.LinearRegression.KFModelParameters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.LinearRegression.KFModelParameters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.LinearRegression.MultivariatePDF.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.LinearRegression.MultivariatePDF.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.LinearRegression.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.LinearRegression.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Reshape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Reshape.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.SerializeToJson.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.SerializeToJson.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Slice.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.Slice.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.State.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.State.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.StateComponent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.StateComponent.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.LinearDynamicalSystems.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.LinearDynamicalSystems.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.ModelReference.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.ModelReference.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Python.FormatToPython.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Python.FormatToPython.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Python.NumpyHelper.NumpyArrayInterface.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Python.NumpyHelper.NumpyArrayInterface.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Python.NumpyHelper.NumpyDataTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Python.NumpyHelper.NumpyDataTypes.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Python.NumpyHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Python.NumpyHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Python.PythonHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Python.PythonHelper.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Python.StringFormatter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Python.StringFormatter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.Python.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.Python.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Bonsai.ML.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Bonsai.ML.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/HiddenMarkovModels/hmm-getting-started.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/HiddenMarkovModels/hmm-getting-started.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/HiddenMarkovModels/hmm-overview.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/HiddenMarkovModels/hmm-overview.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/LinearDynamicalSystems/lds-getting-started.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/LinearDynamicalSystems/lds-getting-started.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/LinearDynamicalSystems/lds-installation-guide-linux.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/LinearDynamicalSystems/lds-installation-guide-linux.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/LinearDynamicalSystems/lds-installation-guide-windows.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/LinearDynamicalSystems/lds-installation-guide-windows.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/LinearDynamicalSystems/lds-overview.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/LinearDynamicalSystems/lds-overview.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "bonsai/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "bonsai/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "examples/docs/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "examples/docs/toc.html"
+        },
+        ".json": {
+          "relative_path": "examples/docs/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/ExtendedModelConfiguration/LoadModelConfig.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/ExtendedModelConfiguration/LoadModelConfig.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/ExtendedModelConfiguration/LoadModelConfig.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/ExtendedModelConfiguration/LoadModelConfig.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/ExtendedModelConfiguration/SaveModelConfig.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/ExtendedModelConfiguration/SaveModelConfig.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/ExtendedModelConfiguration/SaveModelConfig.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/ExtendedModelConfiguration/SaveModelConfig.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/InferredBehavioralState.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/InferredBehavioralState.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/InferringBehavioralState.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/InferringBehavioralState.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/InferringBehavioralState.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/InferringBehavioralState.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/HiddenMarkovModels/InferringBehavioralStateFromKinematics/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/HiddenMarkovModels/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/SimulatedData/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/HiddenMarkovModels/SimulatedData/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/SimulatedData/SimulatedData.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/SimulatedData/SimulatedData.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/SimulatedData/SimulatedData.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/SimulatedData/SimulatedData.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/HiddenMarkovModels/SimulatedData/Simulation.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/HiddenMarkovModels/SimulatedData/Simulation.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForagingMouse/ForagingMouse.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForagingMouse/ForagingMouse.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForagingMouse/ForagingMouse.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForagingMouse/ForagingMouse.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForagingMouse/ForagingMouse.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForagingMouse/ForagingMouse.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForagingMouse/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForagingMouse/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForecastingForagingMouse/ForecastingForagingMouse.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForecastingForagingMouse/ForecastingForagingMouse.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForecastingForagingMouse/ForecastingForagingMouse.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForecastingForagingMouse/ForecastingForagingMouse.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForecastingForagingMouse/ForecastingMouseForaging.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForecastingForagingMouse/ForecastingMouseForaging.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForecastingForagingMouse/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ForecastingForagingMouse/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/ComparingModelOutputs.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/ComparingModelOutputs.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/ModelOptimizationForagingMouse.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/ModelOptimizationForagingMouse.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/ModelOptimizationForagingMouse.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/ModelOptimizationForagingMouse.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ModelOptimizationForagingMouse/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/SimulatedData/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/SimulatedData/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/SimulatedData/Simulation.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/SimulatedData/Simulation.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/SimulatedData/Simulation.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/SimulatedData/Simulation.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/SimulatedData/Simulation.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/SimulatedData/Simulation.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ZebrafishCentroidTracking/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ZebrafishCentroidTracking/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ZebrafishCentroidTracking/ZebrafishTracking.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ZebrafishCentroidTracking/ZebrafishTracking.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ZebrafishCentroidTracking/ZebrafishTracking.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ZebrafishCentroidTracking/ZebrafishTracking.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ZebrafishCentroidTracking/ZebrafishTracking.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/Kinematics/ZebrafishCentroidTracking/ZebrafishTracking.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/ReceptiveFieldSimpleCell/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/ReceptiveFieldSimpleCell/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/ReceptiveFieldSimpleCell/ReceptiveFieldSimpleCell.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/ReceptiveFieldSimpleCell/ReceptiveFieldSimpleCell.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/ReceptiveFieldSimpleCell/ReceptiveFieldSimpleCell.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/ReceptiveFieldSimpleCell/ReceptiveFieldSimpleCell.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/ReceptiveFieldSimpleCell/ReceptiveFieldSimpleCell.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/ReceptiveFieldSimpleCell/ReceptiveFieldSimpleCell.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/SimulatedData/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/SimulatedData/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/SimulatedData/Simulation.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/SimulatedData/Simulation.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/SimulatedData/Simulation.gif",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/SimulatedData/Simulation.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/SimulatedData/Simulation.svg",
+      "output": {
+        "resource": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/LinearRegression/SimulatedData/Simulation.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "examples/examples/LinearDynamicalSystems/README.md",
+      "output": {
+        ".html": {
+          "relative_path": "examples/examples/LinearDynamicalSystems/README.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "favicon.ico",
+      "output": {
+        "resource": {
+          "relative_path": "favicon.ico"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "logo.svg",
+      "output": {
+        "resource": {
+          "relative_path": "logo.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "workflows/HMMImplementation.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "workflows/HMMImplementation.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "workflows/HMMImplementation.svg",
+      "output": {
+        "resource": {
+          "relative_path": "workflows/HMMImplementation.svg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "workflows/KFModelImplementation.bonsai",
+      "output": {
+        "resource": {
+          "relative_path": "workflows/KFModelImplementation.bonsai"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "workflows/KFModelImplementation.svg",
+      "output": {
+        "resource": {
+          "relative_path": "workflows/KFModelImplementation.svg"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

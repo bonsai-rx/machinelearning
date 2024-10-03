@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class DeserializeFromJson | Bonsai.ML </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class DeserializeFromJson | Bonsai.ML ">
+      
+      <meta name="description" content="Deserializes a sequence of JSON strings into data model objects.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/bonsai-rx/machinelearning/new/main/apidoc/new?filename=Bonsai_ML_LinearDynamicalSystems_DeserializeFromJson.md&amp;value=---%0Auid%3A%20Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="Bonsai - ML">
+            Bonsai - ML
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson">
+
+
+
+  <h1 id="Bonsai_ML_LinearDynamicalSystems_DeserializeFromJson" data-uid="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson" class="text-break">
+Class DeserializeFromJson  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/DeserializeFromJson.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Bonsai.html">Bonsai</a>.<a class="xref" href="Bonsai.ML.html">ML</a>.<a class="xref" href="Bonsai.ML.LinearDynamicalSystems.html">LinearDynamicalSystems</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Bonsai.ML.LinearDynamicalSystems.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Deserializes a sequence of JSON strings into data model objects.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[WorkflowElementCategory(ElementCategory.Transform)]
+public class DeserializeFromJson : SingleArgumentExpressionBuilder, IExpressionBuilder</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.ExpressionBuilder.html">ExpressionBuilder</a></div>
+      <div><a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.SingleArgumentExpressionBuilder.html">SingleArgumentExpressionBuilder</a></div>
+      <div><span class="xref">DeserializeFromJson</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.IExpressionBuilder.html">IExpressionBuilder</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.SingleArgumentExpressionBuilder.html#Bonsai_Expressions_SingleArgumentExpressionBuilder_ArgumentRange">SingleArgumentExpressionBuilder.ArgumentRange</a>
+    </div>
+    <div>
+      <a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.ExpressionBuilder.html#Bonsai_Expressions_ExpressionBuilder_ToString">ExpressionBuilder.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.ExpressionBuilder.html#Bonsai_Expressions_ExpressionBuilder_Unwrap_Bonsai_Expressions_ExpressionBuilder_">ExpressionBuilder.Unwrap(ExpressionBuilder)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.ExpressionBuilder.html#Bonsai_Expressions_ExpressionBuilder_GetWorkflowElement_Bonsai_Expressions_ExpressionBuilder_">ExpressionBuilder.GetWorkflowElement(ExpressionBuilder)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.ExpressionBuilder.html#Bonsai_Expressions_ExpressionBuilder_GetVisualizerElement_Bonsai_Expressions_ExpressionBuilder_">ExpressionBuilder.GetVisualizerElement(ExpressionBuilder)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.ExpressionBuilder.html#Bonsai_Expressions_ExpressionBuilder_GetVisualizerMappings_Bonsai_Expressions_ExpressionBuilder_">ExpressionBuilder.GetVisualizerMappings(ExpressionBuilder)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">ExpressionBuilder.FromWorkflowElement(object, ElementCategory)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.type">ExpressionBuilder.GetElementDisplayName(Type)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">ExpressionBuilder.GetElementDisplayName(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_DeserializeFromJson__ctor_" data-uid="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.#ctor*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_DeserializeFromJson__ctor" data-uid="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.#ctor">
+  DeserializeFromJson()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/DeserializeFromJson.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.html">DeserializeFromJson</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DeserializeFromJson()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_DeserializeFromJson_Type_" data-uid="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.Type*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_DeserializeFromJson_Type" data-uid="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.Type">
+  Type
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/DeserializeFromJson.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the type of the object to deserialize.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TypeMapping Type { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://bonsai-rx.org/docs/api/Bonsai.Expressions.TypeMapping.html">TypeMapping</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Bonsai_ML_LinearDynamicalSystems_DeserializeFromJson_Build_" data-uid="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.Build*"></a>
+
+  <h3 id="Bonsai_ML_LinearDynamicalSystems_DeserializeFromJson_Build_System_Collections_Generic_IEnumerable_System_Linq_Expressions_Expression__" data-uid="Bonsai.ML.LinearDynamicalSystems.DeserializeFromJson.Build(System.Collections.Generic.IEnumerable{System.Linq.Expressions.Expression})">
+  Build(IEnumerable&lt;Expression&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/DeserializeFromJson.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructs an <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression">Expression</a> node from a collection of input
+arguments. The result can be chained with other builders in a workflow.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Expression Build(IEnumerable&lt;Expression&gt; arguments)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>arguments</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression">Expression</a>&gt;</dt>
+    <dd><p>A collection of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression">Expression</a> nodes representing the input
+arguments.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression">Expression</a></dt>
+    <dd><p>The constructed <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.linq.expressions.expression">Expression</a> node.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/bonsai-rx/machinelearning/blob/main/src/Bonsai.ML.LinearDynamicalSystems/DeserializeFromJson.cs/#L17" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          &copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href="https://dotnet.github.io/docfx">docfx</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
