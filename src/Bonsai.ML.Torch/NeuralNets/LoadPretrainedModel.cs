@@ -14,7 +14,11 @@ namespace Bonsai.ML.Torch.NeuralNets
     public class LoadPretrainedModel
     {
         public Models.PretrainedModels ModelName { get; set; }
+        [XmlIgnore]
         public Device Device { get; set; }
+
+        [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
+        public string? ModelWeightsPath { get; set; }
 
         private int numClasses = 10;
 
@@ -28,16 +32,20 @@ namespace Bonsai.ML.Torch.NeuralNets
             {
                 case "alexnet":
                     model = new Models.AlexNet(modelName, numClasses, device);
+                    if (ModelWeightsPath is not null) model.load(ModelWeightsPath);
                     break;
                 case "mobilenet":
                     model = new Models.MobileNet(modelName, numClasses, device);
+                    if (ModelWeightsPath is not null) model.load(ModelWeightsPath);
                     break;
                 case "mnist":
                     model = new Models.MNIST(modelName, device);
+                    if (ModelWeightsPath is not null) model.load(ModelWeightsPath);
                     break;
                 default:
                     throw new ArgumentException($"Model {modelName} not supported.");
             }
+            Console.WriteLine($"Model: {model}");
 
             return Observable.Defer(() => {
                 return Observable.Return(model);

@@ -245,8 +245,8 @@ class KalmanFilterKinematics(OnlineKalmanFilter):
         self.loop.stop()
         self.loop.close()
 
-        del(self.thread)
-        del(self.loop)
+        # del(self.thread)
+        # del(self.loop)
 
         self.thread = None
         self.loop = None
