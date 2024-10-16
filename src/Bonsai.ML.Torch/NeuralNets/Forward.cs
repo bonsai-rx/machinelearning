@@ -3,8 +3,7 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 using System.Xml.Serialization;
-using static TorchSharp.torch.nn;
-using Bonsai.Expressions;
+using TorchSharp.Modules;
 
 namespace Bonsai.ML.Torch.NeuralNets
 {
@@ -14,12 +13,11 @@ namespace Bonsai.ML.Torch.NeuralNets
     public class Forward
     {
         [XmlIgnore]
-        public Module Model { get; set; }
+        public nn.IModule<Tensor, Tensor> Model { get; set; }
 
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            var model = (Module<Tensor, Tensor>) Model;
-            return source.Select(model.forward);
+            return source.Select(Model.call);
         }
     }
 }
