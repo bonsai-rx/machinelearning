@@ -17,11 +17,11 @@ namespace Bonsai.ML.Torch.NeuralNets
         public Device Device { get; set; }
 
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-        public string? ModelWeightsPath { get; set; }
+        public string ModelWeightsPath { get; set; }
 
         private int numClasses = 10;
 
-        public IObservable<nn.Module<Tensor, Tensor>> Process()
+        public IObservable<nn.IModule<Tensor, Tensor>> Process()
         {
             nn.Module<Tensor,Tensor> model = null;
             var modelName = ModelName.ToString().ToLower();

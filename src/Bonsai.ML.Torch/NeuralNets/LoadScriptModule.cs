@@ -16,7 +16,7 @@ namespace Bonsai.ML.Torch.NeuralNets
         public Device Device { get; set; } = CPU;
 
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-        public string? ModelPath { get; set; }
+        public string ModelPath { get; set; }
 
         public IObservable<nn.IModule<Tensor, Tensor>> Process()
         {
