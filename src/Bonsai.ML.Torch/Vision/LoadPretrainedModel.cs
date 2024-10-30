@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 using System.Xml.Serialization;
-using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torchvision;
 
