@@ -151,11 +151,14 @@ class HiddenMarkovModel(HMM):
 
         return log_alpha - logsumexp(log_alpha)
     
-    def save_model_to_pickle(self, path: str):
-        pickle.save(self, path)
+    def save_model(self, path: str):
+        with open(path, "wb") as f:
+            pickle.dump(self, f)
 
-    def load_model_from_pickle(self, path: str):
-        self = pickle.load(path)
+    @classmethod
+    def load_model(cls, path: str):
+        with open(path, 'rb') as f:
+            return pickle.load(f)
 
     def fit_async(self,
                   observation: list[float],
