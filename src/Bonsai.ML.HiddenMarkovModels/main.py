@@ -11,6 +11,11 @@ import pickle
 
 npr.seed(0)
 
+class CustomUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        if module == 'main' and name == 'HiddenMarkovModel':
+            return HiddenMarkovModel
+        return super().find_class(module, name)
 
 class HiddenMarkovModel(HMM):
 
@@ -158,7 +163,7 @@ class HiddenMarkovModel(HMM):
     @classmethod
     def load_model(cls, path: str):
         with open(path, 'rb') as f:
-            return pickle.load(f)
+            return CustomUnpickler(f).load()
 
     def fit_async(self,
                   observation: list[float],
