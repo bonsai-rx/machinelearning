@@ -18,9 +18,9 @@ namespace Bonsai.ML.Torch.NeuralNets
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string ModelPath { get; set; }
 
-        public IObservable<nn.IModule<Tensor, Tensor>> Process()
+        public IObservable<ITorchModule> Process()
         {
-            return Observable.Return((nn.IModule<Tensor, Tensor>)jit.load<Tensor, Tensor>(ModelPath, Device));
+            return Observable.Return((ITorchModule)jit.load<Tensor, Tensor>(ModelPath, Device));
         }
     }
 }

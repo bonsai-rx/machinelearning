@@ -20,7 +20,7 @@ namespace Bonsai.ML.Torch.NeuralNets
 
         private int numClasses = 10;
 
-        public IObservable<nn.IModule<Tensor, Tensor>> Process()
+        public IObservable<ITorchModule> Process()
         {
             nn.Module<Tensor,Tensor> model = null;
             var modelName = ModelName.ToString().ToLower();
@@ -42,7 +42,7 @@ namespace Bonsai.ML.Torch.NeuralNets
             }
 
             return Observable.Defer(() => {
-                return Observable.Return(model);
+                return Observable.Return((ITorchModule)model);
             });
         }
     }
