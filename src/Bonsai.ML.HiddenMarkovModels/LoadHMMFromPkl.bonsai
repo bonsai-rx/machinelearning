@@ -40,7 +40,7 @@
         <Combinator xsi:type="py:ObserveOnGIL" />
       </Expression>
       <Expression xsi:type="Format">
-        <Format>{0}=HiddenMarkovModel.load_model({1})</Format>
+        <Format>{0}=HiddenMarkovModel.load_model("{1}")</Format>
         <Selector>Item1,Item2</Selector>
       </Expression>
       <Expression xsi:type="InputMapping">
