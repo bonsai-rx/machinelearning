@@ -13,7 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets
     public class Forward
     {
         [XmlIgnore]
-        public nn.Module<Tensor, Tensor> Model { get; set; }
+        public ITorchModule Model { get; set; }
 
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
