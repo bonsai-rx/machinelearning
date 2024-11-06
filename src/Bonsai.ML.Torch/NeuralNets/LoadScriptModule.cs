@@ -20,7 +20,9 @@ namespace Bonsai.ML.Torch.NeuralNets
 
         public IObservable<ITorchModule> Process()
         {
-            return Observable.Return((ITorchModule)jit.load<Tensor, Tensor>(ModelPath, Device));
+            var scriptModule = jit.load<Tensor, Tensor>(ModelPath, Device);
+            var torchModule = new TorchModuleAdapter(scriptModule);
+            return Observable.Return((ITorchModule)torchModule);
         }
     }
 }
