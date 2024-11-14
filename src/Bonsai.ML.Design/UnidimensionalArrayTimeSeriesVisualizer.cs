@@ -24,20 +24,24 @@ namespace Bonsai.ML.Design
         /// </summary>
         public int RenderMethodSelectedIndex { get; set; }
 
-        private HeatMapSeriesOxyPlotBase Plot;
+        private HeatMapSeriesOxyPlotBase plot;
+
+        /// <summary>
+        /// Gets the plot control.
+        /// </summary>
+        public HeatMapSeriesOxyPlotBase Plot => plot;
 
         private int _capacity = 100;
 
+        /// <summary>
+        /// Gets or sets the integer value that determines how many data points should be shown along the x axis.
+        /// </summary>
         public int Capacity 
         { 
             get => _capacity;
             set 
             {
                 _capacity = value;
-                // if (_capacity < dataList.Count)
-                // {
-                //     dataList.RemoveRange(0, dataList.Count - _capacity);
-                // }
             } 
         }
 
@@ -46,13 +50,13 @@ namespace Bonsai.ML.Design
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Plot = new HeatMapSeriesOxyPlotBase(PaletteSelectedIndex, RenderMethodSelectedIndex)
+            plot = new HeatMapSeriesOxyPlotBase(PaletteSelectedIndex, RenderMethodSelectedIndex)
             {
                 Dock = DockStyle.Fill,
             };
 
-            Plot.PaletteComboBoxValueChanged += PaletteIndexChanged;
-            Plot.RenderMethodComboBoxValueChanged += RenderMethodIndexChanged;
+            plot.PaletteComboBoxValueChanged += PaletteIndexChanged;
+            plot.RenderMethodComboBoxValueChanged += RenderMethodIndexChanged;
             
             var capacityLabel = new ToolStripLabel
             {
@@ -65,7 +69,7 @@ namespace Bonsai.ML.Design
                 AutoSize = true
             };
 
-            Plot.StatusStrip.Items.AddRange([
+            plot.StatusStrip.Items.AddRange([
                 capacityLabel,
                 capacityValue
             ]);
@@ -73,7 +77,7 @@ namespace Bonsai.ML.Design
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             if (visualizerService != null)
             {
-                visualizerService.AddControl(Plot);
+                visualizerService.AddControl(plot);
             }
         }
 
@@ -105,7 +109,7 @@ namespace Bonsai.ML.Design
                 }
             }
 
-            Plot.UpdateHeatMapSeries(
+            plot.UpdateHeatMapSeries(
                 -0.5,
                 shape.Item1 - 0.5,
                 -0.5,
@@ -113,26 +117,26 @@ namespace Bonsai.ML.Design
                 mdarray
             );
 
-            Plot.UpdatePlot();
+            plot.UpdatePlot();
         }
 
         /// <inheritdoc/>
         public override void Unload()
         {
-            if (!Plot.IsDisposed)
+            if (!plot.IsDisposed)
             {
-                Plot.Dispose();
+                plot.Dispose();
             }
         }
 
         private void PaletteIndexChanged(object sender, EventArgs e)
         {
-            PaletteSelectedIndex = Plot.PaletteComboBox.SelectedIndex;
+            PaletteSelectedIndex = plot.PaletteComboBox.SelectedIndex;
         }
         
         private void RenderMethodIndexChanged(object sender, EventArgs e)
         {
-            RenderMethodSelectedIndex = Plot.RenderMethodComboBox.SelectedIndex;
+            RenderMethodSelectedIndex = plot.RenderMethodComboBox.SelectedIndex;
         }
     }
 }
