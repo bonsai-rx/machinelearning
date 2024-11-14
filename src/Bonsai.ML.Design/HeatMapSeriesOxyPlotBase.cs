@@ -64,6 +64,11 @@ namespace Bonsai.ML.Design
         public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
+        /// Gets the plot model.
+        /// </summary>
+        public PlotModel Model => model;
+
+        /// <summary>
         /// Constructor of the TimeSeriesOxyPlotBase class.
         /// Requires a line series name and an area series name.
         /// Data source is optional, since pasing it to the constructor will populate the combobox and leave it empty otherwise.
