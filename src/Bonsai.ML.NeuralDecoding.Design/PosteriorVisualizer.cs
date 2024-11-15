@@ -76,20 +76,23 @@ namespace Bonsai.ML.NeuralDecoding.Design
 
             var data = posterior.Data;
             var argMax = posterior.ArgMax;
-            var positionRange = posterior.PositionRange;
-            var capacity = visualizer.Capacity;
-            while (argMaxVals.Count >= capacity)
+
+            while (argMaxVals.Count >= Capacity)
             {
                 argMaxVals.RemoveAt(0);
             }
-            argMaxVals.Add(argMax);
+
+            argMaxVals.Add(valueRange[argMax]);
             lineSeries.Points.Clear();
             var count = argMaxVals.Count;
+
             for (int i = 0; i < count; i++)
             {
                 lineSeries.Points.Add(new DataPoint(i, argMaxVals[i]));
             }
+            
             visualizer.Show(data);
+            Plot.UpdateHeatMapYAxis(valueRange[0], valueRange[valueRange.Length - 1]);
         }
 
         /// <inheritdoc/>
