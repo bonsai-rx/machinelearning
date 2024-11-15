@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using OxyPlot.Series;
 using OxyPlot;
-using Bonsai.ML.Design;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.NeuralDecoding.Design.PosteriorOverlay),
     Target = typeof(MashupSource<Bonsai.ML.NeuralDecoding.Design.PosteriorVisualizer, TimeSeriesVisualizer>))]
@@ -13,7 +12,7 @@ using Bonsai.ML.Design;
 namespace Bonsai.ML.NeuralDecoding.Design
 {
     /// <summary>
-    /// 
+    /// Class that overlays the true 
     /// </summary>
     public class PosteriorOverlay : DialogTypeVisualizer
     {
@@ -30,26 +29,34 @@ namespace Bonsai.ML.NeuralDecoding.Design
 
             lineSeries = new LineSeries()
             {
+                Title = "True Position",
                 Color = OxyColors.Goldenrod
             };
+            
             plot.Model.Series.Add(lineSeries);
+            plot.Model.DefaultYAxis.Title = "Position";
         }
 
         /// <inheritdoc/>
         public override void Show(object value)
         {
             var position = (double)value;
-            var capacity = visualizer.Capacity;
-            while (data.Count >= capacity)
+            if (position == double.NaN)
+            {
+                return;
+            }
+
+            var currentCount = visualizer.CurrentCount;
+            while (data.Count > currentCount)
             {
                 data.RemoveAt(0);
             }
-            data.Add(position);
             lineSeries.Points.Clear();
+            
             var count = data.Count;
             for (int i = 0; i < count; i++)
             {
-                lineSeries.Points.Add(new DataPoint(i, data[i]));
+                lineSeries.Points.Add(new DataPoint(currentCount - count + i + 1, data[i]));
             }
         }
 
