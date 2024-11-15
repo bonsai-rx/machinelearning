@@ -34,6 +34,11 @@ namespace Bonsai.ML.NeuralDecoding.Design
         /// </summary>
         public int Capacity => visualizer.Capacity;
 
+        /// <summary>
+        /// Gets the current count of data points.
+        /// </summary>
+        public int CurrentCount => visualizer.CurrentCount;
+
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
