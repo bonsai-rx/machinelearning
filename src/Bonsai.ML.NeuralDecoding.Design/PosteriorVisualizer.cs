@@ -75,6 +75,7 @@ namespace Bonsai.ML.NeuralDecoding.Design
         public override void Unload()
         {
             visualizer.Unload();
+            base.Unload();
         }
 
         /// <inheritdoc/>
