@@ -30,7 +30,7 @@ namespace Bonsai.ML.NeuralDecoding.Design
         public HeatMapSeriesOxyPlotBase Plot => visualizer.Plot;
         
         /// <summary>
-        /// Gets the 
+        /// Gets the capacity of the visualizer.
         /// </summary>
         public int Capacity => visualizer.Capacity;
 
