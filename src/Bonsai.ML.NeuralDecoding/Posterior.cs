@@ -26,6 +26,11 @@ public class Posterior
     public int ArgMax { get; set; }
 
     /// <summary>
+    /// The position range.
+    /// </summary>
+    public double[] PositionRange { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="Posterior"/> class.
     /// </summary>
     public Posterior()
@@ -37,10 +42,12 @@ public class Posterior
     /// </summary>
     /// <param name="data"></param>
     /// <param name="argMax"></param>
-    public Posterior(double[] data, int argMax)
+    /// <param name="positionRange"></param>
+    public Posterior(double[] data, int argMax, double[] positionRange)
     {
         Data = data;
         ArgMax = argMax;
+        PositionRange = positionRange;
     }
 
     /// <summary>
@@ -51,11 +58,15 @@ public class Posterior
     public IObservable<Posterior> Process(IObservable<PyObject> source)
     {
         return source.Select(value => {
-            var data = (double[])PythonHelper.ConvertPythonObjectToCSharp(value);
+            var posterior = value[0];
+            var placeBinCenters = value[1];
+            var data = (double[])PythonHelper.ConvertPythonObjectToCSharp(posterior);
             var argMax = Array.IndexOf(data, data.Max());
+            var positionRange = (double[])PythonHelper.ConvertPythonObjectToCSharp(placeBinCenters);
             return new Posterior(
                 data,
-                argMax
+                argMax,
+                positionRange
             );
         });
     }
