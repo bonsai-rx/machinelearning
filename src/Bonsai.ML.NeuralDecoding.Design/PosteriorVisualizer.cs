@@ -111,14 +111,16 @@ namespace Bonsai.ML.NeuralDecoding.Design
             }
 
             var mergedSource = source.SelectMany(xs => xs
-                .ObserveOn(visualizerControl)
                 .Do(value => Show(value)));
 
             var mashupSourceStreams = Observable.Merge(
                 MashupSources.Select(mashupSource =>
-                    mashupSource.Visualizer.Visualize(mashupSource.Source.Output, provider)));
+                    mashupSource.Source.Output.SelectMany(xs => xs
+                        .Do(value => mashupSource.Visualizer.Show(value)))));
 
-            return Observable.Merge(mergedSource, mashupSourceStreams);
+            return Observable.Merge(mergedSource, mashupSourceStreams)
+                .ObserveOn(visualizerControl);
+
         }
     }
 }
