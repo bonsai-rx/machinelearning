@@ -26,9 +26,9 @@ public class Posterior
     public int ArgMax { get; set; }
 
     /// <summary>
-    /// The position range.
+    /// The value range.
     /// </summary>
-    public double[] PositionRange { get; set; }
+    public double[] ValueRange { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Posterior"/> class.
@@ -42,12 +42,12 @@ public class Posterior
     /// </summary>
     /// <param name="data"></param>
     /// <param name="argMax"></param>
-    /// <param name="positionRange"></param>
-    public Posterior(double[] data, int argMax, double[] positionRange)
+    /// <param name="valueRange"></param>
+    public Posterior(double[] data, int argMax, double[] valueRange)
     {
         Data = data;
         ArgMax = argMax;
-        PositionRange = positionRange;
+        ValueRange = valueRange;
     }
 
     /// <summary>
@@ -59,14 +59,14 @@ public class Posterior
     {
         return source.Select(value => {
             var posterior = value[0];
-            var placeBinCenters = value[1];
+            var valueCenters = value[1];
             var data = (double[])PythonHelper.ConvertPythonObjectToCSharp(posterior);
             var argMax = Array.IndexOf(data, data.Max());
-            var positionRange = (double[])PythonHelper.ConvertPythonObjectToCSharp(placeBinCenters);
+            var valueRange = (double[])PythonHelper.ConvertPythonObjectToCSharp(valueCenters);
             return new Posterior(
                 data,
                 argMax,
-                positionRange
+                ValueRange
             );
         });
     }
