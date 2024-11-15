@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using OxyPlot.Series;
 using OxyPlot;
+using Bonsai.ML.Design;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.NeuralDecoding.Design.TruePositionOverlay),
     Target = typeof(MashupSource<Bonsai.ML.NeuralDecoding.Design.PosteriorVisualizer, TimeSeriesVisualizer>))]
@@ -19,13 +20,15 @@ namespace Bonsai.ML.NeuralDecoding.Design
         private PosteriorVisualizer visualizer;
         private LineSeries lineSeries;
         private List<double> data = new();
+        private string defaultYAxisTitle;
+        private HeatMapSeriesOxyPlotBase plot;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
             var service = provider.GetService(typeof(MashupVisualizer));
             visualizer = (PosteriorVisualizer)service;
-            var plot = visualizer.Plot;
+            plot = visualizer.Plot;
 
             lineSeries = new LineSeries()
             {
@@ -37,6 +40,7 @@ namespace Bonsai.ML.NeuralDecoding.Design
 
             plot.Model.Updated += (sender, e) =>
             {
+                defaultYAxisTitle = plot.Model.DefaultYAxis.Title;
                 plot.Model.DefaultYAxis.Title = "Position";
             };
             
@@ -69,7 +73,8 @@ namespace Bonsai.ML.NeuralDecoding.Design
 
         /// <inheritdoc/>
         public override void Unload()
-        {       
+        {
+            plot.Model.DefaultYAxis.Title = defaultYAxisTitle;
         }
     }
 }
