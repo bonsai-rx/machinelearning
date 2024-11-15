@@ -31,6 +31,16 @@ namespace Bonsai.ML.Design
         /// </summary>
         public HeatMapSeriesOxyPlotBase Plot => plot;
 
+        /// <summary>
+        /// Gets or sets the current count of data points.
+        /// </summary>
+        public int CurrentCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current length of the data array.
+        /// </summary>
+        public int CurrentArrayLength { get; set; }
+
         private int _capacity = 100;
 
         /// <summary>
@@ -89,6 +99,7 @@ namespace Bonsai.ML.Design
             if (dataList.Count < Capacity)
             {
                 dataList.Add(array);
+                CurrentCount = dataList.Count;
             }
             else
             {
@@ -99,24 +110,23 @@ namespace Bonsai.ML.Design
                 dataList.Add(array);
             }
 
-            var shape = (dataList.Count, array.Length);
-            var mdarray = new double[shape.Item1, shape.Item2];
-            for (int i = 0; i < shape.Item1; i++)
+            if (array.Length != CurrentArrayLength)
             {
-                for (int j = 0; j < shape.Item2; j++)
+                CurrentArrayLength = array.Length;
+                plot.UpdateHeatMapYAxis(-0.5, CurrentArrayLength - 0.5);
+            }
+
+            var mdarray = new double[CurrentCount, CurrentArrayLength];
+            for (int i = 0; i < CurrentCount; i++)
+            {
+                for (int j = 0; j < CurrentArrayLength; j++)
                 {
                     mdarray[i, j] = dataList[i][j];
                 }
             }
 
-            plot.UpdateHeatMapSeries(
-                -0.5,
-                shape.Item1 - 0.5,
-                -0.5,
-                shape.Item2 - 0.5,
-                mdarray
-            );
-
+            plot.UpdateHeatMapSeries(mdarray);
+            plot.UpdateHeatMapXAxis(-0.5, CurrentCount - 0.5);
             plot.UpdatePlot();
         }
 
