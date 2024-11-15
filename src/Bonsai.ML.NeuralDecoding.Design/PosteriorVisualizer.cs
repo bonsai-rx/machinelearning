@@ -85,12 +85,15 @@ namespace Bonsai.ML.NeuralDecoding.Design
                 return source;
             }
 
-            return Observable.Merge(source.SelectMany(xs => xs.Do(
-                        value => Show(value),
-                        () => visualizerControl.BeginInvoke(SequenceCompleted))), 
-                        Observable.Merge(MashupSources.Select(
-                            mashupSource => mashupSource.Visualizer.Visualize(mashupSource.Source.Output, provider)
-                            .Do(value => mashupSource.Visualizer.Show(value)))));
+            var mergedSource = source.SelectMany(xs => xs
+                .ObserveOn(visualizerControl)
+                .Do(value => Show(value)));
+
+            var mashupSourceStreams = Observable.Merge(
+                MashupSources.Select(mashupSource =>
+                    mashupSource.Visualizer.Visualize(mashupSource.Source.Output, provider)));
+
+            return Observable.Merge(mergedSource, mashupSourceStreams);
         }
     }
 }
