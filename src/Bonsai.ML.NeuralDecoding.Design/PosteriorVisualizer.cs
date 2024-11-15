@@ -22,7 +22,7 @@ namespace Bonsai.ML.NeuralDecoding.Design
         private UnidimensionalArrayTimeSeriesVisualizer visualizer;
         private LineSeries lineSeries;
         private List<double> argMaxVals = new();
-        private double[] positionRange = null;
+        private double[] valueRange = null;
 
         /// <summary>
         /// Gets the underlying heatmap plot.
@@ -53,6 +53,16 @@ namespace Bonsai.ML.NeuralDecoding.Design
         public override void Show(object value)
         {
             Posterior posterior = (Posterior)value;
+            if (posterior == null)
+            {
+                return;
+            }
+
+            if (valueRange == null)
+            {
+                valueRange = posterior.ValueRange;
+            }
+
             var data = posterior.Data;
             var argMax = posterior.ArgMax;
             var positionRange = posterior.PositionRange;
