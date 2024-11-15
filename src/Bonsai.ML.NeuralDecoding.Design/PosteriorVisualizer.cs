@@ -42,11 +42,17 @@ namespace Bonsai.ML.NeuralDecoding.Design
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            visualizer = new UnidimensionalArrayTimeSeriesVisualizer();
+            visualizer = new UnidimensionalArrayTimeSeriesVisualizer()
+            {
+                PaletteSelectedIndex = 1,
+                RenderMethodSelectedIndex = 1
+            };
+            
             visualizer.Load(provider);
 
             lineSeries = new LineSeries()
             {
+                Title = "Maximum Posterior",
                 Color = OxyColors.SkyBlue
             };
             visualizer.Plot.Model.Series.Add(lineSeries);
