@@ -32,9 +32,14 @@ namespace Bonsai.ML.NeuralDecoding.Design
                 Title = "True Position",
                 Color = OxyColors.Goldenrod
             };
-            
+
             plot.Model.Series.Add(lineSeries);
-            plot.Model.DefaultYAxis.Title = "Position";
+
+            plot.Model.Updated += (sender, e) =>
+            {
+                plot.Model.DefaultYAxis.Title = "Position";
+            };
+            
         }
 
         /// <inheritdoc/>
