@@ -26,7 +26,7 @@ public class Posterior
     public int ArgMax { get; set; }
 
     /// <summary>
-    /// The value range.
+    /// An optional mapping of the data to a value range.
     /// </summary>
     public double[] ValueRange { get; set; }
 
@@ -43,11 +43,11 @@ public class Posterior
     /// <param name="data"></param>
     /// <param name="argMax"></param>
     /// <param name="valueRange"></param>
-    public Posterior(double[] data, int argMax, double[] valueRange)
+    public Posterior(double[] data, int argMax, double[] valueRange = null)
     {
         Data = data;
         ArgMax = argMax;
-        ValueRange = valueRange;
+        ValueRange = valueRange ?? Enumerable.Range(0, data.Length).Select(i => (double)i).ToArray();
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public class Posterior
             return new Posterior(
                 data,
                 argMax,
-                ValueRange
+                valueRange
             );
         });
     }
