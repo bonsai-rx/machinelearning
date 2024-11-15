@@ -46,6 +46,8 @@ namespace Bonsai.ML.NeuralDecoding.Design
                 return;
             }
 
+            data.Add(position);
+
             var currentCount = visualizer.CurrentCount;
             while (data.Count > currentCount)
             {
@@ -56,7 +58,7 @@ namespace Bonsai.ML.NeuralDecoding.Design
             var count = data.Count;
             for (int i = 0; i < count; i++)
             {
-                lineSeries.Points.Add(new DataPoint(currentCount - count + i + 1, data[i]));
+                lineSeries.Points.Add(new DataPoint(currentCount - count + i, data[i]));
             }
         }
 
