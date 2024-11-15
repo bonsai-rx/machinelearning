@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using OxyPlot.Series;
 using OxyPlot;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.NeuralDecoding.Design.PosteriorOverlay),
+[assembly: TypeVisualizer(typeof(Bonsai.ML.NeuralDecoding.Design.TruePositionOverlay),
     Target = typeof(MashupSource<Bonsai.ML.NeuralDecoding.Design.PosteriorVisualizer, TimeSeriesVisualizer>))]
 
 namespace Bonsai.ML.NeuralDecoding.Design
@@ -14,7 +14,7 @@ namespace Bonsai.ML.NeuralDecoding.Design
     /// <summary>
     /// Class that overlays the true 
     /// </summary>
-    public class PosteriorOverlay : DialogTypeVisualizer
+    public class TruePositionOverlay : DialogTypeVisualizer
     {
         private PosteriorVisualizer visualizer;
         private LineSeries lineSeries;
