@@ -8,11 +8,12 @@ using Bonsai.ML.Design;
 using System.Windows.Forms;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Xml.Serialization;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.NeuralDecoding.Design.PosteriorVisualizer),
-    Target = typeof(Bonsai.ML.NeuralDecoding.Posterior))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.NeuralDecoder.Design.PosteriorVisualizer),
+    Target = typeof(Bonsai.ML.NeuralDecoder.Posterior))]
 
-namespace Bonsai.ML.NeuralDecoding.Design
+namespace Bonsai.ML.NeuralDecoder.Design
 {
     /// <summary>
     /// Provides a mashup visualizer to display the posterior of the neural decoder.
@@ -22,6 +23,7 @@ namespace Bonsai.ML.NeuralDecoding.Design
         private UnidimensionalArrayTimeSeriesVisualizer visualizer;
         private LineSeries lineSeries;
         private List<double> argMaxVals = new();
+        private double[] valueCenters = null;
         private double[] valueRange = null;
 
         /// <summary>
@@ -38,6 +40,18 @@ namespace Bonsai.ML.NeuralDecoding.Design
         /// Gets the current count of data points.
         /// </summary>
         public int CurrentCount => visualizer.CurrentCount;
+
+        /// <summary>
+        /// Gets the values of the Y axis.
+        /// </summary>
+        [XmlIgnore]
+        public double[] ValueCenters => valueCenters;
+
+        /// <summary>
+        /// Gets the range of values mapped to the values of the Y axis.
+        /// </summary>
+        [XmlIgnore]
+        public double[] ValueRange => valueRange;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -69,6 +83,11 @@ namespace Bonsai.ML.NeuralDecoding.Design
                 return;
             }
 
+            if (valueCenters == null)
+            {
+                valueCenters = posterior.ValueCenters;
+            }
+
             if (valueRange == null)
             {
                 valueRange = posterior.ValueRange;
@@ -82,7 +101,7 @@ namespace Bonsai.ML.NeuralDecoding.Design
                 argMaxVals.RemoveAt(0);
             }
 
-            argMaxVals.Add(valueRange[argMax]);
+            argMaxVals.Add(valueCenters[argMax]);
             lineSeries.Points.Clear();
             var count = argMaxVals.Count;
 

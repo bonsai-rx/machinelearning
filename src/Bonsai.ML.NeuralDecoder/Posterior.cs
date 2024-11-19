@@ -5,7 +5,7 @@ using System.Linq;
 using Python.Runtime;
 using Bonsai.ML.Python;
 
-namespace Bonsai.ML.NeuralDecoding;
+namespace Bonsai.ML.NeuralDecoder;
 
 /// <summary>
 /// Transforms the input sequence of Python objects into a sequence of <see cref="Posterior"/> instances.
@@ -31,6 +31,11 @@ public class Posterior
     public double[] ValueRange { get; set; }
 
     /// <summary>
+    /// The value centers.
+    /// </summary>
+    public double[] ValueCenters { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="Posterior"/> class.
     /// </summary>
     public Posterior()
@@ -48,6 +53,8 @@ public class Posterior
         Data = data;
         ArgMax = argMax;
         ValueRange = valueRange ?? Enumerable.Range(0, data.Length).Select(i => (double)i).ToArray();
+        var step = (valueRange[valueRange.Length-1] - valueRange[0]) / data.Length;
+        ValueCenters = Enumerable.Range(0, data.Length).Select(i => i * step).ToArray();
     }
 
     /// <summary>

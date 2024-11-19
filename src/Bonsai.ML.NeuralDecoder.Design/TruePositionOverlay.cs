@@ -7,10 +7,10 @@ using OxyPlot.Series;
 using OxyPlot;
 using Bonsai.ML.Design;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.NeuralDecoding.Design.TruePositionOverlay),
-    Target = typeof(MashupSource<Bonsai.ML.NeuralDecoding.Design.PosteriorVisualizer, TimeSeriesVisualizer>))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.NeuralDecoder.Design.TruePositionOverlay),
+    Target = typeof(MashupSource<Bonsai.ML.NeuralDecoder.Design.PosteriorVisualizer, TimeSeriesVisualizer>))]
 
-namespace Bonsai.ML.NeuralDecoding.Design
+namespace Bonsai.ML.NeuralDecoder.Design
 {
     /// <summary>
     /// Class that overlays the true 
@@ -58,6 +58,9 @@ namespace Bonsai.ML.NeuralDecoding.Design
             data.Add(position);
 
             var currentCount = visualizer.CurrentCount;
+            var valueRange = visualizer.ValueRange;
+            var valueCenters = visualizer.ValueCenters;
+
             while (data.Count > currentCount)
             {
                 data.RemoveAt(0);
@@ -67,7 +70,12 @@ namespace Bonsai.ML.NeuralDecoding.Design
             var count = data.Count;
             for (int i = 0; i < count; i++)
             {
-                lineSeries.Points.Add(new DataPoint(currentCount - count + i, data[i]));
+                var closestIndex = Array.BinarySearch(valueRange, data[i]);
+                if (closestIndex < 0)
+                {
+                    closestIndex = ~closestIndex;
+                }
+                lineSeries.Points.Add(new DataPoint(currentCount - count + i, valueCenters[closestIndex]));
             }
         }
 

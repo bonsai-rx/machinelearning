@@ -30,9 +30,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.LinearDynamicalSy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.HiddenMarkovModels.Design", "src\Bonsai.ML.HiddenMarkovModels.Design\Bonsai.ML.HiddenMarkovModels.Design.csproj", "{FC395DDC-62A4-4E14-A198-272AB05B33C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.NeuralDecoding", "src\Bonsai.ML.NeuralDecoding\Bonsai.ML.NeuralDecoding.csproj", "{CE083548-26CB-4CF6-AE51-D7E32AE7377A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.NeuralDecoder", "src\Bonsai.ML.NeuralDecoder\Bonsai.ML.NeuralDecoder.csproj", "{CE083548-26CB-4CF6-AE51-D7E32AE7377A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.NeuralDecoding.Design", "src\Bonsai.ML.NeuralDecoding.Design\Bonsai.ML.NeuralDecoding.Design.csproj", "{D2CECE2F-CE7C-41BC-9888-EA53493D64D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.NeuralDecoder.Design", "src\Bonsai.ML.NeuralDecoder.Design\Bonsai.ML.NeuralDecoder.Design.csproj", "{D2CECE2F-CE7C-41BC-9888-EA53493D64D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
