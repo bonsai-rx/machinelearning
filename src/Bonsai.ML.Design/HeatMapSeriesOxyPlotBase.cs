@@ -161,6 +161,11 @@ namespace Bonsai.ML.Design
                 {
                     colorAxis.Maximum = maxValue;
                 }
+                else if (maxValueTextBox.Text.ToLower() == "auto")
+                {
+                    colorAxis.Maximum = double.NaN;
+                    maxValueTextBox.Text = "auto";
+                }
                 else
                 {
                     colorAxis.Maximum = heatMapSeries.MaxValue;
@@ -186,6 +191,11 @@ namespace Bonsai.ML.Design
                 if (double.TryParse(minValueTextBox.Text, out double minValue))
                 {
                     colorAxis.Minimum = minValue;
+                }
+                else if (minValueTextBox.Text.ToLower() == "auto")
+                {
+                    colorAxis.Minimum = double.NaN;
+                    minValueTextBox.Text = "auto";
                 }
                 else
                 {
