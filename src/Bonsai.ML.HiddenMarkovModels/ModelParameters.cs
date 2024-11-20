@@ -29,9 +29,9 @@ namespace Bonsai.ML.HiddenMarkovModels
         private StateParameters stateParameters = null;
 
         /// <summary>
-        /// The number of states of the HMM model.
+        /// The number of discrete latent states in the HMM model.
         /// </summary>
-        [Description("The number of discrete latent states of the HMM model.")]
+        [Description("The number of discrete latent states in the HMM.")]
         [Category("ModelSpecification")]
         public int NumStates 
         { 
@@ -44,9 +44,9 @@ namespace Bonsai.ML.HiddenMarkovModels
         }
 
         /// <summary>
-        /// The dimensionality of the observations into the HMM model.
+        /// The dimensionality of the observations going into the HMM.
         /// </summary>
-        [Description("The dimensionality of the observations into the HMM model.")]
+        [Description("The dimensionality of the observations going into the HMM.")]
         [Category("ModelSpecification")]
         public int Dimensions 
         { 
