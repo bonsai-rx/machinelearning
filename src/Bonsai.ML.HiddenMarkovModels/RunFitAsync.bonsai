@@ -6,13 +6,14 @@
                  xmlns:p1="clr-namespace:Bonsai.ML;assembly=Bonsai.ML"
                  xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Runs the asynchronous fit loop of the HMM model.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="WorkflowInput">
         <Name>Source1</Name>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="BatchSize" Category="TrainingData" />
+        <Property Name="Value" DisplayName="BatchSize" Description="The size of the batch of data to use for fitting the model." Category="TrainingData" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="IntProperty">
@@ -47,7 +48,7 @@
         <Combinator xsi:type="py:ObserveOnGIL" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the python variable referencing the model object."  Category="ModelReference" />
       </Expression>
       <Expression xsi:type="SubscribeSubject" TypeArguments="p1:ModelReference">
         <Name>hmm</Name>
@@ -64,7 +65,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="NumIterations" Category="Hyperparameters" />
+        <Property Name="Value" DisplayName="NumIterations" Description="The number of iterations to use for fitting the model to a single batch of data." Category="Hyperparameters" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="IntProperty">
@@ -72,7 +73,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="FlushDataBetweenBatches" Category="TrainingData" />
+        <Property Name="Value" DisplayName="FlushDataBetweenBatches" Description="Determines whether to append new batches of data to the existing batch or whether to flush the previous batch and fit only on the new batch." Category="TrainingData" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
@@ -80,7 +81,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="InitialStateDistribution" Category="ParametersToFit" />
+        <Property Name="Value" DisplayName="InitialStateDistribution" Description="Determines whether or not the model will fit the initial state distribution." Category="ParametersToFit" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
@@ -88,7 +89,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="TransitionParams" Category="ParametersToFit" />
+        <Property Name="Value" DisplayName="TransitionParams" Description="Determines whether or not the model will fit the state transition parameters." Category="ParametersToFit" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
@@ -96,7 +97,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="ObservationParams" Category="ParametersToFit" />
+        <Property Name="Value" DisplayName="ObservationParams" Description="Determines whether or not the model will fit the observation model parameters." Category="ParametersToFit" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
