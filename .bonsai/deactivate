@@ -1,0 +1,8 @@
+#!/bin/bash
+unset BONSAI_EXE_PATH
+export PS1="$ORIGINAL_PS1"
+unset ORIGINAL_PS1
+unalias bonsai
+unalias bonsai-clean
+unalias deactivate
+echo "Deactivated bonsai environment."

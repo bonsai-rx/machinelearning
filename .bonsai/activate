@@ -1,0 +1,15 @@
+#!/bin/bash
+# activate.sh
+if [[ -v BONSAI_EXE_PATH ]]; then
+    echo "Error! Cannot have multiple bonsai environments activated at the same time. Please deactivate the current environment before activating the new one."
+    return
+fi
+BONSAI_ENV_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+export BONSAI_ENV_DIR
+export BONSAI_EXE_PATH="$BONSAI_ENV_DIR/Bonsai.exe"
+export ORIGINAL_PS1="$PS1"
+export PS1="($(basename "$BONSAI_ENV_DIR")) $PS1"
+alias bonsai='source "$BONSAI_ENV_DIR"/run'
+alias bonsai-clean='GTK_DATA_PREFIX= source "$BONSAI_ENV_DIR"/run'
+alias deactivate='source "$BONSAI_ENV_DIR"/deactivate'
+echo "Activated bonsai environment in $BONSAI_ENV_DIR"
