@@ -25,14 +25,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
         private double _y1 = 1;
         private int _ysteps = 100;
 
-        private string _x0String;
-        private string _x1String;
-        private string _xstepsString;
-
-        private string _y0String;
-        private string _y1String;
-        private string _ystepsString;
-
         /// <summary>
         /// Gets or sets the lower bound of the X axis.
         /// </summary>
@@ -47,8 +39,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             set
             {
                 _x0 = value;
-                _x0String = double.IsNaN(_x0) ? "None" : _x0.ToString();
-
             }
         }
     
@@ -66,7 +56,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             set
             {
                 _x1 = value;
-                _x1String = double.IsNaN(_x1) ? "None" : _x1.ToString();
             }
         }
         
@@ -84,7 +73,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             set
             {
                 _xsteps = value >= 0 ? value : _xsteps;
-                _xstepsString = _xsteps.ToString();
             }
         }
 
@@ -102,7 +90,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             set
             {
                 _y0 = value;
-                _y0String = double.IsNaN(_y0) ? "None" : _y0.ToString();
             }
         }
     
@@ -120,7 +107,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             set
             {
                 _y1 = value;
-                _y1String = double.IsNaN(_y1) ? "None" : _y1.ToString();
             }
         }
         
@@ -138,7 +124,6 @@ namespace Bonsai.ML.LinearDynamicalSystems.LinearRegression
             set
             {
                 _ysteps = value;
-                _ystepsString = _ysteps.ToString();
             }
         }
 
