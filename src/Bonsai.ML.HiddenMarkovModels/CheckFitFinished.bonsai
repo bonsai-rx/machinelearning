@@ -6,13 +6,14 @@
                  xmlns:p1="clr-namespace:Bonsai.ML;assembly=Bonsai.ML"
                  xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Periodically evaluates the `get_fit_finished` function of the HMM. Returns a boolean value representing the objects `fit_finished` attribute. This should onle be used in a state after the `RunFitAsync` function has already been started.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="WorkflowInput">
         <Name>Source1</Name>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" DisplayName="Name" Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the python variable referencing the model object."  Category="ModelReference" />
         <Property Name="TimerFrequency" DisplayName="TimerFrequency" Description="The frequency with which to check if the asynchronous fit loop is complete." Category="Polling" />
       </Expression>
       <Expression xsi:type="rx:SelectMany">
