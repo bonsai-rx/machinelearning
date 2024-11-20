@@ -6,19 +6,20 @@
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Creates a Kalman Filter model for linear regression.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="WorkflowInput">
         <Name>Source1</Name>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="LikelihoodPrecisionCoefficient" Category="Parameters" />
-        <Property Name="PriorPrecisionCoefficient" Category="Parameters" />
-        <Property Name="NumFeatures" Category="Parameters" />
+        <Property Name="LikelihoodPrecisionCoefficient" Description="The likelihood precision coefficient." Category="Parameters" />
+        <Property Name="PriorPrecisionCoefficient" Description="The prior precision coefficient." Category="Parameters" />
+        <Property Name="NumFeatures" Description="The number of features present in the model." Category="Parameters" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="X" Category="ModelState" />
-        <Property Name="P" Category="ModelState" />
+        <Property Name="X" Description="The matrix representing the mean of the state." Category="ModelState" />
+        <Property Name="P" Description="The matrix representing the covariance between state components." Category="ModelState" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:KFModelParameters">
@@ -28,7 +29,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the Python variable referencing the model object." Category="ModelReference" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:CreateModelReference" />

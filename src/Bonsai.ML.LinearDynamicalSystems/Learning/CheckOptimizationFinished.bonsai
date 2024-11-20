@@ -6,6 +6,7 @@
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Periodically evaluates the `get_optimization_finished` function of the LDS model. Returns whether the `optimization_finished` attribute is true. This should only be used after the `RunOptimizationAsync` function has already been started.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="WorkflowInput">
@@ -15,7 +16,7 @@
         <Combinator xsi:type="py:ObserveOnGIL" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" DisplayName="Name" Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the python variable referencing the model object."  Category="ModelReference" />
       </Expression>
       <Expression xsi:type="SubscribeSubject" TypeArguments="p1:ModelReference">
         <Name>model</Name>

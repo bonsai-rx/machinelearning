@@ -6,6 +6,7 @@
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:p2="clr-namespace:Bonsai.ML.LinearDynamicalSystems.LinearRegression;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Creates a multivariate PDF object for the LDS model.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="WorkflowInput">
@@ -15,7 +16,7 @@
         <Combinator xsi:type="py:ObserveOnGIL" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" DisplayName="Name" Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the Python variable referencing the model object." Category="ModelReference" />
       </Expression>
       <Expression xsi:type="SubscribeSubject" TypeArguments="p1:ModelReference">
         <Name>model</Name>
@@ -30,12 +31,12 @@
         <Selector>Item2</Selector>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="X0" Category="GridParameters" />
-        <Property Name="X1" Category="GridParameters" />
-        <Property Name="XSteps" Category="GridParameters" />
-        <Property Name="Y0" Category="GridParameters" />
-        <Property Name="Y1" Category="GridParameters" />
-        <Property Name="YSteps" Category="GridParameters" />
+        <Property Name="X0" Description="The lower bound of the X axis." Category="GridParameters" />
+        <Property Name="X1" Description="The upper bound of the X axis." Category="GridParameters" />
+        <Property Name="XSteps" Description="The number of steps along the X axis." Category="GridParameters" />
+        <Property Name="Y0" Description="The lower bound of the Y axis." Category="GridParameters" />
+        <Property Name="Y1" Description="The upper bound of the X axis." Category="GridParameters" />
+        <Property Name="YSteps" Description="The number of steps along the Y axis." Category="GridParameters" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:GridParameters">

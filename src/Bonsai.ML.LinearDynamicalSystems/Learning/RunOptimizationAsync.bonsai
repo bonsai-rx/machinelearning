@@ -6,13 +6,14 @@
                  xmlns:p1="clr-namespace:Bonsai.ML;assembly=Bonsai.ML"
                  xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Runs the asynchronous optimization loop of the LDS model.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="WorkflowInput">
         <Name>Source1</Name>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="BatchSize" Category="TrainingData" />
+        <Property Name="Value" DisplayName="BatchSize" Description="The size of the batch used for fitting the model." Category="TrainingData" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="IntProperty">
@@ -47,7 +48,7 @@
         <Combinator xsi:type="py:ObserveOnGIL" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" DisplayName="Name" Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the Python variable referencing the model object." Category="ModelReference" />
       </Expression>
       <Expression xsi:type="SubscribeSubject" TypeArguments="p1:ModelReference">
         <Name>model</Name>
@@ -59,7 +60,7 @@
         <Combinator xsi:type="rx:WithLatestFrom" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="sigma_a" Category="ParametersToOptimize" />
+        <Property Name="Value" DisplayName="sigma_a" Description="Determines whether to optimize for the sigma_a parameter." Category="ParametersToOptimize" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
@@ -75,7 +76,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="m0" Category="ParametersToOptimize" />
+        <Property Name="Value" DisplayName="m0" Description="Determines whether to optimize for the initial values of the state (position, velocity, and acceleration)." Category="ParametersToOptimize" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
@@ -83,7 +84,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="sqrt_diag_V0_value" Category="ParametersToOptimize" />
+        <Property Name="Value" DisplayName="sqrt_diag_V0_value" Description="Determines whether to optimize for the sqrt_diag_V0 parameter." Category="ParametersToOptimize" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
@@ -96,7 +97,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="NumIterations" Category="Hyperparameters" />
+        <Property Name="Value" DisplayName="NumIterations" Description="The number of iterations to use for fitting the model to a single batch of data." Category="Hyperparameters" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="IntProperty">
@@ -104,7 +105,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="PrintConvergenceMessages" Category="Verbosity" />
+        <Property Name="Value" DisplayName="PrintConvergenceMessages" Description="Determines whether or not to print messages to the console." Category="Verbosity" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
