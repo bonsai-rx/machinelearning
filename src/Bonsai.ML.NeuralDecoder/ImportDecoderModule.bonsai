@@ -4,6 +4,7 @@
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Import the Bayesian neural decoder module.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="WorkflowInput">

@@ -7,10 +7,11 @@
                  xmlns:sys="clr-namespace:System;assembly=mscorlib"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Load a pickle object into an instance of the clusterless spike decoder class and set it to the referenced python variable.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the python variable referencing the model object."  Category="ModelReference" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:CreateModelReference">
@@ -24,7 +25,7 @@
         <Selector>Name</Selector>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="DecoderPath" Description="Path to the decoder file" />
+        <Property Name="Value" DisplayName="DecoderPath" Description="Path to the decoder file." />
       </Expression>
       <Expression xsi:type="PropertySource" TypeArguments="io:CsvReader,sys:String">
         <MemberName>FileName</MemberName>
