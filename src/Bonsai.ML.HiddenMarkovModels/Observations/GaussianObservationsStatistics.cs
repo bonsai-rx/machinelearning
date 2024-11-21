@@ -45,11 +45,11 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
         public double[,] BatchObservations { get; set; }
 
         /// <summary>
-        /// The sequence of inferred most probable states.
+        /// The predicted state for each observation in the batch of observations.
         /// </summary>
-        [Description("The sequence of inferred most probable states.")]
+        [Description("The predicted state for each observation in the batch of observations.")]
         [XmlIgnore]
-        public long[] InferredMostProbableStates { get; set; }
+        public long[] PredictedStates { get; set; }
 
         /// <summary>
         /// Transforms an observable sequence of <see cref="PyObject"/> into an observable sequence 
@@ -64,7 +64,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                 var covarianceMatricesPyObj = (double[,,])observationsPyObj.GetArrayAttr("Sigmas");
                 var stdDevsPyObj = DiagonalSqrt(covarianceMatricesPyObj);
                 var batchObservationsPyObj = (double[,])pyObject.GetArrayAttr("batch_observations");
-                var inferredMostProbableStatesPyObj = (long[])pyObject.GetArrayAttr("inferred_most_probable_states");
+                var predictedStatesPyObj = (long[])pyObject.GetArrayAttr("predicted_states");
 
                 return new GaussianObservationsStatistics
                 {
@@ -72,7 +72,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                     StdDevs = stdDevsPyObj,
                     CovarianceMatrices = covarianceMatricesPyObj,
                     BatchObservations = batchObservationsPyObj,
-                    InferredMostProbableStates = inferredMostProbableStatesPyObj
+                    PredictedStates = PredictedStates
                 };
             });
         }
