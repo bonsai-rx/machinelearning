@@ -1,8 +1,17 @@
-# Builds and publishes the documentation website to gh-pages branch
+# Builds and publishes the documentation website
 name: Build docs
 
 on:
   workflow_dispatch:
+
+concurrency:
+  group: docs
+  cancel-in-progress: true
+
+permissions:
+  # Both required by actions/deploy-pages
+  pages: write
+  id-token: write
 
 jobs:
   build_docs:
@@ -14,31 +23,31 @@ jobs:
           submodules: true
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v4.0.0
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
-        
+
       - name: Restore NuGet Packages
         run: dotnet restore Bonsai.ML.sln
 
       - name: Build Solution
         run: dotnet build Bonsai.ML.sln -c Release
-        
+
       - name: Setup DocFX
         run: dotnet tool restore
 
       - name: Setup Bonsai
         working-directory: .bonsai
         run: ./Setup.ps1
-        
+
       - name: Build Documentation
         working-directory: docs
         run: ./build.ps1
 
-      - name: Publish to github pages
-        uses: peaceiris/actions-gh-pages@v3.9.3
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_site
-          publish_branch: gh-pages
-          force_orphan: true
+          path: docs/_site
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
