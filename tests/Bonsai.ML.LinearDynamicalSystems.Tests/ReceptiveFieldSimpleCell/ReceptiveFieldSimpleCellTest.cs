@@ -1,8 +1,9 @@
 using System;
-using System.IO.Compression;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.IO.Compression;
+using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Tests.ReceptiveFieldSimpleCell;
@@ -65,7 +66,7 @@ public class ReceptiveFieldSimpleCellTest
                 Console.WriteLine("File downloaded successfully.");
             }
 
-            ZipFile.ExtractToDirectory(tempFilePath, outputPath, true);
+            ZipFile.ExtractToDirectory(tempFilePath, outputPath);
             Console.WriteLine("File extracted successfully.");
         }
 
