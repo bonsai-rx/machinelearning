@@ -3,7 +3,7 @@
     <Title>Bonsai.ML.Design</Title>
     <Description>A package for the Bonsai visual programming language.</Description>
     <PackageTags>Bonsai Rx ML Machine Learning Design</PackageTags>
-    <TargetFrameworks>net472</TargetFrameworks>
+    <TargetFramework>net472</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <ItemGroup>

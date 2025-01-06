@@ -3,7 +3,7 @@
     <Title>Bonsai.ML.LinearDynamicalSystems</Title>
     <Description>A Bonsai package for implementing the Kalman Filter using python.</Description>
     <PackageTags>Bonsai Rx ML KalmanFilter LinearDynamicalSystems</PackageTags>
-    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="*.py" />
