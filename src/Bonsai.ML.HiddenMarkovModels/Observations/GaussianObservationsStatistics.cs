@@ -72,7 +72,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                     StdDevs = stdDevsPyObj,
                     CovarianceMatrices = covarianceMatricesPyObj,
                     BatchObservations = batchObservationsPyObj,
-                    PredictedStates = PredictedStates
+                    PredictedStates = predictedStatesPyObj
                 };
             });
         }

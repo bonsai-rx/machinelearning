@@ -78,7 +78,7 @@ class HiddenMarkovModel(HMM):
         self.state_probabilities = None
 
         self.batch = None
-        self.batch_observations = np.array([[]], dtype=float)
+        self.batch_observations = np.array([[]], dtype=float).reshape((0, dimensions))
         self.is_running = False
         self._fit_finished = False
         self.loop = None
@@ -86,6 +86,7 @@ class HiddenMarkovModel(HMM):
         self.curr_batch_size = 0
         self.flush_data_between_batches = True
         self.predicted_states = np.array([], dtype=int)
+        self.buffer_count = 250
 
     def update_params(self, initial_state_distribution, transitions_params, observations_params):
         hmm_params = self.params
@@ -129,7 +130,11 @@ class HiddenMarkovModel(HMM):
         self.state_probabilities = np.exp(self.log_alpha).astype(np.double)
         prediction = self.state_probabilities.argmax()
         self.predicted_states = np.append(self.predicted_states, prediction)
+        if self.predicted_states.shape[0] > self.buffer_count:
+            self.predicted_states = self.predicted_states[1:]
         self.batch_observations = np.vstack([self.batch_observations, observation])
+        if self.batch_observations.shape[0] == self.buffer_count:
+            self.batch_observations = self.batch_observations[1:]
         return prediction
 
     def compute_log_alpha(self, obs, log_alpha=None):
