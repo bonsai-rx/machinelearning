@@ -1,10 +1,11 @@
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Tests.ReceptiveFieldSimpleCell;
 
@@ -55,33 +56,24 @@ public class ReceptiveFieldSimpleCellTest
     {
         string zipFileUrl = "https://zenodo.org/records/10879253/files/ReceptiveFieldSimpleCell.zip";
         string outputPath = Path.Combine(basePath, "data");
-        string tempFilePath = Path.Combine(Path.GetTempPath(), "tempfile.zip");
 
         try
         {
+            byte[] responseBytes;
             using (var httpClient = new HttpClient())
             {
-                var responseBytes = httpClient.GetByteArrayAsync(zipFileUrl).Result;
-                File.WriteAllBytes(tempFilePath, responseBytes);
+                responseBytes = httpClient.GetByteArrayAsync(zipFileUrl).Result;
                 Console.WriteLine("File downloaded successfully.");
             }
 
-            ZipFile.ExtractToDirectory(tempFilePath, outputPath);
+            using MemoryStream zipStream = new(responseBytes);
+            using ZipArchive zip = new(zipStream, ZipArchiveMode.Read);
+            zip.ExtractToDirectory(outputPath);
             Console.WriteLine("File extracted successfully.");
         }
-
         catch (Exception ex)
         {
             Console.WriteLine($"An error occurred: {ex.Message}");
-        }
-
-        finally
-        {
-            if (File.Exists(tempFilePath))
-            {
-                File.Delete(tempFilePath);
-                Console.WriteLine("Temporary file deleted.");
-            }
         }
     }
 
@@ -184,17 +176,5 @@ public class ReceptiveFieldSimpleCellTest
     {
         var result = CompareJSONData(basePath);
         Assert.IsTrue(result);
-    }
-
-    /// <summary>
-    /// Cleanup after the test.
-    /// </summary>
-    [TestCleanup]
-    public void Cleanup()
-    {
-        if (Directory.Exists(basePath))
-        {
-            Directory.Delete(basePath, true);
-        }
     }
 }
