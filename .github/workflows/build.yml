@@ -1,29 +1,56 @@
-name: Build
+name: Bonsai.ML
 
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
   workflow_dispatch:
-  workflow_call:
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+  ContinuousIntegrationBuild: true
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: Windows x64
+            os: windows-latest
+            rid: win-x64
+          - name: Linux x64
+            os: ubuntu-22.04
+            rid: linux-x64
+        configuration: ['Debug', 'Release']
+    name: ${{matrix.platform.name}} ${{matrix.configuration}}
+    runs-on: ${{matrix.platform.os}}
     steps:
+      # ----------------------------------------------------------------------- Checkout
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: true
 
+      # ----------------------------------------------------------------------- Setup tools
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.x
 
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # ----------------------------------------------------------------------- Build
       - name: Restore NuGet Packages
         run: dotnet restore Bonsai.ML.sln
 
       - name: Build Solution
-        run: dotnet build Bonsai.ML.sln -c Release
+        run: dotnet build Bonsai.ML.sln --no-restore --configuration ${{matrix.configuration}}
+
+      # ----------------------------------------------------------------------- Test
+      - name: Run Tests
+        run: dotnet test Bonsai.ML.sln --no-restore --no-build --configuration ${{matrix.configuration}} --verbosity normal
