@@ -78,14 +78,15 @@ class HiddenMarkovModel(HMM):
         self.state_probabilities = None
 
         self.batch = None
-        self.batch_observations = np.array([[]], dtype=float)
+        self.batch_observations = np.array([[]], dtype=float).reshape((0, dimensions))
         self.is_running = False
         self._fit_finished = False
         self.loop = None
         self.thread = None
         self.curr_batch_size = 0
         self.flush_data_between_batches = True
-        self.inferred_most_probable_states = np.array([], dtype=int)
+        self.predicted_states = np.array([], dtype=int)
+        self.buffer_count = 250
 
     def update_params(self, initial_state_distribution, transitions_params, observations_params):
         hmm_params = self.params
@@ -124,10 +125,17 @@ class HiddenMarkovModel(HMM):
 
     def infer_state(self, observation: list[float]):
 
-        self.log_alpha = self.compute_log_alpha(
-            np.expand_dims(np.array(observation), 0), self.log_alpha)
+        observation = np.expand_dims(np.array(observation), 0)
+        self.log_alpha = self.compute_log_alpha(observation, self.log_alpha)
         self.state_probabilities = np.exp(self.log_alpha).astype(np.double)
-        return self.state_probabilities.argmax()
+        prediction = self.state_probabilities.argmax()
+        self.predicted_states = np.append(self.predicted_states, prediction)
+        if self.predicted_states.shape[0] > self.buffer_count:
+            self.predicted_states = self.predicted_states[1:]
+        self.batch_observations = np.vstack([self.batch_observations, observation])
+        if self.batch_observations.shape[0] == self.buffer_count:
+            self.batch_observations = self.batch_observations[1:]
+        return prediction
 
     def compute_log_alpha(self, obs, log_alpha=None):
 
@@ -170,8 +178,6 @@ class HiddenMarkovModel(HMM):
         elif self.curr_batch_size == batch_size:
             self.batch = np.vstack(
                 [self.batch[1:], np.expand_dims(np.array(observation), 0)])
-
-        self.batch_observations = self.batch
 
         if not self.is_running and self.loop is None and self.thread is None:
 
@@ -220,8 +226,6 @@ class HiddenMarkovModel(HMM):
 
                     if self.flush_data_between_batches:
                         self.batch = None
-
-                    self.inferred_most_probable_states = np.array([self.infer_state(obs) for obs in self.batch_observations]).astype(int)
 
                 self.is_running = True
 

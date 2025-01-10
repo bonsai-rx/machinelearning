@@ -149,7 +149,6 @@ namespace Bonsai.ML.HiddenMarkovModels.Design
         {
             if (value is Observations.GaussianObservationsStatistics gaussianObservationsStatistics)
             {
-              
                 var statesCount = gaussianObservationsStatistics.Means.GetLength(0);
                 var observationDimensions = gaussianObservationsStatistics.Means.GetLength(1);
 
@@ -227,12 +226,14 @@ namespace Bonsai.ML.HiddenMarkovModels.Design
 
                 var batchObservationsCount = gaussianObservationsStatistics.BatchObservations.GetLength(0);
                 var offset = BufferData && batchObservationsCount > BufferCount ? batchObservationsCount - BufferCount : 0;
+                var predictedStatesCount = gaussianObservationsStatistics.PredictedStates.Length;
+
                 for (int i = offset; i < batchObservationsCount; i++)
                 {
                     var dim1 = gaussianObservationsStatistics.BatchObservations[i, dimension1SelectedIndex];
                     var dim2 = gaussianObservationsStatistics.BatchObservations[i, dimension2SelectedIndex];
-                    var state = gaussianObservationsStatistics.InferredMostProbableStates[i];
-                    allScatterSeries[(int)state].Points.Add(new ScatterPoint(dim1, dim2, value: state, tag: state));
+                    var state = gaussianObservationsStatistics.PredictedStates[i];
+                    allScatterSeries[Convert.ToInt32(state)].Points.Add(new ScatterPoint(dim1, dim2, value: state, tag: state));
                 }
 
                 for (int i = 0; i < statesCount; i++)

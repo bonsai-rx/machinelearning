@@ -52,7 +52,7 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="py:Exec">
-                <py:Script>hmm.most_likely_states([59.7382107943162,3.99285183724331])</py:Script>
+                <py:Script>hmm.infer_state([59.7382107943162,3.99285183724331])</py:Script>
               </Combinator>
             </Expression>
             <Expression xsi:type="WorkflowOutput" />
