@@ -3,7 +3,7 @@
     <Title>Bonsai - ML</Title>
     <Description>Bonsai Library containing reactive infrastructure for machine learning.</Description>
     <PackageTags>Bonsai Rx ML Machine Learning</PackageTags>
-    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.8.1" />

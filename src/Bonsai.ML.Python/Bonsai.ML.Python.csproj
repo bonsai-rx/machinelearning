@@ -3,7 +3,7 @@
     <Title>Bonsai.ML.Python</Title>
     <Description>Bonsai Library containing python integration functions for machine learning.</Description>
     <PackageTags>Bonsai Rx Bonsai.ML.Python</PackageTags>
-    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bonsai.Scripting.Python" Version="0.2.1" />
