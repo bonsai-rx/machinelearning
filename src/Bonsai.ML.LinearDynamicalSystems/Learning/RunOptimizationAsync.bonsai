@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.8.1"
+<WorkflowBuilder Version="2.8.5"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
@@ -67,7 +67,7 @@
         </Combinator>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Value" DisplayName="sigma_x, sigma_y" Category="ParametersToOptimize" />
+        <Property Name="Value" DisplayName="sigma_xy" Category="ParametersToOptimize" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="BooleanProperty">
