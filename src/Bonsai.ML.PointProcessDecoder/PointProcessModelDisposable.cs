@@ -7,7 +7,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 sealed class PointProcessModelDisposable : IDisposable
 {
     private IDisposable? resource;
-    public bool IsDispose => resource == null;
+    public bool IsDisposed => resource == null;
 
     private readonly PointProcessModel model;
     public PointProcessModel Model => model;
