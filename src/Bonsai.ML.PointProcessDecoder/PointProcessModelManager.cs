@@ -72,7 +72,11 @@ internal static class PointProcessModelManager
         
         return new PointProcessModelDisposable(
             model, 
-            Disposable.Create(() => models.Remove(name))
+            Disposable.Create(() => {
+                model.Dispose();
+                model = null;
+                models.Remove(name);
+            })
         );
     }
 }
