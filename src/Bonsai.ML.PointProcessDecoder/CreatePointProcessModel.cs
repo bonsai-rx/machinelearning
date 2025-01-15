@@ -27,10 +27,10 @@ public class CreatePointProcessModel
     private string name = "PointProcessModel";
 
     /// <summary>
-    /// Gets or sets the name of the neural decoding model.
+    /// Gets or sets the name of the point process model.
     /// </summary>
     [Category("1. Model Parameters")]
-    [Description("The name of the neural decoding model.")]
+    [Description("The name of the point process model.")]
     public string Name
     {
         get
