@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Bonsai.ML.NeuralDecoder</Title>
+    <Description>A Bonsai package for decoding neural activity.</Description>
+    <PackageTags>Bonsai Rx ML Neural Decoder</PackageTags>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.8.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Python\Bonsai.ML.Python.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="**\*.bonsai" />
+  </ItemGroup>
+</Project>

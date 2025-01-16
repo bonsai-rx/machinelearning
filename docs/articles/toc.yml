@@ -14,3 +14,6 @@
   href: HiddenMarkovModels/hmm-overview.md
 - name: Getting Started
   href: HiddenMarkovModels/hmm-getting-started.md
+- name: NeuralDecoder
+- name: Getting Started
+  href: NeuralDecoder/nd-getting-started.md

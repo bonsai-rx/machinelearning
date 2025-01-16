@@ -64,6 +64,11 @@ namespace Bonsai.ML.Design
         public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
+        /// Gets the plot model.
+        /// </summary>
+        public PlotModel Model => model;
+
+        /// <summary>
         /// Constructor of the TimeSeriesOxyPlotBase class.
         /// Requires a line series name and an area series name.
         /// Data source is optional, since pasing it to the constructor will populate the combobox and leave it empty otherwise.
@@ -305,7 +310,42 @@ namespace Bonsai.ML.Design
         }
 
         /// <summary>
-        /// Method to update the heatmap series with new data.
+        /// Method to update the heatmap x axis.
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="x1"></param>
+        public void UpdateHeatMapXAxis(double x0, double x1)
+        {
+            heatMapSeries.X0 = x0;
+            heatMapSeries.X1 = x1;
+        }
+
+        /// <summary>
+        /// Method to update the heatmap y axis.
+        /// </summary>
+        /// <param name="y0"></param>
+        /// <param name="y1"></param>
+        public void UpdateHeatMapYAxis(double y0, double y1)
+        {
+            heatMapSeries.Y0 = y0;
+            heatMapSeries.Y1 = y1;
+        }
+
+        /// <summary>
+        /// Method to update the heatmap axes.
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="x1"></param>
+        /// <param name="y0"></param>
+        /// <param name="y1"></param>
+        public void UpdateHeatMapAxes(double x0, double x1, double y0, double y1)
+        {
+            UpdateHeatMapXAxis(x0, x1);
+            UpdateHeatMapYAxis(y0, y1);
+        }
+
+        /// <summary>
+        /// Method to update the heatmap series data and axes.
         /// </summary>
         /// <param name="x0">The minimum x value.</param>
         /// <param name="x1">The maximum x value.</param>
@@ -314,10 +354,7 @@ namespace Bonsai.ML.Design
         /// <param name="data">The data to be displayed.</param>
         public void UpdateHeatMapSeries(double x0, double x1, double y0, double y1, double[,] data)
         {
-            heatMapSeries.X0 = x0;
-            heatMapSeries.X1 = x1;
-            heatMapSeries.Y0 = y0;
-            heatMapSeries.Y1 = y1;
+            UpdateHeatMapAxes(x0, x1, y0, y1);
             heatMapSeries.Data = data;
         }
 
