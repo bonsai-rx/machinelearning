@@ -5,23 +5,23 @@ using System.Linq;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torchvision;
-using System.Xml.Serialization;
 
 namespace Bonsai.ML.Torch.Vision
 {
     [Combinator]
-    [Description("")]
+    [Description("Normalizes the input tensor with the mean and standard deviation.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class Normalize
-    {       
-        private ITransform inputTransform;
+    {
+        public double[] Means { get; set; } = [ 0.1307 ];
+        public double[] StdDevs { get; set; } = [ 0.3081 ];
+        private ITransform transform = null;
 
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            inputTransform = transforms.Normalize(new double[] { 0.1307 }, new double[] { 0.3081 });
-
             return source.Select(tensor => {
-                return inputTransform.call(tensor);
+                transform ??= transforms.Normalize(Means, StdDevs, tensor.dtype, tensor.device);
+                return transform.call(tensor);
             });
         }
     }
