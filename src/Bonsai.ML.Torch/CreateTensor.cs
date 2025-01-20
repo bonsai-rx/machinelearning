@@ -24,7 +24,7 @@ namespace Bonsai.ML.Torch
     [WorkflowElementCategory(ElementCategory.Source)]
     public class CreateTensor : ExpressionBuilder
     {
-        readonly Range<int> argumentRange = new Range<int>(0, 1);
+        readonly Range<int> argumentRange = new(0, 1);
 
         /// <inheritdoc/>
         public override Range<int> ArgumentRange => argumentRange;
@@ -171,14 +171,14 @@ namespace Bonsai.ML.Torch
                     ]
                 );
 
-                tensorCreationMethodArguments = tensorCreationMethodArguments.Prepend(
+                tensorCreationMethodArguments = [.. tensorCreationMethodArguments.Prepend(
                     Expression.Constant(scalarType, typeof(ScalarType?))
-                ).ToArray();
+                )];
             }
 
-            tensorCreationMethodArguments = tensorCreationMethodArguments.Prepend(
-                    tensorDataInitializationBlock
-                ).ToArray();
+            tensorCreationMethodArguments = [.. tensorCreationMethodArguments.Prepend(
+                tensorDataInitializationBlock
+            )];
 
             var tensorAssignment = Expression.Call(
                 tensorCreationMethodInfo,
