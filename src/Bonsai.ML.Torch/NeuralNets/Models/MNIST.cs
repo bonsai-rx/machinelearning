@@ -15,9 +15,9 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
         private Module<Tensor, Tensor> conv1 = Conv2d(1, 32, 3);
         private Module<Tensor, Tensor> conv2 = Conv2d(32, 64, 3);
         private Module<Tensor, Tensor> fc1 = Linear(9216, 128);
-        private Module<Tensor, Tensor> fc2 = Linear(128, 10);
-
-        private Module<Tensor, Tensor> pool1 = MaxPool2d(kernelSize: new long[] { 2, 2 });
+         private Module<Tensor, Tensor> fc2 = Linear(128, 128);
+         
+        private Module<Tensor, Tensor> pool1 = MaxPool2d(kernelSize: [2, 2]);
 
         private Module<Tensor, Tensor> relu1 = ReLU();
         private Module<Tensor, Tensor> relu2 = ReLU();
