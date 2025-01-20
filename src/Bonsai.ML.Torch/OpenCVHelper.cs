@@ -82,10 +82,10 @@ namespace Bonsai.ML.Torch
             {
                 return empty([ 0, 0, 0 ]);
             }
-
-            int width = image.Width;
+            // int width = image.Width;
             int height = image.Height;
             int channels = image.Channels;
+            var width = image.WidthStep / channels;
 
             var iplDepth = image.Depth;
             var tensorType = bitDepthLookup.FirstOrDefault(x => x.Value.IplDepth == iplDepth).Key;
