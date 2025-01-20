@@ -1,6 +1,5 @@
 using System;
-using System.Linq;
-using System.Reactive.Linq;
+using System.Collections.Generic;
 using TorchSharp;
 
 namespace Bonsai.ML.Torch.Index;
@@ -50,32 +49,23 @@ public static class IndexHelper
             }
             else if (indexString.Contains(":"))
             {
-                var rangeParts = indexString.Split(':');
-                rangeParts = [.. rangeParts.Where(p => {
-                    p = p.Trim();
-                    return !string.IsNullOrEmpty(p);
-                })];
-
-                if (rangeParts.Length == 0)
+                string[] rangeParts = [.. indexString.Split(':')];
+                var argsList = new List<long?>([null, null, null]);
+                try
                 {
-                    indices[i] = torch.TensorIndex.Slice();
+                    for (int j = 0; j < rangeParts.Length; j++)
+                    {
+                        if (!string.IsNullOrEmpty(rangeParts[j]))
+                        {
+                            argsList[j] = long.Parse(rangeParts[j]);
+                        }
+                    }
                 }
-                else if (rangeParts.Length == 1)
-                {
-                    indices[i] = torch.TensorIndex.Slice(int.Parse(rangeParts[0]));
-                }
-                else if (rangeParts.Length == 2)
-                {
-                    indices[i] = torch.TensorIndex.Slice(int.Parse(rangeParts[0]), int.Parse(rangeParts[1]));
-                }
-                else if (rangeParts.Length == 3)
-                {
-                    indices[i] = torch.TensorIndex.Slice(int.Parse(rangeParts[0]), int.Parse(rangeParts[1]), int.Parse(rangeParts[2]));
-                }
-                else
+                catch (Exception)
                 {
                     throw new Exception($"Invalid index format: {indexString}");
                 }
+                indices[i] = torch.TensorIndex.Slice(argsList[0], argsList[1], argsList[2]);
             }
             else
             {
@@ -84,7 +74,7 @@ public static class IndexHelper
         }
         return indices;
     }
-
+    
     /// <summary>
     /// Serializes the input array of tensor indexes into a string representation.
     /// </summary>
