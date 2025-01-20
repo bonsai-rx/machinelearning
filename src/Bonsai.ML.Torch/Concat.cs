@@ -18,6 +18,7 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The dimension along which to concatenate the tensors.
         /// </summary>
+        [Description("The dimension along which to concatenate the tensors.")]
         public long Dimension { get; set; } = 0;
 
         /// <summary>

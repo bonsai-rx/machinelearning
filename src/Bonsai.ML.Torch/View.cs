@@ -7,12 +7,12 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Reshapes the input tensor according to the specified dimensions.
+    /// Creates a new view of the input tensor with the specified dimensions.
     /// </summary>
     [Combinator]
-    [Description("Reshapes the input tensor according to the specified dimensions.")]
+    [Description("Creates a new view of the input tensor with the specified dimensions.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class Reshape
+    public class View
     {
         /// <summary>
         /// The dimensions of the reshaped tensor.
@@ -21,13 +21,13 @@ namespace Bonsai.ML.Torch
         public long[] Dimensions { get; set; } = [0];
 
         /// <summary>
-        /// Reshapes the input tensor according to the specified dimensions.
+        /// Creates a new view of the input tensor with the specified dimensions.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            return source.Select(input => input.reshape(Dimensions));
+            return source.Select(input => input.view(Dimensions));
         }
     }
 }

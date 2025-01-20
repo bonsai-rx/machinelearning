@@ -16,6 +16,7 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The permutation of the dimensions.
         /// </summary>
+        [Description("The permutation of the dimensions.")]
         public long[] Dimensions { get; set; } = [0];
 
         /// <summary>

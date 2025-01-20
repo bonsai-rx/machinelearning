@@ -10,19 +10,21 @@ using Bonsai.Expressions;
 using static TorchSharp.torch;
 using Bonsai.ML.Data;
 using Bonsai.ML.Python;
-using Bonsai.ML.Torch.Helpers;
+using TorchSharp;
 
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Creates a tensor from the specified values. Uses Python-like syntax to specify the tensor values. For example, a 2x2 tensor can be created with the following values: "[[1, 2], [3, 4]]".
+    /// Creates a tensor from the specified values.
+    /// Uses Python-like syntax to specify the tensor values. 
+    /// For example, a 2x2 tensor can be created with the following values: "[[1, 2], [3, 4]]".
     /// </summary>
     [Combinator]
     [Description("Creates a tensor from the specified values. Uses Python-like syntax to specify the tensor values. For example, a 2x2 tensor can be created with the following values: \"[[1, 2], [3, 4]]\".")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class CreateTensor : ExpressionBuilder
     {
-        Range<int> argumentRange = new Range<int>(0, 1);
+        readonly Range<int> argumentRange = new Range<int>(0, 1);
 
         /// <inheritdoc/>
         public override Range<int> ArgumentRange => argumentRange;
@@ -30,17 +32,21 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The data type of the tensor elements.
         /// </summary>
-        public TensorDataType Type
+        [Description("The data type of the tensor elements.")]
+        public ScalarType Type
         {
             get => scalarType;
             set => scalarType = value;
         }
 
-        private TensorDataType scalarType = TensorDataType.Float32;
+        private ScalarType scalarType = ScalarType.Float32;
 
         /// <summary>
-        /// The values of the tensor elements. Uses Python-like syntax to specify the tensor values.
+        /// The values of the tensor elements. 
+        /// Uses Python-like syntax to specify the tensor values.
+        /// For example: "[[1, 2], [3, 4]]".
         /// </summary>
+        [Description("The values of the tensor elements. Uses Python-like syntax to specify the tensor values. For example: \"[[1, 2], [3, 4]]\".")]
         public string Values
         {
             get => values;
@@ -56,6 +62,7 @@ namespace Bonsai.ML.Torch
         /// The device on which to create the tensor.
         /// </summary>
         [XmlIgnore]
+        [Description("The device on which to create the tensor.")]
         public Device Device
         {
             get => device;
@@ -98,7 +105,7 @@ namespace Bonsai.ML.Torch
                 arrayVariable
             );
 
-            var tensorCreationMethodInfo = typeof(TorchSharp.torch).GetMethod(
+            var tensorCreationMethodInfo = typeof(torch).GetMethod(
                 "tensor", [
                     arrayVariable.Type,
                     typeof(ScalarType?),
@@ -111,7 +118,7 @@ namespace Bonsai.ML.Torch
             var tensorAssignment = Expression.Call(
                 tensorCreationMethodInfo,
                 tensorDataInitializationBlock,
-                Expression.Constant((ScalarType)scalarType, typeof(ScalarType?)),
+                Expression.Constant(scalarType, typeof(ScalarType?)),
                 Expression.Constant(device, typeof(Device)),
                 Expression.Constant(false, typeof(bool)),
                 Expression.Constant(null, typeof(string).MakeArrayType())
@@ -140,7 +147,7 @@ namespace Bonsai.ML.Torch
                 valueVariable
             );
 
-            var tensorCreationMethodInfo = typeof(TorchSharp.torch).GetMethod(
+            var tensorCreationMethodInfo = typeof(torch).GetMethod(
                 "tensor", [
                     valueVariable.Type,
                     typeof(Device),
@@ -155,7 +162,7 @@ namespace Bonsai.ML.Torch
 
             if (tensorCreationMethodInfo == null)
             {
-                tensorCreationMethodInfo = typeof(TorchSharp.torch).GetMethod(
+                tensorCreationMethodInfo = typeof(torch).GetMethod(
                     "tensor", [
                         valueVariable.Type,
                         typeof(ScalarType?),
@@ -193,7 +200,7 @@ namespace Bonsai.ML.Torch
         /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
-            var returnType = TensorDataTypeLookup.GetTypeFromTensorDataType(scalarType);
+            var returnType = ScalarTypeLookup.GetTypeFromScalarType(scalarType);
             var argTypes = arguments.Select(arg => arg.Type).ToArray();
 
             Type[] methodInfoArgumentTypes = [typeof(Tensor)];
@@ -225,7 +232,7 @@ namespace Bonsai.ML.Torch
             finally
             {
                 values = StringFormatter.FormatToPython(tensorValues).ToLower();
-                scalarType = TensorDataTypeLookup.GetTensorDataTypeFromType(returnType);
+                scalarType = ScalarTypeLookup.GetScalarTypeFromType(returnType);
             }
         }
 
@@ -242,7 +249,7 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process<T>(IObservable<T> source, Tensor tensor)
         {
-            return Observable.Select(source, (_) => tensor);
+            return source.Select(_ => tensor);
         }
     }
 }

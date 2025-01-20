@@ -16,6 +16,7 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The scalar type to which to convert the input tensor.
         /// </summary>
+        [Description("The scalar type to which to convert the input tensor.")]
         public ScalarType Type { get; set; } = ScalarType.Float32;
 
         /// <summary>

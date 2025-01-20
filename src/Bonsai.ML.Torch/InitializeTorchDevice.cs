@@ -11,12 +11,13 @@ namespace Bonsai.ML.Torch
     /// </summary>
     [Combinator]
     [Description("Initializes the Torch device with the specified device type.")]
-    [WorkflowElementCategory(ElementCategory.Transform)]
+    [WorkflowElementCategory(ElementCategory.Source)]
     public class InitializeTorchDevice
     {
         /// <summary>
         /// The device type to initialize.
         /// </summary>
+        [Description("The device type to initialize.")]
         public DeviceType DeviceType { get; set; }
 
         /// <summary>

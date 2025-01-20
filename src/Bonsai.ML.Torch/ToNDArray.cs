@@ -12,7 +12,7 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Converts the input tensor into an array of the specified element type.
+    /// Converts the input tensor into an array of the specified element type and rank.
     /// </summary>
     [Combinator]
     [Description("Converts the input tensor into an array of the specified element type.")]
@@ -25,12 +25,12 @@ namespace Bonsai.ML.Torch
     [XmlInclude(typeof(TypeMapping<float>))]
     [XmlInclude(typeof(TypeMapping<double>))]
     [XmlInclude(typeof(TypeMapping<bool>))]
-    public class ToArray : SingleArgumentExpressionBuilder
+    public class ToNDArray : SingleArgumentExpressionBuilder
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ToArray"/> class.
+        /// Initializes a new instance of the <see cref="ToNDArray"/> class.
         /// </summary>
-        public ToArray()
+        public ToNDArray()
         {
             Type = new TypeMapping<double>();
         }
@@ -41,13 +41,21 @@ namespace Bonsai.ML.Torch
         [Description("Gets or sets the type mapping used to convert the input tensor into an array.")]
         public TypeMapping Type { get; set; }
 
+        /// <summary>
+        /// Gets or sets the rank of the output array. Must be greater than or equal to 1.
+        /// </summary>
+        [Description("Gets or sets the rank of the output array. Must be greater than or equal to 1.")]
+        public int Rank { get; set; } = 1;
+
         /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
             TypeMapping typeMapping = Type;
             var returnType = typeMapping.GetType().GetGenericArguments()[0];
             MethodInfo methodInfo = GetType().GetMethod("Process", BindingFlags.Public | BindingFlags.Instance);
-            methodInfo = methodInfo.MakeGenericMethod(returnType);
+            var lengths = new int[Rank];
+            Type arrayType = Array.CreateInstance(returnType, lengths).GetType();
+            methodInfo = methodInfo.MakeGenericMethod(returnType, arrayType);
             Expression sourceExpression = arguments.First();
             
             return Expression.Call(
@@ -61,13 +69,14 @@ namespace Bonsai.ML.Torch
         /// Converts the input tensor into an array of the specified element type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public IObservable<T[]> Process<T>(IObservable<Tensor> source) where T : unmanaged
+        public IObservable<TResult> Process<T, TResult>(IObservable<Tensor> source) where T : unmanaged
         {
             return source.Select(tensor =>
             {
-                return tensor.data<T>().ToArray();
+                return (TResult)(object)tensor.data<T>().ToNDArray();
             });
         }
     }
