@@ -141,7 +141,7 @@ namespace Bonsai.ML.Torch
             var tensorType = tensor.dtype;
             var iplDepth = bitDepthLookup[tensorType].IplDepth;
 
-            var new_tensor = zeros(new long[] { height, width, channels }, tensorType).copy_(tensor);
+            var new_tensor = zeros([height, width, channels], tensorType).copy_(tensor);
 
             var res = THSTensor_data(new_tensor.Handle);
             var image = new IplImage(new OpenCV.Net.Size(width, height), iplDepth, channels, res);
@@ -163,7 +163,7 @@ namespace Bonsai.ML.Torch
             var tensorType = tensor.dtype;
             var depth = bitDepthLookup[tensorType].Depth;
 
-            var new_tensor = zeros(new long[] { height, width, channels }, tensorType).copy_(tensor);
+            var new_tensor = zeros([height, width, channels], tensorType).copy_(tensor);
 
             var res = THSTensor_data(new_tensor.Handle);
             var mat = new Mat(new OpenCV.Net.Size(width, height), depth, channels, res);
