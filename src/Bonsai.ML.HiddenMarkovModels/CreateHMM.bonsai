@@ -6,10 +6,11 @@
                  xmlns:p2="clr-namespace:Bonsai.ML.HiddenMarkovModels;assembly=Bonsai.ML.HiddenMarkovModels"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Creates a new HMM Python object inside of the HMM module and assigns it to a named Python variable.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the Python variable referencing the model object." Category="ModelReference" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:CreateModelReference">
@@ -26,11 +27,11 @@
         <Name>Source1</Name>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="NumStates" />
-        <Property Name="Dimensions" />
-        <Property Name="ObservationsModelType" />
-        <Property Name="StateParameters" />
-        <Property Name="TransitionsModelType" />
+        <Property Name="NumStates" Description="The number of discrete latent states in the HMM." />
+        <Property Name="Dimensions" Description="The dimensionality of the observations going into the HMM." />
+        <Property Name="ObservationModelType" Description="The type of distribution that the HMM will use to model the emission of data observations." />
+        <Property Name="StateParameters" Description="The optional state parameters of the HMM. If an observation model or transition model is defined within the state parameters, these will override the values set in the observation model type and transition model type properties, respectively." />
+        <Property Name="TransitionModelType" Description="The type of model that the HMM will use to calculate the probabilities of transitioning between states."/>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:ModelParameters">

@@ -6,6 +6,7 @@
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
                  xmlns:p2="clr-namespace:Bonsai.ML.LinearDynamicalSystems;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Performs inference using the LDS linear regression model.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="WorkflowInput">
@@ -15,7 +16,7 @@
         <Combinator xsi:type="py:ObserveOnGIL" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" DisplayName="Name" Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the Python variable referencing the model object." Category="ModelReference" />
       </Expression>
       <Expression xsi:type="SubscribeSubject" TypeArguments="p1:ModelReference">
         <Name>model</Name>
