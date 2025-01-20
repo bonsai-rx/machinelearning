@@ -11,13 +11,14 @@ namespace Bonsai.ML.Torch
     /// Creates a mesh grid from an observable sequence of enumerable of 1-D tensors.
     /// </summary>
     [Combinator]
-    [Description("")]
+    [Description("Creates a mesh grid from an observable sequence of enumerable of 1-D tensors.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class MeshGrid
     {
         /// <summary>
         /// The indexing mode to use for the mesh grid.
         /// </summary>
+        [Description("The indexing mode to use for the mesh grid.")]
         public string Indexing { get; set; } = "ij";
 
         /// <summary>

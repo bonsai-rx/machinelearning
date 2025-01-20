@@ -16,6 +16,7 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The size of the tensor.
         /// </summary>
+        [Description("The size of the tensor.")]
         public long[] Size { get; set; } = [0];
 
         /// <summary>
@@ -25,6 +26,18 @@ namespace Bonsai.ML.Torch
         public IObservable<Tensor> Process()
         {
             return Observable.Defer(() => Observable.Return(ones(Size)));
+        }
+
+        /// <summary>
+        /// Generates an observable sequence of tensors filled with ones for each element of the input sequence.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public IObservable<Tensor> Process<T>(IObservable<T> source)
+        {
+            return source.Select(value => {
+                return ones(Size);
+            });
         }
     }
 }

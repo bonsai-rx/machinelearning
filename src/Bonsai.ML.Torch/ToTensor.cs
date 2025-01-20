@@ -11,7 +11,7 @@ namespace Bonsai.ML.Torch
     /// Converts the input value into a tensor.
     /// </summary>
     [Combinator]
-    [Description("")]
+    [Description("Converts the input value into a tensor.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class ToTensor
     {

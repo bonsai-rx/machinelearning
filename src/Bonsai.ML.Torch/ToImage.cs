@@ -11,7 +11,7 @@ namespace Bonsai.ML.Torch
     /// Converts the input tensor into an OpenCV image.
     /// </summary>
     [Combinator]
-    [Description("")]
+    [Description("Converts the input tensor into an OpenCV image.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class ToImage
     {

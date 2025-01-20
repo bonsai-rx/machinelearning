@@ -19,6 +19,7 @@ namespace Bonsai.ML.Torch
         /// The device to which the input tensor should be moved.
         /// </summary>
         [XmlIgnore]
+        [Description("The device to which the input tensor should be moved.")]
         public Device Device { get; set; }
 
         /// <summary>

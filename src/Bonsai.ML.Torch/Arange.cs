@@ -17,16 +17,19 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The start of the range.
         /// </summary>
+        [Description("The start of the range.")]
         public int Start { get; set; } = 0;
 
         /// <summary>
         /// The end of the range.
         /// </summary>
+        [Description("The end of the range.")]
         public int End { get; set; } = 10;
 
         /// <summary>
-        /// The step of the range.
+        /// The step size between values.
         /// </summary>
+        [Description("The step size between values.")]
         public int Step { get; set; } = 1;
 
         /// <summary>
