@@ -1,6 +1,6 @@
 namespace Bonsai.ML.Torch.NeuralNets.Models
 {
-    public enum PretrainedModels
+    public enum ModelArchitecture
     {
         AlexNet,
         MobileNet,
