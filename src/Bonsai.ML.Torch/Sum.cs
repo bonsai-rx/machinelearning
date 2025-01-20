@@ -5,6 +5,9 @@ using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch
 {
+    /// <summary>
+    /// Computes the sum of the input tensor elements along the specified dimensions.
+    /// </summary>
     [Combinator]
     [Description("Computes the sum of the input tensor elements along the specified dimensions.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
