@@ -24,6 +24,7 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// The path to save the model.
         /// </summary>
         [Description("The path to save the model.")]
+        [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string ModelPath { get; set; }
 
         /// <summary>
