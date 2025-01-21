@@ -12,7 +12,7 @@ namespace Bonsai.ML.Torch.Index;
 [Combinator]
 [Description("Represents an index that selects a single value of a tensor.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class CreateTensorIndexSingle
+public class SingleIndex
 {
     /// <summary>
     /// Gets or sets the index value used to select a single element from a tensor.
