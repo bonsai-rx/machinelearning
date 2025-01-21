@@ -32,5 +32,17 @@ namespace Bonsai.ML.Torch
                 return Observable.Return(new Device(DeviceType));
             });
         }
+
+        /// <summary>
+        /// Initializes the Torch device when the input sequence produces an element.
+        /// </summary>
+        /// <returns></returns>
+        public IObservable<Device> Process<T>(IObservable<T> source)
+        {
+            return source.Select((_) => {
+                InitializeDeviceType(DeviceType);
+                return new Device(DeviceType);
+            });
+        }
     }
 }
