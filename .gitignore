@@ -10,3 +10,4 @@ Packages
 *.exe.settings
 *.exe.old
 *.dll
+artifacts
