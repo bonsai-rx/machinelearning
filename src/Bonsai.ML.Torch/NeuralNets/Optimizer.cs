@@ -1,13 +1,13 @@
-using System;
-using System.ComponentModel;
-using System.Reactive.Linq;
-using static TorchSharp.torch;
-using static TorchSharp.torch.optim;
-
 namespace Bonsai.ML.Torch.NeuralNets
 {
+    /// <summary>
+    /// Represents an optimizer that updates the parameters of a neural network.
+    /// </summary>
     public enum Optimizer
     {
+        /// <summary>
+        /// Adam optimizer.
+        /// </summary>
         Adam,
     }
 }
