@@ -14,7 +14,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
         private readonly Module<Tensor, Tensor> fc1 = Linear(9216, 128);
         private readonly Module<Tensor, Tensor> fc2 = Linear(128, 128);
          
-        private readonly Module<Tensor, Tensor> pool1 = MaxPool2d(kernelSize: [2, 2]);
+        private readonly Module<Tensor, Tensor> pool1 = MaxPool2d(kernel_size: [2, 2]);
 
         private readonly Module<Tensor, Tensor> relu1 = ReLU();
         private readonly Module<Tensor, Tensor> relu2 = ReLU();
