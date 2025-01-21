@@ -74,15 +74,13 @@ namespace Bonsai.ML.Torch
         private Expression BuildTensorFromArray(Array arrayValues, Type returnType)
         {
             var rank = arrayValues.Rank;
-            var lengths = Enumerable.Range(0, rank)
-                .Select(arrayValues.GetLength)
-                .ToArray();
+            int[] lengths = [.. Enumerable.Range(0, rank).Select(arrayValues.GetLength)];
 
-            var arrayCreationExpression = Expression.NewArrayBounds(returnType, lengths.Select(len => Expression.Constant(len)).ToArray());
+            var arrayCreationExpression = Expression.NewArrayBounds(returnType, [.. lengths.Select(len => Expression.Constant(len))]);
             var arrayVariable = Expression.Variable(arrayCreationExpression.Type, "array");
             var assignArray = Expression.Assign(arrayVariable, arrayCreationExpression);
 
-            var assignments = new List<Expression>();
+            List<Expression> assignments = [];
             for (int i = 0; i < values.Length; i++)
             {
                 var indices = new Expression[rank];
@@ -201,13 +199,11 @@ namespace Bonsai.ML.Torch
         public override Expression Build(IEnumerable<Expression> arguments)
         {
             var returnType = ScalarTypeLookup.GetTypeFromScalarType(scalarType);
-            var argTypes = arguments.Select(arg => arg.Type).ToArray();
+            Type[] argTypes = [.. arguments.Select(arg => arg.Type)];
 
             Type[] methodInfoArgumentTypes = [typeof(Tensor)];
 
-            var methods = typeof(CreateTensor).GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                    .Where(m => m.Name == "Process")
-                                    .ToArray();
+            MethodInfo[] methods = [.. typeof(CreateTensor).GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(m => m.Name == "Process")];
 
             var methodInfo = arguments.Count() > 0 ? methods.FirstOrDefault(m => m.IsGenericMethod)
                 .MakeGenericMethod(
