@@ -1,4 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Bonsai.ML.PointProcessDecoder</Title>
+    <Description>A Bonsai package for running a neural decoder based on point processes using Bayesian state-space models.</Description>
+    <PackageTags>Bonsai Rx ML Point Process Neural Decoder</PackageTags>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
     <ProjectReference Include="..\Bonsai.ML.Torch\Bonsai.ML.Torch.csproj" />
@@ -6,11 +13,4 @@
   <ItemGroup>
     <PackageReference Include="PointProcessDecoder.Core" Version="0.1.1" />
   </ItemGroup>
-  <PropertyGroup>
-    <Title>Bonsai.ML.PointProcessDecoder</Title>
-    <Description>A Bonsai package for running a neural decoder based on point processes using Bayesian state-space models.</Description>
-    <PackageTags>Bonsai Rx ML Point Process Neural Decoder</PackageTags>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
 </Project>
