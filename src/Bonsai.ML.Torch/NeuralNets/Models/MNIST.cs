@@ -1,34 +1,36 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
 using TorchSharp;
 using static TorchSharp.torch;
-
 using static TorchSharp.torch.nn;
-using static TorchSharp.torch.nn.functional;
 
 namespace Bonsai.ML.Torch.NeuralNets.Models
 {
+    /// <summary>
+    /// Represents a simple convolutional neural network for the MNIST dataset.
+    /// </summary>
     public class MNIST : Module<Tensor,Tensor>
     {
-        private Module<Tensor, Tensor> conv1 = Conv2d(1, 32, 3);
-        private Module<Tensor, Tensor> conv2 = Conv2d(32, 64, 3);
-        private Module<Tensor, Tensor> fc1 = Linear(9216, 128);
-         private Module<Tensor, Tensor> fc2 = Linear(128, 128);
+        private readonly Module<Tensor, Tensor> conv1 = Conv2d(1, 32, 3);
+        private readonly Module<Tensor, Tensor> conv2 = Conv2d(32, 64, 3);
+        private readonly Module<Tensor, Tensor> fc1 = Linear(9216, 128);
+        private readonly Module<Tensor, Tensor> fc2 = Linear(128, 128);
          
-        private Module<Tensor, Tensor> pool1 = MaxPool2d(kernelSize: [2, 2]);
+        private readonly Module<Tensor, Tensor> pool1 = MaxPool2d(kernelSize: [2, 2]);
 
-        private Module<Tensor, Tensor> relu1 = ReLU();
-        private Module<Tensor, Tensor> relu2 = ReLU();
-        private Module<Tensor, Tensor> relu3 = ReLU();
+        private readonly Module<Tensor, Tensor> relu1 = ReLU();
+        private readonly Module<Tensor, Tensor> relu2 = ReLU();
+        private readonly Module<Tensor, Tensor> relu3 = ReLU();
 
-        private Module<Tensor, Tensor> dropout1 = Dropout(0.25);
-        private Module<Tensor, Tensor> dropout2 = Dropout(0.5);
+        private readonly Module<Tensor, Tensor> dropout1 = Dropout(0.25);
+        private readonly Module<Tensor, Tensor> dropout2 = Dropout(0.5);
 
-        private Module<Tensor, Tensor> flatten = Flatten();
-        private Module<Tensor, Tensor> logsm = LogSoftmax(1);
+        private readonly Module<Tensor, Tensor> flatten = Flatten();
+        private readonly Module<Tensor, Tensor> logsm = LogSoftmax(1);
 
+        /// <summary>
+        /// Constructs a new MNIST model.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="device"></param>
         public MNIST(string name, Device device = null) : base(name)
         {
             RegisterComponents();
@@ -37,6 +39,11 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
                 this.to(device);
         }
 
+        /// <summary>
+        /// Forward pass of the MNIST model.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public override Tensor forward(Tensor input)
         {
             var l11 = conv1.forward(input);

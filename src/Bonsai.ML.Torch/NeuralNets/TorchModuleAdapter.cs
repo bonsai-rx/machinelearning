@@ -4,33 +4,48 @@ using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.NeuralNets
 {
+    /// <summary>
+    /// Represents a torch module adapter that wraps a torch module or script module.
+    /// </summary>
     public class TorchModuleAdapter : ITorchModule
     {
         private readonly nn.Module<Tensor, Tensor> _module = null;
 
         private readonly jit.ScriptModule<Tensor, Tensor> _scriptModule = null;
 
-        private Func<Tensor, Tensor> forwardFunc;
+        private readonly Func<Tensor, Tensor> _forwardFunc;
 
+        /// <summary>
+        /// The module.
+        /// </summary>
         public nn.Module Module { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TorchModuleAdapter"/> class.
+        /// </summary>
+        /// <param name="module"></param>
         public TorchModuleAdapter(nn.Module<Tensor, Tensor> module)
         {
             _module = module;
-            forwardFunc = _module.forward;
+            _forwardFunc = _module.forward;
             Module = _module;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TorchModuleAdapter"/> class.
+        /// </summary>
+        /// <param name="scriptModule"></param>
         public TorchModuleAdapter(jit.ScriptModule<Tensor, Tensor> scriptModule)
         {
             _scriptModule = scriptModule;
-            forwardFunc = _scriptModule.forward;
+            _forwardFunc = _scriptModule.forward;
             Module = _scriptModule;
         }
 
-        public Tensor forward(Tensor input)
+        /// <inheritdoc/>
+        public Tensor Forward(Tensor input)
         {
-            return forwardFunc(input);
+            return _forwardFunc(input);
         }
     }
 }
