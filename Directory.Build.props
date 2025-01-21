@@ -6,7 +6,6 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
     <PackageProjectUrl>https://bonsai-rx.org/machinelearning</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bonsai-rx/machinelearning.git</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -17,6 +16,7 @@
     <VersionPrefix>0.3.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <LangVersion>12.0</LangVersion>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="..\..\LICENSE" PackagePath="/" />
