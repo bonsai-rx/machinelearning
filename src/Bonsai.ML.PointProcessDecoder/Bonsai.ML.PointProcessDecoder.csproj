@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Torch\Bonsai.ML.Torch.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="PointProcessDecoder.Core" Version="0.1.1" />
