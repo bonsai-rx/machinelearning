@@ -69,7 +69,7 @@ namespace Bonsai.ML.Torch.NeuralNets
             {
                 "alexnet" => new Models.AlexNet(modelArchitecture, numClasses, device),
                 "mobilenet" => new Models.MobileNet(modelArchitecture, numClasses, device),
-                "mnist" => new Models.MNIST(modelArchitecture, device),
+                "mnist" => new Models.MNIST(modelArchitecture, numClasses, device),
                 _ => throw new ArgumentException($"Model {modelArchitecture} not supported.")
             };
 
