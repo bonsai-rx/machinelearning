@@ -24,4 +24,4 @@ Once complete, you need to install the cuda-compatible torch libraries and place
 - Language: C++/Java
 - Compute Platform: CUDA 12.1
 
-Finally, extract the zip folder and copy all of the DLLs into the `Extensions` folder of your bonsai installation directory.
+Finally, extract the zip folder and copy the contents of the `lib` folder into the `Extensions` folder of your bonsai installation directory.
