@@ -42,6 +42,9 @@ Facilitates inference using Hidden Markov Models (HMMs). It interfaces with the 
 ### Bonsai.ML.HiddenMarkovModels.Design
 Visualizers and editor features for the HiddenMarkovModels package.
 
+### Bonsai.ML.PointProcessDecoder
+Interfaces with the [PointProcessDecoder](https://github.com/ncguilbeault/PointProcessDecoder) package which can be used for decoding neural activity and other point processes.
+
 ### Bonsai.ML.Torch
 Interfaces with the [TorchSharp](https://github.com/dotnet/TorchSharp) package, a C# wrapper around the torch library. Provides tooling for manipulating tensors, performing linear algebra, training and inference with deep neural networks, and more. 
 
