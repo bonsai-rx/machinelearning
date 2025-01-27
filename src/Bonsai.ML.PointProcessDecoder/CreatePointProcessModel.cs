@@ -43,115 +43,6 @@ public class CreatePointProcessModel
         }
     }
 
-    private EstimationMethod estimationMethod = EstimationMethod.KernelDensity;
-
-    /// <summary>
-    /// Gets or sets the estimation method used during the encoding process.
-    /// </summary>
-    [Category("1. Model Parameters")]
-    [Description("The estimation method used during the encoding process.")]
-    public EstimationMethod EstimationMethod
-    {
-        get
-        {
-            return estimationMethod;
-        }
-        set
-        {
-            estimationMethod = value;
-        }
-    }
-
-    private TransitionsType transitionsType = TransitionsType.RandomWalk;
-    /// <summary>
-    /// Gets or sets the type of transition model used during the decoding process.
-    /// </summary>
-    [Category("1. Model Parameters")]
-    [Description("The type of transition model used during the decoding process.")]
-    public TransitionsType TransitionsType
-    {
-        get
-        {
-            return transitionsType;
-        }
-        set
-        {
-            transitionsType = value;
-        }
-    }
-
-    private EncoderType encoderType = EncoderType.SortedSpikeEncoder;
-    /// <summary>
-    /// Gets or sets the type of encoder used.
-    /// </summary>
-    [Category("1. Model Parameters")]
-    [Description("The type of encoder used.")]
-    public EncoderType EncoderType
-    {
-        get
-        {
-            return encoderType;
-        }
-        set
-        {
-            encoderType = value;
-        }
-    }
-
-    private DecoderType decoderType = DecoderType.StateSpaceDecoder;
-    /// <summary>
-    /// Gets or sets the type of decoder used.
-    /// </summary>
-    [Category("1. Model Parameters")]
-    [Description("The type of decoder used.")]
-    public DecoderType DecoderType
-    {
-        get
-        {
-            return decoderType;
-        }
-        set
-        {
-            decoderType = value;
-        }
-    }
-
-    private StateSpaceType stateSpaceType = StateSpaceType.DiscreteUniformStateSpace;
-    /// <summary>
-    /// Gets or sets the type of state space used.
-    /// </summary>
-    [Category("1. Model Parameters")]
-    [Description("The type of state space used.")]
-    public StateSpaceType StateSpaceType
-    {
-        get
-        {
-            return stateSpaceType;
-        }
-        set
-        {
-            stateSpaceType = value;
-        }
-    }
-
-    private LikelihoodType likelihoodType = LikelihoodType.Poisson;
-    /// <summary>
-    /// Gets or sets the type of likelihood function used.
-    /// </summary>
-    [Category("1. Model Parameters")]
-    [Description("The type of likelihood function used.")]
-    public LikelihoodType LikelihoodType
-    {
-        get
-        {
-            return likelihoodType;
-        }
-        set
-        {
-            likelihoodType = value;
-        }
-    }
-
     Device? device = null;
     /// <summary>
     /// Gets or sets the device used to run the neural decoding model.
@@ -189,6 +80,23 @@ public class CreatePointProcessModel
         }
     }
 
+    private StateSpaceType stateSpaceType = StateSpaceType.DiscreteUniformStateSpace;
+    /// <summary>
+    /// Gets or sets the type of state space used.
+    /// </summary>
+    [Category("2. State Space Parameters")]
+    [Description("The type of state space used.")]
+    public StateSpaceType StateSpaceType
+    {
+        get
+        {
+            return stateSpaceType;
+        }
+        set
+        {
+            stateSpaceType = value;
+        }
+    }
 
     private int stateSpaceDimensions = 1;
     /// <summary>
@@ -280,6 +188,24 @@ public class CreatePointProcessModel
         }
     }
 
+    private EncoderType encoderType = EncoderType.SortedSpikeEncoder;
+    /// <summary>
+    /// Gets or sets the type of encoder used.
+    /// </summary>
+    [Category("3. Encoder Parameters")]
+    [Description("The type of encoder used.")]
+    public EncoderType EncoderType
+    {
+        get
+        {
+            return encoderType;
+        }
+        set
+        {
+            encoderType = value;
+        }
+    }
+
     private int? nUnits = null;
     /// <summary>
     /// Gets or sets the number of sorted spiking units.
@@ -357,6 +283,43 @@ public class CreatePointProcessModel
         }
     }
 
+    private bool ignoreNoSpikes = false;
+    /// <summary>
+    /// Gets or sets a value indicating whether to ignore contributions from joint probability distributions with no spikes.
+    /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarkEncoder"/>.
+    /// </summary>
+    [Category("3. Encoder Parameters")]
+    [Description("Indicates whether to ignore contributions from joint probability distributions with no spikes. Only used when the encoder type is set to ClusterlessMarkEncoder.")]
+    public bool IgnoreNoSpikes
+    {
+        get
+        {
+            return ignoreNoSpikes;
+        }
+        set
+        {
+            ignoreNoSpikes = value;
+        }
+    }
+
+    private EstimationMethod estimationMethod = EstimationMethod.KernelDensity;
+    /// <summary>
+    /// Gets or sets the estimation method used during the encoding process.
+    /// </summary>
+    [Category("4. Estimation Parameters")]
+    [Description("The estimation method used during the encoding process.")]
+    public EstimationMethod EstimationMethod
+    {
+        get
+        {
+            return estimationMethod;
+        }
+        set
+        {
+            estimationMethod = value;
+        }
+    }
+
     private double? distanceThreshold = null;
     /// <summary>
     /// Gets or sets the distance threshold used to determine the threshold to merge unique clusters into a single compressed cluster.
@@ -376,12 +339,48 @@ public class CreatePointProcessModel
         }
     }
 
+    private LikelihoodType likelihoodType = LikelihoodType.Poisson;
+    /// <summary>
+    /// Gets or sets the type of likelihood function used.
+    /// </summary>
+    [Category("5. Likelihood Parameters")]
+    [Description("The type of likelihood function used.")]
+    public LikelihoodType LikelihoodType
+    {
+        get
+        {
+            return likelihoodType;
+        }
+        set
+        {
+            likelihoodType = value;
+        }
+    }
+
+    private TransitionsType transitionsType = TransitionsType.RandomWalk;
+    /// <summary>
+    /// Gets or sets the type of transition model used during the decoding process.
+    /// </summary>
+    [Category("6. Transition Parameters")]
+    [Description("The type of transition model used during the decoding process.")]
+    public TransitionsType TransitionsType
+    {
+        get
+        {
+            return transitionsType;
+        }
+        set
+        {
+            transitionsType = value;
+        }
+    }
+
     private double? sigmaRandomWalk = null;
     /// <summary>
     /// Gets or sets the standard deviation of the random walk transitions model.
     /// Only used when the transitions type is set to <see cref="TransitionsType.RandomWalk"/>.
     /// </summary>
-    [Category("5. Transition Parameters")]
+    [Category("6. Transition Parameters")]
     [Description("The standard deviation of the random walk transitions model. Only used when the transitions type is set to RandomWalk.")]
     public double? SigmaRandomWalk
     {
@@ -392,6 +391,24 @@ public class CreatePointProcessModel
         set
         {
             sigmaRandomWalk = value;
+        }
+    }
+
+    private DecoderType decoderType = DecoderType.StateSpaceDecoder;
+    /// <summary>
+    /// Gets or sets the type of decoder used.
+    /// </summary>
+    [Category("7. Decoder Parameters")]
+    [Description("The type of decoder used.")]
+    public DecoderType DecoderType
+    {
+        get
+        {
+            return decoderType;
+        }
+        set
+        {
+            decoderType = value;
         }
     }
 
@@ -418,6 +435,7 @@ public class CreatePointProcessModel
                 markDimensions: markDimensions,
                 markChannels: markChannels,
                 markBandwidth: markBandwidth,
+                ignoreNoSpikes: ignoreNoSpikes,
                 nUnits: nUnits,
                 distanceThreshold: distanceThreshold,
                 sigmaRandomWalk: sigmaRandomWalk,
