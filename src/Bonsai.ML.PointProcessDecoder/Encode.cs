@@ -18,6 +18,7 @@ public class Encode
     /// The name of the point process model to use.
     /// </summary>
     [TypeConverter(typeof(PointProcessModelNameConverter))]
+    [Description("The name of the point process model to use.")]
     public string Model { get; set; } = string.Empty;
 
     /// <summary>
