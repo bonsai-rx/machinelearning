@@ -11,6 +11,6 @@
     <ProjectReference Include="..\Bonsai.ML.Torch\Bonsai.ML.Torch.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="PointProcessDecoder.Core" Version="0.1.3" />
+    <PackageReference Include="PointProcessDecoder.Core" Version="0.1.4" />
   </ItemGroup>
 </Project>
