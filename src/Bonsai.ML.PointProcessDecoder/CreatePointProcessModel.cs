@@ -283,25 +283,6 @@ public class CreatePointProcessModel
         }
     }
 
-    private bool ignoreNoSpikes = false;
-    /// <summary>
-    /// Gets or sets a value indicating whether to ignore contributions from joint probability distributions with no spikes.
-    /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarkEncoder"/>.
-    /// </summary>
-    [Category("3. Encoder Parameters")]
-    [Description("Indicates whether to ignore contributions from joint probability distributions with no spikes. Only used when the encoder type is set to ClusterlessMarkEncoder.")]
-    public bool IgnoreNoSpikes
-    {
-        get
-        {
-            return ignoreNoSpikes;
-        }
-        set
-        {
-            ignoreNoSpikes = value;
-        }
-    }
-
     private EstimationMethod estimationMethod = EstimationMethod.KernelDensity;
     /// <summary>
     /// Gets or sets the estimation method used during the encoding process.
@@ -354,6 +335,25 @@ public class CreatePointProcessModel
         set
         {
             likelihoodType = value;
+        }
+    }
+
+    private bool ignoreNoSpikes = false;
+    /// <summary>
+    /// Gets or sets a value indicating whether to ignore contributions from channels with no spikes.
+    /// Only used when the likelihood type is set to <see cref="LikelihoodType.Clusterless"/>.
+    /// </summary>
+    [Category("5. Likelihood Parameters")]
+    [Description("Indicates whether to ignore contributions from channels with no spikes. Only used when the likelihood type is set to Clusterless.")]
+    public bool IgnoreNoSpikes
+    {
+        get
+        {
+            return ignoreNoSpikes;
+        }
+        set
+        {
+            ignoreNoSpikes = value;
         }
     }
 
