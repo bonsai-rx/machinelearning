@@ -10,7 +10,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 /// Returns the point process model.
 /// </summary>
 [Combinator]
-[WorkflowElementCategory(ElementCategory.Transform)]
+[WorkflowElementCategory(ElementCategory.Source)]
 [Description("Returns the point process model.")]
 public class GetModel
 {
@@ -21,11 +21,23 @@ public class GetModel
     public string Model { get; set; } = string.Empty;
 
     /// <summary>
-    /// Decodes the input neural data into a posterior state estimate using a point process model.
+    /// Returns the point process model.
     /// </summary>
+    /// <returns></returns>
+    public IObservable<PointProcessModel> Process()
+    {
+        return Observable.Defer(() => 
+            Observable.Return(PointProcessModelManager.GetModel(Model))
+        );
+    }
+
+    /// <summary>
+    /// Returns the point process model.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<PointProcessModel> Process(IObservable<Tensor> source)
+    public IObservable<PointProcessModel> Process<T>(IObservable<T> source)
     {
         return source.Select(input => {
             return PointProcessModelManager.GetModel(Model);
