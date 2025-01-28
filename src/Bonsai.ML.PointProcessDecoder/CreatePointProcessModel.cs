@@ -442,6 +442,7 @@ public class CreatePointProcessModel
                 device: device,
                 scalarType: scalarType
             ), resource => Observable.Return(resource.Model)
-                .Concat(Observable.Never(resource.Model)));
+                .Concat(Observable.Never(resource.Model))
+                .Finally(resource.Dispose));
     }
 }
