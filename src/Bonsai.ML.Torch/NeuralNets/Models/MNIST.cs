@@ -7,7 +7,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
     /// <summary>
     /// Represents a simple convolutional neural network for the MNIST dataset.
     /// </summary>
-    public class MNIST : Module<Tensor,Tensor>
+    internal class MNIST : Module<Tensor,Tensor>
     {
         private readonly Module<Tensor, Tensor> conv1;
         private readonly Module<Tensor, Tensor> conv2;

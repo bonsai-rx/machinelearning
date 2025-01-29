@@ -7,7 +7,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
     /// <summary>
     /// Modified version of original AlexNet to fix CIFAR10 32x32 images.
     /// </summary>
-    public class AlexNet : Module<Tensor, Tensor>
+    internal class AlexNet : Module<Tensor, Tensor>
     {
         private readonly Module<Tensor, Tensor> features;
         private readonly Module<Tensor, Tensor> avgPool;
