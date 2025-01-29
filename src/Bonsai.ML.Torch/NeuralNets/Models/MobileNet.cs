@@ -9,7 +9,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
     /// <summary>
     /// MobileNet model.
     /// </summary>
-    public class MobileNet : Module<Tensor, Tensor>
+    internal class MobileNet : Module<Tensor, Tensor>
     {
         private readonly long[] planes = [ 64, 128, 128, 256, 256, 512, 512, 512, 512, 512, 512, 1024, 1024 ];
         private readonly long[] strides = [ 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1 ];
