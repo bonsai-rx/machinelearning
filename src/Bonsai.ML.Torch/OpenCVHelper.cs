@@ -1,6 +1,4 @@
-using System;
-using System.Runtime.InteropServices;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenCV.Net;
@@ -23,54 +21,6 @@ namespace Bonsai.ML.Torch
             { ScalarType.Int8, (IplDepth.S8, Depth.S8) }
         };
 
-        private static ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter> deleters = new ConcurrentDictionary<GCHandleDeleter, GCHandleDeleter>();
-
-        internal delegate void GCHandleDeleter(IntPtr memory);
-        
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_data(IntPtr handle);
-
-        [DllImport("LibTorchSharp")]
-        internal static extern IntPtr THSTensor_new(IntPtr rawArray, GCHandleDeleter deleter, IntPtr dimensions, int numDimensions, sbyte type, sbyte dtype, int deviceType, int deviceIndex, [MarshalAs(UnmanagedType.U1)] bool requires_grad);
-
-        /// <summary>
-        /// Creates a tensor from a pointer to the data and the dimensions of the tensor.
-        /// </summary>
-        /// <param name="tensorDataPtr"></param>
-        /// <param name="dimensions"></param>
-        /// <param name="dtype"></param>
-        /// <returns></returns>
-        public static unsafe Tensor CreateTensorFromPtr(IntPtr tensorDataPtr, long[] dimensions, ScalarType dtype = ScalarType.Byte)
-        {
-            var dataHandle = GCHandle.Alloc(tensorDataPtr, GCHandleType.Pinned);
-            var gchp = GCHandle.ToIntPtr(dataHandle);
-            GCHandleDeleter deleter = null;
-
-            deleter = new GCHandleDeleter((IntPtr ptrHandler) =>
-            {
-                GCHandle.FromIntPtr(gchp).Free();
-                deleters.TryRemove(deleter, out deleter);
-            });
-            deleters.TryAdd(deleter, deleter);
-
-            fixed (long* dimensionsPtr = dimensions)
-            {
-                IntPtr tensorHandle = THSTensor_new(tensorDataPtr, deleter, (IntPtr)dimensionsPtr, dimensions.Length, (sbyte)dtype, (sbyte)dtype, 0, 0, false);
-                if (tensorHandle == IntPtr.Zero) 
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    tensorHandle = THSTensor_new(tensorDataPtr, deleter, (IntPtr)dimensionsPtr, dimensions.Length, (sbyte)dtype, (sbyte)dtype, 0, 0, false);
-                }
-                if (tensorHandle == IntPtr.Zero) 
-                {
-                    CheckForErrors(); 
-                }
-                var output = Tensor.UnsafeCreateTensor(tensorHandle);
-                return output;
-            }
-        }
-
         /// <summary>
         /// Converts an OpenCV image to a Torch tensor.
         /// </summary>
@@ -79,10 +29,8 @@ namespace Bonsai.ML.Torch
         public static Tensor ToTensor(IplImage image)
         {
             if (image == null)
-            {
                 return empty([ 0, 0, 0 ]);
-            }
-            // int width = image.Width;
+
             int height = image.Height;
             int channels = image.Channels;
             var width = image.WidthStep / channels;
@@ -90,13 +38,12 @@ namespace Bonsai.ML.Torch
             var iplDepth = image.Depth;
             var tensorType = bitDepthLookup.FirstOrDefault(x => x.Value.IplDepth == iplDepth).Key;
 
-            IntPtr tensorDataPtr = image.ImageData;
-            long[] dimensions = [ height, width, channels ];
-            if (tensorDataPtr == IntPtr.Zero) 
-            {
-                return empty(dimensions);
-            }
-            return CreateTensorFromPtr(tensorDataPtr, dimensions, tensorType);
+            IntPtr data = image.ImageData;
+            ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
+            if (data == IntPtr.Zero) 
+                return zeros(dimensions);
+
+            return TorchSharpEx.CreateTensorFromUnmanagedMemoryWithManagedAnchor(data, image, dimensions, tensorType);
         }
 
         /// <summary>
@@ -107,9 +54,7 @@ namespace Bonsai.ML.Torch
         public static Tensor ToTensor(Mat mat)
         {
             if (mat == null)
-            {
                 return empty([0, 0, 0 ]);
-            }
 
             int width = mat.Size.Width;
             int height = mat.Size.Height;
@@ -118,13 +63,21 @@ namespace Bonsai.ML.Torch
             var depth = mat.Depth;
             var tensorType = bitDepthLookup.FirstOrDefault(x => x.Value.Depth == depth).Key;
 
-            IntPtr tensorDataPtr = mat.Data;
-            long[] dimensions = [ height, width, channels ];
-            if (tensorDataPtr == IntPtr.Zero) 
-            {
-                return empty(dimensions);
-            }
-            return CreateTensorFromPtr(tensorDataPtr, dimensions, tensorType);  
+            IntPtr data = mat.Data;
+            ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
+            if (data == IntPtr.Zero) 
+                return zeros(dimensions);
+
+            return TorchSharpEx.CreateTensorFromUnmanagedMemoryWithManagedAnchor(data, mat, dimensions, tensorType);
+        }
+
+        private static (int height, int width, int channels) GetImageDimensions(this Tensor tensor)
+        {
+            if (tensor.dim() != 3)
+                throw new ArgumentException("The tensor does not have exactly 3 dimensions.");
+
+            checked
+            { return ((int)tensor.size(0), (int)tensor.size(1), (int)tensor.size(2)); }
         }
 
         /// <summary>
@@ -134,17 +87,16 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public unsafe static IplImage ToImage(Tensor tensor)
         {
-            var height = (int)tensor.shape[0];
-            var width = (int)tensor.shape[1];
-            var channels = (int)tensor.shape[2];
+            var (height, width, channels) = tensor.GetImageDimensions();
 
             var tensorType = tensor.dtype;
             var iplDepth = bitDepthLookup[tensorType].IplDepth;
+            var image = new IplImage(new OpenCV.Net.Size(width, height), iplDepth, channels);
 
-            var new_tensor = zeros([height, width, channels], tensorType).copy_(tensor);
-
-            var res = THSTensor_data(new_tensor.Handle);
-            var image = new IplImage(new OpenCV.Net.Size(width, height), iplDepth, channels, res);
+            // Create a temporary tensor backed by the image's memory and copy the source tensor into it
+            ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
+            using var imageTensor = TorchSharpEx.CreateStackTensor(image.ImageData, image, dimensions, tensorType);
+            imageTensor.Tensor.copy_(tensor);
 
             return image;
         }
@@ -156,17 +108,16 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public unsafe static Mat ToMat(Tensor tensor)
         {
-            var height = (int)tensor.shape[0];
-            var width = (int)tensor.shape[1];
-            var channels = (int)tensor.shape[2];
+            var (height, width, channels) = tensor.GetImageDimensions();
 
             var tensorType = tensor.dtype;
             var depth = bitDepthLookup[tensorType].Depth;
+            var mat = new Mat(new OpenCV.Net.Size(width, height), depth, channels);
 
-            var new_tensor = zeros([height, width, channels], tensorType).copy_(tensor);
-
-            var res = THSTensor_data(new_tensor.Handle);
-            var mat = new Mat(new OpenCV.Net.Size(width, height), depth, channels, res);
+            // Create a temporary tensor backed by the matrix's memory and copy the source tensor into it
+            ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
+            using var matTensor = TorchSharpEx.CreateStackTensor(mat.Data, mat, dimensions, tensorType);
+            matTensor.Tensor.copy_(tensor);
 
             return mat;
         }
