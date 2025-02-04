@@ -43,11 +43,17 @@ internal static class PointProcessModelManager
         int? nUnits = null,
         double? distanceThreshold = null,
         double? sigmaRandomWalk = null,
+        int? kernelLimit = null,
         Device? device = null,
         ScalarType? scalarType = null
     )
     {
-        var model = new PointProcessModel(
+        if (models.TryGetValue(name, out var model))
+        {
+            throw new ArgumentException($"Model with name {nameof(name)} already exists.");
+        }
+
+        model = new PointProcessModel(
             estimationMethod: estimationMethod,
             transitionsType: transitionsType,
             encoderType: encoderType,
@@ -66,10 +72,35 @@ internal static class PointProcessModelManager
             nUnits: nUnits,
             distanceThreshold: distanceThreshold,
             sigmaRandomWalk: sigmaRandomWalk,
+            kernelLimit: kernelLimit,
             device: device,
             scalarType: scalarType
         );
 
+        models.Add(name, model);
+        
+        return new PointProcessModelDisposable(
+            model, 
+            Disposable.Create(() => {
+                model.Dispose();
+                model = null;
+                models.Remove(name);
+            })
+        );
+    }
+
+    internal static PointProcessModelDisposable Load(
+        string name,
+        string path,
+        Device? device = null
+    )
+    {
+        if (models.TryGetValue(name, out var model))
+        {
+            throw new ArgumentException($"Model with name {nameof(name)} already exists.");
+        }
+
+        model = PointProcessModel.Load(path, device) as PointProcessModel ?? throw new InvalidOperationException("The model could not be loaded.");
         models.Add(name, model);
         
         return new PointProcessModelDisposable(
