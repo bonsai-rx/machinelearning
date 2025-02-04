@@ -16,27 +16,30 @@ internal unsafe static class TorchSharpEx
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void DeleterCallback(IntPtr context);
 
-    // Torch does not expect the deleter callback to be able to be null since it's a C++ reference and LibTorchSharp does not expose the functions used to create a tensor without a deleter callback, so we must use a no-op callback
-    private static DeleterCallback NullDeleterCallback = _ => { };
+    // Torch does not expect the deleter callback to be able to be null since it's a C++ reference and LibTorchSharp
+    // does not expose the functions used to create a tensor without a deleter callback, so we must use a no-op callback
+    private static readonly DeleterCallback NullDeleterCallback = _ => { };
 
     // Acts as GC root for unmanaged callbacks, value is unused
-    private static ConcurrentDictionary<DeleterCallback, nint> ActiveDeleterCallbacks = new();
+    private static readonly ConcurrentDictionary<DeleterCallback, nint> ActiveDeleterCallbacks = new();
 
     /// <summary>Creates a <see cref="torch.Tensor"/> from unmanaged memory that is owned by a managed object</summary>
     /// <param name="data">The unmanaged memory that will back the tensor, must remain valid and fixed for the lifetime of the tensor</param>
     /// <param name="managedAnchor">The managed .NET object which owns <paramref name="data"/></param>
     public static torch.Tensor CreateTensorFromUnmanagedMemoryWithManagedAnchor(IntPtr data, object managedAnchor, ReadOnlySpan<long> dimensions, torch.ScalarType dataType)
     {
-        //PERF: Ideally this would receive the GCHandle as the context rather than the pointer to the unmanaged memory since that's what we actually want to free
-        // Torch itself has the ability to set the context to something else via `TensorMaker::context(void* value, ContextDeleter deleter)`, but unfortunately this method isn't exposed in LibTorchSharp
-        // This is the inefficient method TorchSharp uses, which has quite a lot of unecessary overhead (particularly the unmanaged delegate allocation.)
-        // Some overhead could be removed by looking up the GCHandle from the native pointer, but doing this without breaking the ability to create redundant tensors over the same data is overly complicated.
-        GCHandle handle = default;
+        //PERF: Ideally the deleter would receive the GCHandle as the context rather than the pointer to the unmanaged memory since that's
+        // would allow us to use a GCHandle to root the anchor and free it directly rather than capturing it in the lambda.
+        // Torch itself has the ability to set the context to something else via `TensorMaker::context(void* value, ContextDeleter deleter)`,
+        // but unfortunately this method isn't exposed in LibTorchSharp.
+        // This is similar to the inefficient method TorchSharp uses, which has quite a lot of unecessary overhead (particularly the unmanaged
+        // delegate allocation), but we do skip some aspects like the GC handle allocation.
+        // It may be tempting to use a GCHandle and a static delegate, looking up the GC handle from the native memory pointer, but doing this
+        // without breaking the ability to create redundant tensors over the same data is overly complicated.
         DeleterCallback? deleter = null;
         deleter = (data) =>
         {
-            if (handle.IsAllocated)
-                handle.Free();
+            GC.KeepAlive(managedAnchor);
 
             if (!ActiveDeleterCallbacks.TryRemove(deleter!, out _))
                 Debug.Fail($"The same tensor data handle deleter was called more than once!");
@@ -45,32 +48,20 @@ internal unsafe static class TorchSharpEx
         if (!ActiveDeleterCallbacks.TryAdd(deleter, default))
             Debug.Fail("Unreachable");
 
-        handle = GCHandle.Alloc(managedAnchor);
-
-        bool isInitialized = false;
-        try
+        fixed (long* dimensionsPtr = &dimensions[0])
         {
-            fixed (long* dimensionsPtr = &dimensions[0])
+            IntPtr tensorHandle = THSTensor_new(data, deleter, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, 0, 0, 0);
+            if (tensorHandle == IntPtr.Zero)
             {
-                IntPtr tensorHandle = THSTensor_new(data, deleter, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, 0, 0, 0);
-                if (tensorHandle == IntPtr.Zero)
-                {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    tensorHandle = THSTensor_new(data, deleter, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, 0, 0, 0);
-                }
-
-                if (tensorHandle == IntPtr.Zero)
-                    torch.CheckForErrors();
-
-                isInitialized = true;
-                return torch.Tensor.UnsafeCreateTensor(tensorHandle);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                tensorHandle = THSTensor_new(data, deleter, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, 0, 0, 0);
             }
-        }
-        finally
-        {
-            if (!isInitialized)
-                deleter(data);
+
+            if (tensorHandle == IntPtr.Zero)
+                torch.CheckForErrors();
+
+            return torch.Tensor.UnsafeCreateTensor(tensorHandle);
         }
     }
 

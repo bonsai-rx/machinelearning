@@ -40,8 +40,9 @@ namespace Bonsai.ML.Torch
 
             IntPtr data = image.ImageData;
             ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
-            if (data == IntPtr.Zero) 
-                return zeros(dimensions);
+
+            if (data == IntPtr.Zero)
+                throw new InvalidOperationException($"Got {nameof(IplImage)} without backing data, this isn't expected to be possible.");
 
             return TorchSharpEx.CreateTensorFromUnmanagedMemoryWithManagedAnchor(data, image, dimensions, tensorType);
         }
@@ -65,8 +66,9 @@ namespace Bonsai.ML.Torch
 
             IntPtr data = mat.Data;
             ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
-            if (data == IntPtr.Zero) 
-                return zeros(dimensions);
+
+            if (data == IntPtr.Zero)
+                throw new InvalidOperationException($"Got {nameof(Mat)} without backing data, this isn't expected to be possible.");
 
             return TorchSharpEx.CreateTensorFromUnmanagedMemoryWithManagedAnchor(data, mat, dimensions, tensorType);
         }
