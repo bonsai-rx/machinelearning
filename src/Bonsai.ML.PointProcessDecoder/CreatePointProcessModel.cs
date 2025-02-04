@@ -206,6 +206,24 @@ public class CreatePointProcessModel
         }
     }
 
+    private int? kernelLimit = null;
+    /// <summary>
+    /// Gets or sets the kernel limit.
+    /// </summary>
+    [Category("3. Encoder Parameters")]
+    [Description("The kernel limit.")]
+    public int? KernelLimit
+    {
+        get
+        {
+            return kernelLimit;
+        }
+        set
+        {
+            kernelLimit = value;
+        }
+    }
+
     private int? nUnits = null;
     /// <summary>
     /// Gets or sets the number of sorted spiking units.
@@ -439,6 +457,7 @@ public class CreatePointProcessModel
                 nUnits: nUnits,
                 distanceThreshold: distanceThreshold,
                 sigmaRandomWalk: sigmaRandomWalk,
+                kernelLimit: kernelLimit,
                 device: device,
                 scalarType: scalarType
             ), resource => Observable.Return(resource.Model)
