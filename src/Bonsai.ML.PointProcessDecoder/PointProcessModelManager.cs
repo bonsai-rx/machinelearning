@@ -48,12 +48,7 @@ internal static class PointProcessModelManager
         ScalarType? scalarType = null
     )
     {
-        if (models.TryGetValue(name, out var model))
-        {
-            throw new ArgumentException($"Model with name {nameof(name)} already exists.");
-        }
-
-        model = new PointProcessModel(
+        var model = new PointProcessModel(
             estimationMethod: estimationMethod,
             transitionsType: transitionsType,
             encoderType: encoderType,
@@ -95,12 +90,7 @@ internal static class PointProcessModelManager
         Device? device = null
     )
     {
-        if (models.TryGetValue(name, out var model))
-        {
-            throw new ArgumentException($"Model with name {nameof(name)} already exists.");
-        }
-
-        model = PointProcessModel.Load(path, device) as PointProcessModel ?? throw new InvalidOperationException("The model could not be loaded.");
+        var model = PointProcessModel.Load(path, device) as PointProcessModel ?? throw new InvalidOperationException("The model could not be loaded.");
         models.Add(name, model);
         
         return new PointProcessModelDisposable(
