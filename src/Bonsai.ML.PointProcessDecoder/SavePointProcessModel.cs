@@ -53,7 +53,7 @@ public class SavePointProcessModel
 
             var path = AddSuffix switch
             {
-                SuffixType.DateTime => System.IO.Path.Combine(Path, $"{DateTime.Now}"),
+                SuffixType.DateTime => System.IO.Path.Combine(Path, $"{DateTime.Now:yyyyMMddHHmmss}"),
                 SuffixType.Guid => System.IO.Path.Combine(Path, Guid.NewGuid().ToString()),
                 _ => Path
             };
