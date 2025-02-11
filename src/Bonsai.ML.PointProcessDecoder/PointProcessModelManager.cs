@@ -14,11 +14,14 @@ using PointProcessDecoder.Core.Likelihood;
 
 namespace Bonsai.ML.PointProcessDecoder;
 
-internal static class PointProcessModelManager
+/// <summary>
+/// Manages the point process models.
+/// </summary>
+public static class PointProcessModelManager
 {
     private static readonly Dictionary<string, PointProcessModel> models = [];
 
-    internal static PointProcessModel GetModel(string name)
+    public static PointProcessModel GetModel(string name)
     {
         return models.TryGetValue(name, out var model) ? model : throw new InvalidOperationException($"Model with name {name} not found.");
     }
