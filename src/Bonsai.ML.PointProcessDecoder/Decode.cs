@@ -45,8 +45,9 @@ public class Decode
     /// <returns></returns>
     public IObservable<Tensor> Process(IObservable<Tensor> source)
     {
+        var modelName = Model;
         return source.Select(input => {
-            var model = PointProcessModelManager.GetModel(Model);
+            var model = PointProcessModelManager.GetModel(modelName);
             if (_updateIgnoreNoSpikes && model.Likelihood is ClusterlessLikelihood likelihood) {
                 likelihood.IgnoreNoSpikes = _ignoreNoSpikes;
                 _updateIgnoreNoSpikes = false;
