@@ -28,9 +28,10 @@ public class Encode
     /// <returns></returns>
     public IObservable<Tuple<Tensor, Tensor>> Process(IObservable<Tuple<Tensor, Tensor>> source)
     {
+        var modelName = Model;
         return source.Do(input =>
         {
-            var model = PointProcessModelManager.GetModel(Model);
+            var model = PointProcessModelManager.GetModel(modelName);
             var (neuralData, stateObservations) = input;
             model.Encode(neuralData, stateObservations);
         });

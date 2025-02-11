@@ -40,8 +40,9 @@ public class GetModel
     /// <returns></returns>
     public IObservable<PointProcessModel> Process<T>(IObservable<T> source)
     {
+        var modelName = Model;
         return source.Select(input => {
-            return PointProcessModelManager.GetModel(Model);
+            return PointProcessModelManager.GetModel(modelName);
         });
     }
 }

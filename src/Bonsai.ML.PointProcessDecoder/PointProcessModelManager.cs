@@ -80,8 +80,6 @@ public static class PointProcessModelManager
         return new PointProcessModelDisposable(
             model, 
             Disposable.Create(() => {
-                model.Dispose();
-                model = null;
                 models.Remove(name);
             })
         );
@@ -99,8 +97,6 @@ public static class PointProcessModelManager
         return new PointProcessModelDisposable(
             model, 
             Disposable.Create(() => {
-                model.Dispose();
-                model = null;
                 models.Remove(name);
             })
         );
