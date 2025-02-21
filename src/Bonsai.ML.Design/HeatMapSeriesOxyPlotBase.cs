@@ -14,8 +14,18 @@ namespace Bonsai.ML.Design
     /// </summary>
     public class HeatMapSeriesOxyPlotBase : UserControl
     {
-        private PlotView view;
-        private PlotModel model;
+        private PlotView _view;
+        /// <summary>
+        /// Gets the plot view of the control.
+        /// </summary>
+        public PlotView View => _view;
+
+        private PlotModel _model;
+        /// <summary>
+        /// Gets the plot model of the control.
+        /// </summary>
+        public PlotModel Model => _model;
+
         private HeatMapSeries heatMapSeries;
         private LinearColorAxis colorAxis;
 
@@ -85,12 +95,12 @@ namespace Bonsai.ML.Design
 
         private void Initialize()
         {
-            view = new PlotView
+            _view = new PlotView
             {
                 Dock = DockStyle.Fill,
             };
 
-            model = new PlotModel();
+            _model = new PlotModel();
 
             heatMapSeries = new HeatMapSeries {
                 X0 = 0,
@@ -106,11 +116,11 @@ namespace Bonsai.ML.Design
                 Position = AxisPosition.Right,
             };
 
-            model.Axes.Add(colorAxis);
-            model.Series.Add(heatMapSeries);
+            _model.Axes.Add(colorAxis);
+            _model.Series.Add(heatMapSeries);
 
-            view.Model = model;
-            Controls.Add(view);
+            _view.Model = _model;
+            Controls.Add(_view);
 
             InitializeColorPalette();
             InitializeRenderMethod();
@@ -332,7 +342,7 @@ namespace Bonsai.ML.Design
         /// </summary>
         public void UpdatePlot()
         {
-            model.InvalidatePlot(true);
+            _model.InvalidatePlot(true);
         }
 
         private static readonly Dictionary<ColorPalette, Func<int, OxyPalette>> paletteLookup = new Dictionary<ColorPalette, Func<int, OxyPalette>>
