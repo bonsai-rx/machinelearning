@@ -36,6 +36,12 @@ namespace Bonsai.ML.Design
         private ToolStripTextBox minValueTextBox;
         private ToolStripLabel minValueLabel;
 
+        private ToolStripDropDownButton _visualizerPropertiesDropDown;
+        /// <summary>
+        /// Gets the visualizer properties drop down button.
+        /// </summary>
+        public ToolStripDropDownButton VisualizerPropertiesDropDown => _visualizerPropertiesDropDown;
+
         private int _numColors = 100;
 
         /// <summary>
@@ -126,14 +132,14 @@ namespace Bonsai.ML.Design
                 minValueTextBox
             };
 
-            ToolStripDropDownButton visualizerPropertiesButton = new ToolStripDropDownButton("Visualizer Properties");
+            _visualizerPropertiesDropDown = new ToolStripDropDownButton("Visualizer Properties");
 
             foreach (var item in toolStripItems)
             {
-                visualizerPropertiesButton.DropDownItems.Add(item);
+                _visualizerPropertiesDropDown.DropDownItems.Add(item);
             }
 
-            statusStrip.Items.Add(visualizerPropertiesButton);
+            statusStrip.Items.Add(_visualizerPropertiesDropDown);
 
             Controls.Add(statusStrip);
             view.MouseClick += new MouseEventHandler(onMouseClick);
