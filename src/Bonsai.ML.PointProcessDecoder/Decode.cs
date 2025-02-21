@@ -48,8 +48,16 @@ public class Decode
         var modelName = Model;
         return source.Select(input => {
             var model = PointProcessModelManager.GetModel(modelName);
-            if (_updateIgnoreNoSpikes && model.Likelihood is ClusterlessLikelihood likelihood) {
-                likelihood.IgnoreNoSpikes = _ignoreNoSpikes;
+            if (_updateIgnoreNoSpikes) {
+                if (model.Likelihood is ClusterlessLikelihood clusterlessLikelihood)
+                {
+                    clusterlessLikelihood.IgnoreNoSpikes = _ignoreNoSpikes;
+                }
+                else if (model.Likelihood is PoissonLikelihood poissonLikelihood)
+                {
+                    poissonLikelihood.IgnoreNoSpikes = _ignoreNoSpikes;
+                }
+
                 _updateIgnoreNoSpikes = false;
             }
             return model.Decode(input);
