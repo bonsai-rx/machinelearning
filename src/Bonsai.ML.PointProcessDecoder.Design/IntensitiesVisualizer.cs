@@ -14,14 +14,17 @@ using static TorchSharp.torch;
 
 using PointProcessDecoder.Core;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.ConditionalIntensitiesVisualizer), 
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.IntensitiesVisualizer), 
     Target = typeof(Bonsai.ML.PointProcessDecoder.Decode))]
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
-    public class ConditionalIntensitiesVisualizer : DialogTypeVisualizer
+    public class IntensitiesVisualizer : DialogTypeVisualizer
     {
         private int _rowCount = 1;
+        /// <summary>
+        /// The number of rows in the visualizer.
+        /// </summary>
         public int RowCount
         {
             get => _rowCount;
@@ -36,6 +39,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         }
 
         private int _columnCount = 1;
+        /// <summary>
+        /// The number of columns in the visualizer.
+        /// </summary>
         public int ColumnCount
         {
             get => _columnCount;
@@ -50,6 +56,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         }
 
         private int _selectedPageIndex = 0;
+        /// <summary>
+        /// The index of the current page displayed in the visualizer.
+        /// </summary>
         public int SelectedPageIndex
         {
             get => _selectedPageIndex;
@@ -59,21 +68,28 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             }
         }
 
+        private StatusStrip _statusStrip = null;
+        /// <summary>
+        /// The status strip control that displays the visualizer options.
+        /// </summary>
+        public StatusStrip StatusStrip => _statusStrip;
+
         private readonly int _sampleFrequency = 30;
         private int _pageCount = 1;
         private string _modelName = string.Empty;
         private List<HeatMapSeriesOxyPlotBase> _heatmapPlots = null;
-        private int _conditionalIntensitiesCount = 0;
+        private int _intensitiesCount = 0;
         private TableLayoutPanel _container = null;
-        private readonly List<long> _conditionalIntensitiesCumulativeIndex = [];
-        private StatusStrip _statusStrip = null;
-        public StatusStrip StatusStrip => _statusStrip;
+        private readonly List<long> _intensitiesCumulativeIndex = [];
         private ToolStripNumericUpDown _pageIndexControl = null;
         private ToolStripNumericUpDown _rowControl = null;
         private ToolStripNumericUpDown _columnControl = null;
-        private Tensor[] _conditionalIntensities = null;
+        private Tensor[] _intensities = null;
         private long _stateSpaceWidth;
         private long _stateSpaceHeight;
+        private double[] _stateSpaceMin;
+        private double[] _stateSpaceMax;
+        private bool _isProcessing = false;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -90,20 +106,19 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
             if (decodeNode == null)
             {
-                Console.WriteLine("The decode node is invalid.");
                 throw new InvalidOperationException("The decode node is invalid.");
             }
 
             _modelName = decodeNode.Model;
             if (string.IsNullOrEmpty(_modelName))
             {
-                Console.WriteLine("The point process model name is not set.");
                 throw new InvalidOperationException("The point process model name is not set.");
             }
             
             _container = new TableLayoutPanel()
             {
                 Dock = DockStyle.Fill,
+                AutoSize = true,
                 ColumnCount = ColumnCount,
                 RowCount = _rowCount,
             };
@@ -118,6 +133,10 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
             _pageIndexControl.ValueChanged += (sender, e) =>
             {
+                if (_heatmapPlots is null)
+                {
+                    return;
+                }
                 var value = Convert.ToInt32(_pageIndexControl.Value);
                 SelectedPageIndex = value;
                 UpdateTableLayout();
@@ -135,6 +154,11 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
             _rowControl.ValueChanged += (sender, e) =>
             {
+                if (_heatmapPlots is null)
+                {
+                    return;
+                }
+
                 RowCount = Convert.ToInt32(_rowControl.Value);
                 UpdatePages();
                 if (_selectedPageIndex >= _pageCount) 
@@ -160,6 +184,11 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
             _columnControl.ValueChanged += (sender, e) =>
             {
+                if (_heatmapPlots is null)
+                {
+                    return;
+                }
+
                 ColumnCount = Convert.ToInt32(_columnControl.Value);
                 UpdatePages();
                 if (_selectedPageIndex >= _pageCount) 
@@ -196,12 +225,13 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
         private void UpdatePages()
         {
-            _pageCount = (int)Math.Ceiling((double)_conditionalIntensitiesCount / (_rowCount * _columnCount));
+            _pageCount = (int)Math.Ceiling((double)_intensitiesCount / (_rowCount * _columnCount));
             _pageIndexControl.Maximum = _pageCount - 1;
         }
 
         private bool UpdateModel()
         {
+            _isProcessing = true;
             PointProcessModel model;
 
             try {
@@ -217,32 +247,48 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
             if (model.StateSpace.Dimensions != 2) 
             {
-                throw new InvalidOperationException("For the conditional intensities visualizer to work, the state space dimensions must be 2.");
+                throw new InvalidOperationException("For the intensities visualizer to work, the state space dimensions must be 2.");
             }
 
-            if (model.Encoder.ConditionalIntensities.Length == 0 || (model.Encoder.ConditionalIntensities.Length == 1 && model.Encoder.ConditionalIntensities[0].numel() == 0))
+            if (model.Encoder.Intensities.Length == 0 || (model.Encoder.Intensities.Length == 1 && model.Encoder.Intensities[0].NumberOfElements == 0))
             {
                 return false;
             }
-
-            _conditionalIntensities = model.Encoder.ConditionalIntensities;
+            
+            _intensities = model.Encoder.Intensities;
             _stateSpaceWidth = model.StateSpace.Shape[0];
             _stateSpaceHeight = model.StateSpace.Shape[1];
+
+            _stateSpaceMin = [.. model.StateSpace.Points
+                .min(dim: 0)
+                .values
+                .to_type(ScalarType.Float64)
+                .data<double>()
+            ];
+
+            _stateSpaceMax = [.. model.StateSpace.Points
+                .max(dim: 0)
+                .values
+                .to_type(ScalarType.Float64)
+                .data<double>()
+            ];
+
+            _isProcessing = false;
 
             return true;
         }
 
-        private static int GetConditionalIntensitiesCount(Tensor[] conditionalIntensities, List<long> conditionalIntensitiesCumulativeIndex)
+        private static int GetIntensitiesCount(Tensor[] intensities, List<long> intensitiesCumulativeIndex)
         {
-            long conditionalIntensitiesCount = 0;
-            conditionalIntensitiesCumulativeIndex.Clear();
-            for (int i = 0; i < conditionalIntensities.Length; i++) {
-                if (conditionalIntensities[i].numel() > 0) {
-                    conditionalIntensitiesCount += conditionalIntensities[i].size(0);
-                    conditionalIntensitiesCumulativeIndex.Add(conditionalIntensitiesCount);
+            long intensitiesCount = 0;
+            intensitiesCumulativeIndex.Clear();
+            for (int i = 0; i < intensities.Length; i++) {
+                if (intensities[i].NumberOfElements > 0) {
+                    intensitiesCount += intensities[i].size(0);
+                    intensitiesCumulativeIndex.Add(intensitiesCount);
                 }
             }
-            return (int)conditionalIntensitiesCount;
+            return (int)intensitiesCount;
         }
 
         private bool UpdateHeatmaps()
@@ -250,31 +296,31 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             if (_heatmapPlots is null)
             {
                 _heatmapPlots = [];
-                for (int i = 0; i < _conditionalIntensitiesCount; i++)
+                for (int i = 0; i < _intensitiesCount; i++)
                 {
-                    _heatmapPlots.Add(new HeatMapSeriesOxyPlotBase(0, 0)
+                    _heatmapPlots.Add(new HeatMapSeriesOxyPlotBase(1, 0)
                     {
                         Dock = DockStyle.Fill,
                     });
                 }
             }
-            else if (_heatmapPlots.Count > _conditionalIntensitiesCount)
+            else if (_heatmapPlots.Count > _intensitiesCount)
             {
-                var count = _heatmapPlots.Count - _conditionalIntensitiesCount;
+                var count = _heatmapPlots.Count - _intensitiesCount;
                 for (int i = 0; i < count; i++)
                 {
-                    if (!_heatmapPlots[i + _conditionalIntensitiesCount].IsDisposed)
+                    if (!_heatmapPlots[i + _intensitiesCount].IsDisposed)
                     {
-                        _heatmapPlots[i + _conditionalIntensitiesCount].Dispose();
+                        _heatmapPlots[i + _intensitiesCount].Dispose();
                     }
                 }
-                _heatmapPlots.RemoveRange(_conditionalIntensitiesCount, count);
+                _heatmapPlots.RemoveRange(_intensitiesCount, count);
             }
-            else if (_heatmapPlots.Count < _conditionalIntensitiesCount)
+            else if (_heatmapPlots.Count < _intensitiesCount)
             {
-                for (int i = _heatmapPlots.Count; i < _conditionalIntensitiesCount; i++)
+                for (int i = _heatmapPlots.Count; i < _intensitiesCount; i++)
                 {
-                    _heatmapPlots.Add(new HeatMapSeriesOxyPlotBase(0, 0)
+                    _heatmapPlots.Add(new HeatMapSeriesOxyPlotBase(1, 0)
                     {
                         Dock = DockStyle.Fill,
                     });
@@ -308,7 +354,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 for (int j = 0; j < _columnCount; j++)
                 {
                     var index = SelectedPageIndex * _rowCount * _columnCount + i * _columnCount + j;
-                    if (index >= _conditionalIntensitiesCount)
+                    if (index >= _intensitiesCount)
                     {
                         break;
                     }
@@ -318,42 +364,40 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             }
         }
 
-        private (int ConditionalIntensitiesIndex, int ConditionalIntensitiesTensorIndex) GetConditionalIntensitiesIndex(int index)
+        private (int intensitiesIndex, int intensitiesTensorIndex) GetIntensitiesIndex(int index)
         {
 
-            var conditionalIntensitiesIndex = 0;
-            for (int i = 0; i < _conditionalIntensitiesCumulativeIndex.Count; i++)
+            var intensitiesIndex = 0;
+            for (int i = 0; i < _intensitiesCumulativeIndex.Count; i++)
             {
-                if (index < _conditionalIntensitiesCumulativeIndex[i])
+                if (index < _intensitiesCumulativeIndex[i])
                 {
-                    conditionalIntensitiesIndex = i;
+                    intensitiesIndex = i;
                     break;
                 }
             }
-            var conditionalIntensitiesTensorIndex = conditionalIntensitiesIndex == 0 ? index : index - _conditionalIntensitiesCumulativeIndex[conditionalIntensitiesIndex - 1];
-            return (conditionalIntensitiesIndex, (int)conditionalIntensitiesTensorIndex);
+            var intensitiesTensorIndex = intensitiesIndex == 0 ? index : index - _intensitiesCumulativeIndex[intensitiesIndex - 1];
+            return (intensitiesIndex, (int)intensitiesTensorIndex);
         }
 
         /// <inheritdoc/>
         public override void Show(object value)
-        {           
-            var startIndex = SelectedPageIndex * _rowCount * _columnCount;
-            var endIndex = Math.Min(startIndex + _rowCount * _columnCount, _conditionalIntensitiesCount);
+        {
+            var startIndex = _selectedPageIndex * _rowCount * _columnCount;
+            var endIndex = Math.Min(startIndex + _rowCount * _columnCount, _intensitiesCount);
 
             for (int i = startIndex; i < endIndex; i++) 
             {
-                var (conditionalIntensitiesIndex, conditionalIntensitiesTensorIndex) = GetConditionalIntensitiesIndex(i);
+                var (intensitiesIndex, intensitiesTensorIndex) = GetIntensitiesIndex(i);
 
-                var conditionalIntensity = _conditionalIntensities[conditionalIntensitiesIndex][conditionalIntensitiesTensorIndex];
+                var intensity = _intensities[intensitiesIndex][intensitiesTensorIndex];
 
-                if (conditionalIntensity.Dimensions == 2) {
-                    conditionalIntensity = conditionalIntensity
+                if (intensity.Dimensions == 2) {
+                    intensity = intensity
                         .sum(dim: 0);
                 }
 
-
-
-                var conditionalIntensityValues = (double[,])conditionalIntensity
+                var intensityValues = (double[,])intensity
                     .exp()
                     .to_type(ScalarType.Float64)
                     .reshape([_stateSpaceWidth, _stateSpaceHeight])
@@ -361,7 +405,11 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     .ToNDArray();
 
                 _heatmapPlots[i].UpdateHeatMapSeries(
-                    conditionalIntensityValues
+                    _stateSpaceMin[0],
+                    _stateSpaceMax[0],
+                    _stateSpaceMin[1],
+                    _stateSpaceMax[1],
+                    intensityValues
                 );
 
                 _heatmapPlots[i].UpdatePlot();
@@ -392,9 +440,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 _heatmapPlots = null;
             };
 
-            _conditionalIntensitiesCount = 0;
-            _conditionalIntensitiesCumulativeIndex.Clear();
-            _conditionalIntensities = null;
+            _intensitiesCount = 0;
+            _intensitiesCumulativeIndex.Clear();
+            _intensities = null;
         }
 
         public override IObservable<object> Visualize(IObservable<IObservable<object>> source, IServiceProvider provider)
@@ -409,16 +457,15 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     .ObserveOn(visualizerControl)
                     .Do(value => 
                     {
-                        var success = UpdateModel();
-                        if (!success)
+                        if (!UpdateModel() && !_isProcessing)
                         {
                             return;
                         }
 
-                        var newConditionalIntensitiesCount = GetConditionalIntensitiesCount(_conditionalIntensities, _conditionalIntensitiesCumulativeIndex);
-                        if (_conditionalIntensitiesCount != newConditionalIntensitiesCount)
+                        var newIntensitiesCount = GetIntensitiesCount(_intensities, _intensitiesCumulativeIndex);
+                        if (_intensitiesCount != newIntensitiesCount)
                         {
-                            _conditionalIntensitiesCount = newConditionalIntensitiesCount;
+                            _intensitiesCount = newIntensitiesCount;
                             UpdatePages();
                             UpdateHeatmaps();
                             UpdateTableLayout();
