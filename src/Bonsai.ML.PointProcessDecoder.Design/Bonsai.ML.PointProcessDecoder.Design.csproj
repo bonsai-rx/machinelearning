@@ -10,4 +10,7 @@
     <ProjectReference Include="..\Bonsai.ML.Design\Bonsai.ML.Design.csproj" />
     <ProjectReference Include="..\Bonsai.ML.PointProcessDecoder\Bonsai.ML.PointProcessDecoder.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Vision.Design" Version="2.8.1" />
+  </ItemGroup>
 </Project>
