@@ -358,11 +358,10 @@ public class CreatePointProcessModel
 
     private bool ignoreNoSpikes = false;
     /// <summary>
-    /// Gets or sets a value indicating whether to ignore contributions from channels with no spikes.
-    /// Only used when the likelihood type is set to <see cref="LikelihoodType.Clusterless"/>.
+    /// Gets or sets a value indicating whether to ignore contributions from units or channels with no spikes.
     /// </summary>
     [Category("5. Likelihood Parameters")]
-    [Description("Indicates whether to ignore contributions from channels with no spikes. Only used when the likelihood type is set to Clusterless.")]
+    [Description("Indicates whether to ignore contributions from units or channels with no spikes.")]
     public bool IgnoreNoSpikes
     {
         get
