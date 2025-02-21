@@ -46,10 +46,10 @@ Visualizers and editor features for the HiddenMarkovModels package.
 > Bonsai.ML packages can be installed through Bonsai's integrated package manager and are generally ready for immediate use. However, some packages may require additional installation steps. Refer to the specific package section for detailed installation guides and documentation.
 
 ## Development Roadmap
-The ultimate goal of the `Bonsai.ML` project is to bring powerful machine learning tools into Bonsai to enable intelligent experimental control. To achieve this, our plan is to incorporate several different packages, models, frameworks, and language integrations. You can follow our progress by going to the [bonsai ML development roadmap](https://github.com/users/joacorapela/projects/2).
+The ultimate goal of the `Bonsai.ML` project is to bring powerful machine learning tools into Bonsai to enable intelligent experimental control. To achieve this, our plan is to incorporate several different packages, models, frameworks, and language integrations. You can follow our progress by going to the [Bonsai ML development roadmap](https://github.com/orgs/bonsai-rx/projects/7).
 
 ## Feedback and Contributions
-`Bonsai.ML` is an open-source project and we welcome contributions and feedback from the community. If you have any comments or questions, or require assistance, please feel free to open an issue on the [GitHub repo](https://github.com/bonsai-rx/machinelearning). If you would like to contribute to the project, please see the [bonsai contributor guidelines](https://bonsai-rx.org/contribute/) and open a discussion on GitHub.
+`Bonsai.ML` is an open-source project and we welcome contributions and feedback from the community. If you have any comments or questions, or require assistance, please feel free to open an issue on the [GitHub repo](https://github.com/bonsai-rx/machinelearning). If you would like to contribute to the project, please see our [Contributor Guide](https://bonsai-rx.org/contribute/). By contributing to our project, we also expect you to uphold our community [Code of Conduct](https://bonsai-rx.org/code-of-conduct).
 
 ## Acknowledgments
 
