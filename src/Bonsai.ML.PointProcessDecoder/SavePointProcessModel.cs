@@ -29,6 +29,7 @@ public class SavePointProcessModel
 
     /// <summary>
     /// Specifies the type of suffix to add to the save path.
+    /// If DateTime, a suffix with the current date and time is added to the save path in the format 'yyyyMMddHHmmss'.
     /// </summary>
     [Description("Specifies the type of suffix to add to the save path.")]
     public SuffixType AddSuffix { get; set; } = SuffixType.None;
@@ -53,7 +54,7 @@ public class SavePointProcessModel
 
             var path = AddSuffix switch
             {
-                SuffixType.DateTime => System.IO.Path.Combine(Path, $"{DateTime.Now:yyyyMMddHHmmss}"),
+                SuffixType.DateTime => System.IO.Path.Combine(Path, $"{HighResolutionScheduler.Now:yyyyMMddHHmmss}"),
                 SuffixType.Guid => System.IO.Path.Combine(Path, Guid.NewGuid().ToString()),
                 _ => Path
             };
