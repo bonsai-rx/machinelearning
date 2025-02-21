@@ -21,6 +21,12 @@ public static class PointProcessModelManager
 {
     private static readonly Dictionary<string, PointProcessModel> models = [];
 
+    /// <summary>
+    /// Gets the point process model with the specified name.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static PointProcessModel GetModel(string name)
     {
         return models.TryGetValue(name, out var model) ? model : throw new InvalidOperationException($"Model with name {name} not found.");
