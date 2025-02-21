@@ -85,7 +85,11 @@ namespace Bonsai.ML.Design
         /// Data source is optional, since pasing it to the constructor will populate the combobox and leave it empty otherwise.
         /// The selected index is only needed when the data source is provided.
         /// </summary>
-        public HeatMapSeriesOxyPlotBase(int paletteSelectedIndex, int renderMethodSelectedIndex, int numColors = 100)
+        public HeatMapSeriesOxyPlotBase(
+            int paletteSelectedIndex,
+            int renderMethodSelectedIndex, 
+            int numColors = 100
+        )
         {
             _paletteSelectedIndex = paletteSelectedIndex;
             _renderMethodSelectedIndex = renderMethodSelectedIndex;
@@ -152,7 +156,13 @@ namespace Bonsai.ML.Design
             statusStrip.Items.Add(_visualizerPropertiesDropDown);
 
             Controls.Add(statusStrip);
-            view.MouseClick += new MouseEventHandler(onMouseClick);
+            _view.MouseClick += (sender, e) => {
+                if (e.Button == MouseButtons.Right)
+                {
+                    statusStrip.Visible = !statusStrip.Visible;
+                }
+            };
+
             AutoScaleDimensions = new SizeF(6F, 13F);
         }
 
@@ -301,14 +311,6 @@ namespace Bonsai.ML.Design
         {
             renderMethod = (HeatMapRenderMethod)renderMethodComboBox.Items[_renderMethodSelectedIndex];
             heatMapSeries.RenderMethod = renderMethod;
-        }
-
-        private void onMouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                statusStrip.Visible = !statusStrip.Visible;
-            }
         }
 
         /// <summary>
