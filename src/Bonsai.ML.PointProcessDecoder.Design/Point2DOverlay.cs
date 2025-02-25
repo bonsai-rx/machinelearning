@@ -25,20 +25,38 @@ namespace Bonsai.ML.PointProcessDecoder.Design
     /// </summary>
     public class Point2DOverlay : DialogTypeVisualizer
     {
-        internal LineSeries _lineSeries;
-        internal ScatterSeries _scatterSeries;
-        private int _capacity;
+        private LineSeries _lineSeries;
+        private ScatterSeries _scatterSeries;
         private int _dataCount;
+        private IDecoderVisualizer decoderVisualizer;
+
+        private OxyColor _color = OxyColors.LimeGreen;
+
+        /// <summary>
+        /// Gets or sets the color of the overlay.
+        /// </summary>
+        public OxyColor Color 
+        { 
+            get => _color; 
+            set
+            {
+                if (_lineSeries != null && _scatterSeries != null)
+                {
+                    _lineSeries.Color = value;
+                    _scatterSeries.MarkerFill = value;
+                    _color = value;
+                }
+            }
+        }
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            dynamic service = provider.GetService(typeof(MashupVisualizer));
-            _capacity = service.Capacity;
+            decoderVisualizer = provider.GetService(typeof(MashupVisualizer)) as IDecoderVisualizer;
 
             _lineSeries = new LineSeries()
             {
-                Color = OxyColors.LimeGreen,
+                Color = _color,
                 StrokeThickness = 2
             };
 
@@ -52,14 +70,13 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             {
                 MarkerType = MarkerType.Circle,
                 MarkerSize = 10,
-                MarkerFill = OxyColors.LimeGreen,
+                MarkerFill = _color,
                 ColorAxisKey = "Point2DOverlayColorAxis"
             };
 
-            
-            service.Plot.Model.Series.Add(_scatterSeries);
-            service.Plot.Model.Series.Add(_lineSeries);
-            service.Plot.Model.Axes.Add(colorAxis);
+            decoderVisualizer.Plot.Model.Series.Add(_scatterSeries);
+            decoderVisualizer.Plot.Model.Series.Add(_lineSeries);
+            decoderVisualizer.Plot.Model.Axes.Add(colorAxis);
         }
 
         /// <inheritdoc/>
@@ -71,7 +88,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             _scatterSeries.Points.Clear();
             _scatterSeries.Points.Add(new ScatterPoint(point.X, point.Y, value: 1));
 
-            while (_dataCount > _capacity)
+            while (_dataCount > decoderVisualizer.Capacity)
             {
                 _lineSeries.Points.RemoveAt(0);
                 _dataCount--;
