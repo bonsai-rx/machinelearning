@@ -27,7 +27,7 @@ namespace Bonsai.ML.Design
         public PlotModel Model => _model;
 
         private HeatMapSeries heatMapSeries;
-        private LinearColorAxis colorAxis;
+        private LinearColorAxis colorAxis = null;
 
         private ToolStripComboBox paletteComboBox;
         private ToolStripLabel paletteLabel;
@@ -40,10 +40,10 @@ namespace Bonsai.ML.Design
         private HeatMapRenderMethod renderMethod = HeatMapRenderMethod.Bitmap;
         private StatusStrip statusStrip;
 
-        private ToolStripTextBox maxValueTextBox;
+        private ToolStripTextBox maxValueTextBox = null;
         private ToolStripLabel maxValueLabel;
 
-        private ToolStripTextBox minValueTextBox;
+        private ToolStripTextBox minValueTextBox = null;
         private ToolStripLabel minValueLabel;
 
         private ToolStripDropDownButton _visualizerPropertiesDropDown;
@@ -78,6 +78,40 @@ namespace Bonsai.ML.Design
         /// Gets the status strip control.
         /// </summary>
         public StatusStrip StatusStrip => statusStrip;
+
+        private double? _valueMin = null;
+        /// <summary>
+        /// Gets or sets the minimum value of the color axis.
+        /// </summary>
+        public double? ValueMin 
+        { 
+            get => _valueMin;
+            set
+            {
+                _valueMin = value;
+                if (minValueTextBox != null)
+                    minValueTextBox.Text = value?.ToString();
+                if (colorAxis != null)
+                    colorAxis.Maximum = value ?? double.NaN;
+            }
+        }
+
+        private double? _valueMax = null;
+        /// <summary>
+        /// Gets or sets the maximum value of the color axis.
+        /// </summary>
+        public double? ValueMax
+        {
+            get => _valueMax;
+            set
+            {
+                _valueMax = value;
+                if (maxValueTextBox != null)
+                    maxValueTextBox.Text = value?.ToString();
+                if (colorAxis != null)
+                    colorAxis.Maximum = value ?? double.NaN;
+            }
+        }
 
         /// <summary>
         /// Constructor of the TimeSeriesOxyPlotBase class.
@@ -178,7 +212,7 @@ namespace Bonsai.ML.Design
             {
                 Name = "maxValue",
                 AutoSize = true,
-                Text = "auto",
+                Text = _valueMax.HasValue ? _valueMax.ToString() : "auto",
             };
 
             maxValueTextBox.TextChanged += (sender, e) =>
@@ -186,15 +220,18 @@ namespace Bonsai.ML.Design
                 if (double.TryParse(maxValueTextBox.Text, out double maxValue))
                 {
                     colorAxis.Maximum = maxValue;
+                    ValueMax = maxValue;
                 }
                 else if (maxValueTextBox.Text.ToLower() == "auto")
                 {
                     colorAxis.Maximum = double.NaN;
                     maxValueTextBox.Text = "auto";
+                    ValueMax = null;
                 }
                 else
                 {
                     colorAxis.Maximum = heatMapSeries.MaxValue;
+                    ValueMax = heatMapSeries.MaxValue;
                 }
                 UpdatePlot();
             };
@@ -209,7 +246,7 @@ namespace Bonsai.ML.Design
             {
                 Name = "minValue",
                 AutoSize = true,
-                Text = "auto",
+                Text = _valueMin.HasValue ? _valueMin.ToString() : "auto",
             };
 
             minValueTextBox.TextChanged += (sender, e) =>
@@ -217,15 +254,18 @@ namespace Bonsai.ML.Design
                 if (double.TryParse(minValueTextBox.Text, out double minValue))
                 {
                     colorAxis.Minimum = minValue;
+                    ValueMin = minValue;
                 }
                 else if (minValueTextBox.Text.ToLower() == "auto")
                 {
                     colorAxis.Minimum = double.NaN;
                     minValueTextBox.Text = "auto";
+                    ValueMin = null;
                 }
                 else
                 {
                     colorAxis.Minimum = heatMapSeries.MinValue;
+                    ValueMin = heatMapSeries.MinValue;
                 }
                 UpdatePlot();
             };
@@ -322,6 +362,29 @@ namespace Bonsai.ML.Design
             heatMapSeries.Data = data;
         }
 
+
+        /// <summary>
+        /// Method to update the heatmap series X axis range.
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="x1"></param>
+        public void UpdateXRange(double x0, double x1)
+        {
+            heatMapSeries.X0 = x0;
+            heatMapSeries.X1 = x1;
+        }
+
+        /// <summary>
+        /// Method to update the heatmap series Y axis range.
+        /// </summary>
+        /// <param name="y0"></param>
+        /// <param name="y1"></param>
+        public void UpdateYRange(double y0, double y1)
+        {
+            heatMapSeries.Y0 = y0;
+            heatMapSeries.Y1 = y1;
+        }
+
         /// <summary>
         /// Method to update the heatmap series with new data.
         /// </summary>
@@ -332,11 +395,9 @@ namespace Bonsai.ML.Design
         /// <param name="data">The data to be displayed.</param>
         public void UpdateHeatMapSeries(double x0, double x1, double y0, double y1, double[,] data)
         {
-            heatMapSeries.X0 = x0;
-            heatMapSeries.X1 = x1;
-            heatMapSeries.Y0 = y0;
-            heatMapSeries.Y1 = y1;
-            heatMapSeries.Data = data;
+            UpdateXRange(x0, x1);
+            UpdateYRange(y0, y1);
+            UpdateHeatMapSeries(data);
         }
 
         /// <summary>
