@@ -22,7 +22,7 @@ using TorchSharp;
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
-    public class PosteriorVisualizer : MashupVisualizer
+    public class PosteriorVisualizer : MashupVisualizer, IDecoderVisualizer
     {
         private MultidimensionalArrayVisualizer _visualizer;
 
@@ -43,6 +43,16 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 _capacity = value;
             } 
         }
+
+        /// <summary>
+        /// Gets or sets the minimum value of the likelihood.
+        /// </summary>
+        public double? ValueMin { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the maximum value of the likelihood.
+        /// </summary>
+        public double? ValueMax { get; set; } = null;
 
         private double[,] _data = null;
         private double[] _stateSpaceMin;
@@ -79,18 +89,30 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             
             _visualizer.Load(provider);
 
+            _visualizer.Plot.ValueMin = ValueMin;
+            _visualizer.Plot.ValueMax = ValueMax;
+
             var capacityLabel = new ToolStripLabel
             {
                 Text = "Capacity:",
                 AutoSize = true
             };
-            var capacityValue = new ToolStripLabel
+
+            var capacityValue = new ToolStripTextBox
             {
                 Text = Capacity.ToString(),
                 AutoSize = true
             };
 
-            _visualizer.Plot.StatusStrip.Items.AddRange([
+            capacityValue.TextChanged += (sender, e) => 
+            {
+                if (int.TryParse(capacityValue.Text, out int capacity))
+                {
+                    Capacity = capacity;
+                }
+            };
+
+            _visualizer.Plot.VisualizerPropertiesDropDown.DropDownItems.AddRange([
                 capacityLabel,
                 capacityValue
             ]);
@@ -213,6 +235,8 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 return source;
             }
 
+            var colorCycler = new OxyColorPresetCycle();
+
             var timer = Observable.Interval(
                 TimeSpan.FromMilliseconds(100),
                 HighResolutionScheduler.Default
@@ -226,16 +250,23 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                         {
                             UpdateModel();
                         }
+                        ValueMin = _visualizer.Plot.ValueMin;
+                        ValueMax = _visualizer.Plot.ValueMax;
                         Show(buffer.LastOrDefault());
                     }));
 
             var mashupSourceStreams = Observable.Merge(
-                MashupSources.Select(mashupSource =>
-                    mashupSource.Source.Output.SelectMany(xs => 
+                MashupSources.Select(mashupSource => {
+                    var color = colorCycler.Next();
+                    var visualizer = mashupSource.Visualizer as Point2DOverlay;
+                    visualizer.Color = color;
+                    return mashupSource.Source.Output.SelectMany(xs => 
                         xs.Buffer(timer)
                             .Where(buffer => buffer.Count > 0)
                             .Do(buffer => mashupSource.Visualizer.Show(buffer.LastOrDefault()))
-                        )));
+                    );
+                })
+            );
 
             return Observable.Merge(mergedSource, mashupSourceStreams);
         }
