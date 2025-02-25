@@ -24,7 +24,10 @@ using System.Linq.Expressions;
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
-    public class LikelihoodVisualizer : MashupVisualizer
+    /// <summary>
+    /// Visualizer for the likelihood of a point process model.
+    /// </summary>
+    public class LikelihoodVisualizer : MashupVisualizer, IDecoderVisualizer
     {
         private MultidimensionalArrayVisualizer _visualizer;
 
@@ -46,6 +49,16 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             } 
         }
 
+        /// <summary>
+        /// Gets or sets the minimum value of the likelihood.
+        /// </summary>
+        public double? ValueMin { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the maximum value of the likelihood.
+        /// </summary>
+        public double? ValueMax { get; set; } = null;
+
         private double[,] _data = null;
         private long _stateSpaceWidth;
         private long _stateSpaceHeight;
@@ -55,7 +68,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         private ILikelihood _likelihood;
         private Tensor[] _intensities;
         private IObservable<IObservable<object>> _inputSource;
-        private Tensor _dataTensor;
         
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -65,9 +77,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             var typeVisualizerContext = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
             if (expressionBuilderGraph != null && typeVisualizerContext != null)
             {
-                // decodeNode = ExpressionBuilder.GetWorkflowElement(
-                //     expressionBuilderGraph.Where(node => node.Value == typeVisualizerContext.Source)
-                //         .FirstOrDefault());
                 visualizerNode = (from node in expressionBuilderGraph
                     where node.Value == typeVisualizerContext.Source
                     select node).FirstOrDefault();
@@ -202,21 +211,12 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 return source;
             }
 
+            var colorCycler = new OxyColorPresetCycle();
+
             var timer = Observable.Interval(
                 TimeSpan.FromMilliseconds(100),
                 HighResolutionScheduler.Default
             );
-
-            // var mergedSource = source.SelectMany(xs => 
-            //     xs.Buffer(timer)
-            //         .Where(buffer => buffer.Count > 0)
-            //         .Do(buffer => {
-            //             if (!UpdateModel())
-            //             {
-            //                 return;
-            //             }
-            //             Show(buffer.LastOrDefault());
-            //         }));
 
             var mergedSource = _inputSource.SelectMany(xs => 
                 xs.Buffer(timer)
@@ -227,16 +227,21 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                         {
                             return;
                         }
+                        ValueMin = _visualizer.Plot.ValueMin;
+                        ValueMax = _visualizer.Plot.ValueMax;
                         Show(buffer.LastOrDefault());
                     }));
 
             var mashupSourceStreams = Observable.Merge(
                 MashupSources.Select(mashupSource =>
-                    mashupSource.Source.Output.SelectMany(xs => 
-                        xs.Buffer(timer)
+                    mashupSource.Source.Output.SelectMany(xs => {
+                        var color = colorCycler.Next();
+                        var visualizer = mashupSource.Visualizer as Point2DOverlay;
+                        visualizer.Color = color;
+                        return xs.Buffer(timer)
                             .Where(buffer => buffer.Count > 0)
-                            .Do(buffer => mashupSource.Visualizer.Show(buffer.LastOrDefault()))
-                        )));
+                            .Do(buffer => mashupSource.Visualizer.Show(buffer.LastOrDefault()));
+            })));
 
             return Observable.Merge(mergedSource, mashupSourceStreams);
         }
