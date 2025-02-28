@@ -91,8 +91,6 @@ namespace Bonsai.ML.Design
                 _valueMin = value;
                 if (minValueTextBox != null)
                     minValueTextBox.Text = value?.ToString();
-                if (colorAxis != null)
-                    colorAxis.Maximum = value ?? double.NaN;
             }
         }
 
@@ -108,8 +106,6 @@ namespace Bonsai.ML.Design
                 _valueMax = value;
                 if (maxValueTextBox != null)
                     maxValueTextBox.Text = value?.ToString();
-                if (colorAxis != null)
-                    colorAxis.Maximum = value ?? double.NaN;
             }
         }
 
@@ -215,23 +211,30 @@ namespace Bonsai.ML.Design
                 Text = _valueMax.HasValue ? _valueMax.ToString() : "auto",
             };
 
+            var updateMaxValueText = true;
+
             maxValueTextBox.TextChanged += (sender, e) =>
             {
+                if (!updateMaxValueText)
+                {
+                    updateMaxValueText = true;
+                    return;
+                }
+
                 if (double.TryParse(maxValueTextBox.Text, out double maxValue))
                 {
+                    _valueMax = maxValue;
                     colorAxis.Maximum = maxValue;
-                    ValueMax = maxValue;
                 }
-                else if (maxValueTextBox.Text.ToLower() == "auto")
+                else if (string.IsNullOrEmpty(maxValueTextBox.Text))
                 {
+                    _valueMax = null;
                     colorAxis.Maximum = double.NaN;
-                    maxValueTextBox.Text = "auto";
-                    ValueMax = null;
                 }
                 else
                 {
-                    colorAxis.Maximum = heatMapSeries.MaxValue;
-                    ValueMax = heatMapSeries.MaxValue;
+                    updateMaxValueText = false;
+                    maxValueTextBox.Text = "";
                 }
                 UpdatePlot();
             };
@@ -249,23 +252,30 @@ namespace Bonsai.ML.Design
                 Text = _valueMin.HasValue ? _valueMin.ToString() : "auto",
             };
 
+            var updateMinValueText = true;
+
             minValueTextBox.TextChanged += (sender, e) =>
             {
+                if (!updateMinValueText)
+                {
+                    updateMinValueText = true;
+                    return;
+                }
+
                 if (double.TryParse(minValueTextBox.Text, out double minValue))
                 {
+                    _valueMin = minValue;
                     colorAxis.Minimum = minValue;
-                    ValueMin = minValue;
                 }
-                else if (minValueTextBox.Text.ToLower() == "auto")
+                else if (string.IsNullOrEmpty(minValueTextBox.Text))
                 {
+                    _valueMin = null;
                     colorAxis.Minimum = double.NaN;
-                    minValueTextBox.Text = "auto";
-                    ValueMin = null;
                 }
                 else
                 {
-                    colorAxis.Minimum = heatMapSeries.MinValue;
-                    ValueMin = heatMapSeries.MinValue;
+                    updateMinValueText = false;
+                    minValueTextBox.Text = "";
                 }
                 UpdatePlot();
             };
@@ -331,12 +341,12 @@ namespace Bonsai.ML.Design
                 renderMethodComboBox.Items.Add(value);
             }
 
-            renderMethodComboBox.SelectedIndexChanged += renderMethodComboBoxSelectedIndexChanged;
+            renderMethodComboBox.SelectedIndexChanged += RenderMethodComboBoxSelectedIndexChanged;
             renderMethodComboBox.SelectedIndex = _renderMethodSelectedIndex;
             UpdateRenderMethod();
         }
 
-        private void renderMethodComboBoxSelectedIndexChanged(object sender, EventArgs e)
+        private void RenderMethodComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             if (renderMethodComboBox.SelectedIndex != _renderMethodSelectedIndex)
             {
