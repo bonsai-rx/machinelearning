@@ -114,13 +114,22 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 Text = "Capacity:",
                 AutoSize = true
             };
-            var capacityValue = new ToolStripLabel
+
+            var capacityValue = new ToolStripTextBox
             {
                 Text = Capacity.ToString(),
                 AutoSize = true
             };
 
-            _visualizer.Plot.StatusStrip.Items.AddRange([
+            capacityValue.TextChanged += (sender, e) => 
+            {
+                if (int.TryParse(capacityValue.Text, out int capacity))
+                {
+                    Capacity = capacity;
+                }
+            };
+
+            _visualizer.Plot.VisualizerPropertiesDropDown.DropDownItems.AddRange([
                 capacityLabel,
                 capacityValue
             ]);
