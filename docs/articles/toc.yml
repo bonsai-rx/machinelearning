@@ -14,3 +14,8 @@
   href: HiddenMarkovModels/hmm-overview.md
 - name: Getting Started
   href: HiddenMarkovModels/hmm-getting-started.md
+- name: Torch
+- name: Overview
+  href: Torch/torch-overview.md
+- name: Getting Started
+  href: Torch/torch-getting-started.md

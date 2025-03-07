@@ -42,6 +42,9 @@ Facilitates inference using Hidden Markov Models (HMMs). It interfaces with the 
 ### Bonsai.ML.HiddenMarkovModels.Design
 Visualizers and editor features for the HiddenMarkovModels package.
 
+### Bonsai.ML.Torch
+Interfaces with the [TorchSharp](https://github.com/dotnet/TorchSharp) package, a C# wrapper around the torch library. Provides tooling for manipulating tensors, performing linear algebra, training and inference with deep neural networks, and more. 
+
 > [!NOTE]
 > Bonsai.ML packages can be installed through Bonsai's integrated package manager and are generally ready for immediate use. However, some packages may require additional installation steps. Refer to the specific package section for detailed installation guides and documentation.
 
