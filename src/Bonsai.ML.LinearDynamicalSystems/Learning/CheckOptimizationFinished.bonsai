@@ -16,7 +16,7 @@
         <Combinator xsi:type="py:ObserveOnGIL" />
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" DisplayName="Name" Description="The name of the python variable referencing the model object."  Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the Python variable referencing the model object."  Category="ModelReference" />
       </Expression>
       <Expression xsi:type="SubscribeSubject" TypeArguments="p1:ModelReference">
         <Name>model</Name>
