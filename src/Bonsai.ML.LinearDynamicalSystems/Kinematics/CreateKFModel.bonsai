@@ -6,10 +6,11 @@
                  xmlns:p2="clr-namespace:Bonsai.ML.LinearDynamicalSystems.Kinematics;assembly=Bonsai.ML.LinearDynamicalSystems"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns="https://bonsai-rx.org/2018/workflow">
+  <Description>Creates a Kalman filter model for kinematics estimation based on the discrete Weiner process acceleration model.</Description>
   <Workflow>
     <Nodes>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Name" Category="ModelReference" />
+        <Property Name="Name" DisplayName="Name" Description="The name of the Python variable referencing the model object." Category="ModelReference" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:CreateModelReference" />
@@ -24,17 +25,17 @@
         <Name>Source1</Name>
       </Expression>
       <Expression xsi:type="ExternalizedMapping">
-        <Property Name="Fps" Category="ModelParams" />
-        <Property Name="Pos_x0" Category="ModelParams" />
-        <Property Name="Pos_y0" Category="ModelParams" />
-        <Property Name="Vel_x0" Category="ModelParams" />
-        <Property Name="Vel_y0" Category="ModelParams" />
-        <Property Name="Acc_x0" Category="ModelParams" />
-        <Property Name="Acc_y0" Category="ModelParams" />
-        <Property Name="Sigma_a" Category="ModelParams" />
-        <Property Name="Sigma_x" Category="ModelParams" />
-        <Property Name="Sigma_y" Category="ModelParams" />
-        <Property Name="Sqrt_diag_V0_value" Category="ModelParams" />
+        <Property Name="Fps" Description="The frames per second of the observations." Category="ModelParams" />
+        <Property Name="Pos_x0" Description="The initial x position." Category="ModelParams" />
+        <Property Name="Pos_y0" Description="The initial y position." Category="ModelParams" />
+        <Property Name="Vel_x0" Description="The initial x velocity." Category="ModelParams" />
+        <Property Name="Vel_y0" Description="The initial y velocity." Category="ModelParams" />
+        <Property Name="Acc_x0" Description="The initial x acceleration." Category="ModelParams" />
+        <Property Name="Acc_y0" Description="The initial y acceleration." Category="ModelParams" />
+        <Property Name="Sigma_a" Description="A scalar value representing the measurement noise." Category="ModelParams" />
+        <Property Name="Sigma_x" Description="A scalar value representing the prediction noise along the x axis." Category="ModelParams" />
+        <Property Name="Sigma_y" Description="A scalar value representing the prediction noise along the y axis." Category="ModelParams" />
+        <Property Name="Sqrt_diag_V0_value" Description="The initial value of the diagonal of the state covariance matrix." Category="ModelParams" />
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:KFModelParameters">

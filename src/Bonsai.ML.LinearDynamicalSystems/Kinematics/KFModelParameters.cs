@@ -51,10 +51,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         private string fpsString;
 
         /// <summary>
-        /// x position at time 0
+        /// The initial x position.
         /// </summary>
         [JsonProperty("pos_x0")]
-        [Description("x position at time 0")]
+        [Description("The initial x position.")]
         public double Pos_x0
         {
             get
@@ -69,10 +69,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// y position at time 0
+        /// The initial y position.
         /// </summary>
         [JsonProperty("pos_y0")]
-        [Description("y position at time 0")]
+        [Description("The initial y position.")]
         public double Pos_y0
         {
             get
@@ -87,10 +87,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// x velocity at time 0
+        /// The initial x velocity.
         /// </summary>
         [JsonProperty("vel_x0")]
-        [Description("x velocity at time 0")]
+        [Description("The initial x velocity.")]
         public double Vel_x0
         {
             get
@@ -105,10 +105,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// y velocity at time 0
+        /// The initial y velocity.
         /// </summary>
         [JsonProperty("vel_y0")]
-        [Description("y velocity at time 0")]
+        [Description("The initial y velocity.")]
         public double Vel_y0
         {
             get
@@ -123,10 +123,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// x acceleration at time 0
+        /// The initial x acceleration.
         /// </summary>
         [JsonProperty("acc_x0")]
-        [Description("x acceleration at time 0")]
+        [Description("The initial x acceleration.")]
         public double Acc_x0
         {
             get
@@ -141,10 +141,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// x velocity at time 0
+        /// The initial y acceleration.
         /// </summary>
         [JsonProperty("acc_y0")]
-        [Description("x velocity at time 0")]
+        [Description("The initial y acceleration.")]
         public double Acc_y0
         {
             get
@@ -159,10 +159,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// covariance of a
+        /// A scalar value representing the measurement noise.
         /// </summary>
         [JsonProperty("sigma_a")]
-        [Description("covariance of a")]
+        [Description("A scalar value representing the measurement noise.")]
         public double Sigma_a
         {
             get
@@ -177,10 +177,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// covariance of x
+        /// A scalar value representing the prediction noise along the x axis.
         /// </summary>
         [JsonProperty("sigma_x")]
-        [Description("covariance of x")]
+        [Description("A scalar value representing the prediction noise along the x axis.")]
         public double Sigma_x
         {
             get
@@ -195,10 +195,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// covariance of y
+        /// A scalar value representing the prediction noise along the y axis.
         /// </summary>
         [JsonProperty("sigma_y")]
-        [Description("covariance of y")]
+        [Description("A scalar value representing the prediction noise along the y axis.")]
         public double Sigma_y
         {
             get
@@ -213,10 +213,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// v0
+        /// The initial value of the diagonal of the state covariance matrix.
         /// </summary>
         [JsonProperty("sqrt_diag_V0_value")]
-        [Description("v0")]
+        [Description("The initial value of the diagonal of the state covariance matrix.")]
         public double Sqrt_diag_V0_value
         {
             get
@@ -231,10 +231,10 @@ namespace Bonsai.ML.LinearDynamicalSystems.Kinematics
         }
     
         /// <summary>
-        /// frames per second
+        /// The frames per second of the observations.
         /// </summary>
         [JsonProperty("fps")]
-        [Description("frames per second")]
+        [Description("The frames per second of the observations.")]
         public int Fps
         {
             get
