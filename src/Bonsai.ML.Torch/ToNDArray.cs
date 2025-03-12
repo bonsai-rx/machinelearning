@@ -17,14 +17,6 @@ namespace Bonsai.ML.Torch
     [Combinator]
     [Description("Converts the input tensor into an array of the specified element type.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    [XmlInclude(typeof(TypeMapping<byte>))]
-    [XmlInclude(typeof(TypeMapping<sbyte>))]
-    [XmlInclude(typeof(TypeMapping<short>))]
-    [XmlInclude(typeof(TypeMapping<int>))]
-    [XmlInclude(typeof(TypeMapping<long>))]
-    [XmlInclude(typeof(TypeMapping<float>))]
-    [XmlInclude(typeof(TypeMapping<double>))]
-    [XmlInclude(typeof(TypeMapping<bool>))]
     public class ToNDArray : SingleArgumentExpressionBuilder
     {
         /// <summary>
@@ -32,14 +24,28 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public ToNDArray()
         {
-            Type = new TypeMapping<double>();
+            Type = typeof(double);
         }
 
         /// <summary>
         /// Gets or sets the type mapping used to convert the input tensor into an array.
         /// </summary>
         [Description("Gets or sets the type mapping used to convert the input tensor into an array.")]
-        public TypeMapping Type { get; set; }
+        [TypeConverter(typeof(ScalarTypeConverter))]
+        [XmlIgnore]
+        public Type Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets an XML serializable representation of the type.
+        /// </summary>
+        [Browsable(false)]
+        [XmlElement("Type")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public string XmlType 
+        {
+            get { return Type.AssemblyQualifiedName; }
+            set { Type = Type.GetType(value); }
+        }
 
         /// <summary>
         /// Gets or sets the rank of the output array. Must be greater than or equal to 1.
@@ -50,12 +56,10 @@ namespace Bonsai.ML.Torch
         /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
-            TypeMapping typeMapping = Type;
-            var returnType = typeMapping.GetType().GetGenericArguments()[0];
             MethodInfo methodInfo = GetType().GetMethod("Process", BindingFlags.Public | BindingFlags.Instance);
             var lengths = new int[Rank];
-            Type arrayType = Array.CreateInstance(returnType, lengths).GetType();
-            methodInfo = methodInfo.MakeGenericMethod(returnType, arrayType);
+            Type arrayType = Array.CreateInstance(Type, lengths).GetType();
+            methodInfo = methodInfo.MakeGenericMethod(Type, arrayType);
             Expression sourceExpression = arguments.First();
             
             return Expression.Call(

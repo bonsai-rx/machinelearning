@@ -33,6 +33,7 @@ namespace Bonsai.ML.Torch
         /// The data type of the tensor elements.
         /// </summary>
         [Description("The data type of the tensor elements.")]
+        [TypeConverter(typeof(ScalarTypeConverter))]
         public ScalarType Type
         {
             get => scalarType;

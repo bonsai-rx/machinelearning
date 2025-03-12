@@ -12,19 +12,11 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Converts the input tensor into an array of the specified element type.
+    /// Converts the input tensor into a flattened array of the specified element type.
     /// </summary>
     [Combinator]
-    [Description("Converts the input tensor into an array of the specified element type.")]
+    [Description("Converts the input tensor into a flattened array of the specified element type.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    [XmlInclude(typeof(TypeMapping<byte>))]
-    [XmlInclude(typeof(TypeMapping<sbyte>))]
-    [XmlInclude(typeof(TypeMapping<short>))]
-    [XmlInclude(typeof(TypeMapping<int>))]
-    [XmlInclude(typeof(TypeMapping<long>))]
-    [XmlInclude(typeof(TypeMapping<float>))]
-    [XmlInclude(typeof(TypeMapping<double>))]
-    [XmlInclude(typeof(TypeMapping<bool>))]
     public class ToArray : SingleArgumentExpressionBuilder
     {
         /// <summary>
@@ -32,22 +24,34 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public ToArray()
         {
-            Type = new TypeMapping<double>();
+            Type = typeof(double);
         }
 
         /// <summary>
-        /// Gets or sets the type mapping used to convert the input tensor into an array.
+        /// Gets or sets the type mapping used to convert the input tensor into a flattened array.
         /// </summary>
-        [Description("Gets or sets the type mapping used to convert the input tensor into an array.")]
-        public TypeMapping Type { get; set; }
+        [Description("Gets or sets the type mapping used to convert the input tensor into a flattened array.")]
+        [TypeConverter(typeof(ScalarTypeConverter))]
+        [XmlIgnore]
+        public Type Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets an XML serializable representation of the type.
+        /// </summary>
+        [Browsable(false)]
+        [XmlElement("Type")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public string XmlType 
+        {
+            get { return Type.AssemblyQualifiedName; }
+            set { Type = Type.GetType(value); }
+        }
 
         /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
-            TypeMapping typeMapping = Type;
-            var returnType = typeMapping.GetType().GetGenericArguments()[0];
             MethodInfo methodInfo = GetType().GetMethod("Process", BindingFlags.Public | BindingFlags.Instance);
-            methodInfo = methodInfo.MakeGenericMethod(returnType);
+            methodInfo = methodInfo.MakeGenericMethod(Type);
             Expression sourceExpression = arguments.First();
             
             return Expression.Call(
@@ -58,7 +62,7 @@ namespace Bonsai.ML.Torch
         }
 
         /// <summary>
-        /// Converts the input tensor into an array of the specified element type.
+        /// Converts the input tensor into a flattened array of the specified element type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
