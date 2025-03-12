@@ -12,7 +12,7 @@ namespace Bonsai.ML.Torch
     /// </summary>
     [Combinator]
     [Description("Concatenates tensors along a given dimension.")]
-    [WorkflowElementCategory(ElementCategory.Combinator)]
+    [WorkflowElementCategory(ElementCategory.Transform)]
     public class Concat
     {
         /// <summary>
@@ -20,16 +20,6 @@ namespace Bonsai.ML.Torch
         /// </summary>
         [Description("The dimension along which to concatenate the tensors.")]
         public long Dimension { get; set; } = 0;
-
-        /// <summary>
-        /// Takes any number of observable sequences of tensors and concatenates the input tensors along the specified dimension by zipping each tensor together.
-        /// </summary>
-        public IObservable<Tensor> Process(params IObservable<Tensor>[] sources)
-        {
-            return sources.Aggregate((current, next) =>
-                current.Zip(next, (tensor1, tensor2) =>
-                    cat([tensor1, tensor2], Dimension)));
-        }
 
         /// <summary>
         /// Concatenates the input tensors along the specified dimension.
@@ -93,7 +83,7 @@ namespace Bonsai.ML.Torch
         {
             return source.Select(value =>
             {
-                return cat(value.ToList(), Dimension);
+                return cat([.. value], Dimension);
             });
         }
     }
