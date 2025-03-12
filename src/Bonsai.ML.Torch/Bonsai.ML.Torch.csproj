@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Title>Bonsai.ML.Torch</Title>
     <Description>A Bonsai package for TorchSharp tensor manipulations.</Description>
-    <PackageTags>Bonsai Rx ML Tensors TorchSharp</PackageTags>
+    <PackageTags>Bonsai Rx ML Torch Tensor</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
