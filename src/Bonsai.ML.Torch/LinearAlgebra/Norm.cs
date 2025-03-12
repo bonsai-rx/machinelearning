@@ -17,6 +17,7 @@ namespace Bonsai.ML.Torch.LinearAlgebra
         /// <summary>
         /// The dimensions along which to compute the matrix norm.
         /// </summary>
+        [TypeConverter(typeof(UnidimensionalArrayConverter))]
         public long[] Dimensions { get; set; } = null;
 
         /// <summary>

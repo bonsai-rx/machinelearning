@@ -17,6 +17,7 @@ namespace Bonsai.ML.Torch
         /// The size of the tensor.
         /// </summary>
         [Description("The size of the tensor.")]
+        [TypeConverter(typeof(UnidimensionalArrayConverter))]
         public long[] Size { get; set; } = [0];
 
         /// <summary>

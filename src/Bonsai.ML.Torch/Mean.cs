@@ -17,6 +17,7 @@ namespace Bonsai.ML.Torch
         /// The dimensions along which to compute the mean.
         /// </summary>
         [Description("The dimensions along which to compute the mean.")]
+        [TypeConverter(typeof(UnidimensionalArrayConverter))]
         public long[] Dimensions { get; set; }
 
         /// <summary>

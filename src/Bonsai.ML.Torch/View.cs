@@ -18,6 +18,7 @@ namespace Bonsai.ML.Torch
         /// The dimensions of the reshaped tensor.
         /// </summary>
         [Description("The dimensions of the reshaped tensor.")]
+        [TypeConverter(typeof(UnidimensionalArrayConverter))]
         public long[] Dimensions { get; set; } = [0];
 
         /// <summary>

@@ -16,6 +16,8 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The dimensions along which to compute the sum.
         /// </summary>
+        [Description("The dimensions along which to compute the sum.")]
+        [TypeConverter(typeof(UnidimensionalArrayConverter))]
         public long[] Dimensions { get; set; }
 
         /// <summary>

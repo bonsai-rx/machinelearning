@@ -16,6 +16,8 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The number of repetitions in each dimension.
         /// </summary>
+        [Description("The number of repetitions in each dimension.")]
+        [TypeConverter(typeof(UnidimensionalArrayConverter))]
         public long[] Dimensions { get; set; }
 
         /// <summary>
