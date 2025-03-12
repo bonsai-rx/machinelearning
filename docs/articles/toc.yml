@@ -17,5 +17,3 @@
 - name: Torch
 - name: Overview
   href: Torch/torch-overview.md
-- name: Getting Started
-  href: Torch/torch-getting-started.md
