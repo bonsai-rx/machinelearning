@@ -11,7 +11,7 @@ namespace Bonsai.ML.Torch.LinearAlgebra
     [Combinator]
     [Description("Computes the eigenvalue decomposition of a square matrix if it exists.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class Eig
+    public class EigenvalueDecomposition
     {
         /// <summary>
         /// Computes the eigenvalue decomposition of a square matrix if it exists.
@@ -20,10 +20,7 @@ namespace Bonsai.ML.Torch.LinearAlgebra
         /// <returns></returns>
         public IObservable<Tuple<Tensor, Tensor>> Process(IObservable<Tensor> source)
         {
-            return source.Select(tensor => {
-                var (eigvals, eigvecs) = linalg.eig(tensor);
-                return Tuple.Create(eigvals, eigvecs);
-            });
+            return source.Select(tensor => linalg.eig(tensor).ToTuple());
         }
     }
 }
