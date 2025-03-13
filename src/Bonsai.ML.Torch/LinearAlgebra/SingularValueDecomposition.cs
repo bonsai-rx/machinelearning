@@ -11,7 +11,7 @@ namespace Bonsai.ML.Torch.LinearAlgebra
     [Combinator]
     [Description("Computes the singular value decomposition (SVD) of a matrix.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class SVD
+    public class SingularValueDecomposition
     {
         /// <summary>
         /// Whether to compute the full or reduced SVD.
@@ -25,10 +25,7 @@ namespace Bonsai.ML.Torch.LinearAlgebra
         /// <returns></returns>
         public IObservable<Tuple<Tensor, Tensor, Tensor>> Process(IObservable<Tensor> source)
         {
-            return source.Select(tensor => {
-                var (u, s, v) = linalg.svd(tensor, fullMatrices: FullMatrices);
-                return Tuple.Create(u, s, v);
-            });
+            return source.Select(tensor => linalg.svd(tensor, fullMatrices: FullMatrices).ToTuple());
         }
     }
 }
