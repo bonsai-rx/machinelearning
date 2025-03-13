@@ -6,7 +6,7 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Provides methods to look up tensor data types.
+    /// Provides methods to look up tensor data types that currently support conversion to designated .NET types.
     /// </summary>
     public static class ScalarTypeLookup
     {
