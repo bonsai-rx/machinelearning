@@ -11,7 +11,7 @@ namespace Bonsai.ML.Torch.LinearAlgebra
     [Combinator]
     [Description("Computes the Cholesky decomposition of a complex Hermitian or real symmetric positive-definite matrix.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class Cholesky
+    public class CholeskyDecomposition
     {
         /// <summary>
         /// Computes the Cholesky decomposition of a complex Hermitian or real symmetric positive-definite matrix.
