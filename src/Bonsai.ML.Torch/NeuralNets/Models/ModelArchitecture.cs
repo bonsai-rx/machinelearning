@@ -16,8 +16,8 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
         MobileNet,
 
         /// <summary>
-        /// The MNIST model architecture.
+        /// The Mnist model architecture.
         /// </summary>
-        MNIST
+        Mnist
     }
 }

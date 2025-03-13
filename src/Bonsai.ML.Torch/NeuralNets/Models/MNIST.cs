@@ -7,7 +7,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
     /// <summary>
     /// Represents a simple convolutional neural network for the MNIST dataset.
     /// </summary>
-    internal class MNIST : Module<Tensor,Tensor>
+    internal class Mnist : Module<Tensor,Tensor>
     {
         private readonly Module<Tensor, Tensor> conv1;
         private readonly Module<Tensor, Tensor> conv2;
@@ -27,12 +27,12 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
         private readonly Module<Tensor, Tensor> logsm;
 
         /// <summary>
-        /// Constructs a new MNIST model.
+        /// Constructs a new Mnist model.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="numClasses"></param>
         /// <param name="device"></param>
-        public MNIST(string name, int numClasses, Device device = null) : base(name)
+        public Mnist(string name, int numClasses, Device device = null) : base(name)
         {
             conv1 = Conv2d(1, 32, 3);
             conv2 = Conv2d(32, 64, 3);
@@ -58,7 +58,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Models
         }
 
         /// <summary>
-        /// Forward pass of the MNIST model.
+        /// Forward pass of the Mnist model.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
