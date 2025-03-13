@@ -12,7 +12,7 @@ namespace Bonsai.ML.Torch.LinearAlgebra
     [Combinator]
     [Description("Computes the inverse of the input matrix.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class Inv
+    public class Inverse
     {
         /// <summary>
         /// Computes the inverse of the input matrix.
