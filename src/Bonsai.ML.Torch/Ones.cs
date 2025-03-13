@@ -26,7 +26,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process()
         {
-            return Observable.Defer(() => Observable.Return(ones(Size)));
+            return Observable.Return(ones(Size));
         }
 
         /// <summary>
@@ -36,9 +36,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process<T>(IObservable<T> source)
         {
-            return source.Select(value => {
-                return ones(Size);
-            });
+            return source.Select(value => ones(Size));
         }
     }
 }

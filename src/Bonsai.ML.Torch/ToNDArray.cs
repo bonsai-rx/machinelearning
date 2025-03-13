@@ -78,10 +78,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<TResult> Process<T, TResult>(IObservable<Tensor> source) where T : unmanaged
         {
-            return source.Select(tensor =>
-            {
-                return (TResult)(object)tensor.data<T>().ToNDArray();
-            });
+            return source.Select(tensor => (TResult)(object)tensor.data<T>().ToNDArray());
         }
     }
 }

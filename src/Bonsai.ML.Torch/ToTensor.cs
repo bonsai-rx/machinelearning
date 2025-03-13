@@ -22,9 +22,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<int> source)
         {
-            return source.Select(value => {
-                return as_tensor(value);
-            });
+            return source.Select(value => as_tensor(value));
         }
 
         /// <summary>
@@ -34,9 +32,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<double> source)
         {
-            return source.Select(value => {
-                return as_tensor(value);
-            });
+            return source.Select(value => as_tensor(value));
         }
 
         /// <summary>
@@ -46,9 +42,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<byte> source)
         {
-            return source.Select(value => {
-                return as_tensor(value);
-            });
+            return source.Select(value => as_tensor(value));
         }
 
         /// <summary>
@@ -58,9 +52,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<bool> source)
         {
-            return source.Select(value => {
-                return as_tensor(value);
-            });
+            return source.Select(value => as_tensor(value));
         }
 
         /// <summary>
@@ -70,9 +62,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<float> source)
         {
-            return source.Select(value => {
-                return as_tensor(value);
-            });
+            return source.Select(value => as_tensor(value));
         }
 
         /// <summary>
@@ -82,9 +72,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<long> source)
         {
-            return source.Select(value => {
-                return as_tensor(value);
-            });
+            return source.Select(value => as_tensor(value));
         }
 
         /// <summary>
@@ -94,9 +82,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<short> source)
         {
-            return source.Select(value => {
-                return as_tensor(value);
-            });
+            return source.Select(value => as_tensor(value));
         }
 
         /// <summary>
@@ -106,9 +92,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Array> source)
         {
-            return source.Select(value => {
-                return as_tensor(value);
-            });
+            return source.Select(value => as_tensor(value));
         }
 
         /// <summary>

@@ -27,9 +27,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            return source.Select(tensor => {
-                return tensor.permute(Dimensions);
-            });
+            return source.Select(tensor => tensor.permute(Dimensions));
         }
     }
 }

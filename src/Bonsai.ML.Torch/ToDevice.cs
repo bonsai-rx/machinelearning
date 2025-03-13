@@ -29,9 +29,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            return source.Select(tensor => {
-                return tensor.to(Device);
-            });
+            return source.Select(tensor => tensor.to(Device));
         }
     }
 }

@@ -31,10 +31,7 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process()
         {
-            return Observable.Defer(() =>
-            {
-                return Observable.Return(empty(Size, Type));
-            });
+            return Observable.Return(empty(Size, Type));
         }
 
         /// <summary>
@@ -44,9 +41,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process<T>(IObservable<T> source)
         {
-            return source.Select(value => {
-                return empty(Size, Type);
-            });
+            return source.Select(value => empty(Size, Type));
         }
     }
 }
