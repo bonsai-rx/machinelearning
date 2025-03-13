@@ -11,8 +11,9 @@ namespace Bonsai.ML.Torch.LinearAlgebra
     [Combinator]
     [Description("Computes the determinant of a square matrix.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class Det
+    public class Determinant
     {
+        /// <summary>
         /// <summary>
         /// Computes the determinant of a square matrix.
         /// </summary>
