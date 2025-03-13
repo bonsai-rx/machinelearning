@@ -14,7 +14,6 @@ namespace Bonsai.ML.Torch.NeuralNets
     [WorkflowElementCategory(ElementCategory.Source)]
     public class LoadScriptModule
     {
-
         /// <summary>
         /// The device on which to load the model.
         /// </summary>
