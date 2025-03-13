@@ -8,6 +8,6 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// <summary>
         /// Computes the negative log likelihood loss.
         /// </summary>
-        NLLLoss,
+        NegativeLogLikelihood,
     }
 }
