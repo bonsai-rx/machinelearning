@@ -62,23 +62,19 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// <exception cref="ArgumentException"></exception>
         public IObservable<ITorchModule> Process()
         {
-            var modelArchitecture = ModelArchitecture.ToString().ToLower();
             var device = Device;
-
-            nn.Module<Tensor,Tensor> module = modelArchitecture switch
+            nn.Module<Tensor,Tensor> module = ModelArchitecture switch
             {
-                "alexnet" => new Models.AlexNet(modelArchitecture, numClasses, device),
-                "mobilenet" => new Models.MobileNet(modelArchitecture, numClasses, device),
-                "mnist" => new Models.MNIST(modelArchitecture, numClasses, device),
-                _ => throw new ArgumentException($"Model {modelArchitecture} not supported.")
+                Models.ModelArchitecture.AlexNet => new Models.AlexNet("alexnet", numClasses, device),
+                Models.ModelArchitecture.MobileNet => new Models.MobileNet("mobilenet", numClasses, device),
+                Models.ModelArchitecture.Mnist => new Models.Mnist("mnist", numClasses, device),
+                _ => throw new ArgumentException($"Model {ModelArchitecture} not supported.")
             };
 
             if (ModelWeightsPath is not null) module.load(ModelWeightsPath);
 
             var torchModule = new TorchModuleAdapter(module);
-            return Observable.Defer(() => {
-                return Observable.Return((ITorchModule)torchModule);
-            });
+            return Observable.Return((ITorchModule)torchModule);
         }
     }
 }
