@@ -26,10 +26,7 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor>> source)
         {
-            return source.Select(value =>
-            {
-                return cat([value.Item1, value.Item2], Dimension);
-            });
+            return source.Select(value => cat([value.Item1, value.Item2], Dimension));
         }
 
         /// <summary>
@@ -37,10 +34,7 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor>> source)
         {
-            return source.Select(value =>
-            {
-                return cat([value.Item1, value.Item2, value.Item3], Dimension);
-            });
+            return source.Select(value => cat([value.Item1, value.Item2, value.Item3], Dimension));
         }
 
         /// <summary>
@@ -48,10 +42,7 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor>> source)
         {
-            return source.Select(value =>
-            {
-                return cat([value.Item1, value.Item2, value.Item3, value.Item4], Dimension);
-            });
+            return source.Select(value => cat([value.Item1, value.Item2, value.Item3, value.Item4], Dimension));
         }
 
         /// <summary>
@@ -59,10 +50,7 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor, Tensor>> source)
         {
-            return source.Select(value =>
-            {
-                return cat([value.Item1, value.Item2, value.Item3, value.Item4, value.Item5], Dimension);
-            });
+            return source.Select(value => cat([value.Item1, value.Item2, value.Item3, value.Item4, value.Item5], Dimension));
         }
 
         /// <summary>
@@ -70,10 +58,15 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor, Tensor, Tensor>> source)
         {
-            return source.Select(value =>
-            {
-                return cat([value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6], Dimension);
-            });
+            return source.Select(value => cat([value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6], Dimension));
+        }
+
+        /// <summary>
+        /// Concatenates the input tensors along the specified dimension.
+        /// </summary>
+        public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor>> source)
+        {
+            return source.Select(value => cat([value.Item1, value.Item2, value.Item3, value.Item4, value.Item5, value.Item6, value.Item7], Dimension));
         }
 
         /// <summary>
@@ -81,10 +74,7 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process(IObservable<IEnumerable<Tensor>> source)
         {
-            return source.Select(value =>
-            {
-                return cat([.. value], Dimension);
-            });
+            return source.Select(value => cat([.. value], Dimension));
         }
     }
 }
