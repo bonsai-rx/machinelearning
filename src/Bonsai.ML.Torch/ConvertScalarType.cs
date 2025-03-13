@@ -6,17 +6,17 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Converts the input tensor to the specified scalar type.
+    /// Converts the data type of the input tensor to the newly specified scalar type.
     /// </summary>
     [Combinator]
-    [Description("Converts the input tensor to the specified scalar type.")]
+    [Description("Converts the data type of the input tensor to the newly specified scalar type.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class ConvertDataType
+    public class ConvertScalarType
     {
         /// <summary>
-        /// The scalar type to which to convert the input tensor.
+        /// The scalar type with which to convert the input tensor.
         /// </summary>
-        [Description("The scalar type to which to convert the input tensor.")]
+        [Description("The scalar type with which to convert the input tensor.")]
         public ScalarType Type { get; set; } = ScalarType.Float32;
 
         /// <summary>
@@ -24,10 +24,7 @@ namespace Bonsai.ML.Torch
         /// </summary>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            return source.Select(tensor =>
-            {
-                return tensor.to_type(Type);
-            });
+            return source.Select(tensor => tensor.to_type(Type));
         }
     }
 }
