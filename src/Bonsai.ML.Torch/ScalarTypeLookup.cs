@@ -8,7 +8,7 @@ namespace Bonsai.ML.Torch
     /// <summary>
     /// Provides methods to look up tensor data types that currently support conversion to designated .NET types.
     /// </summary>
-    public static class ScalarTypeLookup
+    internal static class ScalarTypeLookup
     {
         private static readonly Dictionary<ScalarType, (Type Type, string StringValue)> _lookup = new()
         {
