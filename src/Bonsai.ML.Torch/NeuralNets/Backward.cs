@@ -39,21 +39,17 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor>> source)
         {
-            optim.Optimizer optimizer = null;
-            switch (Optimizer)
+            optim.Optimizer optimizer = Optimizer switch
             {
-                case Optimizer.Adam:
-                    optimizer = Adam(Model.Module.parameters());
-                    break;
-            }
+                Optimizer.Adam => Adam(Model.Module.parameters()),
+                _ => throw new ArgumentException($"Selected optimizer, {Optimizer} is currently not supported.")
+            };
 
-            Module<Tensor, Tensor, Tensor> loss = null;
-            switch (Loss)
+            Module<Tensor, Tensor, Tensor> loss = Loss switch
             {
-                case Loss.NLLLoss:
-                    loss = NLLLoss();
-                    break;
-            }
+                Loss.NegativeLogLikelihood => NLLLoss(),
+                _ => throw new ArgumentException($"Selected loss, {Loss} is currently not supported.")
+            };
 
             var scheduler = lr_scheduler.StepLR(optimizer, 1, 0.7);
             Model.Module.train();
