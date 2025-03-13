@@ -22,12 +22,15 @@ namespace Bonsai.ML.Torch
     [Combinator]
     [Description("Creates a tensor from the specified values. Uses Python-like syntax to specify the tensor values. For example, a 2x2 tensor can be created with the following values: \"[[1, 2], [3, 4]]\".")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class CreateTensor : ExpressionBuilder
+    public class CreateTensor : VariableArgumentExpressionBuilder
     {
-        readonly Range<int> argumentRange = new(0, 1);
-
-        /// <inheritdoc/>
-        public override Range<int> ArgumentRange => argumentRange;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CreateTensor"/> class.
+        /// </summary>
+        public CreateTensor()
+            : base(minArguments: 0, maxArguments: 1)
+        {
+        }
 
         /// <summary>
         /// The data type of the tensor elements.
