@@ -9,7 +9,6 @@ using System.Xml.Serialization;
 using Bonsai.Expressions;
 using static TorchSharp.torch;
 using Bonsai.ML.Data;
-using Bonsai.ML.Python;
 using TorchSharp;
 
 namespace Bonsai.ML.Torch
@@ -39,11 +38,15 @@ namespace Bonsai.ML.Torch
         [TypeConverter(typeof(ScalarTypeConverter))]
         public ScalarType Type
         {
-            get => scalarType;
-            set => scalarType = value;
+            get => _scalarType;
+            set
+            {
+                _returnType = ScalarTypeLookup.GetTypeFromScalarType(value);
+                _scalarType = value;
+            }
         }
-
-        private ScalarType scalarType = ScalarType.Float32;
+        private Type _returnType;
+        private ScalarType _scalarType = ScalarType.Float32;
 
         /// <summary>
         /// The values of the tensor elements. 
@@ -53,14 +56,15 @@ namespace Bonsai.ML.Torch
         [Description("The values of the tensor elements. Uses Python-like syntax to specify the tensor values. For example: \"[[1, 2], [3, 4]]\".")]
         public string Values
         {
-            get => values;
+            get => _stringValues;
             set
             {
-                values = value.ToLower();
+                _tensorData = PythonDataHelper.Parse(value, _returnType);
+                _stringValues = PythonDataHelper.Format(_tensorData);
             }
         }
-
-        private string values = "[0]";
+        private object _tensorData = new int[] { 0 };
+        private string _stringValues = "[0]";
 
         /// <summary>
         /// The device on which to create the tensor.
@@ -72,7 +76,6 @@ namespace Bonsai.ML.Torch
             get => device;
             set => device = value;
         }
-
         private Device device = null;
 
         private Expression BuildTensorFromArray(Array arrayValues, Type returnType)
@@ -85,7 +88,7 @@ namespace Bonsai.ML.Torch
             var assignArray = Expression.Assign(arrayVariable, arrayCreationExpression);
 
             List<Expression> assignments = [];
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 0; i < _stringValues.Length; i++)
             {
                 var indices = new Expression[rank];
                 int temp = i;
@@ -120,7 +123,7 @@ namespace Bonsai.ML.Torch
             var tensorAssignment = Expression.Call(
                 tensorCreationMethodInfo,
                 tensorDataInitializationBlock,
-                Expression.Constant(scalarType, typeof(ScalarType?)),
+                Expression.Constant(_scalarType, typeof(ScalarType?)),
                 Expression.Constant(device, typeof(Device)),
                 Expression.Constant(false, typeof(bool)),
                 Expression.Constant(null, typeof(string).MakeArrayType())
@@ -174,7 +177,7 @@ namespace Bonsai.ML.Torch
                 );
 
                 tensorCreationMethodArguments = [.. tensorCreationMethodArguments.Prepend(
-                    Expression.Constant(scalarType, typeof(ScalarType?))
+                    Expression.Constant(_scalarType, typeof(ScalarType?))
                 )];
             }
 
@@ -202,7 +205,6 @@ namespace Bonsai.ML.Torch
         /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
-            var returnType = ScalarTypeLookup.GetTypeFromScalarType(scalarType);
             Type[] argTypes = [.. arguments.Select(arg => arg.Type)];
 
             Type[] methodInfoArgumentTypes = [typeof(Tensor)];
@@ -217,23 +219,14 @@ namespace Bonsai.ML.Torch
                         .GetGenericArguments()[0]
                 ) : methods.FirstOrDefault(m => !m.IsGenericMethod);
 
-            var tensorValues = ArrayHelper.ParseString(values, returnType);
-            var buildTensor = tensorValues is Array arrayValues ? BuildTensorFromArray(arrayValues, returnType) : BuildTensorFromScalarValue(tensorValues, returnType);
+            var buildTensor = _tensorData is Array arrayValues ? BuildTensorFromArray(arrayValues, _returnType) : BuildTensorFromScalarValue(_tensorData, _returnType);
             var methodArguments = arguments.Count() == 0 ? [buildTensor] : arguments.Concat([buildTensor]);
 
-            try
-            {
-                return Expression.Call(
-                    Expression.Constant(this),
-                    methodInfo,
-                    methodArguments
-                );
-            }
-            finally
-            {
-                values = StringFormatter.FormatToPython(tensorValues).ToLower();
-                scalarType = ScalarTypeLookup.GetScalarTypeFromType(returnType);
-            }
+            return Expression.Call(
+                Expression.Constant(this),
+                methodInfo,
+                methodArguments
+            );
         }
 
         /// <summary>
