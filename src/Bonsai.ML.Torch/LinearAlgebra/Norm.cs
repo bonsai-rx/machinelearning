@@ -6,16 +6,15 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch.LinearAlgebra
 {
     /// <summary>
-    /// Computes a matrix norm.
+    /// Computes a vector or matrix norm.
     /// </summary>
     [Combinator]
-    [Description("Computes a matrix norm.")]
+    [Description("Computes a vector or matrix norm.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class MatrixNorm
+    public class Norm
     {
-
         /// <summary>
-        /// The dimensions along which to compute the matrix norm.
+        /// The dimensions along which to compute the norm.
         /// </summary>
         [TypeConverter(typeof(UnidimensionalArrayConverter))]
         public long[] Dimensions { get; set; } = null;
