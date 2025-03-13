@@ -3,24 +3,24 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Bonsai.ML.Data
 {
     /// <summary>
-    /// Provides a set of static methods for working with arrays.
+    /// Provides a set of static methods for working with JSON data containing numeric and boolean values.
     /// </summary>
-    public static class ArrayHelper
+    public static class JsonDataHelper
     {
         /// <summary>
-        /// Parses the input string into an object of the specified type. 
-        /// If the input is a JSON array, the method will attempt to parse it into a list or array of the specified type. 
+        /// Parses the input string into an object of the specified type.
         /// </summary>
         /// <param name="input">The string to parse.</param>
         /// <param name="dtype">The data type of the object.</param>
         /// <returns>An object of the specified type containing the parsed data.</returns>
-        public static object ParseString(string input, Type dtype)
+        public static object Parse(string input, Type dtype)
         {
             if (!IsValidJson(input))
             {
@@ -28,7 +28,7 @@ namespace Bonsai.ML.Data
             }
 
             var token = JsonConvert.DeserializeObject<JToken>(input);
-            
+
             if (token is JValue value)
             {
                 return Convert.ChangeType(value, dtype);
@@ -78,7 +78,8 @@ namespace Bonsai.ML.Data
                 }
                 else
                 {
-                    var subArrayDimensions = token.Cast<JArray>().Select(value => {
+                    var subArrayDimensions = token.Cast<JArray>().Select(value =>
+                    {
                         var depth = ParseDepth(value);
                         return ParseDimensions(value, depth);
                     }).ToList();
@@ -159,7 +160,7 @@ namespace Bonsai.ML.Data
                 }
             }
 
-            return dimensions.ToArray();
+            return [.. dimensions];
         }
 
         private static void PopulateArray(JToken token, Array array, int[] indices, Type dtype)
@@ -185,13 +186,13 @@ namespace Bonsai.ML.Data
         {
             var listType = typeof(List<>).MakeGenericType(DetermineListType(token, dtype));
             var list = (IList)Activator.CreateInstance(listType);
-            
+
             foreach (var item in token)
             {
                 var result = ParseToken(item, dtype);
                 list.Add(result);
             }
-            
+
             return list;
         }
 
@@ -223,6 +224,188 @@ namespace Bonsai.ML.Data
             {
                 return typeof(object);
             }
+        }
+
+        /// <summary>
+        /// Formats the input object into a string representation that is consistent with JSON syntax.
+        /// </summary>
+        /// <param name="obj">The object to format.</param>
+        /// <returns>A string representation that is consistent with JSON syntax.</returns>
+        public static string Format(object obj)
+        {
+            var sb = new StringBuilder();
+            int depth = 0;
+            Format(obj, sb, depth);
+            return sb.ToString();
+        }
+
+        private static void Format(object obj, StringBuilder sb, int depth)
+        {
+            switch (obj)
+            {
+                case null:
+                    sb.Append("null");
+                    break;
+                case string:
+                case char:
+                    sb.Append('"').Append(obj).Append('"');
+                    break;
+                case bool:
+                    sb.Append(obj.ToString().ToLower());
+                    break;
+                case int:
+                case double:
+                case float:
+                case long:
+                case short:
+                case byte:
+                case ushort:
+                case uint:
+                case ulong:
+                case sbyte:
+                case decimal:
+                    sb.Append(obj);
+                    break;
+                case Array:
+                    FormatArray(obj, sb, depth);
+                    break;
+                case IList:
+                    FormatList(obj, sb, depth);
+                    break;
+                case IDictionary:
+                    FormatDictionary(obj, sb, depth);
+                    break;
+                case object tuple when obj.GetType().IsGenericType && 
+                        obj.GetType().GetGenericTypeDefinition() == typeof(Tuple<,>) || 
+                        obj.GetType().GetGenericTypeDefinition() == typeof(Tuple<,,>) ||
+                        obj.GetType().GetGenericTypeDefinition() == typeof(Tuple<,,,>) ||
+                        obj.GetType().GetGenericTypeDefinition() == typeof(Tuple<,,,,>) ||
+                        obj.GetType().GetGenericTypeDefinition() == typeof(Tuple<,,,,,>) ||
+                        obj.GetType().GetGenericTypeDefinition() == typeof(Tuple<,,,,,,>) ||
+                        obj.GetType().GetGenericTypeDefinition() == typeof(Tuple<,,,,,,,>):
+                    FormatTuple(obj, sb, depth);
+                    break;
+                default:
+                    FormatDefault(obj, sb, depth);
+                    break;
+            }
+        }
+
+        private static void FormatArray(object obj, StringBuilder sb, int depth)
+        {
+            var array = (Array)obj;
+            if (array.Rank == 1)
+            {
+                sb.Append('[');
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (i > 0)
+                    {
+                        sb.Append(", ");
+                    }
+                    Format(array.GetValue(i), sb, depth + 1);
+                }
+                sb.Append(']');
+            }
+            else
+            {
+                FormatNDArray(array, new int[array.Rank], 0, sb, depth);
+            }
+        }
+
+        private static void FormatNDArray(Array array, int[] indices, int dimension, StringBuilder sb, int depth)
+        {
+            if (dimension == array.Rank)
+            {
+                Format(array.GetValue(indices), sb, depth + 1);
+                return;
+            }
+
+            sb.Append('[');
+            for (int i = 0; i < array.GetLength(dimension); i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                indices[dimension] = i;
+                FormatNDArray(array, indices, dimension + 1, sb, depth + 1);
+            }
+            sb.Append(']');
+        }
+
+        private static void FormatList(object obj, StringBuilder sb, int depth)
+        {
+            var list = (IList)obj;
+            sb.Append('[');
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                Format(list[i], sb, depth + 1);
+            }
+            sb.Append(']');
+        }
+
+        private static void FormatDictionary(object obj, StringBuilder sb, int depth)
+        {
+            var dict = (IDictionary)obj;
+            sb.Append('{');
+            bool first = true;
+            foreach (DictionaryEntry entry in dict)
+            {
+                if (!first)
+                {
+                    sb.Append(", ");
+                }
+                else
+                {
+                    first = false;
+                }
+                Format(entry.Key, sb, depth + 1);
+                sb.Append(": ");
+                Format(entry.Value, sb, depth + 1);
+            }
+            sb.Append('}');
+        }
+
+        private static void FormatTuple(object obj, StringBuilder sb, int depth)
+        {
+            var itemProperties = obj.GetType()
+                .GetProperties()
+                .Where(p => p.Name.StartsWith("Item"))
+                .OrderBy(p => p.Name)
+                .ToArray();
+
+            sb.Append('(');
+            for (int i = 0; i < itemProperties.Length; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                Format(itemProperties[i].GetValue(obj), sb, depth + 1);
+            }
+            sb.Append(')');
+        }
+
+        private static void FormatDefault(object obj, StringBuilder sb, int depth)
+        {
+
+            var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            sb.Append('{');
+            for (int i = 0; i < properties.Length; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+                sb.Append('"').Append(properties[i].Name).Append("\": ");
+                Format(properties[i].GetValue(obj), sb, depth + 1);
+            }
+            sb.Append('}');
         }
     }
 }
