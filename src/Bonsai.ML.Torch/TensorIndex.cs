@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.Index;
+namespace Bonsai.ML.Torch;
 
 /// <summary>
 /// Represents an index that is created from a tensor.

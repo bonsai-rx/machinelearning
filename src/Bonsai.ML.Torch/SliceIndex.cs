@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using TorchSharp;
 
-namespace Bonsai.ML.Torch.Index;
+namespace Bonsai.ML.Torch;
 
 /// <summary>
 /// Represents an index that selects a range of elements from a tensor.

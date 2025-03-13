@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using TorchSharp;
 
-namespace Bonsai.ML.Torch.Index;
+namespace Bonsai.ML.Torch;
 
 /// <summary>
 /// Provides helper methods to parse tensor indexes.
 /// </summary>
-public static class IndexHelper
+internal static class IndexHelper
 {
-
     /// <summary>
     /// Parses the input string into an array of tensor indexes.
     /// </summary>
@@ -76,11 +75,11 @@ public static class IndexHelper
     }
     
     /// <summary>
-    /// Serializes the input array of tensor indexes into a string representation.
+    /// Formats the input array of tensor indexes into a string representation.
     /// </summary>
     /// <param name="indexes"></param>
     /// <returns></returns>
-    public static string Serialize(torch.TensorIndex[] indexes)
+    public static string Format(torch.TensorIndex[] indexes)
     {
         return string.Join(", ", indexes);
     }

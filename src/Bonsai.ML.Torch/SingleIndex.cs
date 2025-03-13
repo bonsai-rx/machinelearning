@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using TorchSharp;
 
-namespace Bonsai.ML.Torch.Index;
+namespace Bonsai.ML.Torch;
 
 /// <summary>
 /// Represents an index that selects a single value of a tensor.
@@ -18,7 +18,7 @@ public class SingleIndex
     /// Gets or sets the index value used to select a single element from a tensor.
     /// </summary>
     [Description("The index value used to select a single element from a tensor.")]
-    public long Index { get; set; } = 0;
+    public long Value { get; set; } = 0;
 
     /// <summary>
     /// Generates the single index.
@@ -26,7 +26,7 @@ public class SingleIndex
     /// <returns></returns>
     public IObservable<torch.TensorIndex> Process()
     {
-        return Observable.Return(torch.TensorIndex.Single(Index));
+        return Observable.Return(torch.TensorIndex.Single(Value));
     }
 
     /// <summary>
@@ -37,6 +37,6 @@ public class SingleIndex
     /// <returns></returns>
     public IObservable<torch.TensorIndex> Process<T>(IObservable<T> source)
     {
-        return source.Select((_) => torch.TensorIndex.Single(Index));
+        return source.Select((_) => torch.TensorIndex.Single(Value));
     }
 }

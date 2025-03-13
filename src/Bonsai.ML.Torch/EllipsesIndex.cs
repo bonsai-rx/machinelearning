@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using TorchSharp;
 
-namespace Bonsai.ML.Torch.Index;
+namespace Bonsai.ML.Torch;
 
 /// <summary>
 /// Represents an index that selects all dimensions of a tensor.
@@ -14,7 +14,6 @@ namespace Bonsai.ML.Torch.Index;
 [WorkflowElementCategory(ElementCategory.Source)]
 public class EllipsisIndex
 {
-
     /// <summary>
     /// Generates the ellipsis index.
     /// </summary>

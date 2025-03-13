@@ -4,33 +4,33 @@ using System.Linq;
 using System.Reactive.Linq;
 using TorchSharp;
 
-namespace Bonsai.ML.Torch.Index;
+namespace Bonsai.ML.Torch;
 
 /// <summary>
-/// Represents an index that selects no elements of a tensor.
+/// Represents the colon index used to select all elements along a given dimension.
 /// </summary>
 [Combinator]
-[Description("Represents an index that selects no elements of a tensor.")]
+[Description("Represents the colon index used to select all elements along a given dimension.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class NoneIndex
+public class ColonIndex
 {
     /// <summary>
-    /// Generates the none index.
+    /// Generates the colon index.
     /// </summary>
     /// <returns></returns>
     public IObservable<torch.TensorIndex> Process()
     {
-        return Observable.Return(torch.TensorIndex.None);
+        return Observable.Return(torch.TensorIndex.Colon);
     }
 
     /// <summary>
-    /// Processes the input sequence and generates the none index.
+    /// Processes the input sequence and generates the colon index.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<torch.TensorIndex> Process<T>(IObservable<T> source)
     {
-        return source.Select((_) => torch.TensorIndex.None);
+        return source.Select((_) => torch.TensorIndex.Colon);
     }
 }
