@@ -21,13 +21,25 @@ namespace Bonsai.ML.Torch
         public long[] Dimensions { get; set; }
 
         /// <summary>
+        /// If true, keeps the dimensions of the input tensor the same.
+        /// </summary>
+        [Description("If true, keeps the dimensions of the input tensor the same.")]
+        public bool KeepDimensions { get; set; }
+
+        /// <summary>
+        /// The data type of the tensor.
+        /// </summary>
+        [Description("The data type of the tensor.")]
+        public ScalarType? Type { get; set; } = null;
+
+        /// <summary>
         /// Computes the sum of the input tensor elements along the specified dimensions.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            return source.Select(input => input.sum(Dimensions));
+            return source.Select(input => input.sum(Dimensions, keepdim: KeepDimensions, type: Type));
         }
     }
 }
