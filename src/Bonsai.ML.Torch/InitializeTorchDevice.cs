@@ -21,13 +21,19 @@ namespace Bonsai.ML.Torch
         public DeviceType DeviceType { get; set; }
 
         /// <summary>
+        /// The index of the device to initialize.
+        /// </summary>
+        [Description("The index of the device to initialize.")]
+        public int DeviceIndex { get; set; } = -1;
+
+        /// <summary>
         /// Initializes the Torch device with the specified device type.
         /// </summary>
         /// <returns></returns>
         public IObservable<Device> Process()
         {
             InitializeDeviceType(DeviceType);
-            return Observable.Return(new Device(DeviceType));
+            return Observable.Return(new Device(DeviceType, DeviceIndex));
         }
 
         /// <summary>
@@ -37,7 +43,7 @@ namespace Bonsai.ML.Torch
         public IObservable<Device> Process<T>(IObservable<T> source)
         {
             InitializeDeviceType(DeviceType);
-            return source.Select((_) => new Device(DeviceType));
+            return source.Select((_) => new Device(DeviceType, DeviceIndex));
         }
     }
 }
