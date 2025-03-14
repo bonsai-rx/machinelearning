@@ -6,12 +6,12 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Creates a 1-D tensor of linearly interpolated values within a given range given the start, end, and count.
+    /// Creates a 1-D tensor of equally spaced values within a given range given the start, end, and count.
     /// </summary>
     [Combinator]
-    [Description("Creates a 1-D tensor of linearly interpolated values within a given range given the start, end, and count.")]
+    [Description("Creates a 1-D tensor of equally spaced values within a given range given the start, end, and count.")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class Linspace
+    public class LinSpace
     {
         /// <summary>
         /// The start of the range.
