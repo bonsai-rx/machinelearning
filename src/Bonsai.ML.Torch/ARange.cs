@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using static TorchSharp.torch;
 using TorchSharp;
 
@@ -33,11 +34,24 @@ namespace Bonsai.ML.Torch
         public int Step { get; set; } = 1;
 
         /// <summary>
+        /// The device on which to create the tensor.
+        /// </summary>
+        [Description("The device on which to create the tensor.")]
+        [XmlIgnore]
+        public Device Device { get; set; } = null;
+
+        /// <summary>
+        /// The data type of the tensor.
+        /// </summary>
+        [Description("The data type of the tensor.")]
+        public ScalarType? Type { get; set; } = null;
+
+        /// <summary>
         /// Generates an observable sequence of 1-D tensors created with the <see cref="arange(Scalar, Scalar, Scalar, ScalarType?, Device?, bool)"/> function.
         /// </summary>
         public IObservable<Tensor> Process()
         {
-            return Observable.Return(arange(Start, End, Step));
+            return Observable.Return(arange(Start, End, Step, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -47,7 +61,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process<T>(IObservable<T> source)
         {
-            return source.Select(value => arange(Start, End, Step));
+            return source.Select(value => arange(Start, End, Step, dtype: Type, device: Device));
         }
     }
 }

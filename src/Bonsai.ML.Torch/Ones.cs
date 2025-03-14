@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch
@@ -21,12 +22,25 @@ namespace Bonsai.ML.Torch
         public long[] Size { get; set; } = [0];
 
         /// <summary>
+        /// The device on which to create the tensor.
+        /// </summary>
+        [Description("The device on which to create the tensor.")]
+        [XmlIgnore]
+        public Device Device { get; set; } = null;
+
+        /// <summary>
+        /// The data type of the tensor.
+        /// </summary>
+        [Description("The data type of the tensor.")]
+        public ScalarType? Type { get; set; } = null;
+
+        /// <summary>
         /// Generates an observable sequence of tensors filled with ones.
         /// </summary>
         /// <returns></returns>
         public IObservable<Tensor> Process()
         {
-            return Observable.Return(ones(Size));
+            return Observable.Return(ones(Size, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -36,7 +50,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process<T>(IObservable<T> source)
         {
-            return source.Select(value => ones(Size));
+            return source.Select(value => ones(Size, dtype: Type, device: Device));
         }
     }
 }

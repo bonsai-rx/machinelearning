@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch
@@ -32,12 +33,25 @@ namespace Bonsai.ML.Torch
         public int Count { get; set; } = 10;
 
         /// <summary>
+        /// The device on which to create the tensor.
+        /// </summary>
+        [Description("The device on which to create the tensor.")]
+        [XmlIgnore]
+        public Device Device { get; set; } = null;
+
+        /// <summary>
+        /// The data type of the tensor.
+        /// </summary>
+        [Description("The data type of the tensor.")]
+        public ScalarType? Type { get; set; } = null;
+
+        /// <summary>
         /// Generates an observable sequence of 1-D tensors created with the <see cref="linspace"/> function.
         /// </summary>
         /// <returns></returns>
         public IObservable<Tensor> Process()
         {
-            return Observable.Return(linspace(Start, End, Count));
+            return Observable.Return(linspace(Start, End, Count, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -47,7 +61,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process<T>(IObservable<T> source)
         {
-            return source.Select(value => linspace(Start, End, Count));
+            return source.Select(value => linspace(Start, End, Count, dtype: Type, device: Device));
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using OpenCV.Net;
 using static TorchSharp.torch;
 
@@ -16,13 +17,26 @@ namespace Bonsai.ML.Torch
     public class ToTensor
     {
         /// <summary>
+        /// The device on which to create the tensor.
+        /// </summary>
+        [Description("The device on which to create the tensor.")]
+        [XmlIgnore]
+        public Device Device { get; set; } = null;
+
+        /// <summary>
+        /// The data type of the tensor.
+        /// </summary>
+        [Description("The data type of the tensor.")]
+        public ScalarType? Type { get; set; } = null;
+
+        /// <summary>
         /// Converts an int into a tensor.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<int> source)
         {
-            return source.Select(value => as_tensor(value));
+            return source.Select(value => as_tensor(value, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -32,7 +46,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<double> source)
         {
-            return source.Select(value => as_tensor(value));
+            return source.Select(value => as_tensor(value, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -42,7 +56,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<byte> source)
         {
-            return source.Select(value => as_tensor(value));
+            return source.Select(value => as_tensor(value, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -52,7 +66,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<bool> source)
         {
-            return source.Select(value => as_tensor(value));
+            return source.Select(value => as_tensor(value, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -62,7 +76,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<float> source)
         {
-            return source.Select(value => as_tensor(value));
+            return source.Select(value => as_tensor(value, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -72,7 +86,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<long> source)
         {
-            return source.Select(value => as_tensor(value));
+            return source.Select(value => as_tensor(value, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -82,7 +96,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<short> source)
         {
-            return source.Select(value => as_tensor(value));
+            return source.Select(value => as_tensor(value, dtype: Type, device: Device));
         }
 
         /// <summary>
@@ -92,7 +106,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Array> source)
         {
-            return source.Select(value => as_tensor(value));
+            return source.Select(value => as_tensor(value, dtype: Type, device: Device));
         }
 
         /// <summary>

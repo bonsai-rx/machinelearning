@@ -90,10 +90,10 @@ namespace Bonsai.ML.Torch
         [Description("The device on which to create the tensor.")]
         public Device Device
         {
-            get => device;
-            set => device = value;
+            get => _device;
+            set => _device = value;
         }
-        private Device device = null;
+        private Device _device = null;
 
         private bool ValidateUserInput(
             out Type returnType,
@@ -175,7 +175,7 @@ namespace Bonsai.ML.Torch
                 tensorCreationMethodInfo,
                 tensorDataInitializationBlock,
                 Expression.Constant(_scalarType, typeof(ScalarType?)),
-                Expression.Constant(device, typeof(Device)),
+                Expression.Constant(_device, typeof(Device)),
                 Expression.Constant(false, typeof(bool)),
                 Expression.Constant(null, typeof(string).MakeArrayType())
             );
@@ -212,7 +212,7 @@ namespace Bonsai.ML.Torch
             );
 
             Expression[] tensorCreationMethodArguments = [
-                Expression.Constant(device, typeof(Device)),
+                Expression.Constant(_device, typeof(Device)),
                 Expression.Constant(false, typeof(bool))
             ];
 
