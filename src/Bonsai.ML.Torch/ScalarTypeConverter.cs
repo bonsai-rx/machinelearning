@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
 using System.ComponentModel;
 using static TorchSharp.torch;
-using OpenCV.Net;
 
 namespace Bonsai.ML.Torch
 {
