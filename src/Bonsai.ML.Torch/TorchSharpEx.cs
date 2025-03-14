@@ -4,7 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using TorchSharp;
+using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch;
 
@@ -23,10 +23,17 @@ internal unsafe static class TorchSharpEx
     // Acts as GC root for unmanaged callbacks, value is unused
     private static readonly ConcurrentDictionary<DeleterCallback, nint> ActiveDeleterCallbacks = new();
 
-    /// <summary>Creates a <see cref="torch.Tensor"/> from unmanaged memory that is owned by a managed object</summary>
+    /// <summary>Creates a <see cref="Tensor"/> from unmanaged memory that is owned by a managed object</summary>
     /// <param name="data">The unmanaged memory that will back the tensor, must remain valid and fixed for the lifetime of the tensor</param>
     /// <param name="managedAnchor">The managed .NET object which owns <paramref name="data"/></param>
-    public static torch.Tensor CreateTensorFromUnmanagedMemoryWithManagedAnchor(IntPtr data, object managedAnchor, ReadOnlySpan<long> dimensions, torch.ScalarType dataType)
+    public static Tensor CreateTensorFromUnmanagedMemoryWithManagedAnchor(
+        IntPtr data, 
+        object managedAnchor, 
+        ReadOnlySpan<long> 
+        dimensions, 
+        ScalarType dataType,
+        Device device
+    )
     {
         //PERF: Ideally the deleter would receive the GCHandle as the context rather than the pointer to the unmanaged memory since that's
         // would allow us to use a GCHandle to root the anchor and free it directly rather than capturing it in the lambda.
@@ -48,29 +55,31 @@ internal unsafe static class TorchSharpEx
         if (!ActiveDeleterCallbacks.TryAdd(deleter, default))
             Debug.Fail("Unreachable");
 
+        device ??= get_default_device();
+
         fixed (long* dimensionsPtr = &dimensions[0])
         {
-            IntPtr tensorHandle = THSTensor_new(data, deleter, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, 0, 0, 0);
+            IntPtr tensorHandle = THSTensor_new(data, deleter, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, (int)device.type, device.index, 0);
             if (tensorHandle == IntPtr.Zero)
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                tensorHandle = THSTensor_new(data, deleter, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, 0, 0, 0);
+                tensorHandle = THSTensor_new(data, deleter, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, (int)device.type, device.index, 0);
             }
 
             if (tensorHandle == IntPtr.Zero)
-                torch.CheckForErrors();
+                CheckForErrors();
 
-            return torch.Tensor.UnsafeCreateTensor(tensorHandle);
+            return Tensor.UnsafeCreateTensor(tensorHandle);
         }
     }
 
     internal readonly ref struct StackTensor
     {
-        public readonly torch.Tensor Tensor;
+        public readonly Tensor Tensor;
         private readonly object? Anchor;
 
-        internal StackTensor(torch.Tensor tensor, object? anchor)
+        internal StackTensor(Tensor tensor, object? anchor)
         {
             Tensor = tensor;
             Anchor = anchor;
@@ -89,36 +98,44 @@ internal unsafe static class TorchSharpEx
     /// <remarks>
     /// The returned stack tensor must be disposed. The tensor it refers to will not be valid outside of the scope where it was allocated.
     /// </remarks>
-    internal static StackTensor CreateStackTensor(IntPtr data, object? managedAnchor, ReadOnlySpan<long> dimensions, torch.ScalarType dataType)
+    internal static StackTensor CreateStackTensor(
+        IntPtr data, 
+        object? managedAnchor, 
+        ReadOnlySpan<long> dimensions, 
+        ScalarType dataType,
+        Device device
+    )
     {
+        device ??= get_default_device();
+        
         fixed (long* dimensionsPtr = &dimensions[0])
         {
-            IntPtr tensorHandle = THSTensor_new(data, NullDeleterCallback, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, 0, 0, 0);
+            IntPtr tensorHandle = THSTensor_new(data, NullDeleterCallback, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, (int)device.type, device.index, 0);
             if (tensorHandle == IntPtr.Zero)
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                tensorHandle = THSTensor_new(data, NullDeleterCallback, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, 0, 0, 0);
+                tensorHandle = THSTensor_new(data, NullDeleterCallback, dimensionsPtr, dimensions.Length, (sbyte)dataType, (sbyte)dataType, (int)device.type, device.index, 0);
             }
 
             if (tensorHandle == IntPtr.Zero)
-                torch.CheckForErrors();
+                CheckForErrors();
 
-            torch.Tensor result = torch.Tensor.UnsafeCreateTensor(tensorHandle);
+            Tensor result = Tensor.UnsafeCreateTensor(tensorHandle);
             return new StackTensor(result, data);
         }
     }
 
     /// <summary>Gets a pointer to the tensor's backing memory</summary>
     /// <remarks>The data backing a tensor is not necessarily contiguous or even present on the CPU, consider other strategies before using this method.</remarks>
-    public static IntPtr DangerousGetDataPointer(this torch.Tensor tensor)
+    public static IntPtr DangerousGetDataPointer(this Tensor tensor)
     {
         [DllImport("LibTorchSharp")]
         static extern IntPtr THSTensor_data(IntPtr handle);
 
         IntPtr data = THSTensor_data(tensor.Handle);
         if (data == IntPtr.Zero)
-            torch.CheckForErrors();
+            CheckForErrors();
         return data;
     }
 }

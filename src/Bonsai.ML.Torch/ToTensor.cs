@@ -116,7 +116,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<IplImage> source)
         {
-            return source.Select(OpenCVHelper.ToTensor);
+            return source.Select(value => OpenCVHelper.ToTensor(value, device: Device));
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Mat> source)
         {
-            return source.Select(OpenCVHelper.ToTensor);
+            return source.Select(value => OpenCVHelper.ToTensor(value, device: Device));
         }
     }
 }

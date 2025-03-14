@@ -11,7 +11,7 @@ namespace Bonsai.ML.Torch
     /// </summary>
     public static class OpenCVHelper
     {
-        private static Dictionary<ScalarType, (IplDepth IplDepth, Depth Depth)> bitDepthLookup = new Dictionary<ScalarType, (IplDepth, Depth)> 
+        private static readonly Dictionary<ScalarType, (IplDepth IplDepth, Depth Depth)> bitDepthLookup = new()
         {
             { ScalarType.Byte, (IplDepth.U8, Depth.U8) },
             { ScalarType.Int16, (IplDepth.S16, Depth.S16) },
@@ -25,8 +25,9 @@ namespace Bonsai.ML.Torch
         /// Converts an OpenCV image to a Torch tensor.
         /// </summary>
         /// <param name="image"></param>
+        /// <param name="device"></param>
         /// <returns></returns>
-        public static Tensor ToTensor(IplImage image)
+        public static Tensor ToTensor(IplImage image, Device device)
         {
             if (image == null)
                 return empty([ 0, 0, 0 ]);
@@ -44,15 +45,16 @@ namespace Bonsai.ML.Torch
             if (data == IntPtr.Zero)
                 throw new InvalidOperationException($"Got {nameof(IplImage)} without backing data, this isn't expected to be possible.");
 
-            return TorchSharpEx.CreateTensorFromUnmanagedMemoryWithManagedAnchor(data, image, dimensions, tensorType);
+            return TorchSharpEx.CreateTensorFromUnmanagedMemoryWithManagedAnchor(data, image, dimensions, tensorType, device);
         }
 
         /// <summary>
         /// Converts an OpenCV mat to a Torch tensor.
         /// </summary>
         /// <param name="mat"></param>
+        /// <param name="device"></param>
         /// <returns></returns>
-        public static Tensor ToTensor(Mat mat)
+        public static Tensor ToTensor(Mat mat, Device device)
         {
             if (mat == null)
                 return empty([0, 0, 0 ]);
@@ -70,7 +72,7 @@ namespace Bonsai.ML.Torch
             if (data == IntPtr.Zero)
                 throw new InvalidOperationException($"Got {nameof(Mat)} without backing data, this isn't expected to be possible.");
 
-            return TorchSharpEx.CreateTensorFromUnmanagedMemoryWithManagedAnchor(data, mat, dimensions, tensorType);
+            return TorchSharpEx.CreateTensorFromUnmanagedMemoryWithManagedAnchor(data, mat, dimensions, tensorType, device);
         }
 
         private static (int height, int width, int channels) GetImageDimensions(this Tensor tensor)
@@ -86,8 +88,9 @@ namespace Bonsai.ML.Torch
         /// Converts a Torch tensor to an OpenCV image.
         /// </summary>
         /// <param name="tensor"></param>
+        /// <param name="device"></param>
         /// <returns></returns>
-        public unsafe static IplImage ToImage(Tensor tensor)
+        public unsafe static IplImage ToImage(Tensor tensor, Device device)
         {
             var (height, width, channels) = tensor.GetImageDimensions();
 
@@ -97,7 +100,7 @@ namespace Bonsai.ML.Torch
 
             // Create a temporary tensor backed by the image's memory and copy the source tensor into it
             ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
-            using var imageTensor = TorchSharpEx.CreateStackTensor(image.ImageData, image, dimensions, tensorType);
+            using var imageTensor = TorchSharpEx.CreateStackTensor(image.ImageData, image, dimensions, tensorType, device);
             imageTensor.Tensor.copy_(tensor);
 
             return image;
@@ -107,8 +110,9 @@ namespace Bonsai.ML.Torch
         /// Converts a Torch tensor to an OpenCV mat.
         /// </summary>
         /// <param name="tensor"></param>
+        /// <param name="device"></param>
         /// <returns></returns>
-        public unsafe static Mat ToMat(Tensor tensor)
+        public unsafe static Mat ToMat(Tensor tensor, Device device)
         {
             var (height, width, channels) = tensor.GetImageDimensions();
 
@@ -118,7 +122,7 @@ namespace Bonsai.ML.Torch
 
             // Create a temporary tensor backed by the matrix's memory and copy the source tensor into it
             ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
-            using var matTensor = TorchSharpEx.CreateStackTensor(mat.Data, mat, dimensions, tensorType);
+            using var matTensor = TorchSharpEx.CreateStackTensor(mat.Data, mat, dimensions, tensorType, device);
             matTensor.Tensor.copy_(tensor);
 
             return mat;
