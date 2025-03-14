@@ -41,8 +41,17 @@ namespace Bonsai.ML.Torch
             get => _scalarType;
             set
             {
-                _returnType = ScalarTypeLookup.GetTypeFromScalarType(value);
-                _scalarType = value;
+                if (ValidateUserInput(out var returnType, out var tensorData, out var validatedStringValues, scalarType: value))
+                {
+                    _returnType = returnType;
+                    _tensorData = tensorData;
+                    _stringValues = validatedStringValues;
+                    _scalarType = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid input.");
+                }
             }
         }
         private Type _returnType;
@@ -59,8 +68,16 @@ namespace Bonsai.ML.Torch
             get => _stringValues;
             set
             {
-                _tensorData = PythonDataHelper.Parse(value, _returnType);
-                _stringValues = PythonDataHelper.Format(_tensorData);
+                if (ValidateUserInput(out var returnType, out var tensorData, out var validatedStringValues, stringValues: value))
+                {
+                    _returnType = returnType;
+                    _tensorData = tensorData;
+                    _stringValues = validatedStringValues;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid input.");
+                }
             }
         }
         private object _tensorData = new int[] { 0 };
@@ -77,6 +94,40 @@ namespace Bonsai.ML.Torch
             set => device = value;
         }
         private Device device = null;
+
+        private bool ValidateUserInput(
+            out Type returnType,
+            out object tensorData,
+            out string validatedStringValues,
+            string stringValues = null, 
+            ScalarType? scalarType = null
+        )
+        {
+            stringValues ??= _stringValues;
+            scalarType ??= _scalarType;
+
+            try
+            {
+                returnType = ScalarTypeLookup.GetTypeFromScalarType(scalarType.Value);
+                tensorData = PythonDataHelper.Parse(stringValues, returnType);
+
+                if (tensorData is not Array)
+                    throw new ArgumentException("Invalid tensor data type.");
+
+                validatedStringValues = PythonDataHelper.Format(tensorData);
+
+                return true;
+            }
+
+            catch
+            {
+                returnType = null;
+                tensorData = null;
+                validatedStringValues = null;
+
+                return false;
+            }
+        }
 
         private Expression BuildTensorFromArray(Array arrayValues, Type returnType)
         {
