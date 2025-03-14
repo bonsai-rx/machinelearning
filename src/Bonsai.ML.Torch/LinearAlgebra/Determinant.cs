@@ -14,7 +14,6 @@ namespace Bonsai.ML.Torch.LinearAlgebra
     public class Determinant
     {
         /// <summary>
-        /// <summary>
         /// Computes the determinant of a square matrix.
         /// </summary>
         /// <param name="source"></param>
