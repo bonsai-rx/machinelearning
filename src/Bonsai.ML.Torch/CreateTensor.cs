@@ -111,7 +111,8 @@ namespace Bonsai.ML.Torch
                 returnType = ScalarTypeLookup.GetTypeFromScalarType(scalarType.Value);
                 tensorData = PythonDataHelper.Parse(stringValues, returnType);
 
-                if (tensorData is not Array)
+                if (tensorData is not Array && 
+                    !ScalarTypeLookup.Types.Contains(tensorData.GetType()))
                     throw new ArgumentException("Invalid tensor data type.");
 
                 validatedStringValues = PythonDataHelper.Format(tensorData);
@@ -205,7 +206,7 @@ namespace Bonsai.ML.Torch
 
             var tensorCreationMethodInfo = typeof(torch).GetMethod(
                 "tensor", [
-                    valueVariable.Type,
+                    returnType,
                     typeof(Device),
                     typeof(bool)
                 ]
@@ -220,7 +221,7 @@ namespace Bonsai.ML.Torch
             {
                 tensorCreationMethodInfo = typeof(torch).GetMethod(
                     "tensor", [
-                        valueVariable.Type,
+                        returnType,
                         typeof(ScalarType?),
                         typeof(Device),
                         typeof(bool)
@@ -245,7 +246,7 @@ namespace Bonsai.ML.Torch
             var assignTensor = Expression.Assign(tensorVariable, tensorAssignment);
 
             var buildTensor = Expression.Block(
-                tensorVariable,
+                [tensorVariable],
                 assignTensor,
                 tensorVariable
             );
