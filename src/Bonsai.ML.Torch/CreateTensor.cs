@@ -54,7 +54,7 @@ namespace Bonsai.ML.Torch
                 }
             }
         }
-        private Type _returnType;
+        private Type _returnType = typeof(float);
         private ScalarType _scalarType = ScalarType.Float32;
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Bonsai.ML.Torch
                 }
             }
         }
-        private object _tensorData = new int[] { 0 };
+        private object _tensorData = new float[] { 0 };
         private string _stringValues = "[0]";
 
         /// <summary>
