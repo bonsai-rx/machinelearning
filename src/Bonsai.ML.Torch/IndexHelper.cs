@@ -5,12 +5,12 @@ using TorchSharp;
 namespace Bonsai.ML.Torch;
 
 /// <summary>
-/// Provides helper methods to parse tensor indexes.
+/// Provides helper methods to parse tensor indices.
 /// </summary>
 internal static class IndexHelper
 {
     /// <summary>
-    /// Parses the input string into an array of tensor indexes.
+    /// Parses the input string into an array of tensor indices.
     /// </summary>
     /// <param name="input"></param>
     public static torch.TensorIndex[] Parse(string input)
@@ -75,12 +75,12 @@ internal static class IndexHelper
     }
     
     /// <summary>
-    /// Formats the input array of tensor indexes into a string representation.
+    /// Formats the input array of tensor indices into a string representation.
     /// </summary>
-    /// <param name="indexes"></param>
+    /// <param name="indices"></param>
     /// <returns></returns>
-    public static string Format(torch.TensorIndex[] indexes)
+    public static string Format(torch.TensorIndex[] indices)
     {
-        return string.Join(", ", indexes);
+        return string.Join(", ", indices);
     }
 }
