@@ -373,24 +373,6 @@ public class CreatePointProcessModel
         }
     }
 
-    private bool sumAcrossBatch = true;
-    /// <summary>
-    /// Gets or sets a value indicating whether to sum across the batched likelihood.
-    /// </summary>
-    [Category("5. Likelihood Parameters")]
-    [Description("Indicates whether to sum across the batched likelihood.")]
-    public bool SumAcrossBatch
-    {
-        get
-        {
-            return sumAcrossBatch;
-        }
-        set
-        {
-            sumAcrossBatch = value;
-        }
-    }
-
     private TransitionsType transitionsType = TransitionsType.RandomWalk;
     /// <summary>
     /// Gets or sets the type of transition model used during the decoding process.
@@ -470,7 +452,6 @@ public class CreatePointProcessModel
                 markChannels: markChannels,
                 markBandwidth: markBandwidth,
                 ignoreNoSpikes: ignoreNoSpikes,
-                sumAcrossBatch: sumAcrossBatch,
                 nUnits: nUnits,
                 distanceThreshold: distanceThreshold,
                 sigmaRandomWalk: sigmaRandomWalk,

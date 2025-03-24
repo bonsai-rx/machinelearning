@@ -38,23 +38,6 @@ public class Decode
         }
     }
 
-    private bool _sumAcrossBatch = true;
-    private bool _updateSumAcrossBatch = false;
-    /// <summary>
-    /// Gets or sets a value indicating whether to ignore contributions from no spike events.
-    /// </summary>
-    [Description("Indicates whether to ignore contributions from no spike events.")]
-    public bool SumAcrossBatch
-    {
-        get => _sumAcrossBatch;
-        set
-        {
-            _sumAcrossBatch = value;
-            _updateSumAcrossBatch = true;
-        }
-    }
-
-
     /// <summary>
     /// Decodes the input neural data into a posterior state estimate using a point process model.
     /// </summary>
@@ -70,13 +53,6 @@ public class Decode
             {
                 model.Likelihood.IgnoreNoSpikes = _ignoreNoSpikes;
                 _updateIgnoreNoSpikes = false;
-            }
-
-            if (_updateSumAcrossBatch)
-            {
-
-                model.Likelihood.SumAcrossBatch = _sumAcrossBatch;
-                _updateSumAcrossBatch = false;
             }
             
             return model.Decode(input);
