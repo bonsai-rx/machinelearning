@@ -99,7 +99,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 throw new InvalidOperationException("The decode node is invalid.");
             }
 
-            _modelName = decodeNode.Model;
+            _modelName = decodeNode.Name;
 
             _visualizer = new MultidimensionalArrayVisualizer()
             {

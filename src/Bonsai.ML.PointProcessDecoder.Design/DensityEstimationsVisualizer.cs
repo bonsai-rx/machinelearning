@@ -15,10 +15,23 @@ using static TorchSharp.torch;
 using PointProcessDecoder.Core;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.DensityEstimationsVisualizer), 
+    Target = typeof(Bonsai.ML.PointProcessDecoder.CreatePointProcessModel))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.DensityEstimationsVisualizer), 
     Target = typeof(Bonsai.ML.PointProcessDecoder.Decode))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.DensityEstimationsVisualizer), 
+    Target = typeof(Bonsai.ML.PointProcessDecoder.Encode))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.DensityEstimationsVisualizer), 
+    Target = typeof(Bonsai.ML.PointProcessDecoder.GetModel))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.DensityEstimationsVisualizer), 
+    Target = typeof(Bonsai.ML.PointProcessDecoder.LoadPointProcessModel))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.DensityEstimationsVisualizer), 
+    Target = typeof(Bonsai.ML.PointProcessDecoder.SavePointProcessModel))]
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
+    /// <summary>
+    /// Visualizer for the density estimations of a point process model.
+    /// </summary>
     public class DensityEstimationsVisualizer : DialogTypeVisualizer
     {
         private int _rowCount = 1;
@@ -80,22 +93,22 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Decode decodeNode = null;
+            IManagedPointProcessModelNode node = null;
             var expressionBuilderGraph = (ExpressionBuilderGraph)provider.GetService(typeof(ExpressionBuilderGraph));
             var typeVisualizerContext = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
             if (expressionBuilderGraph != null && typeVisualizerContext != null)
             {
-                decodeNode = ExpressionBuilder.GetWorkflowElement(
+                node = ExpressionBuilder.GetWorkflowElement(
                     expressionBuilderGraph.Where(node => node.Value == typeVisualizerContext.Source)
-                        .FirstOrDefault().Value) as Decode;
+                        .FirstOrDefault().Value) as IManagedPointProcessModelNode;
             }
 
-            if (decodeNode == null)
+            if (node == null)
             {
                 throw new InvalidOperationException("The decode node is invalid.");
             }
 
-            _modelName = decodeNode.Model;
+            _modelName = node.Name;
             if (string.IsNullOrEmpty(_modelName))
             {
                 throw new InvalidOperationException("The point process model name is not set.");
@@ -289,7 +302,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 .data<double>()
             ];
 
-            // GC.KeepAlive(model);
             _isProcessing = false;
 
             return true;
