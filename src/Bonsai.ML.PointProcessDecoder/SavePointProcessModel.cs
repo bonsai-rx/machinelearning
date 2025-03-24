@@ -1,8 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
-using PointProcessDecoder.Core;
-using static TorchSharp.torch;
 
 namespace Bonsai.ML.PointProcessDecoder;
 
@@ -29,6 +27,7 @@ public class SavePointProcessModel
 
     /// <summary>
     /// Specifies the type of suffix to add to the save path.
+    /// The suffix is added as a subfolder to the save path.
     /// If DateTime, a suffix with the current date and time is added to the save path in the format 'yyyyMMddHHmmss'.
     /// </summary>
     [Description("Specifies the type of suffix to add to the save path.")]
@@ -39,7 +38,7 @@ public class SavePointProcessModel
     /// </summary>
     [TypeConverter(typeof(PointProcessModelNameConverter))]
     [Description("The name of the point process model to save.")]
-    public string Model { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Saves the state of the point process model.
@@ -55,7 +54,7 @@ public class SavePointProcessModel
             var path = AddSuffix switch
             {
                 SuffixType.DateTime => System.IO.Path.Combine(Path, $"{HighResolutionScheduler.Now:yyyyMMddHHmmss}"),
-                SuffixType.Guid => System.IO.Path.Combine(Path, Guid.NewGuid().ToString()),
+                SuffixType.Guid => System.IO.Path.Combine(Path, $"{Guid.NewGuid()}"),
                 _ => Path
             };
 
@@ -76,7 +75,7 @@ public class SavePointProcessModel
                 }
             }
 
-            var model = PointProcessModelManager.GetModel(Model);
+            var model = PointProcessModelManager.GetModel(Name);
 
             model.Save(path);
         });

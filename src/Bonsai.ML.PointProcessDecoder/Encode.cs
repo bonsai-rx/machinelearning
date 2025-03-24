@@ -12,14 +12,14 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Sink)]
 [Description("Encodes the combined state observation data and neural data into a point process model.")]
-public class Encode
+public class Encode : IManagedPointProcessModelNode
 {
     /// <summary>
     /// The name of the point process model to use.
     /// </summary>
     [TypeConverter(typeof(PointProcessModelNameConverter))]
     [Description("The name of the point process model to use.")]
-    public string Model { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Encodes the combined state observation data and neural data into a point process model.
@@ -28,7 +28,7 @@ public class Encode
     /// <returns></returns>
     public IObservable<Tuple<Tensor, Tensor>> Process(IObservable<Tuple<Tensor, Tensor>> source)
     {
-        var modelName = Model;
+        var modelName = Name;
         return source.Do(input =>
         {
             var model = PointProcessModelManager.GetModel(modelName);

@@ -22,7 +22,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Source)]
 [Description("Creates a new neural decoding model based on point processes using Bayesian state space models.")]
-public class CreatePointProcessModel
+public class CreatePointProcessModel : IManagedPointProcessModelNode
 {
     private string name = "PointProcessModel";
     /// <summary>

@@ -12,14 +12,14 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Source)]
 [Description("Returns the point process model.")]
-public class GetModel
+public class GetModel : IManagedPointProcessModelNode
 {
     /// <summary>
     /// The name of the point process model to return.
     /// </summary>
     [TypeConverter(typeof(PointProcessModelNameConverter))]
     [Description("The name of the point process model to return.")]
-    public string Model { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Returns the point process model.
@@ -28,7 +28,7 @@ public class GetModel
     public IObservable<PointProcessModel> Process()
     {
         return Observable.Defer(() => 
-            Observable.Return(PointProcessModelManager.GetModel(Model))
+            Observable.Return(PointProcessModelManager.GetModel(Name))
         );
     }
 
@@ -40,7 +40,7 @@ public class GetModel
     /// <returns></returns>
     public IObservable<PointProcessModel> Process<T>(IObservable<T> source)
     {
-        var modelName = Model;
+        var modelName = Name;
         return source.Select(input => {
             return PointProcessModelManager.GetModel(modelName);
         });

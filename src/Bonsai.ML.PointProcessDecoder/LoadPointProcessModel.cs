@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Linq;
@@ -7,13 +8,6 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 
 using PointProcessDecoder.Core;
-using PointProcessDecoder.Core.Estimation;
-using PointProcessDecoder.Core.Transitions;
-using PointProcessDecoder.Core.Encoder;
-using PointProcessDecoder.Core.Decoder;
-using PointProcessDecoder.Core.StateSpace;
-using PointProcessDecoder.Core.Likelihood;
-using System.IO;
 
 namespace Bonsai.ML.PointProcessDecoder;
 
@@ -23,7 +17,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Source)]
 [Description("Loads a point process model from a saved state.")]
-public class LoadPointProcessModel
+public class LoadPointProcessModel : IManagedPointProcessModelNode
 {
     private string name = "PointProcessModel";
 

@@ -13,14 +13,14 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Transform)]
 [Description("Decodes the input neural data into a posterior state estimate using a point process model.")]
-public class Decode
+public class Decode : IManagedPointProcessModelNode
 {
     /// <summary>
     /// The name of the point process model to use.
     /// </summary>
     [TypeConverter(typeof(PointProcessModelNameConverter))]
     [Description("The name of the point process model to use.")]
-    public string Model { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     private bool _ignoreNoSpikes = false;
     private bool _updateIgnoreNoSpikes = false;
@@ -45,7 +45,7 @@ public class Decode
     /// <returns></returns>
     public IObservable<Tensor> Process(IObservable<Tensor> source)
     {
-        var modelName = Model;
+        var modelName = Name;
         return source.Select(input => 
         {
             var model = PointProcessModelManager.GetModel(modelName);
