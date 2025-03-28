@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
-using System.Text;
-using PointProcessDecoder.Core.Decoder;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.PointProcessDecoder;
@@ -13,7 +13,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Transform)]
 [Description("Decodes the input neural data into a posterior state estimate using a point process model.")]
-public class Decode : IManagedPointProcessModelNode
+public class SelectUnits : IManagedPointProcessModelNode
 {
     /// <summary>
     /// The name of the point process model to use.
@@ -22,21 +22,28 @@ public class Decode : IManagedPointProcessModelNode
     [Description("The name of the point process model to use.")]
     public string Name { get; set; } = string.Empty;
 
-    private bool _ignoreNoSpikes = false;
-    private bool _updateIgnoreNoSpikes = false;
+    private Tensor _unitIds = empty(0);
+    private List<int> _units = [];
     /// <summary>
-    /// Gets or sets a value indicating whether to ignore contributions from no spike events.
+    /// Gets or sets the selected units.
     /// </summary>
-    [Description("Indicates whether to ignore contributions from no spike events.")]
-    public bool IgnoreNoSpikes
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
+    public int[] Units
     {
-        get => _ignoreNoSpikes;
+        get => [.._units];
         set
         {
-            _ignoreNoSpikes = value;
-            _updateIgnoreNoSpikes = true;
+            _units = [..value];
+            _unitIds = tensor(value);
         }
     }
+
+    /// <summary>
+    /// Gets the selected units in the form of a list.
+    /// </summary>
+    [Browsable(false)]
+    [XmlIgnore]
+    public List<int> SelectedUnits => _units;
 
     /// <summary>
     /// Decodes the input neural data into a posterior state estimate using a point process model.
@@ -45,17 +52,19 @@ public class Decode : IManagedPointProcessModelNode
     /// <returns></returns>
     public IObservable<Tensor> Process(IObservable<Tensor> source)
     {
-        var modelName = Name;
         return source.Select(input => 
         {
-            var model = PointProcessModelManager.GetModel(modelName);
-            if (_updateIgnoreNoSpikes) 
+            if (_unitIds.NumberOfElements == 0)
             {
-                model.Likelihood.IgnoreNoSpikes = _ignoreNoSpikes;
-                _updateIgnoreNoSpikes = false;
+                return input;
             }
-            
-            return model.Decode(input);
+
+            if (_unitIds.device != input.device)
+            {
+                _unitIds = _unitIds.to(input.device);
+            }
+
+            return input[TensorIndex.Colon, TensorIndex.Tensor(_unitIds)];
         });
     }
 }

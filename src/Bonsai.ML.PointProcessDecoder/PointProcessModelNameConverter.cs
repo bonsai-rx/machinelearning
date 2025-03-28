@@ -26,7 +26,9 @@ public class PointProcessModelNameConverter : StringConverter
             {
                 var models = (from builder in workflowBuilder.Workflow.Descendants()
                                     where builder.GetType() != typeof(DisableBuilder)
-                                    let createPointProcessModel = ExpressionBuilder.GetWorkflowElement(builder) as CreatePointProcessModel
+                                    let managedModelNode = ExpressionBuilder.GetWorkflowElement(builder)
+                                    where managedModelNode != null && (managedModelNode is CreatePointProcessModel || managedModelNode is LoadPointProcessModel) 
+                                    let createPointProcessModel = (IManagedPointProcessModelNode)managedModelNode
                                     where createPointProcessModel != null && !string.IsNullOrEmpty(createPointProcessModel.Name)
                                     select createPointProcessModel.Name)
                                     .Distinct()

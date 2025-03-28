@@ -35,6 +35,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
     public class DensityEstimationsVisualizer : DialogTypeVisualizer
     {
         private int _rowCount = 1;
+        /// <summary>
+        /// The number of rows in the table layout.
+        /// </summary>
         public int RowCount
         {
             get => _rowCount;
@@ -49,6 +52,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         }
 
         private int _columnCount = 1;
+        /// <summary>
+        /// The number of columns in the table layout.
+        /// </summary>
         public int ColumnCount
         {
             get => _columnCount;

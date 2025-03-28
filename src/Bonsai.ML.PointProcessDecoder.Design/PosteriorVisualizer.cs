@@ -16,9 +16,14 @@ using static TorchSharp.torch;
 
 using PointProcessDecoder.Core;
 using TorchSharp;
+using PointProcessDecoder.Core.Decoder;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer), 
     Target = typeof(Bonsai.ML.PointProcessDecoder.Decode))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer), 
+    Target = typeof(Bonsai.ML.PointProcessDecoder.GetDecoderData))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer), 
+    Target = typeof(Bonsai.ML.PointProcessDecoder.GetClassifierData))]
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
@@ -60,26 +65,36 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         private string _modelName;
         private bool _success = false;
         private Tensor _dataTensor;
+        private Func<object, Tensor> _convertInputData; 
         
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Decode decodeNode = null;
+            IManagedPointProcessModelNode node = null;
             var expressionBuilderGraph = (ExpressionBuilderGraph)provider.GetService(typeof(ExpressionBuilderGraph));
             var typeVisualizerContext = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
             if (expressionBuilderGraph != null && typeVisualizerContext != null)
             {
-                decodeNode = ExpressionBuilder.GetWorkflowElement(
+                node = ExpressionBuilder.GetWorkflowElement(
                     expressionBuilderGraph.Where(node => node.Value == typeVisualizerContext.Source)
-                        .FirstOrDefault().Value) as Decode;
+                        .FirstOrDefault().Value) as IManagedPointProcessModelNode;
             }
 
-            if (decodeNode == null)
+            if (node == null)
             {
                 throw new InvalidOperationException("The decode node is invalid.");
             }
 
-            _modelName = decodeNode.Name;
+            if (node is Decode)
+                _convertInputData = input => (Tensor)input;
+            else if (node is GetDecoderData)
+                _convertInputData = input => ((DecoderData)input).Posterior;
+            else if (node is GetClassifierData)
+                _convertInputData = input => ((ClassifierData)input).DecoderData.Posterior;
+            else
+                throw new InvalidOperationException("The node is invalid.");
+
+            _modelName = node.Name;
 
             _visualizer = new MultidimensionalArrayVisualizer()
             {
@@ -158,7 +173,8 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            Tensor posterior = (Tensor)value;
+            var posterior = _convertInputData(value);
+
             if (posterior.NumberOfElements == 0 || !_success)
             {
                 return;

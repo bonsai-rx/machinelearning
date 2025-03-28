@@ -53,6 +53,7 @@ public static class PointProcessModelManager
         double? distanceThreshold = null,
         double? sigmaRandomWalk = null,
         int? kernelLimit = null,
+        double? stayProbability = null,
         Device? device = null,
         ScalarType? scalarType = null
     )
@@ -77,6 +78,7 @@ public static class PointProcessModelManager
             distanceThreshold: distanceThreshold,
             sigmaRandomWalk: sigmaRandomWalk,
             kernelLimit: kernelLimit,
+            stayProbability: stayProbability,
             device: device,
             scalarType: scalarType
         );

@@ -79,7 +79,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
         }
     }
 
-    private StateSpaceType stateSpaceType = StateSpaceType.DiscreteUniformStateSpace;
+    private StateSpaceType stateSpaceType = StateSpaceType.DiscreteUniform;
     /// <summary>
     /// Gets or sets the type of state space used.
     /// </summary>
@@ -187,7 +187,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
         }
     }
 
-    private EncoderType encoderType = EncoderType.SortedSpikeEncoder;
+    private EncoderType encoderType = EncoderType.SortedSpikes;
     /// <summary>
     /// Gets or sets the type of encoder used.
     /// </summary>
@@ -226,7 +226,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     private int? nUnits = null;
     /// <summary>
     /// Gets or sets the number of sorted spiking units.
-    /// Only used when the encoder type is set to <see cref="EncoderType.SortedSpikeEncoder"/>.
+    /// Only used when the encoder type is set to <see cref="EncoderType.SortedSpikes"/>.
     /// </summary>
     [Category("3. Encoder Parameters")]
     [Description("The number of sorted spiking units. Only used when the encoder type is set to SortedSpikeEncoder.")]
@@ -245,7 +245,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     private int? markDimensions = null;
     /// <summary>
     /// Gets or sets the number of dimensions or features associated with each mark.
-    /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarkEncoder"/>.
+    /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarks"/>.
     /// </summary>
     [Category("3. Encoder Parameters")]
     [Description("The number of dimensions or features associated with each mark. Only used when the encoder type is set to ClusterlessMarkEncoder.")]
@@ -264,7 +264,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     private int? markChannels = null;
     /// <summary>
     /// Gets or sets the number of mark recording channels.
-    /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarkEncoder"/>.
+    /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarks"/>.
     /// </summary>
     [Category("3. Encoder Parameters")]
     [Description("The number of mark recording channels. Only used when the encoder type is set to ClusterlessMarkEncoder.")]
@@ -284,7 +284,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// <summary>
     /// Gets or sets the bandwidth of the mark estimation method.
     /// Must be the same length as the number of mark dimensions.
-    /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarkEncoder"/>.
+    /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarks"/>.
     /// </summary>
     [Category("3. Encoder Parameters")]
     [Description("The bandwidth of the mark estimation method. Must be the same length as the number of mark dimensions. Only used when the encoder type is set to ClusterlessMarkEncoder.")]
@@ -394,10 +394,10 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     private double? sigmaRandomWalk = null;
     /// <summary>
     /// Gets or sets the standard deviation of the random walk transitions model.
-    /// Only used when the transitions type is set to <see cref="TransitionsType.RandomWalk"/>.
+    /// Only used when the transitions type is set to <see cref="TransitionsType.RandomWalk"/> or when the decoder type is set to <see cref="DecoderType.HybridStateSpaceReplayClassifier"/> 
     /// </summary>
     [Category("6. Transition Parameters")]
-    [Description("The standard deviation of the random walk transitions model. Only used when the transitions type is set to RandomWalk.")]
+    [Description("The standard deviation of the random walk transitions model. Only used when the transitions type is set to RandomWalk or when the decoder type is set to HybridStateSpaceReplayClassifier.")]
     public double? SigmaRandomWalk
     {
         get
@@ -425,6 +425,27 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
         set
         {
             decoderType = value;
+        }
+    }
+
+    private double? _stayProbability = null;
+    /// <summary>
+    /// Gets or sets the stay probability used in the hybrid state space replay classifier.
+    /// Only used when the decoder type is set to <see cref="DecoderType.HybridStateSpaceReplayClassifier"/>.
+    /// </summary>
+    [Category("7. Decoder Parameters")]
+    [Description("The stay probability used in the hybrid state space replay classifier. Only used when the decoder type is set to HybridStateSpaceReplayClassifier.")]
+    public double? StayProbability
+    {
+        get => _stayProbability;
+        set
+        {
+            if (value <= 0 || value >= 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(StayProbability), "The stay probability must be greater than zero and less than one.");
+            }
+
+            _stayProbability = value;
         }
     }
 
@@ -456,6 +477,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
                 distanceThreshold: distanceThreshold,
                 sigmaRandomWalk: sigmaRandomWalk,
                 kernelLimit: kernelLimit,
+                stayProbability: _stayProbability,
                 device: device,
                 scalarType: scalarType
             ), resource => Observable.Return(resource.Model)
