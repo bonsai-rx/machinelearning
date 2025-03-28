@@ -17,41 +17,25 @@ namespace Bonsai.ML.Torch
     [Combinator]
     [Description("Converts the input tensor into a flattened array of the specified element type.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class ToArray : SingleArgumentExpressionBuilder
+    public class ConvertToArray : SingleArgumentExpressionBuilder
     {
+        private Type _type = typeof(float);
         /// <summary>
-        /// Initializes a new instance of the <see cref="ToArray"/> class.
+        /// Gets or sets the type of the elements in the output array.
         /// </summary>
-        public ToArray()
-        {
-            Type = typeof(double);
-        }
-
-        /// <summary>
-        /// Gets or sets the type mapping used to convert the input tensor into a flattened array.
-        /// </summary>
-        [Description("Gets or sets the type mapping used to convert the input tensor into a flattened array.")]
+        [Description("Gets or sets the type of the elements in the output array.")]
         [TypeConverter(typeof(ScalarTypeConverter))]
-        [XmlIgnore]
-        public Type Type { get; set; }
-
-        /// <summary>
-        /// Gets or sets an XML serializable representation of the type.
-        /// </summary>
-        [Browsable(false)]
-        [XmlElement("Type")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public string XmlType 
-        {
-            get { return Type.AssemblyQualifiedName; }
-            set { Type = Type.GetType(value); }
+        public ScalarType Type 
+        { 
+            get => ScalarTypeLookup.GetScalarTypeFromType(_type);
+            set => _type = ScalarTypeLookup.GetTypeFromScalarType(value);
         }
 
         /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
             MethodInfo methodInfo = GetType().GetMethod("Process", BindingFlags.Public | BindingFlags.Instance);
-            methodInfo = methodInfo.MakeGenericMethod(Type);
+            methodInfo = methodInfo.MakeGenericMethod(_type);
             Expression sourceExpression = arguments.First();
             
             return Expression.Call(
@@ -69,7 +53,14 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<T[]> Process<T>(IObservable<Tensor> source) where T : unmanaged
         {
-            return source.Select(tensor => tensor.data<T>().ToArray());
+            return source.Select(tensor => 
+            {
+                if (tensor.dtype != Type)
+                {
+                    tensor = tensor.to_type(Type);
+                }
+                return tensor.data<T>().ToArray();
+            });
         }
     }
 }

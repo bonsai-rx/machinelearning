@@ -17,34 +17,18 @@ namespace Bonsai.ML.Torch
     [Combinator]
     [Description("Converts the input tensor into an array of the specified element type.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class ToNDArray : SingleArgumentExpressionBuilder
+    public class ConvertToNDArray : SingleArgumentExpressionBuilder
     {
+        private Type _type = typeof(float);
         /// <summary>
-        /// Initializes a new instance of the <see cref="ToNDArray"/> class.
+        /// Gets or sets the type of the elements in the output array.
         /// </summary>
-        public ToNDArray()
-        {
-            Type = typeof(double);
-        }
-
-        /// <summary>
-        /// Gets or sets the type mapping used to convert the input tensor into an array.
-        /// </summary>
-        [Description("Gets or sets the type mapping used to convert the input tensor into an array.")]
+        [Description("Gets or sets the type of the elements in the output array.")]
         [TypeConverter(typeof(ScalarTypeConverter))]
-        [XmlIgnore]
-        public Type Type { get; set; }
-
-        /// <summary>
-        /// Gets or sets an XML serializable representation of the type.
-        /// </summary>
-        [Browsable(false)]
-        [XmlElement("Type")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public string XmlType 
-        {
-            get { return Type.AssemblyQualifiedName; }
-            set { Type = Type.GetType(value); }
+        public ScalarType Type 
+        { 
+            get => ScalarTypeLookup.GetScalarTypeFromType(_type);
+            set => _type = ScalarTypeLookup.GetTypeFromScalarType(value);
         }
 
         /// <summary>
@@ -58,8 +42,8 @@ namespace Bonsai.ML.Torch
         {
             MethodInfo methodInfo = GetType().GetMethod("Process", BindingFlags.Public | BindingFlags.Instance);
             var lengths = new int[Rank];
-            Type arrayType = Array.CreateInstance(Type, lengths).GetType();
-            methodInfo = methodInfo.MakeGenericMethod(Type, arrayType);
+            Type arrayType = Array.CreateInstance(_type, lengths).GetType();
+            methodInfo = methodInfo.MakeGenericMethod(_type, arrayType);
             Expression sourceExpression = arguments.First();
             
             return Expression.Call(
@@ -78,7 +62,14 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<TResult> Process<T, TResult>(IObservable<Tensor> source) where T : unmanaged
         {
-            return source.Select(tensor => (TResult)(object)tensor.data<T>().ToNDArray());
+            return source.Select(tensor => 
+            {
+                if (tensor.dtype != Type)
+                {
+                    tensor = tensor.to_type(Type);
+                }
+                return (TResult)(object)tensor.data<T>().ToNDArray();
+            });
         }
     }
 }
