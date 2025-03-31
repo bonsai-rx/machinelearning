@@ -96,14 +96,20 @@ namespace Bonsai.ML.Torch
 
             var tensorType = tensor.dtype;
             var iplDepth = bitDepthLookup[tensorType].IplDepth;
-            var image = new IplImage(new OpenCV.Net.Size(width, height), iplDepth, channels);
 
-            // Create a temporary tensor backed by the image's memory and copy the source tensor into it
-            ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
-            using var imageTensor = TorchSharpEx.CreateStackTensor(image.ImageData, image, dimensions, tensorType, device);
-            imageTensor.Tensor.copy_(tensor);
+            return new ImageWrapper(new OpenCV.Net.Size(width, height), iplDepth, channels, tensor);
+        }
 
-            return image;
+        internal class ImageWrapper(OpenCV.Net.Size size, IplDepth depth, int channels, Tensor tensor) 
+            : IplImage(size, depth, channels, tensor.DangerousGetDataPointer())
+        {
+            private readonly object Anchor = tensor;
+
+            public new void Dispose()
+            {
+                base.Dispose();
+                GC.KeepAlive(Anchor);
+            }
         }
 
         /// <summary>
@@ -118,14 +124,20 @@ namespace Bonsai.ML.Torch
 
             var tensorType = tensor.dtype;
             var depth = bitDepthLookup[tensorType].Depth;
-            var mat = new Mat(new OpenCV.Net.Size(width, height), depth, channels);
 
-            // Create a temporary tensor backed by the matrix's memory and copy the source tensor into it
-            ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
-            using var matTensor = TorchSharpEx.CreateStackTensor(mat.Data, mat, dimensions, tensorType, device);
-            matTensor.Tensor.copy_(tensor);
+            return new MatWrapper(new OpenCV.Net.Size(width, height), depth, channels, tensor);
+        }
 
-            return mat;
+        internal class MatWrapper(OpenCV.Net.Size size, Depth depth, int channels, Tensor tensor) 
+            : Mat(size, depth, channels, tensor.DangerousGetDataPointer())
+        {
+            private readonly object Anchor = tensor;
+
+            public new void Dispose()
+            {
+                base.Dispose();
+                GC.KeepAlive(Anchor);
+            }
         }
     }
 }
