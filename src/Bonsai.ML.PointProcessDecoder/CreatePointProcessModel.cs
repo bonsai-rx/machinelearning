@@ -440,7 +440,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
         get => _stayProbability;
         set
         {
-            if (value <= 0 || value >= 1)
+            if (value < 0 || value > 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(StayProbability), "The stay probability must be greater than zero and less than one.");
             }
