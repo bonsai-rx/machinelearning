@@ -1,15 +1,10 @@
 using Bonsai;
 using Bonsai.Design;
-using Bonsai.Design.Visualizers;
 using System;
-using System.Collections.Generic;
 using OxyPlot.Series;
 using OxyPlot.Axes;
 using OxyPlot;
 using Bonsai.Vision.Design;
-using Bonsai.ML.Design;
-using System.Linq;
-using TorchSharp;
 using OpenCV.Net;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.Point2DOverlay),
@@ -82,11 +77,18 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            dynamic point = value;
+            var dataPoint = value switch
+            {
+                Point point => new Point2d(point.X, point.Y),
+                Point2f point => new Point2d(point.X, point.Y),
+                Point2d point => point,
+                _ => throw new ArgumentException("Unsupported type for Point2DOverlay.")
+            };
+
             _dataCount++;
-            _lineSeries.Points.Add(new DataPoint(point.X, point.Y));
+            _lineSeries.Points.Add(new DataPoint(dataPoint.X, dataPoint.Y));
             _scatterSeries.Points.Clear();
-            _scatterSeries.Points.Add(new ScatterPoint(point.X, point.Y, value: 1));
+            _scatterSeries.Points.Add(new ScatterPoint(dataPoint.X, dataPoint.Y, value: 1));
 
             while (_dataCount > decoderVisualizer.Capacity)
             {
