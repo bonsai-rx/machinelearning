@@ -109,7 +109,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
             var capacityLabel = new ToolStripLabel
             {
-                Text = "Capacity:",
+                Text = "Capacity: ",
                 AutoSize = true
             };
 
