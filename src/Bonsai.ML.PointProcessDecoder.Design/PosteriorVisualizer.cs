@@ -180,7 +180,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 return;
             }
 
-            posterior = posterior.sum(dim: 0);
+            posterior = posterior.mean([0]);
             
             double xMin;
             double xMax;

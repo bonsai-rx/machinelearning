@@ -184,7 +184,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
             if (likelihood.Dimensions == 2) {
                 likelihood = likelihood
-                    .sum(dim: 0);
+                    .mean([0]);
             }
             
             _data = (double[,])likelihood
