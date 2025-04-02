@@ -127,15 +127,13 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         private ToolStripNumericUpDown _pageIndexControl = null;
         private ToolStripNumericUpDown _rowControl = null;
         private ToolStripNumericUpDown _columnControl = null;
-
         private ToolStripButton _displaySelectedButton = null;
         private ToolStripButton _resetSelectedButton = null;
-
         private Tensor[] _intensities = null;
         private long _stateSpaceWidth;
         private long _stateSpaceHeight;
-        private double[] _stateSpaceMin;
-        private double[] _stateSpaceMax;
+        private double[] _stateSpaceMin = null;
+        private double[] _stateSpaceMax = null;
         private bool _isProcessing = false;
 
         /// <inheritdoc/>
@@ -166,7 +164,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
-                ColumnCount = ColumnCount,
+                ColumnCount = _columnCount,
                 RowCount = _rowCount,
             };
 
@@ -188,7 +186,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 SelectedPageIndex = value;
                 UpdateTableLayout();
                 Show(null);
-                // pageIndexLabel.Text = $"Page: {_selectedPageIndex}";
             };
 
             var rowLabel = new ToolStripLabel($"Rows: ");
@@ -218,7 +215,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     UpdateTableLayout();
                     Show(null);
                 }
-                // rowLabel.Text = $"Rows: {_rowCount}";
             };
 
             var columnLabel = new ToolStripLabel($"Columns: ");
@@ -248,7 +244,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     UpdateTableLayout();
                     Show(null);
                 }
-                // columnLabel.Text = $"Columns: {_columnCount}";
             };
 
             _displaySelectedButton = new ToolStripButton("Display Selection")
@@ -318,7 +313,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                         Show(null);
                     }
                 }
-                // Show(null);
             };
 
             _statusStrip = new StatusStrip()
@@ -344,7 +338,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
         private void UpdatePages()
         {
-            // _pageCount = (int)Math.Ceiling((double)_intensitiesCount / (_rowCount * _columnCount));
             _pageCount = _displaySelected ? 
                 (int)Math.Ceiling((double)_selectedCells.Count / (_rowCount * _columnCount)) : 
                 (int)Math.Ceiling((double)_intensitiesCount / (_rowCount * _columnCount));
@@ -445,12 +438,12 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     if (_selectedCells.Contains(index))
                     {
                         _selectedCells.Remove(index);
-                        control.BackColor = SystemColors.Control; // deselect
+                        control.BackColor = SystemColors.Control;
                     }
                     else
                     {
                         _selectedCells.Add(index);
-                        control.BackColor = Color.LightBlue; // select
+                        control.BackColor = Color.LightBlue;
                     }
                 }
             };
@@ -526,7 +519,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     }
                     else 
                     {
-                        index = SelectedPageIndex * _rowCount * _columnCount + i * _columnCount + j;
+                        index = _selectedPageIndex * _rowCount * _columnCount + i * _columnCount + j;
                         if (index >= _intensitiesCount)
                         {
                             break;
@@ -561,28 +554,20 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            int startIndex;
-            int endIndex;
-
-            if (_displaySelected)
-            {
-                startIndex = SelectedPageIndex * _rowCount * _columnCount;
-                endIndex = Math.Min(startIndex + _rowCount * _columnCount, _selectedCells.Count);
-            }
-            else
-            {
-                startIndex = SelectedPageIndex * _rowCount * _columnCount;
-                endIndex = Math.Min(startIndex + _rowCount * _columnCount, _intensitiesCount);
-            }
+            var startIndex = _selectedPageIndex * _rowCount * _columnCount;
+            var endIndex = _displaySelected ? 
+                Math.Min(startIndex + _rowCount * _columnCount, _selectedCells.Count) : 
+                Math.Min(startIndex + _rowCount * _columnCount, _intensitiesCount);
 
             for (int i = startIndex; i < endIndex; i++) 
             {
+                var index = i;
                 if (_displaySelected)
                 {
-                    i = _selectedCells[i];
+                    index = _selectedCells[i];
                 }
 
-                var (intensitiesIndex, intensitiesTensorIndex) = GetIntensitiesIndex(i);
+                var (intensitiesIndex, intensitiesTensorIndex) = GetIntensitiesIndex(index);
                 var intensity = _intensities[intensitiesIndex][intensitiesTensorIndex];
 
                 if (intensity.Dimensions == 2) {
@@ -597,7 +582,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     .data<double>()
                     .ToNDArray();
 
-                _heatmapPlots[i].UpdateHeatMapSeries(
+                _heatmapPlots[index].UpdateHeatMapSeries(
                     _stateSpaceMin[0],
                     _stateSpaceMax[0],
                     _stateSpaceMin[1],
@@ -605,7 +590,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     intensityValues
                 );
 
-                _heatmapPlots[i].UpdatePlot();
+                _heatmapPlots[index].UpdatePlot();
             }
         }
 
@@ -648,11 +633,11 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             }
 
             return source.SelectMany(input => 
-                input.Sample(TimeSpan.FromMilliseconds(_sampleFrequency))
+                input.Sample(TimeSpan.FromMilliseconds(_sampleFrequency), HighResolutionScheduler.Default)
                     .ObserveOn(visualizerControl)
                     .Do(value => 
                     {
-                        if (!UpdateModel() && !_isProcessing)
+                        if (_isProcessing || !UpdateModel())
                         {
                             return;
                         }
