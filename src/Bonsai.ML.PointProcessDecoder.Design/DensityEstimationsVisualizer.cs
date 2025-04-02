@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Linq;
-using System.Reactive;
+using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,6 +70,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         }
 
         private int _selectedPageIndex = 0;
+        /// <summary>
+        /// The index of the selected page in the table layout.
+        /// </summary>
         public int SelectedPageIndex
         {
             get => _selectedPageIndex;
@@ -78,22 +82,55 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             }
         }
 
-        private readonly int _sampleFrequency = 5;
+        private StatusStrip _statusStrip = null;
+        /// <summary>
+        /// The status strip control that displays the visualizer options.
+        /// </summary>
+        public StatusStrip StatusStrip => _statusStrip;
+
+        private bool _displaySelected = false;
+        /// <summary>
+        /// Gets or sets a value indicating whether to display only the selected cells.
+        /// </summary>
+        public bool DisplaySelected
+        {
+            get => _displaySelected;
+            set
+            {
+                _displaySelected = value;
+            }
+        }
+
+        private List<int> _selectedCells = [];
+        /// <summary>
+        /// Gets or sets the selected cells in the visualizer.
+        /// </summary>
+        [TypeConverter(typeof(UnidimensionalArrayConverter))]
+        public int[] SelectedCells
+        {
+            get => [.. _selectedCells];
+            set
+            {
+                _selectedCells = [.. value];
+            }
+        }
+
+        private readonly int _sampleFrequency = 200;
         private int _pageCount = 1;
         private string _modelName = string.Empty;
         private List<HeatMapSeriesOxyPlotBase> _heatmapPlots = null;
         private int _estimationsCount = 0;
         private TableLayoutPanel _container = null;
-        private StatusStrip _statusStrip = null;
-        public StatusStrip StatusStrip => _statusStrip;
         private ToolStripNumericUpDown _pageIndexControl = null;
         private ToolStripNumericUpDown _rowControl = null;
         private ToolStripNumericUpDown _columnControl = null;
+        private ToolStripButton _displaySelectedButton = null;
+        private ToolStripButton _resetSelectedButton = null;
         private Tensor[] _estimations = null;
         private long _stateSpaceWidth;
         private long _stateSpaceHeight;
-        private double[] _stateSpaceMin;
-        private double[] _stateSpaceMax;
+        private double[] _stateSpaceMin = null;
+        private double[] _stateSpaceMax = null;
         private bool _isProcessing = false;
 
         /// <inheritdoc/>
@@ -124,11 +161,11 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
-                ColumnCount = ColumnCount,
+                ColumnCount = _columnCount,
                 RowCount = _rowCount,
             };
 
-            var pageIndexLabel = new ToolStripLabel($"Page: {_selectedPageIndex}");
+            var pageIndexLabel = new ToolStripLabel($"Page: ");
             _pageIndexControl = new ToolStripNumericUpDown()
             {
                 Minimum = 0,
@@ -145,15 +182,17 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 
                 var value = Convert.ToInt32(_pageIndexControl.Value);
                 SelectedPageIndex = value;
-                UpdateTableLayout();
-                if (UpdateModel())
+                
+                if (_isProcessing || !UpdateModel())
                 {
-                    Show(null);
+                    return;
                 }
-                pageIndexLabel.Text = $"Page: {_selectedPageIndex}";
+
+                UpdateTableLayout();
+                Show(null);
             };
 
-            var rowLabel = new ToolStripLabel($"Rows: {_rowCount}");
+            var rowLabel = new ToolStripLabel($"Rows: ");
             _rowControl = new ToolStripNumericUpDown()
             {
                 Minimum = 1,
@@ -177,16 +216,17 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 }
                 else 
                 {
-                    UpdateTableLayout();
-                    if (UpdateModel())
+                    if (_isProcessing || !UpdateModel())
                     {
-                        Show(null);
+                        return;
                     }
+                    
+                    UpdateTableLayout();
+                    Show(null);
                 }
-                rowLabel.Text = $"Rows: {_rowCount}";
             };
 
-            var columnLabel = new ToolStripLabel($"Columns: {_columnCount}");
+            var columnLabel = new ToolStripLabel($"Columns: ");
             _columnControl = new ToolStripNumericUpDown()
             {
                 Minimum = 1,
@@ -210,13 +250,93 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 }
                 else 
                 {
-                    UpdateTableLayout();
-                    if (UpdateModel())
+                    if (_isProcessing || !UpdateModel())
                     {
+                        return;
+                    }
+
+                    UpdateTableLayout();
+                    Show(null);
+                }
+            };
+
+            _displaySelectedButton = new ToolStripButton("Display Selection")
+            {
+                CheckOnClick = true,
+                Checked = _displaySelected,
+            };
+
+            _displaySelectedButton.CheckedChanged += (sender, e) =>
+            {
+                if (_heatmapPlots is null)
+                {
+                    return;
+                }
+
+                _displaySelected = _displaySelectedButton.Checked;
+
+                UpdatePages();
+
+                if (_selectedPageIndex >= _pageCount) 
+                {
+                    SelectedPageIndex = _pageCount - 1;
+                    _pageIndexControl.Value = _selectedPageIndex;
+                }
+                else 
+                {
+                    if (_isProcessing || !UpdateModel())
+                    {
+                        return;
+                    }
+                    
+                    UpdateTableLayout();
+                    Show(null);
+                }
+            };
+
+            _resetSelectedButton = new ToolStripButton("Reset Selection");
+
+            _resetSelectedButton.Click += (sender, e) =>
+            {
+                if (!_displaySelected)
+                {
+                    for (int i = 0; i < _selectedCells.Count; i++)
+                    {
+                        _heatmapPlots[_selectedCells[i]].View.BackColor = SystemColors.Control;
+                    }
+                }
+
+                _selectedCells.Clear();
+                _displaySelected = false;
+                if (_displaySelectedButton.Checked)
+                {
+                    _displaySelectedButton.Checked = false;
+                }
+                else
+                {
+                    if (_heatmapPlots is null)
+                    {
+                        return;
+                    }
+
+                    UpdatePages();
+
+                    if (_selectedPageIndex >= _pageCount) 
+                    {
+                        SelectedPageIndex = _pageCount - 1;
+                        _pageIndexControl.Value = _selectedPageIndex;
+                    }
+                    else 
+                    {
+                        if (_isProcessing || !UpdateModel())
+                        {
+                            return;
+                        }
+
+                        UpdateTableLayout();
                         Show(null);
                     }
                 }
-                columnLabel.Text = $"Columns: {_columnCount}";
             };
 
             _statusStrip = new StatusStrip()
@@ -230,7 +350,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 rowLabel,
                 _rowControl,
                 columnLabel,
-                _columnControl
+                _columnControl,
+                _displaySelectedButton,
+                _resetSelectedButton
             ]);
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
@@ -240,7 +362,10 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
         private void UpdatePages()
         {
-            _pageCount = (int)Math.Ceiling((double)_estimationsCount / (_rowCount * _columnCount));
+            _pageCount = _displaySelected ? 
+                (int)Math.Ceiling((double)_selectedCells.Count / (_rowCount * _columnCount)) : 
+                (int)Math.Ceiling((double)_estimationsCount / (_rowCount * _columnCount));
+            _pageCount = Math.Max(_pageCount, 1);
             _pageIndexControl.Maximum = _pageCount - 1;
         }
 
@@ -265,43 +390,52 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 throw new InvalidOperationException("For the conditional intensities visualizer to work, the state space dimensions must be 2.");
             }
 
-            if (model.Encoder.Estimations.Length == 0)
+            var estimationsCount = model.Encoder.Estimations.Length;
+
+            if (estimationsCount == 0)
             {
                 return false;
             }
+            
+            if (_estimations is null || estimationsCount != _estimations.Length)
+                _estimations = new Tensor[estimationsCount];
 
-
-            _estimationsCount = model.Encoder.Estimations.Length;
-            _estimations = new Tensor[_estimationsCount];
-
-            var startIndex = SelectedPageIndex * _rowCount * _columnCount;
-            var endIndex = Math.Min(startIndex + _rowCount * _columnCount, _estimationsCount);
+            var startIndex = _selectedPageIndex * _rowCount * _columnCount;
+            var endIndex = _displaySelected ? 
+                Math.Min(startIndex + _rowCount * _columnCount, _selectedCells.Count) : 
+                Math.Min(startIndex + _rowCount * _columnCount, estimationsCount);
 
             for (int i = startIndex; i < endIndex; i++)
             {
-                var estimate = model.Encoder.Estimations[i].Estimate(
+                var index = i;
+                if (_displaySelected)
+                {
+                    index = _selectedCells[i];
+                }
+
+                var estimate = model.Encoder.Estimations[index].Estimate(
                     model.StateSpace.Points,
                     null,
                     model.StateSpace.Dimensions
                 );
 
                 if (estimate.NumberOfElements == 0) {
-                    _estimations[i] = ones([model.StateSpace.Points.size(0), 1]) * double.NaN;
+                    _estimations[index] = ones([model.StateSpace.Points.size(0), 1]) * double.NaN;
                 } else {
-                    _estimations[i] = model.Encoder.Estimations[i].Normalize(estimate);
+                    _estimations[index] = model.Encoder.Estimations[index].Normalize(estimate);
                 }
             }
 
             _stateSpaceWidth = model.StateSpace.Shape[0];
             _stateSpaceHeight = model.StateSpace.Shape[1];
 
-            _stateSpaceMin = [.. model.StateSpace.Points
+            _stateSpaceMin ??= [.. model.StateSpace.Points
                 .min(dim: 0)
                 .values
                 .to_type(ScalarType.Float64)
                 .data<double>()
             ];
-            _stateSpaceMax = [.. model.StateSpace.Points
+            _stateSpaceMax ??= [.. model.StateSpace.Points
                 .max(dim: 0)
                 .values
                 .to_type(ScalarType.Float64)
@@ -313,6 +447,48 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             return true;
         }
 
+        private void AddHeatmap()
+        {
+            var heatmap = new HeatMapSeriesOxyPlotBase(1, 0)
+            {
+                Dock = DockStyle.Fill,
+            };
+
+            _heatmapPlots.Add(heatmap);
+            heatmap.View.Tag = _heatmapPlots.Count - 1;
+
+            heatmap.View.MouseDown += (sender, eventArgs) =>
+            {
+                if (eventArgs.Button != MouseButtons.Left)
+                {
+                    return;
+                }
+
+                if ((Control.ModifierKeys & Keys.Control) == 0)
+                {
+                    return;
+                }
+                
+                var control = (Control)sender;
+
+                if (sender != null)
+                {
+                    var index = (int)control.Tag;
+
+                    if (_selectedCells.Contains(index))
+                    {
+                        _selectedCells.Remove(index);
+                        control.BackColor = SystemColors.Control;
+                    }
+                    else
+                    {
+                        _selectedCells.Add(index);
+                        control.BackColor = Color.LightBlue;
+                    }
+                }
+            };
+        }
+
         private bool UpdateHeatmaps()
         {
             if (_heatmapPlots is null)
@@ -320,10 +496,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 _heatmapPlots = [];
                 for (int i = 0; i < _estimationsCount; i++)
                 {
-                    _heatmapPlots.Add(new HeatMapSeriesOxyPlotBase(1, 0)
-                    {
-                        Dock = DockStyle.Fill,
-                    });
+                    AddHeatmap();
                 }
             }
             else if (_heatmapPlots.Count > _estimationsCount)
@@ -342,10 +515,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             {
                 for (int i = _heatmapPlots.Count; i < _estimationsCount; i++)
                 {
-                    _heatmapPlots.Add(new HeatMapSeriesOxyPlotBase(1, 0)
-                    {
-                        Dock = DockStyle.Fill,
-                    });
+                    AddHeatmap();
                 }
             }
 
@@ -353,7 +523,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         }
 
         private void UpdateTableLayout()
-        {            
+        {
             _container.Controls.Clear();
             _container.RowStyles.Clear();
             _container.ColumnStyles.Clear();
@@ -375,10 +545,29 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             {
                 for (int j = 0; j < _columnCount; j++)
                 {
-                    var index = SelectedPageIndex * _rowCount * _columnCount + i * _columnCount + j;
-                    if (index >= _estimationsCount)
+                    int index;
+                    if (_displaySelected)
                     {
-                        break;
+                        var selectionIndex = i * _columnCount + j;
+                        if (selectionIndex >= _selectedCells.Count)
+                        {
+                            break;
+                        }
+                        
+                        index = _selectedCells[selectionIndex];
+                        _heatmapPlots[index].View.BackColor = SystemColors.Control;
+                    }
+                    else 
+                    {
+                        index = _selectedPageIndex * _rowCount * _columnCount + i * _columnCount + j;
+                        if (index >= _estimationsCount)
+                        {
+                            break;
+                        }
+                        if (_selectedCells.Contains(index))
+                        {
+                            _heatmapPlots[index].View.BackColor = Color.LightBlue;
+                        }
                     }
 
                     _container.Controls.Add(_heatmapPlots[index], j, i);
@@ -389,11 +578,18 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            var startIndex = SelectedPageIndex * _rowCount * _columnCount;
-            var endIndex = Math.Min(startIndex + _rowCount * _columnCount, _estimationsCount);
+            var startIndex = _selectedPageIndex * _rowCount * _columnCount;
+            var endIndex = _displaySelected ? 
+                Math.Min(startIndex + _rowCount * _columnCount, _selectedCells.Count) : 
+                Math.Min(startIndex + _rowCount * _columnCount, _estimationsCount);
 
             for (int i = startIndex; i < endIndex; i++) 
             {
+                if (_displaySelected)
+                {
+                    i = _selectedCells[i];
+                }
+
                 var estimation = _estimations[i];
 
                 var estimationValues = (double[,])estimation
@@ -440,8 +636,10 @@ namespace Bonsai.ML.PointProcessDecoder.Design
 
             _estimationsCount = 0;
             _estimations = null;
+            _selectedCells.Clear();
         }
 
+        /// <inheritdoc/>
         public override IObservable<object> Visualize(IObservable<IObservable<object>> source, IServiceProvider provider)
         {
             if (provider.GetService(typeof(IDialogTypeVisualizerService)) is not Control visualizerControl)
@@ -449,27 +647,25 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 return source;
             }
 
-            var timer = Observable.Interval(
-                TimeSpan.FromMilliseconds(100),
-                HighResolutionScheduler.Default
-            );
-
             return source.SelectMany(input => 
-                input.Buffer(timer)
-                    .Where(buffer => buffer.Count > 0 && !_isProcessing)
+                input.Sample(TimeSpan.FromMilliseconds(_sampleFrequency), HighResolutionScheduler.Default)
                     .ObserveOn(visualizerControl)
-                    .Do(buffer => 
+                    .Do(value => 
                     {
-                        if (!UpdateModel())
+                        if (_isProcessing || !UpdateModel())
                         {
                             return;
                         }
 
-                        UpdatePages();
-                        UpdateHeatmaps();
-                        UpdateTableLayout();
+                        if (_estimations.Length != _estimationsCount)
+                        {
+                            _estimationsCount = _estimations.Length;
+                            UpdatePages();
+                            UpdateHeatmaps();
+                            UpdateTableLayout();
+                        }
 
-                        Show(buffer.LastOrDefault());
+                        Show(value);
                     }
                 )
             );
