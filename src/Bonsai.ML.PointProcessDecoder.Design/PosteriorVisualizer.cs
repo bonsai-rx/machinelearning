@@ -85,14 +85,13 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 throw new InvalidOperationException("The decode node is invalid.");
             }
 
-            if (node is Decode)
-                _convertInputData = input => (Tensor)input;
-            else if (node is GetDecoderData)
-                _convertInputData = input => ((DecoderData)input).Posterior;
-            else if (node is GetClassifierData)
-                _convertInputData = input => ((ClassifierData)input).DecoderData.Posterior;
-            else
-                throw new InvalidOperationException("The node is invalid.");
+            _convertInputData = node switch
+            {
+                Decode _ => input => (Tensor)input,
+                GetDecoderData _ => input => ((DecoderData)input).Posterior,
+                GetClassifierData _ => input => ((ClassifierData)input).DecoderData.Posterior,
+                _ => throw new InvalidOperationException("The node is invalid.")
+            };
 
             _modelName = node.Name;
 
