@@ -188,10 +188,10 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             }
             
             _data = (double[,])likelihood
-                    .to_type(ScalarType.Float64)
-                    .reshape([_stateSpaceWidth, _stateSpaceHeight])
-                    .data<double>()
-                    .ToNDArray();
+                .to_type(ScalarType.Float64)
+                .reshape([_stateSpaceWidth, _stateSpaceHeight])
+                .data<double>()
+                .ToNDArray();
 
 
             _visualizer.Plot.UpdateHeatMapSeries(
@@ -249,7 +249,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                         visualizer.Color = color;
                         return xs.Buffer(timer)
                             .Where(buffer => buffer.Count > 0)
-                            .Do(buffer => mashupSource.Visualizer.Show(buffer.LastOrDefault()));
+                            .Do(buffer => visualizer.Show(buffer.LastOrDefault()));
             })));
 
             return Observable.Merge(mergedSource, mashupSourceStreams);

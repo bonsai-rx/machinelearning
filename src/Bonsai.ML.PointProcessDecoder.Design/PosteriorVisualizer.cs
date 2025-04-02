@@ -279,7 +279,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     return mashupSource.Source.Output.SelectMany(xs => 
                         xs.Buffer(timer)
                             .Where(buffer => buffer.Count > 0)
-                            .Do(buffer => mashupSource.Visualizer.Show(buffer.LastOrDefault()))
+                            .Do(buffer => visualizer.Show(buffer.LastOrDefault()))
                     );
                 })
             );
