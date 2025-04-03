@@ -16,7 +16,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Transform)]
 [Description("Selects specific units IDs from the input neural data.")]
-public class SelectUnitIds : IManagedPointProcessModelNode
+public class SelectUnitIds : IManagedPointProcessModelNode, IScalarTypeProvider
 {
     /// <summary>
     /// The name of the point process model to use.
@@ -25,13 +25,21 @@ public class SelectUnitIds : IManagedPointProcessModelNode
     [Description("The name of the point process model to use.")]
     public string Name { get; set; } = string.Empty;
 
-    private Tensor _unitIds = empty(0);
+    private static readonly ScalarType _scalarType = ScalarType.Int32;
+    /// <summary>
+    /// The data type of the tensor elements.
+    /// </summary>
+    [XmlIgnore]
+    [Browsable(false)]
+    public ScalarType Type => _scalarType;
+
+    private Tensor _unitIds = empty(0, dtype: _scalarType);
     /// <summary>
     /// Gets or sets the selected units.
     /// </summary>
     [XmlIgnore]
-    [TypeConverter(typeof(TensorConverter))]
     [Description("The selected units IDs.")]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor UnitIds
     {
         get => _unitIds;
@@ -42,7 +50,7 @@ public class SelectUnitIds : IManagedPointProcessModelNode
                 throw new ArgumentException("Unit IDs must be a 1D tensor.");
             }
             
-            _unitIds = value.to_type(ScalarType.Int32);
+            _unitIds = value.to_type(_scalarType);
         }
     }
 
@@ -54,8 +62,8 @@ public class SelectUnitIds : IManagedPointProcessModelNode
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string UnitIdsXml
     {
-        get => TensorConverter.ConvertToString(UnitIds, ScalarType.Int32);
-        set => UnitIds = TensorConverter.ConvertFromString(value, ScalarType.Int32);
+        get => TensorConverter.ConvertToString(UnitIds, _scalarType);
+        set => UnitIds = TensorConverter.ConvertFromString(value, _scalarType);
     }
 
     /// <summary>
@@ -65,18 +73,22 @@ public class SelectUnitIds : IManagedPointProcessModelNode
     /// <returns></returns>
     public IObservable<Tuple<Tensor, Tensor>> Process(IObservable<Tensor> source)
     {
+        var modelName = Name;
         return source.Select(input => 
         {
-            var device = input.device;
+            var model = PointProcessModelManager.GetModel(modelName);
 
-            if (_unitIds.device != input.device)
+            var device = input.device;
+            var unitIds = _unitIds.clone();
+
+            if (unitIds.device != input.device)
             {
-                _unitIds = _unitIds.to(device);
+                unitIds = unitIds.to(device);
             }
 
             return _unitIds.NumberOfElements == 0 ? 
-                Tuple.Create(empty(0, device: device), _unitIds) :
-                Tuple.Create(input[torch.TensorIndex.Colon, torch.TensorIndex.Tensor(_unitIds)], _unitIds);
+                Tuple.Create(empty(0, device: device), unitIds) :
+                Tuple.Create(input[torch.TensorIndex.Colon, torch.TensorIndex.Tensor(unitIds)], unitIds);
         });
     }
 }

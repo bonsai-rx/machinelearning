@@ -116,7 +116,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         private bool _isProcessing = false;
 
         private SelectUnitIds _node = null;
-        private List<int> _selectedUnits = [];
+        private Tensor _selectedUnits = empty(0, dtype: ScalarType.Int32);
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -141,13 +141,13 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 throw new InvalidOperationException("The point process model name is not set.");
             }
 
-            _selectedUnits = [.. _node.UnitIds.data<int>()];
+            _selectedUnits = _node.UnitIds;
             
             _container = new TableLayoutPanel()
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
-                ColumnCount = ColumnCount,
+                ColumnCount = _columnCount,
                 RowCount = _rowCount,
             };
 
@@ -264,13 +264,15 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             {
                 if (!_displaySelected)
                 {
-                    for (int i = 0; i < _selectedUnits.Count; i++)
+                    for (int i = 0; i < _selectedUnits.size(0); i++)
                     {
-                        _heatmapPlots[_selectedUnits[i]].View.BackColor = SystemColors.Control;
+                        var index = _selectedUnits[i].item<int>();
+                        _heatmapPlots[index].View.BackColor = SystemColors.Control;
                     }
                 }
 
-                _selectedUnits.Clear();
+                _selectedUnits = empty(0, dtype: ScalarType.Int32);
+                _node.UnitIds = _selectedUnits;
 
                 _displaySelected = false;
                 if (_displaySelectedButton.Checked)
@@ -323,7 +325,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         private void UpdatePages()
         {
             _pageCount = _displaySelected ? 
-                (int)Math.Ceiling((double)_selectedUnits.Count / (_rowCount * _columnCount)) : 
+                (int)Math.Ceiling((double)_selectedUnits.size(0) / (_rowCount * _columnCount)) : 
                 (int)Math.Ceiling((double)_intensitiesCount / (_rowCount * _columnCount));
             _pageCount = Math.Max(_pageCount, 1);
             _pageIndexControl.Maximum = _pageCount - 1;
@@ -418,17 +420,34 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 if (sender != null)
                 {
                     var index = (int)control.Tag;
+                    var containsIndex = (_selectedUnits == index).any().item<bool>();
 
-                    if (_selectedUnits.Contains(index))
+                    if (containsIndex)
                     {
-                        _selectedUnits.Remove(index);
-                        control.BackColor = SystemColors.Control; // deselect
+                        if (_selectedUnits.NumberOfElements == 1)
+                        {
+                            _selectedUnits = empty(0, dtype: ScalarType.Int32);
+                        }
+                        else
+                        {
+                            _selectedUnits = _selectedUnits[_selectedUnits != index];
+                        }
+                        control.BackColor = SystemColors.Control;
                     }
                     else
                     {
-                        _selectedUnits.Add(index);
-                        control.BackColor = Color.LightBlue; // select
+                        var indexTensor = tensor(new int[] { index }, dtype: ScalarType.Int32);
+                        if (_selectedUnits.NumberOfElements == 0)
+                        {
+                            _selectedUnits = indexTensor;
+                        }
+                        else
+                        {
+                            _selectedUnits = cat([_selectedUnits, indexTensor], dim: 0);
+                        }
+                        control.BackColor = Color.LightBlue;
                     }
+                    _node.UnitIds = _selectedUnits;
                 }
             };
         }
@@ -493,12 +512,12 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                     if (_displaySelected)
                     {
                         var selectionIndex = i * _columnCount + j;
-                        if (selectionIndex >= _selectedUnits.Count)
+                        if (selectionIndex >= _selectedUnits.size(0))
                         {
                             break;
                         }
                         
-                        index = _selectedUnits[selectionIndex];
+                        index = _selectedUnits[selectionIndex].item<int>();
                         _heatmapPlots[index].View.BackColor = SystemColors.Control;
                     }
                     else 
@@ -508,7 +527,8 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                         {
                             break;
                         }
-                        if (_selectedUnits.Contains(index))
+                        var containsIndex = (_selectedUnits == index).any().item<bool>();
+                        if (containsIndex)
                         {
                             _heatmapPlots[index].View.BackColor = Color.LightBlue;
                         }
@@ -538,25 +558,16 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            int startIndex;
-            int endIndex;
-
-            if (_displaySelected)
-            {
-                startIndex = SelectedPageIndex * _rowCount * _columnCount;
-                endIndex = Math.Min(startIndex + _rowCount * _columnCount, _selectedUnits.Count);
-            }
-            else
-            {
-                startIndex = SelectedPageIndex * _rowCount * _columnCount;
-                endIndex = Math.Min(startIndex + _rowCount * _columnCount, _intensitiesCount);
-            }
+            var startIndex = SelectedPageIndex * _rowCount * _columnCount;
+            var endIndex = _displaySelected ? 
+                Math.Min(startIndex + _rowCount * _columnCount, (int)_selectedUnits.size(0)) : 
+                Math.Min(startIndex + _rowCount * _columnCount, _intensitiesCount);
 
             for (int i = startIndex; i < endIndex; i++) 
             {
                 if (_displaySelected)
                 {
-                    i = _selectedUnits[i];
+                    i = _selectedUnits[i].item<int>();
                 }
 
                 var (intensitiesIndex, intensitiesTensorIndex) = GetIntensitiesIndex(i);
@@ -624,7 +635,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             }
 
             return source.SelectMany(input => 
-                input.Sample(TimeSpan.FromMilliseconds(_sampleFrequency))
+                input.Sample(TimeSpan.FromMilliseconds(_sampleFrequency), HighResolutionScheduler.Default)
                     .ObserveOn(visualizerControl)
                     .Do(value => 
                     {
