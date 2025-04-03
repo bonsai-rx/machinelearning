@@ -94,8 +94,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 _displaySelected = value;
             }
         }
-
-        private List<int> _selectedUnits;
         private readonly int _sampleFrequency = 30;
         private int _pageCount = 1;
         private string _modelName = string.Empty;
@@ -118,6 +116,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         private bool _isProcessing = false;
 
         private SelectUnitIds _node = null;
+        private List<int> _selectedUnits = [];
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -142,7 +141,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 throw new InvalidOperationException("The point process model name is not set.");
             }
 
-            _selectedUnits = _node.SelectedUnits;
+            _selectedUnits = [.. _node.UnitIds.data<int>()];
             
             _container = new TableLayoutPanel()
             {

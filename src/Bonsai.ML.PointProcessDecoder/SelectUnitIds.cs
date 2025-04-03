@@ -29,11 +29,21 @@ public class SelectUnitIds : IManagedPointProcessModelNode
     /// <summary>
     /// Gets or sets the selected units.
     /// </summary>
+    [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The selected units IDs.")]
     public Tensor UnitIds
     {
         get => _unitIds;
-        set => _unitIds = value.to_type(ScalarType.Int32);
+        set 
+        {
+            if (value.Dimensions != 1)
+            {
+                throw new ArgumentException("Unit IDs must be a 1D tensor.");
+            }
+            
+            _unitIds = value.to_type(ScalarType.Int32);
+        }
     }
 
     /// <summary>
