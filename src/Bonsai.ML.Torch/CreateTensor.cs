@@ -21,7 +21,7 @@ namespace Bonsai.ML.Torch
     [Combinator]
     [Description("Creates a tensor from the specified values. Uses Python-like syntax to specify the tensor values. For example, a 2x2 tensor can be created with the following values: \"[[1, 2], [3, 4]]\".")]
     [WorkflowElementCategory(ElementCategory.Source)]
-    public class CreateTensor : ITensorType
+    public class CreateTensor : IScalarTypeProvider
     {
         /// <summary>
         /// The data type of the tensor elements.

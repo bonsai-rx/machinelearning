@@ -30,9 +30,9 @@ public class TensorConverter : TypeConverter
     /// <inheritdoc/>
     public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
     {
-        if (context?.Instance is ITensorType tensorType && value is string stringValue)
+        if (context?.Instance is IScalarTypeProvider scalarTypeProvider && value is string stringValue)
         {
-            var scalarType = tensorType.Type;
+            var scalarType = scalarTypeProvider.Type;
             return ConvertFromString(stringValue, scalarType);
         }
 
@@ -107,10 +107,10 @@ public class TensorConverter : TypeConverter
     public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
     {
         if (value is Tensor tensor && 
-            context?.Instance is CreateTensor createTensor &&
+            context?.Instance is IScalarTypeProvider scalarTypeProvider &&
             destinationType == typeof(string))
         {
-            var scalarType = createTensor.Type;
+            var scalarType = scalarTypeProvider.Type;
             return ConvertToString(tensor, scalarType);
         }
 
