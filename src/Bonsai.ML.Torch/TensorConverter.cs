@@ -50,7 +50,7 @@ public class TensorConverter : TypeConverter
     /// This class relies on the PythonDataHelper class to parse the string into the appropriate data type.
     /// The Parse method however returns a type of object, so we use pattern matching to determine the type of the data and create the tensor from the typed object.
     /// </remarks>
-    internal static Tensor ConvertFromString(string value, ScalarType scalarType)
+    public static Tensor ConvertFromString(string value, ScalarType scalarType)
     {
         var returnType = ScalarTypeLookup.GetTypeFromScalarType(scalarType);
         var tensorData = PythonDataHelper.Parse(value, returnType);
@@ -123,7 +123,7 @@ public class TensorConverter : TypeConverter
     /// Thus, we use the provided <see cref="ScalarType"/> as the expected .NET data type to extract the data from the tensor.
     /// The data is then passed to the PythonDataHelper class to format the data into the appropriate string representation for the given data type.
     /// </remarks>
-    internal static string ConvertToString(Tensor tensor, ScalarType scalarType)
+    public static string ConvertToString(Tensor tensor, ScalarType scalarType)
     {
         object tensorData;
 
