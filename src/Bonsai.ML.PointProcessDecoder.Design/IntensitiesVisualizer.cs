@@ -30,6 +30,9 @@ using PointProcessDecoder.Core;
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
+    /// <summary>
+    /// Visualizer for the intensities of a point process model.
+    /// </summary>
     public class IntensitiesVisualizer : DialogTypeVisualizer
     {
         private int _rowCount = 1;
