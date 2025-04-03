@@ -67,7 +67,7 @@ namespace Bonsai.ML.Data
             }
             else if (token is JArray)
             {
-                if (token[0] is JValue)
+                if (token.Count() == 0 || token[0] is JValue)
                 {
                     if (token.All(item => item is JValue))
                     {
@@ -148,7 +148,7 @@ namespace Bonsai.ML.Data
             if (currentLevel > 0 && token is JArray arr && arr.All(x => x is JArray))
             {
                 var subArrayDimensions = new HashSet<string>();
-                foreach (JArray subArr in arr)
+                foreach (JArray subArr in arr.Cast<JArray>())
                 {
                     int[] subDims = ParseDimensions(subArr, depth - currentLevel, currentLevel + 1);
                     subArrayDimensions.Add(string.Join(",", subDims));
