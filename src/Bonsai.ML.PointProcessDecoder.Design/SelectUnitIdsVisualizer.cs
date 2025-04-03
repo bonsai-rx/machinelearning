@@ -15,12 +15,15 @@ using static TorchSharp.torch;
 
 using PointProcessDecoder.Core;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.SelectUnitsVisualizer), 
-    Target = typeof(Bonsai.ML.PointProcessDecoder.SelectUnits))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.SelectUnitIdsVisualizer), 
+    Target = typeof(Bonsai.ML.PointProcessDecoder.SelectUnitIds))]
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
-    public class SelectUnitsVisualizer : DialogTypeVisualizer
+    /// <summary>
+    /// Visualizer for the <see cref="SelectUnitIds"/> node.
+    /// </summary>
+    public class SelectUnitIdsVisualizer : DialogTypeVisualizer
     {
         private int _rowCount = 1;
         /// <summary>
@@ -114,7 +117,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         private double[] _stateSpaceMax;
         private bool _isProcessing = false;
 
-        private SelectUnits _node = null;
+        private SelectUnitIds _node = null;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
@@ -125,7 +128,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             {
                 _node = ExpressionBuilder.GetWorkflowElement(
                     expressionBuilderGraph.Where(node => node.Value == typeVisualizerContext.Source)
-                        .FirstOrDefault().Value) as SelectUnits;
+                        .FirstOrDefault().Value) as SelectUnitIds;
             }
 
             if (_node == null)
