@@ -53,6 +53,12 @@ public class TensorConverter : TypeConverter
     public static Tensor ConvertFromString(string value, ScalarType scalarType)
     {
         var returnType = ScalarTypeLookup.GetTypeFromScalarType(scalarType);
+
+        if (string.IsNullOrEmpty(value))
+        {
+            return empty(0, dtype: scalarType);
+        }
+
         var tensorData = PythonDataHelper.Parse(value, returnType);
 
         if (tensorData is Array arrayData)
