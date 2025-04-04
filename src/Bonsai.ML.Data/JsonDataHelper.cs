@@ -393,7 +393,6 @@ namespace Bonsai.ML.Data
 
         private static void FormatDefault(object obj, StringBuilder sb, int depth)
         {
-
             var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
             sb.Append('{');
             for (int i = 0; i < properties.Length; i++)
