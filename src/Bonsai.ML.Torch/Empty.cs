@@ -10,6 +10,7 @@ namespace Bonsai.ML.Torch
     /// Creates an empty tensor with the given data type and size.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Creates an empty tensor with the given data type and size.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class Empty

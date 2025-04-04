@@ -10,6 +10,7 @@ namespace Bonsai.ML.Torch
     /// Creates a tensor filled with zeros.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Creates a tensor filled with zeros.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class Zeros

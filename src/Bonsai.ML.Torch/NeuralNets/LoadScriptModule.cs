@@ -10,6 +10,7 @@ namespace Bonsai.ML.Torch.NeuralNets
     /// Loads a TorchScript module from the specified file path.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Loads a TorchScript module from the specified file path.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class LoadScriptModule
@@ -19,7 +20,7 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// </summary>
         [Description("The device on which to load the model.")]
         [XmlIgnore]
-        public Device Device { get; set; } = CPU;
+        public Device Device { get; set; }
 
         /// <summary>
         /// The path to the TorchScript model file.

@@ -11,6 +11,7 @@ namespace Bonsai.ML.Torch
     /// Creates a 1-D tensor of values within a given range given the start, end, and step.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Creates a 1-D tensor of values within a given range given the start, end, and step.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class ARange

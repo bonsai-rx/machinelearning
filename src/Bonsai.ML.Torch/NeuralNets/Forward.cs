@@ -10,6 +10,7 @@ namespace Bonsai.ML.Torch.NeuralNets
     /// Runs forward inference on the input tensor using the specified model.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Runs forward inference on the input tensor using the specified model.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class Forward

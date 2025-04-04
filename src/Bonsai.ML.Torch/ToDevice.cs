@@ -11,6 +11,7 @@ namespace Bonsai.ML.Torch
     /// Moves the input tensor to the specified device.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Moves the input tensor to the specified device.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class ToDevice

@@ -9,6 +9,7 @@ namespace Bonsai.ML.Torch.NeuralNets
     /// Saves the model to a file.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Saves the model to a file.")]
     [WorkflowElementCategory(ElementCategory.Sink)]
     public class SaveModel

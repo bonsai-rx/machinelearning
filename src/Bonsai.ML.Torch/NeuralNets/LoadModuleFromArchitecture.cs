@@ -10,6 +10,7 @@ namespace Bonsai.ML.Torch.NeuralNets
     /// Loads a neural network module from a specified architecture.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Loads a neural network module from a specified architecture.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class LoadModuleFromArchitecture

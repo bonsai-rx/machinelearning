@@ -10,6 +10,7 @@ namespace Bonsai.ML.Torch
     /// Creates a tensor filled with ones.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Creates a tensor filled with ones.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class Ones

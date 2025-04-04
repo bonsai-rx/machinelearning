@@ -12,6 +12,7 @@ namespace Bonsai.ML.Torch.NeuralNets
     /// Trains a model using backpropagation.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Trains a model using backpropagation.")]
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class Backward

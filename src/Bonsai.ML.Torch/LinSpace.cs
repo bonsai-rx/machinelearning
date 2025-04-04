@@ -10,6 +10,7 @@ namespace Bonsai.ML.Torch
     /// Creates a 1-D tensor of equally spaced values within a given range given the start, end, and count.
     /// </summary>
     [Combinator]
+    [ResetCombinator]
     [Description("Creates a 1-D tensor of equally spaced values within a given range given the start, end, and count.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class LinSpace
