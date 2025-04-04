@@ -19,23 +19,18 @@ namespace Bonsai.ML.Torch
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class ConvertToArray : SingleArgumentExpressionBuilder
     {
-        private Type _type = typeof(float);
         /// <summary>
         /// Gets or sets the type of the elements in the output array.
         /// </summary>
         [Description("Gets or sets the type of the elements in the output array.")]
         [TypeConverter(typeof(ScalarTypeConverter))]
-        public ScalarType Type 
-        { 
-            get => ScalarTypeLookup.GetScalarTypeFromType(_type);
-            set => _type = ScalarTypeLookup.GetTypeFromScalarType(value);
-        }
+        public ScalarType Type { get; set; } = ScalarType.Float32;
 
         /// <inheritdoc/>
         public override Expression Build(IEnumerable<Expression> arguments)
         {
             MethodInfo methodInfo = GetType().GetMethod("Process", BindingFlags.Public | BindingFlags.Instance);
-            methodInfo = methodInfo.MakeGenericMethod(_type);
+            methodInfo = methodInfo.MakeGenericMethod(ScalarTypeLookup.GetTypeFromScalarType(Type));
             Expression sourceExpression = arguments.First();
             
             return Expression.Call(

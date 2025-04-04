@@ -19,17 +19,12 @@ namespace Bonsai.ML.Torch
     [WorkflowElementCategory(ElementCategory.Transform)]
     public class ConvertToNDArray : SingleArgumentExpressionBuilder
     {
-        private Type _type = typeof(float);
         /// <summary>
         /// Gets or sets the type of the elements in the output array.
         /// </summary>
         [Description("Gets or sets the type of the elements in the output array.")]
         [TypeConverter(typeof(ScalarTypeConverter))]
-        public ScalarType Type 
-        { 
-            get => ScalarTypeLookup.GetScalarTypeFromType(_type);
-            set => _type = ScalarTypeLookup.GetTypeFromScalarType(value);
-        }
+        public ScalarType Type { get; set; } = ScalarType.Float32;
 
         /// <summary>
         /// Gets or sets the rank of the output array. Must be greater than or equal to 1.
@@ -42,8 +37,9 @@ namespace Bonsai.ML.Torch
         {
             MethodInfo methodInfo = GetType().GetMethod("Process", BindingFlags.Public | BindingFlags.Instance);
             var lengths = new int[Rank];
-            Type arrayType = Array.CreateInstance(_type, lengths).GetType();
-            methodInfo = methodInfo.MakeGenericMethod(_type, arrayType);
+            var type = ScalarTypeLookup.GetTypeFromScalarType(Type);
+            Type arrayType = Array.CreateInstance(type, lengths).GetType();
+            methodInfo = methodInfo.MakeGenericMethod(type, arrayType);
             Expression sourceExpression = arguments.First();
             
             return Expression.Call(
