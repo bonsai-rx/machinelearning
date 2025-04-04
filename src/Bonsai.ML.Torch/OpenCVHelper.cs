@@ -89,15 +89,29 @@ namespace Bonsai.ML.Torch
         /// </summary>
         /// <param name="tensor"></param>
         /// <param name="device"></param>
+        /// <param name="copy"></param>
         /// <returns></returns>
-        public unsafe static IplImage ToImage(Tensor tensor, Device device)
+        public unsafe static IplImage ToImage(Tensor tensor, Device device, bool copy = true)
         {
             var (height, width, channels) = tensor.GetImageDimensions();
 
             var tensorType = tensor.dtype;
             var iplDepth = bitDepthLookup[tensorType].IplDepth;
 
-            return new ImageWrapper(new OpenCV.Net.Size(width, height), iplDepth, channels, tensor);
+            if (copy)
+            {
+                var image = new IplImage(new OpenCV.Net.Size(width, height), iplDepth, channels);
+
+                // Create a temporary tensor backed by the image's memory and copy the source tensor into it
+                ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
+                using var imageTensor = TorchSharpEx.CreateStackTensor(image.ImageData, image, dimensions, tensorType, device);
+                imageTensor.Tensor.copy_(tensor);
+                return image;
+            }
+            else
+            {
+                return new ImageWrapper(new OpenCV.Net.Size(width, height), iplDepth, channels, tensor);
+            }
         }
 
         internal class ImageWrapper(OpenCV.Net.Size size, IplDepth depth, int channels, Tensor tensor) 
@@ -117,15 +131,30 @@ namespace Bonsai.ML.Torch
         /// </summary>
         /// <param name="tensor"></param>
         /// <param name="device"></param>
+        /// <param name="copy"></param>
         /// <returns></returns>
-        public unsafe static Mat ToMat(Tensor tensor, Device device)
+        public unsafe static Mat ToMat(Tensor tensor, Device device, bool copy = true)
         {
             var (height, width, channels) = tensor.GetImageDimensions();
 
             var tensorType = tensor.dtype;
             var depth = bitDepthLookup[tensorType].Depth;
 
-            return new MatWrapper(new OpenCV.Net.Size(width, height), depth, channels, tensor);
+            if (copy)
+            {
+                var mat = new Mat(new OpenCV.Net.Size(width, height), depth, channels);
+
+                // Create a temporary tensor backed by the matrix's memory and copy the source tensor into it
+                ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
+                using var matTensor = TorchSharpEx.CreateStackTensor(mat.Data, mat, dimensions, tensorType, device);
+                matTensor.Tensor.copy_(tensor);
+
+                return mat;
+            }
+            else
+            {
+                return new MatWrapper(new OpenCV.Net.Size(width, height), depth, channels, tensor);
+            }
         }
 
         internal class MatWrapper(OpenCV.Net.Size size, Depth depth, int channels, Tensor tensor) 
