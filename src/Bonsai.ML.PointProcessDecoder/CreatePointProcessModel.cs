@@ -121,6 +121,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// </summary>
     [Category("2. State Space Parameters")]
     [Description("The minimum values of the state space. Must be the same length as the number of state space dimensions.")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public double[] MinStateSpace
     {
         get
@@ -139,6 +140,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// </summary>
     [Category("2. State Space Parameters")]
     [Description("The maximum values of the state space. Must be the same length as the number of state space dimensions.")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public double[] MaxStateSpace
     {
         get
@@ -157,6 +159,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// </summary>
     [Category("2. State Space Parameters")]
     [Description("The number of steps evaluated in the state space. Must be the same length as the number of state space dimensions.")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public long[] StepsStateSpace
     {
         get
@@ -175,6 +178,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// </summary>
     [Category("2. State Space Parameters")]
     [Description("The bandwidth of the observation estimation method. Must be the same length as the number of state space dimensions.")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public double[] ObservationBandwidth
     {
         get
@@ -288,6 +292,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// </summary>
     [Category("3. Encoder Parameters")]
     [Description("The bandwidth of the mark estimation method. Must be the same length as the number of mark dimensions. Only used when the encoder type is set to ClusterlessMarkEncoder.")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public double[]? MarkBandwidth
     {
         get
@@ -430,11 +435,11 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
 
     private double? _stayProbability = null;
     /// <summary>
-    /// Gets or sets the stay probability used in the hybrid state space replay classifier.
-    /// Only used when the decoder type is set to <see cref="DecoderType.HybridStateSpaceReplayClassifier"/>.
+    /// Gets or sets the stay probability used in the discrete transition matrix.
+    /// Only used when the decoder type is set to <see cref="DecoderType.HybridStateSpaceClassifier"/>.
     /// </summary>
     [Category("7. Decoder Parameters")]
-    [Description("The stay probability used in the hybrid state space replay classifier. Only used when the decoder type is set to HybridStateSpaceReplayClassifier.")]
+    [Description("The stay probability used in the discrete transition matrix. Only used when the decoder type is set to HybridStateSpaceClassifier.")]
     public double? StayProbability
     {
         get => _stayProbability;
