@@ -15,8 +15,8 @@
 - name: Getting Started
   href: HiddenMarkovModels/hmm-getting-started.md
 - name: PointProcessDecoder
-- name: Getting Started
-  href: PointProcessDecoder/ppd-getting-started.md
+- name: Overview
+  href: PointProcessDecoder/ppd-overview.md
 - name: Torch
 - name: Overview
   href: Torch/torch-overview.md
