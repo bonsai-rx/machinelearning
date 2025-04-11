@@ -399,10 +399,10 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     private double? sigmaRandomWalk = null;
     /// <summary>
     /// Gets or sets the standard deviation of the random walk transitions model.
-    /// Only used when the transitions type is set to <see cref="TransitionsType.RandomWalk"/> or when the decoder type is set to <see cref="DecoderType.HybridStateSpaceReplayClassifier"/> 
+    /// Only used when the transitions type is set to <see cref="TransitionsType.RandomWalk"/> or when the decoder type is set to <see cref="DecoderType.HybridStateSpaceClassifier"/> 
     /// </summary>
     [Category("6. Transition Parameters")]
-    [Description("The standard deviation of the random walk transitions model. Only used when the transitions type is set to RandomWalk or when the decoder type is set to HybridStateSpaceReplayClassifier.")]
+    [Description("The standard deviation of the random walk transitions model. Only used when the transitions type is set to RandomWalk or when the decoder type is set to HybridStateSpaceClassifier.")]
     public double? SigmaRandomWalk
     {
         get
