@@ -30,8 +30,8 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
         [Description("The mask which gets applied to the transition matrix to prohibit certain transitions. It must be written in JSON format as an int[,] with the same shape as the transition matrix (nStates x nStates). For example, the mask [[1, 0], [1, 1]] is valid and would prohibit transitions from state 0 to state 1.")]
         public string TransitionMask
         {
-            get => transitionMask != null ? StringFormatter.FormatToPython(transitionMask) : "[[1, 1], [1, 1]]";
-            set => transitionMask = (int[,])ArrayHelper.ParseString(value, typeof(int));
+            get => transitionMask != null ? PythonDataHelper.Format(transitionMask) : "[[1, 1], [1, 1]]";
+            set => transitionMask = (int[,])PythonDataHelper.Parse(value, typeof(int));
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
                 int[,] mask => mask,
                 long[,] mask => ConvertLongArrayToIntArray(mask),
                 bool[,] mask => ConvertBoolArrayToIntArray(mask),
-                var mask => (int[,])ArrayHelper.ParseString(mask.ToString(), typeof(int))
+                var mask => (int[,])PythonDataHelper.Parse(mask.ToString(), typeof(int))
             };
         }
 

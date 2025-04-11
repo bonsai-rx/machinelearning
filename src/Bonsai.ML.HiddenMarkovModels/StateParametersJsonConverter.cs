@@ -49,7 +49,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 transitionsParamsArray = new object[nParams];
                 for (int i = 0; i < nParams; i++)
                 {
-                    transitionsParamsArray[i] = ArrayHelper.ParseToken(paramsJArray[i], typeof(double));
+                    transitionsParamsArray[i] = JsonDataHelper.ParseToken(paramsJArray[i], typeof(double));
                 }
             }
 
@@ -83,7 +83,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 observationsParamsArray = new object[nParams];
                 for (int i = 0; i < nParams; i++)
                 {
-                    observationsParamsArray[i] = ArrayHelper.ParseToken(paramsJArray[i], typeof(double));
+                    observationsParamsArray[i] = JsonDataHelper.ParseToken(paramsJArray[i], typeof(double));
                 }
             }
 
