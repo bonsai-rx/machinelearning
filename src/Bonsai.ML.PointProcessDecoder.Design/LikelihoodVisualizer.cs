@@ -1,8 +1,6 @@
 using System;
 using System.Reactive.Linq;
-using System.Reactive;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using System.Linq;
 
 using Bonsai;
@@ -10,14 +8,10 @@ using Bonsai.Expressions;
 using Bonsai.Design;
 using Bonsai.ML.Design;
 
-using OxyPlot.Series;
-
 using static TorchSharp.torch;
 
 using PointProcessDecoder.Core;
-using TorchSharp;
 using Bonsai.Dag;
-using System.Linq.Expressions;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.LikelihoodVisualizer), 
     Target = typeof(Bonsai.ML.PointProcessDecoder.Decode))]

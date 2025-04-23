@@ -28,7 +28,8 @@ public class SavePointProcessModel
     /// <summary>
     /// Specifies the type of suffix to add to the save path.
     /// The suffix is added as a subfolder to the save path.
-    /// If DateTime, a suffix with the current date and time is added to the save path in the format 'yyyyMMddHHmmss'.
+    /// If DateTime is used, a suffix with the current date and time is added to the save path in the format, '[Path]/yyyyMMddHHmmss/...'.
+    /// If Guid is used, a suffix with a unique 128-bit identifier is added to the save path in the format, '[Path]/[128-bit identifier]/...'.
     /// </summary>
     [Description("Specifies the type of suffix to add to the save path.")]
     public SuffixType AddSuffix { get; set; } = SuffixType.None;

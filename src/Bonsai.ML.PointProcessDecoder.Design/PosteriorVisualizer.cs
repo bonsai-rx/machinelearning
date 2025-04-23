@@ -1,8 +1,6 @@
 using System;
 using System.Reactive.Linq;
-using System.Reactive;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using System.Linq;
 
 using Bonsai;
@@ -10,12 +8,9 @@ using Bonsai.Expressions;
 using Bonsai.Design;
 using Bonsai.ML.Design;
 
-using OxyPlot.Series;
-
 using static TorchSharp.torch;
 
 using PointProcessDecoder.Core;
-using TorchSharp;
 using PointProcessDecoder.Core.Decoder;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer), 
@@ -27,6 +22,9 @@ using PointProcessDecoder.Core.Decoder;
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
+    /// <summary>
+    /// Visualizer for the posterior of a point process model.
+    /// </summary>
     public class PosteriorVisualizer : MashupVisualizer, IDecoderVisualizer
     {
         private MultidimensionalArrayVisualizer _visualizer;
