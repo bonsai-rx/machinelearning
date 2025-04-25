@@ -24,8 +24,8 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         private ScatterSeries _scatterSeries;
         private int _dataCount;
         private IDecoderVisualizer decoderVisualizer;
-
         private OxyColor _color = OxyColors.LimeGreen;
+        private Func<object, Point2d> _convertInputData = null;
 
         /// <summary>
         /// Gets or sets the color of the overlay.
@@ -77,14 +77,36 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            var dataPoint = value switch
+            if (value == null)
             {
-                Point point => new Point2d(point.X, point.Y),
-                Point2f point => new Point2d(point.X, point.Y),
-                Point2d point => point,
-                _ => throw new ArgumentException("Unsupported type for Point2DOverlay.")
-            };
+                return;
+            }
 
+            if (_convertInputData == null)
+            {
+                if (value is Point2d)
+                {
+                    _convertInputData = (data) => (Point2d)data;
+                }
+                else if (value is Point2f)
+                {
+                    _convertInputData = (data) => 
+                    {
+                        var datapoint = (Point2f)data;
+                        return new Point2d(datapoint.X, datapoint.Y);
+                    };
+                }
+                else if (value is Point)
+                {
+                    _convertInputData = (data) => 
+                    {
+                        var datapoint = (Point)data;
+                        return new Point2d(datapoint.X, datapoint.Y);
+                    };
+                }
+            }
+
+            var dataPoint = _convertInputData(value);
             _dataCount++;
             _lineSeries.Points.Add(new DataPoint(dataPoint.X, dataPoint.Y));
             _scatterSeries.Points.Clear();
@@ -100,6 +122,10 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Unload()
         {
+            _convertInputData = null;
+            _dataCount = 0;
+            _lineSeries.Points.Clear();
+            _scatterSeries.Points.Clear();
         }
     }
 }
