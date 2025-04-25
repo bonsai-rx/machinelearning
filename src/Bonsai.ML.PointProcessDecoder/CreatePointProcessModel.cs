@@ -79,115 +79,99 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
         }
     }
 
-    private StateSpaceType stateSpaceType = StateSpaceType.DiscreteUniform;
+    private readonly StateSpaceType stateSpaceType = StateSpaceType.DiscreteUniform;
+
+    private int covariateDimensions = 1;
     /// <summary>
-    /// Gets or sets the type of state space used.
+    /// Gets or sets the number of dimensions of the covariate data.
     /// </summary>
-    [Category("2. State Space Parameters")]
-    [Description("The type of state space used.")]
-    public StateSpaceType StateSpaceType
+    [Category("2. Covariate Parameters")]
+    [Description("The number of dimensions of the covariate.")]
+    public int Dimensions
     {
         get
         {
-            return stateSpaceType;
+            return covariateDimensions;
         }
         set
         {
-            stateSpaceType = value;
+            covariateDimensions = value;
         }
     }
 
-    private int stateSpaceDimensions = 1;
+    private double[] minCovariateRange = [0];
     /// <summary>
-    /// Gets or sets the number of dimensions in the state space.
+    /// Gets or sets the minimum values of the covariate range. Must be the same length as the number of covariate dimensions.
     /// </summary>
-    [Category("2. State Space Parameters")]
-    [Description("The number of dimensions in the state space.")]
-    public int StateSpaceDimensions
-    {
-        get
-        {
-            return stateSpaceDimensions;
-        }
-        set
-        {
-            stateSpaceDimensions = value;
-        }
-    }
-
-    private double[] minStateSpace = [0];
-    /// <summary>
-    /// Gets or sets the minimum values of the state space. Must be the same length as the number of state space dimensions.
-    /// </summary>
-    [Category("2. State Space Parameters")]
-    [Description("The minimum values of the state space. Must be the same length as the number of state space dimensions.")]
+    [Category("2. Covariate Parameters")]
+    [Description("The minimum values of the covariate range. Must be the same length as the number of covariate dimensions.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
-    public double[] MinStateSpace
+    public double[] MinRange
     {
         get
         {
-            return minStateSpace;
+            return minCovariateRange;
         }
         set
         {
-            minStateSpace = value;
+            minCovariateRange = value;
         }
     }
 
-    private double[] maxStateSpace = [100];
+    private double[] maxCovariateRange = [100];
     /// <summary>
-    /// Gets or sets the maximum values of the state space. Must be the same length as the number of state space dimensions.
+    /// Gets or sets the maximum values of the covariate range. Must be the same length as the number of covariate dimensions.
     /// </summary>
-    [Category("2. State Space Parameters")]
-    [Description("The maximum values of the state space. Must be the same length as the number of state space dimensions.")]
+    [Category("2. Covariate Parameters")]
+    [Description("The maximum values of the covariate range. Must be the same length as the number of covariate dimensions.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
-    public double[] MaxStateSpace
+    public double[] MaxRange
     {
         get
         {
-            return maxStateSpace;
+            return maxCovariateRange;
         }
         set
         {
-            maxStateSpace = value;
+            maxCovariateRange = value;
         }
     }
 
-    private long[] stepsStateSpace = [50];
+    private long[] stepsCovariateRange = [50];
     /// <summary>
-    /// Gets or sets the number of steps evaluated in the state space. Must be the same length as the number of state space dimensions.
+    /// Gets or sets the number of steps evaluated in the covariate range. Must be the same length as the number of covariate dimensions.
     /// </summary>
-    [Category("2. State Space Parameters")]
-    [Description("The number of steps evaluated in the state space. Must be the same length as the number of state space dimensions.")]
+    [Category("2. Covariate Parameters")]
+    [Description("The number of steps evaluated in the covariate range. Must be the same length as the number of covariate dimensions.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
-    public long[] StepsStateSpace
+    public long[] Steps
     {
         get
         {
-            return stepsStateSpace;
+            return stepsCovariateRange;
         }
         set
         {
-            stepsStateSpace = value;
+            stepsCovariateRange = value;
         }
     }
 
-    private double[] observationBandwidth = [1];
+    private double[] covariateBandwidth = [1];
     /// <summary>
-    /// Gets or sets the bandwidth of the observation estimation method. Must be the same length as the number of state space dimensions.
+    /// Gets or sets the kernel bandwidth used to estimate the probability density over the covariate dimensions. Must be the same length as the covariate dimensions.
     /// </summary>
-    [Category("2. State Space Parameters")]
-    [Description("The bandwidth of the observation estimation method. Must be the same length as the number of state space dimensions.")]
+    [Category("2. Covariate Parameters")]
+    [Description("The kernel bandwidth used to estimate the probability density over the covariate dimensions. Must be the same length as the covariate dimensions.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
-    public double[] ObservationBandwidth
+    public double[] Bandwidth
     {
         get
         {
-            return observationBandwidth;
+            return covariateBandwidth;
         }
         set
         {
-            observationBandwidth = value;
+            covariateBandwidth = value;
         }
     }
 
@@ -211,10 +195,10 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
 
     private int? kernelLimit = null;
     /// <summary>
-    /// Gets or sets the kernel limit.
+    /// Gets or sets the maximum number of kernels maintained in memory for each probability density estimation made by the encoder. In the case of sorted spikes, there is an estimate for the full covariate distribution and an estimate for each unit. In the case of clusterless marks, there is an estimate for the full covariate distribution, and 2 estimates for each mark channel (1 for the overall distribution of marks and 1 for the joint distribution of covariates and marks).
     /// </summary>
     [Category("3. Encoder Parameters")]
-    [Description("The kernel limit.")]
+    [Description("The maximum number of kernels maintained in memory for each probability density estimation made by the encoder. In the case of sorted spikes, there is an estimate for the full covariate distribution and an estimate for each unit. In the case of clusterless marks, there is an estimate for the full covariate distribution, and 2 estimates for each mark channel (1 for the overall distribution of marks and 1 for the joint distribution of covariates and marks).")]
     public int? KernelLimit
     {
         get
@@ -309,7 +293,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// <summary>
     /// Gets or sets the estimation method used during the encoding process.
     /// </summary>
-    [Category("4. Estimation Parameters")]
+    [Category("3. Encoder Parameters")]
     [Description("The estimation method used during the encoding process.")]
     public EstimationMethod EstimationMethod
     {
@@ -325,11 +309,11 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
 
     private double? distanceThreshold = null;
     /// <summary>
-    /// Gets or sets the distance threshold used to determine the threshold to merge unique clusters into a single compressed cluster.
+    /// Gets or sets the distance threshold used to determine if a new data point is merged into an existing kernel or if a new kernel gets created.
     /// Only used when the estimation method is set to <see cref="EstimationMethod.KernelCompression"/>.
     /// </summary>
-    [Category("4. Estimation Parameters")]
-    [Description("The distance threshold used to determine the threshold to merge unique clusters into a single compressed cluster. Only used when the estimation method is set to KernelCompression.")]
+    [Category("3. Encoder Parameters")]
+    [Description("The distance threshold used to determine if a new data point is merged into an existing kernel or if a new kernel gets created. Only used when the estimation method is set to KernelCompression.")]
     public double? DistanceThreshold
     {
         get
@@ -342,48 +326,13 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
         }
     }
 
-    private LikelihoodType likelihoodType = LikelihoodType.Poisson;
-    /// <summary>
-    /// Gets or sets the type of likelihood function used.
-    /// </summary>
-    [Category("5. Likelihood Parameters")]
-    [Description("The type of likelihood function used.")]
-    public LikelihoodType LikelihoodType
-    {
-        get
-        {
-            return likelihoodType;
-        }
-        set
-        {
-            likelihoodType = value;
-        }
-    }
-
-    private bool ignoreNoSpikes = false;
-    /// <summary>
-    /// Gets or sets a value indicating whether to ignore contributions from units or channels with no spikes.
-    /// </summary>
-    [Category("5. Likelihood Parameters")]
-    [Description("Indicates whether to ignore contributions from units or channels with no spikes.")]
-    public bool IgnoreNoSpikes
-    {
-        get
-        {
-            return ignoreNoSpikes;
-        }
-        set
-        {
-            ignoreNoSpikes = value;
-        }
-    }
-
     private TransitionsType transitionsType = TransitionsType.RandomWalk;
     /// <summary>
     /// Gets or sets the type of transition model used during the decoding process.
+    /// Only used when the decoder type is set to <see cref="DecoderType.StateSpaceDecoder"/>.
     /// </summary>
-    [Category("6. Transition Parameters")]
-    [Description("The type of transition model used during the decoding process.")]
+    [Category("4. Decoder Parameters")]
+    [Description("The type of transition model used during the decoding process. Only used when the decoder type is set to StateSpaceDecoder.")]
     public TransitionsType TransitionsType
     {
         get
@@ -401,7 +350,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// Gets or sets the standard deviation of the random walk transitions model.
     /// Only used when the transitions type is set to <see cref="TransitionsType.RandomWalk"/> or when the decoder type is set to <see cref="DecoderType.HybridStateSpaceClassifier"/> 
     /// </summary>
-    [Category("6. Transition Parameters")]
+    [Category("4. Decoder Parameters")]
     [Description("The standard deviation of the random walk transitions model. Only used when the transitions type is set to RandomWalk or when the decoder type is set to HybridStateSpaceClassifier.")]
     public double? SigmaRandomWalk
     {
@@ -419,7 +368,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// <summary>
     /// Gets or sets the type of decoder used.
     /// </summary>
-    [Category("7. Decoder Parameters")]
+    [Category("4. Decoder Parameters")]
     [Description("The type of decoder used.")]
     public DecoderType DecoderType
     {
@@ -438,7 +387,7 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// Gets or sets the stay probability used in the discrete transition matrix.
     /// Only used when the decoder type is set to <see cref="DecoderType.HybridStateSpaceClassifier"/>.
     /// </summary>
-    [Category("7. Decoder Parameters")]
+    [Category("4. Decoder Parameters")]
     [Description("The stay probability used in the discrete transition matrix. Only used when the decoder type is set to HybridStateSpaceClassifier.")]
     public double? StayProbability
     {
@@ -460,6 +409,14 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
     /// <returns></returns>
     public IObservable<PointProcessModel> Process()
     {
+        var likelihoodType = encoderType switch
+        {
+            EncoderType.SortedSpikes => LikelihoodType.Poisson,
+            EncoderType.ClusterlessMarks => LikelihoodType.Clusterless,
+            _ => throw new NotSupportedException($"The encoder type {encoderType} is not supported.")
+        };
+
+
         return Observable.Using(
             () => PointProcessModelManager.Reserve(
                 name: name,
@@ -469,15 +426,14 @@ public class CreatePointProcessModel : IManagedPointProcessModelNode
                 decoderType: decoderType,
                 stateSpaceType: stateSpaceType,
                 likelihoodType: likelihoodType,
-                minStateSpace: minStateSpace,
-                maxStateSpace: maxStateSpace,
-                stepsStateSpace: stepsStateSpace,
-                observationBandwidth: observationBandwidth,
-                stateSpaceDimensions: stateSpaceDimensions,
+                minStateSpace: minCovariateRange,
+                maxStateSpace: maxCovariateRange,
+                stepsStateSpace: stepsCovariateRange,
+                observationBandwidth: covariateBandwidth,
+                stateSpaceDimensions: covariateDimensions,
                 markDimensions: markDimensions,
                 markChannels: markChannels,
                 markBandwidth: markBandwidth,
-                ignoreNoSpikes: ignoreNoSpikes,
                 nUnits: nUnits,
                 distanceThreshold: distanceThreshold,
                 sigmaRandomWalk: sigmaRandomWalk,
