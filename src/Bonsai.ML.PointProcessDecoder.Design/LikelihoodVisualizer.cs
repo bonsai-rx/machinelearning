@@ -177,8 +177,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             Tensor likelihood = _likelihood.Likelihood(inputs, _intensities);
 
             if (likelihood.Dimensions == 2) {
-                likelihood = likelihood
-                    .mean([0]);
+                likelihood = likelihood[-1];
             }
             
             _data = (double[,])likelihood
