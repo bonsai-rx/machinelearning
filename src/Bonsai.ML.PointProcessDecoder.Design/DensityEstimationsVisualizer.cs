@@ -141,14 +141,17 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             var typeVisualizerContext = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
             if (expressionBuilderGraph != null && typeVisualizerContext != null)
             {
-                node = ExpressionBuilder.GetWorkflowElement(
-                    expressionBuilderGraph.Where(node => node.Value == typeVisualizerContext.Source)
-                        .FirstOrDefault().Value) as IManagedPointProcessModelNode;
+                var element = typeVisualizerContext.Source.Builder;
+                
+                if (element != null)
+                {
+                    node = ExpressionBuilder.GetWorkflowElement(element) as IManagedPointProcessModelNode;
+                }
             }
 
             if (node == null)
             {
-                throw new InvalidOperationException("The decode node is invalid.");
+                throw new InvalidOperationException("Unable to access visualizer's source node.");
             }
 
             _modelName = node.Name;

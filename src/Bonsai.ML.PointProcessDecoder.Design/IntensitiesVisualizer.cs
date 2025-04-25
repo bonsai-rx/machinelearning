@@ -143,13 +143,14 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         public override void Load(IServiceProvider provider)
         {
             IManagedPointProcessModelNode node = null;
-            var expressionBuilderGraph = (ExpressionBuilderGraph)provider.GetService(typeof(ExpressionBuilderGraph));
             var typeVisualizerContext = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
-            if (expressionBuilderGraph != null && typeVisualizerContext != null)
+            if (typeVisualizerContext != null)
             {
-                node = ExpressionBuilder.GetWorkflowElement(
-                    expressionBuilderGraph.Where(node => node.Value == typeVisualizerContext.Source)
-                        .FirstOrDefault().Value) as IManagedPointProcessModelNode;
+                var element = typeVisualizerContext.Source.Builder;
+                if (element != null)
+                {
+                    node = ExpressionBuilder.GetWorkflowElement(element) as IManagedPointProcessModelNode;
+                }
             }
 
             if (node == null)

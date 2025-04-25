@@ -12,6 +12,7 @@ using static TorchSharp.torch;
 
 using PointProcessDecoder.Core;
 using PointProcessDecoder.Core.Decoder;
+using System.Text;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer), 
     Target = typeof(Bonsai.ML.PointProcessDecoder.Decode))]
@@ -69,13 +70,19 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         public override void Load(IServiceProvider provider)
         {
             IManagedPointProcessModelNode node = null;
-            var expressionBuilderGraph = (ExpressionBuilderGraph)provider.GetService(typeof(ExpressionBuilderGraph));
-            var typeVisualizerContext = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
-            if (expressionBuilderGraph != null && typeVisualizerContext != null)
+            if (provider == null)
             {
-                node = ExpressionBuilder.GetWorkflowElement(
-                    expressionBuilderGraph.Where(node => node.Value == typeVisualizerContext.Source)
-                        .FirstOrDefault().Value) as IManagedPointProcessModelNode;
+                throw new ArgumentNullException(nameof(provider));
+            }
+            
+            var typeVisualizerContext = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
+            if (typeVisualizerContext != null)
+            {
+                var element = typeVisualizerContext.Source.Builder;
+                if (element != null)
+                {
+                    node = ExpressionBuilder.GetWorkflowElement(element) as IManagedPointProcessModelNode;
+                }
             }
 
             if (node == null)
