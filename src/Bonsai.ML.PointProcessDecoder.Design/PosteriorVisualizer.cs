@@ -35,7 +35,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// </summary>
         public HeatMapSeriesOxyPlotBase Plot => _visualizer.Plot;
 
-        private int _capacity = 100;
+        private int _capacity = 10;
         /// <summary>
         /// Gets or sets the integer value that determines how many data points should be shown along the x axis if the posterior is a 1D tensor.
         /// </summary>
