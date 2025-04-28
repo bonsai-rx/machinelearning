@@ -1,7 +1,5 @@
 .vs
 .venv
-bin
-obj
 Packages
 *.orig
 *.user
@@ -10,4 +8,4 @@ Packages
 *.exe.settings
 *.exe.old
 *.dll
-artifacts
+/artifacts/
