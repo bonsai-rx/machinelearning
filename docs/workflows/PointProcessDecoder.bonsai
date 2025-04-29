@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.8.5"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:p1="clr-namespace:Bonsai.ML.PointProcessDecoder;assembly=Bonsai.ML.PointProcessDecoder"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:CreatePointProcessModel">
+          <p1:Name>PointProcessModel</p1:Name>
+          <p1:EstimationMethod>KernelDensity</p1:EstimationMethod>
+          <p1:TransitionsType>RandomWalk</p1:TransitionsType>
+          <p1:EncoderType>SortedSpikeEncoder</p1:EncoderType>
+          <p1:DecoderType>StateSpaceDecoder</p1:DecoderType>
+          <p1:StateSpaceType>DiscreteUniformStateSpace</p1:StateSpaceType>
+          <p1:LikelihoodType>Poisson</p1:LikelihoodType>
+          <p1:ScalarType xsi:nil="true" />
+          <p1:StateSpaceDimensions>2</p1:StateSpaceDimensions>
+          <p1:MinStateSpace>
+            <p1:double>0</p1:double>
+            <p1:double>0</p1:double>
+          </p1:MinStateSpace>
+          <p1:MaxStateSpace>
+            <p1:double>120</p1:double>
+            <p1:double>120</p1:double>
+          </p1:MaxStateSpace>
+          <p1:StepsStateSpace>
+            <p1:long>50</p1:long>
+            <p1:long>50</p1:long>
+          </p1:StepsStateSpace>
+          <p1:ObservationBandwidth>
+            <p1:double>5</p1:double>
+            <p1:double>5</p1:double>
+          </p1:ObservationBandwidth>
+          <p1:NUnits>104</p1:NUnits>
+          <p1:MarkDimensions xsi:nil="true" />
+          <p1:MarkChannels xsi:nil="true" />
+          <p1:DistanceThreshold>1.5</p1:DistanceThreshold>
+          <p1:SigmaRandomWalk xsi:nil="true" />
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>Observation</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>SpikeCounts</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Encode">
+          <p1:Model>PointProcessModel</p1:Model>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>SortedSpikeCounts</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:Decode">
+          <p1:Model>PointProcessModel</p1:Model>
+        </Combinator>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="1" To="3" Label="Source1" />
+      <Edge From="2" To="3" Label="Source2" />
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="5" To="6" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

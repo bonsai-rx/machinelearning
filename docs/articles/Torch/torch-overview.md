@@ -26,9 +26,6 @@ Once complete, you need to install the cuda-compatible torch libraries and place
 
 Finally, extract the zip folder and copy the contents of the `lib` folder into the `Extensions` folder of your bonsai installation directory.
 
-> [!WARNING]
-> You can only install one of the above CPU or GPU packages, not both. The GPU package contains all of the support of the CPU package. 
-
 ## Getting Started
 
 The `Bonsai.ML.Torch` package primarily provides tooling and functionality for users to interact with and manipulate `Tensor` objects, the core data type of torch which underlies most advanced operations. Additionally, the package provides some capabilities for defining neural network architectures, running forward inference, and learning via back propagation.
