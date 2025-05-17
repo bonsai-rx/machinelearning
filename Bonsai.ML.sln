@@ -1,24 +1,14 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{12312384-8828-4786-AE19-EFCEDF968290}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML", "src\Bonsai.ML\Bonsai.ML.csproj", "{AA6BE73F-1E15-49A5-AC3C-CD069035C940}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.ML", "src\Bonsai.ML\Bonsai.ML.csproj", "{AA6BE73F-1E15-49A5-AC3C-CD069035C940}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.LinearDynamicalSystems", "src\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj", "{17AABD18-E275-4409-9E33-3D755B809FF6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.ML.LinearDynamicalSystems", "src\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj", "{17AABD18-E275-4409-9E33-3D755B809FF6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Design", "src\Bonsai.ML.Design\Bonsai.ML.Design.csproj", "{196AA5C7-AE8A-477B-B01A-B94676EC60EE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.ML.Design", "src\Bonsai.ML.Design\Bonsai.ML.Design.csproj", "{196AA5C7-AE8A-477B-B01A-B94676EC60EE}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{461FE3E2-21C4-47F9-8405-DF72326AAB2B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bonsai.ML.LinearDynamicalSystems.Tests", "tests\Bonsai.ML.LinearDynamicalSystems.Tests\Bonsai.ML.LinearDynamicalSystems.Tests.csproj", "{81DB65B3-EA65-4947-8CF1-0E777324C082}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FEFDDEAC-91FD-45DA-A67A-C76D538FD484}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.LinearDynamicalSystems.Tests", "tests\Bonsai.ML.LinearDynamicalSystems.Tests\Bonsai.ML.LinearDynamicalSystems.Tests.csproj", "{81DB65B3-EA65-4947-8CF1-0E777324C082}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.HiddenMarkovModels", "src\Bonsai.ML.HiddenMarkovModels\Bonsai.ML.HiddenMarkovModels.csproj", "{BAD0A733-8EFB-4EAF-9648-9851656AF7FF}"
 EndProject
@@ -31,6 +21,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.HiddenMarkovModels.Design", "src\Bonsai.ML.HiddenMarkovModels.Design\Bonsai.ML.HiddenMarkovModels.Design.csproj", "{FC395DDC-62A4-4E14-A198-272AB05B33C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Torch", "src\Bonsai.ML.Torch\Bonsai.ML.Torch.csproj", "{06FCC9AF-CE38-44BB-92B3-0D451BE88537}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{DEE5DD87-39C1-BF34-B639-A387DCCF972B}"
+	ProjectSection(SolutionItems) = preProject
+		build\Common.csproj.props = build\Common.csproj.props
+		build\Common.csproj.targets = build\Common.csproj.targets
+		build\Common.Tests.csproj.props = build\Common.Tests.csproj.props
+		build\icon.png = build\icon.png
+		build\Package.props = build\Package.props
+		build\Project.csproj.props = build\Project.csproj.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,37 +62,25 @@ Global
 		{39A4414F-52B1-42D7-82FA-E65DAD885264}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39A4414F-52B1-42D7-82FA-E65DAD885264}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39A4414F-52B1-42D7-82FA-E65DAD885264}.Release|Any CPU.Build.0 = Release|Any CPU
-        {A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13}.Release|Any CPU.Build.0 = Release|Any CPU
-        {17DF50BE-F481-4904-A4C8-5DF9725B2CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {17DF50BE-F481-4904-A4C8-5DF9725B2CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {17DF50BE-F481-4904-A4C8-5DF9725B2CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {17DF50BE-F481-4904-A4C8-5DF9725B2CA1}.Release|Any CPU.Build.0 = Release|Any CPU
-        {FC395DDC-62A4-4E14-A198-272AB05B33C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {FC395DDC-62A4-4E14-A198-272AB05B33C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {FC395DDC-62A4-4E14-A198-272AB05B33C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {FC395DDC-62A4-4E14-A198-272AB05B33C7}.Release|Any CPU.Build.0 = Release|Any CPU
-        {06FCC9AF-CE38-44BB-92B3-0D451BE88537}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {06FCC9AF-CE38-44BB-92B3-0D451BE88537}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {06FCC9AF-CE38-44BB-92B3-0D451BE88537}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {06FCC9AF-CE38-44BB-92B3-0D451BE88537}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17DF50BE-F481-4904-A4C8-5DF9725B2CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17DF50BE-F481-4904-A4C8-5DF9725B2CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17DF50BE-F481-4904-A4C8-5DF9725B2CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17DF50BE-F481-4904-A4C8-5DF9725B2CA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC395DDC-62A4-4E14-A198-272AB05B33C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC395DDC-62A4-4E14-A198-272AB05B33C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC395DDC-62A4-4E14-A198-272AB05B33C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC395DDC-62A4-4E14-A198-272AB05B33C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06FCC9AF-CE38-44BB-92B3-0D451BE88537}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06FCC9AF-CE38-44BB-92B3-0D451BE88537}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06FCC9AF-CE38-44BB-92B3-0D451BE88537}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06FCC9AF-CE38-44BB-92B3-0D451BE88537}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{FC395DDC-62A4-4E14-A198-272AB05B33C7} = {12312384-8828-4786-AE19-EFCEDF968290}
-		{AA6BE73F-1E15-49A5-AC3C-CD069035C940} = {12312384-8828-4786-AE19-EFCEDF968290}
-		{17AABD18-E275-4409-9E33-3D755B809FF6} = {12312384-8828-4786-AE19-EFCEDF968290}
-		{196AA5C7-AE8A-477B-B01A-B94676EC60EE} = {12312384-8828-4786-AE19-EFCEDF968290}
-		{81DB65B3-EA65-4947-8CF1-0E777324C082} = {461FE3E2-21C4-47F9-8405-DF72326AAB2B}
-		{BAD0A733-8EFB-4EAF-9648-9851656AF7FF} = {12312384-8828-4786-AE19-EFCEDF968290}
-		{39A4414F-52B1-42D7-82FA-E65DAD885264} = {12312384-8828-4786-AE19-EFCEDF968290}
-        {A135C7DB-EA50-4FC6-A6CB-6A5A5CC5FA13} = {12312384-8828-4786-AE19-EFCEDF968290}
-        {17DF50BE-F481-4904-A4C8-5DF9725B2CA1} = {12312384-8828-4786-AE19-EFCEDF968290}
-        {06FCC9AF-CE38-44BB-92B3-0D451BE88537} = {12312384-8828-4786-AE19-EFCEDF968290}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B6468F13-97CD-45E0-9E1E-C122D7F1E09F}

@@ -1,15 +1,17 @@
 {
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
   "metadata": [
     {
       "src": [
         {
-          "src": "../src",
-          "files": [
-            "**/*.csproj"
-          ]
+          "src": "../src/",
+          "files": "**/*.csproj",
+          "exclude": "**/*.Tests.csproj"
         }
       ],
-      "dest": "api",
+      "output": "../artifacts/docs/api/",
+      "enumSortOrder": "declaringOrder",
+      "memberLayout": "separatePages",
       "filter": "filter.yml"
     }
   ],
@@ -17,76 +19,57 @@
     "content": [
       {
         "files": [
-          "**/*.{md,yml}"
+          "*.md",
+          "toc.yml",
+          "{articles,tutorials,examples}/**/*.md",
+          "{articles,tutorials,examples}/**/toc.yml"
         ],
-        "exclude": [
-          "_site/**",
-          "filter.yml"
-        ]
+        "exclude": "README.md"
       },
       {
-        "files": [
-          "**/*.{md,yml}"
-        ],
-        "exclude": [
-          "_site/**"
-        ],
-        "src": "./examples",
-        "dest": "examples"
+        "src": "../artifacts/docs/api/",
+        "dest": "api",
+        "files": "**/*.yml"
       }
     ],
     "resource": [
       {
         "files": [
-          "logo.svg",
-          "favicon.ico",
           "images/**",
-          "workflows/**"
+          "workflows/**/*.{bonsai,svg}",
+          "{articles,tutorials,examples}/**/*.{bonsai,svg}"
         ]
       },
       {
-        "files": [
-          "**/*.{bonsai,svg,gif}"
-        ],
-        "exclude": [
-          "_site/**"
-        ],
-        "src": "./examples",
-        "dest": "examples"
+        "src": "../build/",
+        "files": "icon.png"
       }
     ],
-    "output": "_site",
     "overwrite": [
-      {
-        "files": [
-          "apidoc/**.md"
-        ],
-        "exclude": [
-          "obj/**",
-          "_site/**"
-        ]
-      }
+      "apidoc/**/*.md"
     ],
+    "output": "../artifacts/docs/site/",
     "template": [
       "default",
       "modern",
-      "bonsai/template",
+      "bonsai-docfx/template",
       "template"
     ],
+    "sitemap": {
+      "baseUrl": "https://bonsai-rx.org/machinelearning"
+    },
     "globalMetadata": {
-      "_appName": "Bonsai - ML",
+      "_appName": "Bonsai.ML",
       "_appTitle": "Bonsai.ML",
+      "_appFooter": "&copy; Bonsai Foundation CIC and Contributors. Made with <a href=\"https://dotnet.github.io/docfx\">docfx</a>",
+      "_appLogoPath": "logo.svg",
+      "_appFaviconPath": "icon.png",
       "_enableNewTab": true,
       "_enableSearch": true,
-      "pdf": false,
-      "_appFooter": "&copy; 2024 Bonsai Foundation CIC and Contributors. Made with <a href=\"https://dotnet.github.io/docfx\">docfx</a>",
       "_gitContribute": {
-        "repo": "https://github.com/bonsai-rx/machinelearning",
-        "branch": "main",
-        "apiSpecFolder": "apidoc"
+        "apiSpecFolder": "docs/apidoc"
       }
     },
-    "markdownEngineName": "markdig",
     "markdownEngineProperties": {
       "markdigExtensions": [
         "attributes",
