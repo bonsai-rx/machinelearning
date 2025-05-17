@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Title>Bonsai.ML.HiddenMarkovModels</Title>
     <Description>A Bonsai package for hidden markov models. Interfaces with the SSM python package using the Bonsai.Scripting.Python package.</Description>
-    <PackageTags>Bonsai Rx ML SSM Hidden Markov Models</PackageTags>
+    <PackageTags>$(PackageTags) SSM Hidden Markov Models</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>

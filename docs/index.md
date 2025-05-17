@@ -1,1 +1,1 @@
-[!INCLUDE [Bonsai - Machine Learning](../README.md)]
+[!INCLUDE [](README.md)]

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Title>Bonsai.ML.Data</Title>
     <Description>Provides common tools and functionality for working with ML data.</Description>
-    <PackageTags>Bonsai Rx ML Machine Learning Data</PackageTags>
+    <PackageTags>$(PackageTags) Data</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
