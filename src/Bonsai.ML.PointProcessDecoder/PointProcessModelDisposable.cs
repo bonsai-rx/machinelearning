@@ -10,7 +10,7 @@ internal sealed class PointProcessModelDisposable(PointProcessModel model, IDisp
     /// <summary>
     /// Gets a value indicating whether the object has been disposed.
     /// </summary>
-    public bool IsDisposed => resource == null;
+    public bool IsDisposed => resource is null;
 
     private readonly PointProcessModel model = model ?? throw new ArgumentNullException(nameof(model));
     /// <summary>

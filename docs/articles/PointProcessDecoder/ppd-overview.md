@@ -4,7 +4,7 @@ The `Bonsai.ML.PointProcessDecoder` package provides a Bonsai interface to the [
 
 ## Installation
 
-The package can be installed by going to the bonsai package manager and installing the `Bonsai.ML.PointProcessDecoder` package. Additional installation steps are required for installing the CPU or GPU version of the `Bonsai.ML.Torch` package. See the [Torch installation guide](../Torch/torch-overview.md) for more information.
+The package can be installed by going to the Bonsai package manager and installing the `Bonsai.ML.PointProcessDecoder` package. Additional installation steps are required for installing the CPU or GPU version of the `Bonsai.ML.Torch` package. See the [Torch installation guide](../Torch/torch-overview.md) for more information.
 
 ## Bonsai Implementation
 
@@ -14,15 +14,19 @@ The following workflow showcases the core functionality of the `Bonsai.ML.PointP
 ![Point Process Decoder Implementation](~/workflows/PointProcessDecoder.bonsai)
 :::
 
-The `CreatePointProcessModel` node is used to instantiate a model object and configure parameters while the `Encode` and `Decode` nodes are the two main methods that will be used.
+The `CreatePointProcessModel` operator is used to instantiate a model object and configure its parameters, while `Encode` and `Decode` are the two main operators that will be used to for data processing.
 
-Below detailed breakdown of the configuration parameters and how they relate to model specification. 
+Below is a detailed breakdown of the configuration parameters and how they relate to model specification. 
 
 ### Model Specification
 
 #### Model Parameters
 
-The model parameters are used to define generic properties of the model. The `Device` property determines the torch device to run the model on. In most cases, this will be either CPU (the default configuration if no device is specified) or CUDA (for running on the GPU). The `ScalarType` property is used to set the data type of tensors computed and maintined within the model. The `Name` property is used to ascribe a unique key to a model, which allows other nodes throughout the workflow to reference the same model. In this way, multiple models can be defined and used in a single workflow so long as each model is given a unique name.  
+The model parameters are used to define generic properties of the model. The `Device` property determines the torch device used to run the model on. In most cases, this will be either CPU (the default configuration if no device is specified) or CUDA (for running on the GPU).
+
+The `ScalarType` property is used to set the data type of tensors computed and maintined within the model.
+
+The `Name` property is used to ascribe a unique key to a model, which allows other nodes throughout the workflow to reference the same model. In this way, multiple models can be defined and used in a single workflow so long as each model is given a unique name.  
 
 #### Covariate Parameters
 
