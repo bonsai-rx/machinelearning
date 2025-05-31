@@ -1,6 +1,6 @@
 - name: Docs
   href: articles/
 - name: API
-  href: api/
+  href: ../artifacts/docs/api/
 - name: Examples
   href: examples/docs/

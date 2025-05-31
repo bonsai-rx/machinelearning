@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Temporarily disabling this config out of concern it is guarenteed to mess with the way bonsai-rx/setup-bonsai does caching.
+  Feel free to re-enable locally by renaming, just don't commit until I have more time to investigate.
+-->
+<configuration>
+  <packageSources>
+    <add key="Build Packages" value="../artifacts/package/release" />
+  </packageSources>
+</configuration>

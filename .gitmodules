@@ -1,6 +1,6 @@
 [submodule "examples"]
 	path = docs/examples
 	url = https://github.com/bonsai-rx/machinelearning-examples.git
-[submodule "docs/bonsai"]
-	path = docs/bonsai
-	url = https://github.com/bonsai-rx/docfx-tools
+[submodule "docs/bonsai-docfx"]
+	path = docs/bonsai-docfx
+	url = https://github.com/bonsai-rx/docfx-tools.git

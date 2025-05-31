@@ -1,11 +1,10 @@
-.vs
+.bonsai/Bonsai.exe*
+.bonsai/Packages/
+.bonsai/Settings/
+.vs/
+/artifacts/
 .venv
-Packages
 *.orig
 *.user
 *.suo
-*.exe
-*.exe.settings
 *.exe.old
-*.dll
-/artifacts/
