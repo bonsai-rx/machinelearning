@@ -13,4 +13,7 @@
   <ItemGroup>
     <PackageReference Include="PointProcessDecoder.Core" Version="0.4.0" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Bonsai.ML.PointProcessDecoder.Design" />
+  </ItemGroup>
 </Project>
