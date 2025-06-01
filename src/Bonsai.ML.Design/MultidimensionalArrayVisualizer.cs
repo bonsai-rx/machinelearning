@@ -23,6 +23,16 @@ namespace Bonsai.ML.Design
         /// </summary>
         public int RenderMethodSelectedIndex { get; set; }
 
+        /// <summary>
+        /// Gets or sets the minimum value of the heatmap.
+        /// </summary>
+        public double? ValueMin { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum value of the heatmap.
+        /// </summary>
+        public double? ValueMax { get; set; } = null;
+
         private HeatMapSeriesOxyPlotBase _plot;
         /// <summary>
         /// Gets the HeatMapSeriesOxyPlotBase control used to display the heatmap.
@@ -32,7 +42,12 @@ namespace Bonsai.ML.Design
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            _plot = new HeatMapSeriesOxyPlotBase(PaletteSelectedIndex, RenderMethodSelectedIndex)
+            _plot = new HeatMapSeriesOxyPlotBase(
+                PaletteSelectedIndex,
+                RenderMethodSelectedIndex,
+                ValueMin,
+                ValueMax
+            )
             {
                 Dock = DockStyle.Fill,
             };
