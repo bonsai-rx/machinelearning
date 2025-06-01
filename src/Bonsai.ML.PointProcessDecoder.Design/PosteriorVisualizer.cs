@@ -51,12 +51,12 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <summary>
         /// Gets or sets the minimum value of the likelihood.
         /// </summary>
-        public double? ValueMin { get; set; } = null;
+        public double? ValueMin { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum value of the likelihood.
         /// </summary>
-        public double? ValueMax { get; set; } = null;
+        public double? ValueMax { get; set; }
 
         private double[,] _data = null;
         private double[] _stateSpaceMin;
@@ -103,13 +103,12 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             _visualizer = new MultidimensionalArrayVisualizer()
             {
                 PaletteSelectedIndex = 1,
-                RenderMethodSelectedIndex = 0
+                RenderMethodSelectedIndex = 0,
+                ValueMin = ValueMin,
+                ValueMax = ValueMax,
             };
             
             _visualizer.Load(provider);
-
-            _visualizer.Plot.ValueMin = ValueMin;
-            _visualizer.Plot.ValueMax = ValueMax;
 
             var capacityLabel = new ToolStripLabel
             {
@@ -131,10 +130,16 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 }
             };
 
-            _visualizer.Plot.VisualizerPropertiesDropDown.DropDownItems.AddRange([
+            Plot.VisualizerPropertiesDropDown.DropDownItems.AddRange([
                 capacityLabel,
                 capacityValue
             ]);
+
+            Plot.View.HandleDestroyed += (sender, e) =>
+            {
+                ValueMin = Plot.ValueMin;
+                ValueMax = Plot.ValueMax;
+            };
 
             base.Load(provider);
         }

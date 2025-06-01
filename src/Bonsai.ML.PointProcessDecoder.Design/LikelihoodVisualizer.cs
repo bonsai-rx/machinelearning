@@ -98,7 +98,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             _visualizer = new MultidimensionalArrayVisualizer()
             {
                 PaletteSelectedIndex = 1,
-                RenderMethodSelectedIndex = 0
+                RenderMethodSelectedIndex = 0,
+                ValueMin = ValueMin,
+                ValueMax = ValueMax,
             };
             
             _visualizer.Load(provider);
@@ -123,10 +125,16 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 }
             };
 
-            _visualizer.Plot.VisualizerPropertiesDropDown.DropDownItems.AddRange([
+            Plot.VisualizerPropertiesDropDown.DropDownItems.AddRange([
                 capacityLabel,
                 capacityValue
             ]);
+
+            Plot.View.HandleDestroyed += (sender, e) =>
+            {
+                ValueMin = Plot.ValueMin;
+                ValueMax = Plot.ValueMax;
+            };
 
             base.Load(provider);
         }
