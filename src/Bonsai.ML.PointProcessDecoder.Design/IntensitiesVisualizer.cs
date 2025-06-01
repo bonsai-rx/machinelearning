@@ -142,14 +142,14 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            IManagedPointProcessModelNode node = null;
+            IPointProcessModelReference node = null;
             var typeVisualizerContext = (ITypeVisualizerContext)provider.GetService(typeof(ITypeVisualizerContext));
             if (typeVisualizerContext != null)
             {
                 var element = typeVisualizerContext.Source.Builder;
                 if (element != null)
                 {
-                    node = ExpressionBuilder.GetWorkflowElement(element) as IManagedPointProcessModelNode;
+                    node = ExpressionBuilder.GetWorkflowElement(element) as IPointProcessModelReference;
                 }
             }
 

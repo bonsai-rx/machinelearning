@@ -16,7 +16,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Transform)]
 [Description("Selects specific units IDs from the input neural data.")]
-public class SelectUnitIds : IManagedPointProcessModelNode, IScalarTypeProvider
+public class SelectUnitIds : IPointProcessModelReference, IScalarTypeProvider
 {
     /// <summary>
     /// The name of the point process model to use.

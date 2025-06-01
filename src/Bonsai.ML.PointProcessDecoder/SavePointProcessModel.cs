@@ -10,7 +10,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Sink)]
 [Description("Saves the state of the point process model.")]
-public class SavePointProcessModel
+public class SavePointProcessModel : IPointProcessModelReference
 {
     /// <summary>
     /// The path to the folder where the state of the point process model will be saved.

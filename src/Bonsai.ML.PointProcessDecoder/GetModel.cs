@@ -12,7 +12,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Source)]
 [Description("Returns the point process model.")]
-public class GetModel : IManagedPointProcessModelNode
+public class GetModel : IPointProcessModelReference
 {
     /// <summary>
     /// The name of the point process model to return.

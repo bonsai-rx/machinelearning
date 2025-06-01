@@ -28,7 +28,7 @@ public class PointProcessModelNameConverter : StringConverter
                                     where builder.GetType() != typeof(DisableBuilder)
                                     let managedModelNode = ExpressionBuilder.GetWorkflowElement(builder)
                                     where managedModelNode != null && (managedModelNode is CreatePointProcessModel || managedModelNode is LoadPointProcessModel) 
-                                    let createPointProcessModel = (IManagedPointProcessModelNode)managedModelNode
+                                    let createPointProcessModel = (IPointProcessModelReference)managedModelNode
                                     where createPointProcessModel != null && !string.IsNullOrEmpty(createPointProcessModel.Name)
                                     select createPointProcessModel.Name)
                                     .Distinct()

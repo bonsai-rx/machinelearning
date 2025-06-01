@@ -17,7 +17,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Source)]
 [Description("Loads a point process model from a saved state.")]
-public class LoadPointProcessModel : IManagedPointProcessModelNode
+public class LoadPointProcessModel : IPointProcessModelReference
 {
     private string name = "PointProcessModel";
 

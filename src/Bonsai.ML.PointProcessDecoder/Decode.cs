@@ -13,7 +13,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Transform)]
 [Description("Decodes the input neural data into a posterior state estimate using a point process model.")]
-public class Decode : IManagedPointProcessModelNode
+public class Decode : IPointProcessModelReference
 {
     /// <summary>
     /// The name of the point process model to use.

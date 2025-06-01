@@ -12,7 +12,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Transform)]
 [Description("Transforms the output of a decoder model into a DecoderData object.")]
-public class GetDecoderData : IManagedPointProcessModelNode
+public class GetDecoderData : IPointProcessModelReference
 {
     /// <summary>
     /// The name of the point process model to use.

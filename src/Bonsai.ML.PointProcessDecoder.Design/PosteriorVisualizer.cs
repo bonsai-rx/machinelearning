@@ -69,7 +69,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            IManagedPointProcessModelNode node = null;
+            IPointProcessModelReference node = null;
             if (provider == null)
             {
                 throw new ArgumentNullException(nameof(provider));
@@ -81,7 +81,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 var element = typeVisualizerContext.Source.Builder;
                 if (element != null)
                 {
-                    node = ExpressionBuilder.GetWorkflowElement(element) as IManagedPointProcessModelNode;
+                    node = ExpressionBuilder.GetWorkflowElement(element) as IPointProcessModelReference;
                 }
             }
 
