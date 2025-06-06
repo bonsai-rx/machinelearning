@@ -275,8 +275,6 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                         {
                             UpdateModel();
                         }
-                        ValueMin = _visualizer.Plot.ValueMin;
-                        ValueMax = _visualizer.Plot.ValueMax;
                         Show(buffer.LastOrDefault());
                     }));
 
