@@ -23,24 +23,40 @@ namespace Bonsai.ML.Design
         /// </summary>
         public int RenderMethodSelectedIndex { get; set; }
 
-        private HeatMapSeriesOxyPlotBase Plot;
+        /// <summary>
+        /// Gets or sets the minimum value of the heatmap.
+        /// </summary>
+        public double? ValueMin { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum value of the heatmap.
+        /// </summary>
+        public double? ValueMax { get; set; } = null;
+
+        private HeatMapSeriesOxyPlotBase _plot;
+        /// <summary>
+        /// Gets the HeatMapSeriesOxyPlotBase control used to display the heatmap.
+        /// </summary>
+        public HeatMapSeriesOxyPlotBase Plot => _plot;
 
         /// <inheritdoc/>
         public override void Load(IServiceProvider provider)
         {
-            Plot = new HeatMapSeriesOxyPlotBase(PaletteSelectedIndex, RenderMethodSelectedIndex)
+            _plot = new HeatMapSeriesOxyPlotBase(
+                PaletteSelectedIndex,
+                RenderMethodSelectedIndex,
+                ValueMin,
+                ValueMax
+            )
             {
                 Dock = DockStyle.Fill,
             };
 
-            Plot.PaletteComboBoxValueChanged += PaletteIndexChanged;
-            Plot.RenderMethodComboBoxValueChanged += RenderMethodIndexChanged;
+            _plot.PaletteComboBoxValueChanged += PaletteIndexChanged;
+            _plot.RenderMethodComboBoxValueChanged += RenderMethodIndexChanged;
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
-            if (visualizerService != null)
-            {
-                visualizerService.AddControl(Plot);
-            }
+            visualizerService?.AddControl(_plot);
         }
 
         /// <inheritdoc/>

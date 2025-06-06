@@ -14,29 +14,36 @@ namespace Bonsai.ML.Design
     /// </summary>
     public class HeatMapSeriesOxyPlotBase : UserControl
     {
-        private PlotView view;
-        private PlotModel model;
         private HeatMapSeries heatMapSeries;
-        private LinearColorAxis colorAxis;
-
+        private LinearColorAxis colorAxis = null;
         private ToolStripComboBox paletteComboBox;
         private ToolStripLabel paletteLabel;
-        private int _paletteSelectedIndex;
+        private int paletteSelectedIndex;
         private OxyPalette palette;
-
         private ToolStripComboBox renderMethodComboBox;
         private ToolStripLabel renderMethodLabel;
-        private int _renderMethodSelectedIndex;
+        private int renderMethodSelectedIndex;
         private HeatMapRenderMethod renderMethod = HeatMapRenderMethod.Bitmap;
         private StatusStrip statusStrip;
-
-        private ToolStripTextBox maxValueTextBox;
+        private ToolStripTextBox maxValueTextBox = null;
         private ToolStripLabel maxValueLabel;
-
-        private ToolStripTextBox minValueTextBox;
+        private ToolStripTextBox minValueTextBox = null;
         private ToolStripLabel minValueLabel;
 
-        private int _numColors = 100;
+        /// <summary>
+        /// Gets the visualizer properties drop down button.
+        /// </summary>
+        public ToolStripDropDownButton VisualizerPropertiesDropDown { get; private set; }
+
+        /// <summary>
+        /// Gets the plot view of the control.
+        /// </summary>
+        public PlotView View { get; private set; }
+
+        /// <summary>
+        /// Gets the plot model of the control.
+        /// </summary>
+        public PlotModel Model { get; private set; }
 
         /// <summary>
         /// Event handler which can be used to hook into events generated when the combobox values have changed.
@@ -64,29 +71,46 @@ namespace Bonsai.ML.Design
         public StatusStrip StatusStrip => statusStrip;
 
         /// <summary>
+        /// Gets or sets the minimum value of the color axis.
+        /// </summary>
+        public double? ValueMin { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum value of the color axis.
+        /// </summary>
+        public double? ValueMax { get; set; }
+
+        /// <summary>
         /// Constructor of the TimeSeriesOxyPlotBase class.
         /// Requires a line series name and an area series name.
         /// Data source is optional, since pasing it to the constructor will populate the combobox and leave it empty otherwise.
         /// The selected index is only needed when the data source is provided.
         /// </summary>
-        public HeatMapSeriesOxyPlotBase(int paletteSelectedIndex, int renderMethodSelectedIndex, int numColors = 100)
+        public HeatMapSeriesOxyPlotBase(
+            int paletteSelectedIndex,
+            int renderMethodSelectedIndex,
+            double? valueMin = null,
+            double? valueMax = null
+        )
         {
-            _paletteSelectedIndex = paletteSelectedIndex;
-            _renderMethodSelectedIndex = renderMethodSelectedIndex;
-            _numColors = numColors;
+            this.paletteSelectedIndex = paletteSelectedIndex;
+            this.renderMethodSelectedIndex = renderMethodSelectedIndex;
+            ValueMin = valueMin;
+            ValueMax = valueMax;
             Initialize();
         }
 
         private void Initialize()
         {
-            view = new PlotView
+            View = new PlotView
             {
                 Dock = DockStyle.Fill,
             };
 
-            model = new PlotModel();
+            Model = new PlotModel();
 
-            heatMapSeries = new HeatMapSeries {
+            heatMapSeries = new HeatMapSeries
+            {
                 X0 = 0,
                 X1 = 100,
                 Y0 = 0,
@@ -96,15 +120,16 @@ namespace Bonsai.ML.Design
                 CoordinateDefinition = HeatMapCoordinateDefinition.Edge
             };
 
-            colorAxis = new LinearColorAxis {
+            colorAxis = new LinearColorAxis
+            {
                 Position = AxisPosition.Right,
             };
 
-            model.Axes.Add(colorAxis);
-            model.Series.Add(heatMapSeries);
+            Model.Axes.Add(colorAxis);
+            Model.Series.Add(heatMapSeries);
 
-            view.Model = model;
-            Controls.Add(view);
+            View.Model = Model;
+            Controls.Add(View);
 
             InitializeColorPalette();
             InitializeRenderMethod();
@@ -126,18 +151,31 @@ namespace Bonsai.ML.Design
                 minValueTextBox
             };
 
-            ToolStripDropDownButton visualizerPropertiesButton = new ToolStripDropDownButton("Visualizer Properties");
+            VisualizerPropertiesDropDown = new ToolStripDropDownButton("Visualizer Properties");
 
             foreach (var item in toolStripItems)
             {
-                visualizerPropertiesButton.DropDownItems.Add(item);
+                VisualizerPropertiesDropDown.DropDownItems.Add(item);
             }
 
-            statusStrip.Items.Add(visualizerPropertiesButton);
+            statusStrip.Items.Add(VisualizerPropertiesDropDown);
 
             Controls.Add(statusStrip);
-            view.MouseClick += new MouseEventHandler(onMouseClick);
+            View.MouseClick += (sender, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    statusStrip.Visible = !statusStrip.Visible;
+                }
+            };
+
             AutoScaleDimensions = new SizeF(6F, 13F);
+
+            View.HandleDestroyed += (sender, e) =>
+            {
+                ValueMin = double.IsNaN(colorAxis.Minimum) ? null : colorAxis.Minimum;
+                ValueMax = double.IsNaN(colorAxis.Maximum) ? null : colorAxis.Maximum;
+            };
         }
 
         private void InitializeColorAxisValues()
@@ -152,24 +190,31 @@ namespace Bonsai.ML.Design
             {
                 Name = "maxValue",
                 AutoSize = true,
-                Text = "auto",
+                Text = ValueMax.ToString(),
             };
+
+            if (ValueMax.HasValue)
+                colorAxis.Maximum = ValueMax.Value;
 
             maxValueTextBox.TextChanged += (sender, e) =>
             {
+
                 if (double.TryParse(maxValueTextBox.Text, out double maxValue))
                 {
                     colorAxis.Maximum = maxValue;
                 }
-                else if (maxValueTextBox.Text.ToLower() == "auto")
+
+                else if (string.IsNullOrEmpty(maxValueTextBox.Text))
                 {
                     colorAxis.Maximum = double.NaN;
-                    maxValueTextBox.Text = "auto";
                 }
+
                 else
                 {
-                    colorAxis.Maximum = heatMapSeries.MaxValue;
+                    maxValueTextBox.Text = colorAxis.Maximum.ToString();
+                    return;
                 }
+
                 UpdatePlot();
             };
 
@@ -183,8 +228,11 @@ namespace Bonsai.ML.Design
             {
                 Name = "minValue",
                 AutoSize = true,
-                Text = "auto",
+                Text = ValueMin.ToString()
             };
+
+            if (ValueMin.HasValue)
+                colorAxis.Minimum = ValueMin.Value;
 
             minValueTextBox.TextChanged += (sender, e) =>
             {
@@ -192,15 +240,18 @@ namespace Bonsai.ML.Design
                 {
                     colorAxis.Minimum = minValue;
                 }
-                else if (minValueTextBox.Text.ToLower() == "auto")
+
+                else if (string.IsNullOrEmpty(minValueTextBox.Text))
                 {
                     colorAxis.Minimum = double.NaN;
-                    minValueTextBox.Text = "auto";
                 }
+
                 else
                 {
-                    colorAxis.Minimum = heatMapSeries.MinValue;
+                    minValueTextBox.Text = colorAxis.Minimum.ToString();
+                    return;
                 }
+
                 UpdatePlot();
             };
         }
@@ -224,15 +275,15 @@ namespace Bonsai.ML.Design
             }
 
             paletteComboBox.SelectedIndexChanged += PaletteComboBoxSelectedIndexChanged;
-            paletteComboBox.SelectedIndex = _paletteSelectedIndex;
+            paletteComboBox.SelectedIndex = paletteSelectedIndex;
             UpdateColorPalette();
         }
 
         private void PaletteComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (paletteComboBox.SelectedIndex != _paletteSelectedIndex)
+            if (paletteComboBox.SelectedIndex != paletteSelectedIndex)
             {
-                _paletteSelectedIndex = paletteComboBox.SelectedIndex;
+                paletteSelectedIndex = paletteComboBox.SelectedIndex;
                 UpdateColorPalette();
                 PaletteComboBoxValueChanged?.Invoke(this, e);
                 UpdatePlot();
@@ -241,9 +292,9 @@ namespace Bonsai.ML.Design
 
         private void UpdateColorPalette()
         {
-            var selectedPalette = (ColorPalette)paletteComboBox.Items[_paletteSelectedIndex];
+            var selectedPalette = (ColorPalette)paletteComboBox.Items[paletteSelectedIndex];
             paletteLookup.TryGetValue(selectedPalette, out Func<int, OxyPalette> paletteMethod);
-            palette = paletteMethod(_numColors);
+            palette = paletteMethod(100);
             colorAxis.Palette = palette;
         }
 
@@ -265,16 +316,16 @@ namespace Bonsai.ML.Design
                 renderMethodComboBox.Items.Add(value);
             }
 
-            renderMethodComboBox.SelectedIndexChanged += renderMethodComboBoxSelectedIndexChanged;
-            renderMethodComboBox.SelectedIndex = _renderMethodSelectedIndex;
+            renderMethodComboBox.SelectedIndexChanged += RenderMethodComboBoxSelectedIndexChanged;
+            renderMethodComboBox.SelectedIndex = renderMethodSelectedIndex;
             UpdateRenderMethod();
         }
 
-        private void renderMethodComboBoxSelectedIndexChanged(object sender, EventArgs e)
+        private void RenderMethodComboBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            if (renderMethodComboBox.SelectedIndex != _renderMethodSelectedIndex)
+            if (renderMethodComboBox.SelectedIndex != renderMethodSelectedIndex)
             {
-                _renderMethodSelectedIndex = renderMethodComboBox.SelectedIndex;
+                renderMethodSelectedIndex = renderMethodComboBox.SelectedIndex;
                 UpdateRenderMethod();
                 RenderMethodComboBoxValueChanged?.Invoke(this, e);
                 UpdatePlot();
@@ -283,16 +334,8 @@ namespace Bonsai.ML.Design
 
         private void UpdateRenderMethod()
         {
-            renderMethod = (HeatMapRenderMethod)renderMethodComboBox.Items[_renderMethodSelectedIndex];
+            renderMethod = (HeatMapRenderMethod)renderMethodComboBox.Items[renderMethodSelectedIndex];
             heatMapSeries.RenderMethod = renderMethod;
-        }
-
-        private void onMouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                statusStrip.Visible = !statusStrip.Visible;
-            }
         }
 
         /// <summary>
@@ -302,6 +345,29 @@ namespace Bonsai.ML.Design
         public void UpdateHeatMapSeries(double[,] data)
         {
             heatMapSeries.Data = data;
+        }
+
+
+        /// <summary>
+        /// Method to update the heatmap series X axis range.
+        /// </summary>
+        /// <param name="x0"></param>
+        /// <param name="x1"></param>
+        public void UpdateXRange(double x0, double x1)
+        {
+            heatMapSeries.X0 = x0;
+            heatMapSeries.X1 = x1;
+        }
+
+        /// <summary>
+        /// Method to update the heatmap series Y axis range.
+        /// </summary>
+        /// <param name="y0"></param>
+        /// <param name="y1"></param>
+        public void UpdateYRange(double y0, double y1)
+        {
+            heatMapSeries.Y0 = y0;
+            heatMapSeries.Y1 = y1;
         }
 
         /// <summary>
@@ -314,11 +380,9 @@ namespace Bonsai.ML.Design
         /// <param name="data">The data to be displayed.</param>
         public void UpdateHeatMapSeries(double x0, double x1, double y0, double y1, double[,] data)
         {
-            heatMapSeries.X0 = x0;
-            heatMapSeries.X1 = x1;
-            heatMapSeries.Y0 = y0;
-            heatMapSeries.Y1 = y1;
-            heatMapSeries.Data = data;
+            UpdateXRange(x0, x1);
+            UpdateYRange(y0, y1);
+            UpdateHeatMapSeries(data);
         }
 
         /// <summary>
@@ -326,7 +390,7 @@ namespace Bonsai.ML.Design
         /// </summary>
         public void UpdatePlot()
         {
-            model.InvalidatePlot(true);
+            Model.InvalidatePlot(true);
         }
 
         private static readonly Dictionary<ColorPalette, Func<int, OxyPalette>> paletteLookup = new Dictionary<ColorPalette, Func<int, OxyPalette>>
