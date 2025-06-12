@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Title>Bonsai.ML.HiddenMarkovModels.Design</Title>
     <Description>A package for visualizing data from the Bonsai.ML.HiddenMarkovModels package.</Description>
-    <PackageTags>Bonsai Rx ML Machine Learning Hidden Markov Models Design</PackageTags>
+    <PackageTags>$(PackageTags) Hidden Markov Models Design</PackageTags>
     <TargetFramework>net472</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>

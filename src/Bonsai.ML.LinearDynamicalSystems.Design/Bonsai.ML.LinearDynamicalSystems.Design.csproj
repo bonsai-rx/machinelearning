@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Bonsai.ML.LinearDynamicalSystems.Design</Title>
     <Description>A package for visualizing data from the Bonsai.ML.LinearDynamicalSystems package.</Description>
-    <PackageTags>Bonsai Rx ML Machine Learning LinearDynamicalSystems LDS Design</PackageTags>
+    <PackageTags>$(PackageTags) LinearDynamicalSystems LDS Design</PackageTags>
     <TargetFramework>net472</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.8.5"
+<WorkflowBuilder Version="2.9.0"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
-                 xmlns:p1="clr-namespace:Bonsai.ML.HiddenMarkovModels;assembly=Bonsai.ML.HiddenMarkovModels"
+                 xmlns:p1="clr-namespace:Bonsai.ML.Python;assembly=Bonsai.ML.Python"
                  xmlns="https://bonsai-rx.org/2018/workflow">
   <Workflow>
     <Nodes>
@@ -21,14 +21,14 @@
         <Name>hmm</Name>
         <NumStates>2</NumStates>
         <Dimensions>2</Dimensions>
-        <ObservationsType>Gaussian</ObservationsType>
-        <TransitionsType>Stationary</TransitionsType>
+        <ObservationsModelType>Gaussian</ObservationsModelType>
+        <TransitionModelType>Stationary</TransitionModelType>
       </Expression>
       <Expression xsi:type="SubscribeSubject">
         <Name>Data</Name>
       </Expression>
       <Expression xsi:type="Combinator">
-        <Combinator xsi:type="p1:FormatToPythonList" />
+        <Combinator xsi:type="p1:FormatToPython" />
       </Expression>
       <Expression xsi:type="rx:BehaviorSubject">
         <Name>Observation</Name>

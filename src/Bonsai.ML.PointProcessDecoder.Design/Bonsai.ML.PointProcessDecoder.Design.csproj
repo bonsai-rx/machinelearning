@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Title>Bonsai.ML.PointProcessDecoder.Design</Title>
     <Description>A package for visualizing data from the Bonsai.ML.PointProcessDecoder package.</Description>
-    <PackageTags>Bonsai Rx ML Machine Learning Point Process Decoder Design</PackageTags>
+    <PackageTags>$(PackageTags) Point Process Decoder Design</PackageTags>
     <TargetFramework>net472</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Title>Bonsai.ML.PointProcessDecoder</Title>
     <Description>A Bonsai package for running a neural decoder based on point processes using Bayesian state-space models.</Description>
-    <PackageTags>Bonsai Rx ML Point Process Neural Decoder</PackageTags>
+    <PackageTags>$(PackageTags) Point Process Neural Decoder</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <Nullable>enable</Nullable>
   </PropertyGroup>

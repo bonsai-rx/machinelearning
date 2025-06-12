@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.8.1"
+<WorkflowBuilder Version="2.9.0"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:py="clr-namespace:Bonsai.Scripting.Python;assembly=Bonsai.Scripting.Python"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
@@ -17,7 +17,7 @@
       </Expression>
       <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:LoadLDSModule.bonsai" />
       <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:Kinematics.CreateKFModel.bonsai">
-        <ModelName>model</ModelName>
+        <Name>model</Name>
         <Fps>60</Fps>
         <Pos_x0>0</Pos_x0>
         <Pos_y0>0</Pos_y0>
@@ -41,7 +41,7 @@
         <Name>Observation</Name>
       </Expression>
       <Expression xsi:type="IncludeWorkflow" Path="Bonsai.ML.LinearDynamicalSystems:Kinematics.PerformInference.bonsai">
-        <ModelName>model</ModelName>
+        <Name>model</Name>
       </Expression>
       <Expression xsi:type="rx:BehaviorSubject">
         <Name>InferredKinematics</Name>
