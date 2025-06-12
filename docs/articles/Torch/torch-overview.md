@@ -4,10 +4,7 @@ The Torch package provides a Bonsai interface to interact with [TorchSharp](http
 
 ## Installation Guide
 
-The Bonsai.ML.Torch package can be installed through the Bonsai Package Manager and depends on the TorchSharp library. Additionally, running the package requires installing the specific torch DLLs needed for your desired application. The steps for installing are outlined below.
-
-### Running on the CPU 
-For running the package using the CPU, the `TorchSharp-cpu` library should be installed through the NuGet package manager.
+The Bonsai.ML.Torch package can be installed through the Bonsai Package Manager and depends on the TorchSharp library. Additionally, running the package with GPU support enabled requires installing the specific torch DLLs. The steps for installing are outlined below.
 
 ### Running on the GPU
 To run torch on the GPU, you first need to ensure that you have a CUDA compatible device installed on your system. 
