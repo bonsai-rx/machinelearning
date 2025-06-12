@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WorkflowBuilder Version="2.8.5"
+<WorkflowBuilder Version="2.9.0"
                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                  xmlns:p1="clr-namespace:Bonsai.ML.PointProcessDecoder;assembly=Bonsai.ML.PointProcessDecoder"
                  xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
@@ -9,35 +9,35 @@
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:CreatePointProcessModel">
           <p1:Name>PointProcessModel</p1:Name>
-          <p1:EstimationMethod>KernelDensity</p1:EstimationMethod>
-          <p1:TransitionsType>RandomWalk</p1:TransitionsType>
-          <p1:EncoderType>SortedSpikeEncoder</p1:EncoderType>
-          <p1:DecoderType>StateSpaceDecoder</p1:DecoderType>
-          <p1:StateSpaceType>DiscreteUniformStateSpace</p1:StateSpaceType>
-          <p1:LikelihoodType>Poisson</p1:LikelihoodType>
           <p1:ScalarType xsi:nil="true" />
-          <p1:StateSpaceDimensions>2</p1:StateSpaceDimensions>
-          <p1:MinStateSpace>
+          <p1:Dimensions>2</p1:Dimensions>
+          <p1:MinRange>
             <p1:double>0</p1:double>
             <p1:double>0</p1:double>
-          </p1:MinStateSpace>
-          <p1:MaxStateSpace>
+          </p1:MinRange>
+          <p1:MaxRange>
             <p1:double>120</p1:double>
             <p1:double>120</p1:double>
-          </p1:MaxStateSpace>
-          <p1:StepsStateSpace>
+          </p1:MaxRange>
+          <p1:Steps>
             <p1:long>50</p1:long>
             <p1:long>50</p1:long>
-          </p1:StepsStateSpace>
-          <p1:ObservationBandwidth>
+          </p1:Steps>
+          <p1:Bandwidth>
             <p1:double>5</p1:double>
             <p1:double>5</p1:double>
-          </p1:ObservationBandwidth>
+          </p1:Bandwidth>
+          <p1:EncoderType>SortedSpikes</p1:EncoderType>
+          <p1:KernelLimit xsi:nil="true" />
           <p1:NUnits>104</p1:NUnits>
           <p1:MarkDimensions xsi:nil="true" />
           <p1:MarkChannels xsi:nil="true" />
+          <p1:EstimationMethod>KernelDensity</p1:EstimationMethod>
           <p1:DistanceThreshold>1.5</p1:DistanceThreshold>
+          <p1:TransitionsType>RandomWalk</p1:TransitionsType>
           <p1:SigmaRandomWalk xsi:nil="true" />
+          <p1:DecoderType>StateSpaceDecoder</p1:DecoderType>
+          <p1:StayProbability xsi:nil="true" />
         </Combinator>
       </Expression>
       <Expression xsi:type="SubscribeSubject">
@@ -51,7 +51,7 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:Encode">
-          <p1:Model>PointProcessModel</p1:Model>
+          <p1:Name>PointProcessModel</p1:Name>
         </Combinator>
       </Expression>
       <Expression xsi:type="SubscribeSubject">
@@ -59,7 +59,8 @@
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p1:Decode">
-          <p1:Model>PointProcessModel</p1:Model>
+          <p1:Name>PointProcessModel</p1:Name>
+          <p1:IgnoreNoSpikes>false</p1:IgnoreNoSpikes>
         </Combinator>
       </Expression>
     </Nodes>
