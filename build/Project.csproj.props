@@ -1,4 +1,9 @@
 <Project>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)../elementIcon.svg" >
+      <LogicalName>$(RootNamespace).$(MSBuildProjectName).svg</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
   <PropertyGroup>
     <Nullable>annotations</Nullable>
   </PropertyGroup>
