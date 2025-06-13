@@ -4,10 +4,10 @@ The Torch package provides a Bonsai interface to interact with [TorchSharp](http
 
 ## Installation Guide
 
-The Bonsai.ML.Torch package can be installed through the Bonsai Package Manager and depends on the TorchSharp library. Additionally, running the package requires installing the specific torch DLLs needed for your desired application. The steps for installing are outlined below.
+The `Bonsai.ML.Torch` package can be installed through the Bonsai package manager and depends on the `TorchSharp` library. Additionally, running the package requires installing the specific torch DLLs needed for your desired application. The steps for installing these are outlined below.
 
 ### Running on the CPU 
-For running the package using the CPU, the `TorchSharp-cpu` library should be installed through the NuGet package manager.
+The `Bonsai.ML.Torch-cpu` library should only be installed if you are looking to run on the CPU only. You should not install the `Bonsai.ML.Torch-cpu` package if you plan to run a CUDA-compatible GPU device. For GPU support, you should follow the instructions outlined in the [next section](#running-on-the-gpu).
 
 ### Running on the GPU
 To run torch on the GPU, you first need to ensure that you have a CUDA compatible device installed on your system. 
@@ -16,7 +16,7 @@ Next, you must follow the [CUDA installation guide for Windows](https://docs.nvi
 
 Next, you need to install the `cuDNN v9` library following the [guide for Windows](https://docs.nvidia.com/deeplearning/cudnn/latest/installation/windows.html) or the [guide for Linux](https://docs.nvidia.com/deeplearning/cudnn/latest/installation/linux.html). Again, you need to ensure you have the correct version installed (v9). You should consult [nvidia's support matrix](https://docs.nvidia.com/deeplearning/cudnn/latest/reference/support-matrix.html) to ensure the versions of CUDA and cuDNN you installed are compatible with your specific OS, graphics driver, and hardware.
 
-Once complete, you need to install the cuda-compatible torch libraries and place them into the correct location. You can download the libraries from [the PyTorch website](https://pytorch.org/get-started/locally/) with the following options selected:
+Once complete, you need to install the CUDA-compatible torch libraries and place them into the correct location. You can download the libraries from [the PyTorch website](https://pytorch.org/get-started/locally/) with the following options selected:
 
 - PyTorch Build: Stable (2.5.1)
 - OS: [Your OS]
