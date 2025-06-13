@@ -125,10 +125,10 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 }
             };
 
-            Plot.VisualizerPropertiesDropDown.DropDownItems.AddRange([
+            Plot.VisualizerPropertiesDropDown.DropDownItems.AddRange(new ToolStripItem[] {
                 capacityLabel,
                 capacityValue
-            ]);
+            });
 
             Plot.View.HandleDestroyed += (sender, e) =>
             {
