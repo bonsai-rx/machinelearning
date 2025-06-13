@@ -324,8 +324,8 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 Visible = true,
             };
 
-            _statusStrip.Items.AddRange([
-                pageIndexLabel, 
+            _statusStrip.Items.AddRange(new ToolStripItem[] {
+                pageIndexLabel,
                 _pageIndexControl,
                 rowLabel,
                 _rowControl,
@@ -333,7 +333,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 _columnControl,
                 _displaySelectedButton,
                 _resetSelectedButton
-            ]);
+            });
 
             var visualizerService = (IDialogTypeVisualizerService)provider.GetService(typeof(IDialogTypeVisualizerService));
             visualizerService?.AddControl(_container);
