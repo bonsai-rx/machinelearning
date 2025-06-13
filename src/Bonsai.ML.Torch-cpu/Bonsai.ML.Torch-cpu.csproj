@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Bonsai.ML.Torch-cpu</Title>
+    <Description>A Bonsai package for TorchSharp tensor manipulations. This package combines the Bonsai.ML.Torch package with LibTorch 2.5.1 CPU support.</Description>
+    <PackageTags>$(PackageTags) Torch Tensor cpu</PackageTags>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+
+    <!--
+    This warning happens because this package has no assemblies but does have dependencies
+    https://github.com/NuGet/Home/issues/8583
+    -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="libtorch-cpu" Version="2.5.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.Torch\Bonsai.ML.Torch.csproj" />
+  </ItemGroup>
+</Project>

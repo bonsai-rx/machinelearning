@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.PointProcessDecod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.PointProcessDecoder.Design", "src\Bonsai.ML.PointProcessDecoder.Design\Bonsai.ML.PointProcessDecoder.Design.csproj", "{91C3E252-9457-43AB-A21A-6064E2404BAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Torch-cpu", "src\Bonsai.ML.Torch-cpu\Bonsai.ML.Torch-cpu.csproj", "{6FB774A6-0165-4576-A6A9-5E0CC17CB633}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{DEE5DD87-39C1-BF34-B639-A387DCCF972B}"
 	ProjectSection(SolutionItems) = preProject
 		build\Common.csproj.props = build\Common.csproj.props
@@ -90,6 +92,10 @@ Global
 		{91C3E252-9457-43AB-A21A-6064E2404BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91C3E252-9457-43AB-A21A-6064E2404BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91C3E252-9457-43AB-A21A-6064E2404BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FB774A6-0165-4576-A6A9-5E0CC17CB633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FB774A6-0165-4576-A6A9-5E0CC17CB633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FB774A6-0165-4576-A6A9-5E0CC17CB633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FB774A6-0165-4576-A6A9-5E0CC17CB633}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
