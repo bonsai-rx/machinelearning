@@ -14,7 +14,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [Browsable(false)]
-        protected override string ModelName => "transitions";
+        protected override string ModelName => "transition";
 
         /// <inheritdoc/>
         [Browsable(false)]

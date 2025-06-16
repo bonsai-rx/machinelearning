@@ -201,19 +201,19 @@ namespace Bonsai.ML.HiddenMarkovModels
                 .Append($"dimensions={dimensions},");
             if (stateParameters == null || string.IsNullOrEmpty(stateParameters.ToString()))
             {
-                StringBuilder.Append($"observations_model_type=\"{ObservationModelLookup.GetString(observationModelType)}\",");
-                StringBuilder.Append($"transitions_model_type=\"{TransitionModelLookup.GetString(transitionModelType)}\"");
+                StringBuilder.Append($"observation_model_type=\"{ObservationModelLookup.GetString(observationModelType)}\",");
+                StringBuilder.Append($"transition_model_type=\"{TransitionModelLookup.GetString(transitionModelType)}\"");
             }
             else
             {
                 StringBuilder.Append($"{stateParameters},");
                 if (stateParameters.Observations == null)
                 {
-                    StringBuilder.Append($"observations_model_type=\"{ObservationModelLookup.GetString(observationModelType)}\",");
+                    StringBuilder.Append($"observation_model_type=\"{ObservationModelLookup.GetString(observationModelType)}\",");
                 }
                 if (stateParameters.Transitions == null)
                 {
-                    StringBuilder.Append($"transitions_model_type=\"{TransitionModelLookup.GetString(transitionModelType)}\",");
+                    StringBuilder.Append($"transition_model_type=\"{TransitionModelLookup.GetString(transitionModelType)}\",");
                 }
                 StringBuilder.Remove(StringBuilder.Length - 1, 1);
             }

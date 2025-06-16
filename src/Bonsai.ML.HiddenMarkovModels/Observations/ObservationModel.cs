@@ -14,7 +14,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [Browsable(false)]
-        protected override string ModelName => "observations";
+        protected override string ModelName => "observation";
 
         /// <inheritdoc/>
         [Browsable(false)]
