@@ -31,7 +31,7 @@
         <Property Name="Dimensions" Description="The dimensionality of the observations going into the HMM." />
         <Property Name="ObservationsModelType" Description="The type of distribution that the HMM will use to model the emission of data observations." />
         <Property Name="StateParameters" Description="The optional state parameters of the HMM. If an observation model or transition model is defined within the state parameters, these will override the values set in the observation model type and transition model type properties, respectively." />
-        <Property Name="TransitionModelType" Description="The type of model that the HMM will use to calculate the probabilities of transitioning between states."/>
+        <Property Name="TransitionsModelType" Description="The type of model that the HMM will use to calculate the probabilities of transitioning between states."/>
       </Expression>
       <Expression xsi:type="Combinator">
         <Combinator xsi:type="p2:ModelParameters">
