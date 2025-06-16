@@ -16,7 +16,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
     [Description("Creates an observable sequence of StationaryTransitions objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class StationaryTransitions : TransitionsModel
+    public class StationaryTransitions : TransitionModel
     {
         /// <summary>
         /// The Log Ps of the transitions.
@@ -27,9 +27,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        [JsonConverter(typeof(TransitionModelTypeJsonConverter))]
         [Browsable(false)]
-        public override TransitionsModelType TransitionsModelType => TransitionsModelType.Stationary;
+        public override TransitionModelType TransitionModelType => TransitionModelType.Stationary;
 
         /// <inheritdoc/>
         [JsonProperty]

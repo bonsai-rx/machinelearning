@@ -9,16 +9,16 @@ using OxyPlot.Series;
 using OxyPlot.Axes;
 using OxyPlot.WindowsForms;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationsStatisticsClustersVisualizer),
-    Target = typeof(Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservationsStatistics))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationStatisticsClustersVisualizer),
+    Target = typeof(Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservationStatistics))]
 
 namespace Bonsai.ML.HiddenMarkovModels.Design
 {
     /// <summary>
-    /// Provides a type visualizer of <see cref="Observations.GaussianObservationsStatistics"/> to display how the observations 
+    /// Provides a type visualizer of <see cref="Observations.GaussianObservationStatistics"/> to display how the observations 
     /// cluster with respect to the mean and covariance of each state of an HMM with gaussian observations model.
     /// </summary>
-    public class GaussianObservationsStatisticsClustersVisualizer : DialogTypeVisualizer
+    public class GaussianObservationStatisticsClustersVisualizer : DialogTypeVisualizer
     {
         private PlotView view;
         private PlotModel model;
@@ -147,7 +147,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Design
         /// <inheritdoc/>
         public override void Show(object value)
         {
-            if (value is Observations.GaussianObservationsStatistics gaussianObservationsStatistics)
+            if (value is Observations.GaussianObservationStatistics gaussianObservationsStatistics)
             {
                 var statesCount = gaussianObservationsStatistics.Means.GetLength(0);
                 var observationDimensions = gaussianObservationsStatistics.Means.GetLength(1);

@@ -17,7 +17,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
     [Description("Creates an observable sequence of StickyTransitions objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class StickyTransitions : TransitionsModel
+    public class StickyTransitions : TransitionModel
     {
         /// <summary>
         /// The alpha parameter.
@@ -40,9 +40,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        [JsonConverter(typeof(TransitionModelTypeJsonConverter))]
         [Browsable(false)]
-        public override TransitionsModelType TransitionsModelType => TransitionsModelType.Sticky;
+        public override TransitionModelType TransitionModelType => TransitionModelType.Sticky;
 
         /// <inheritdoc/>
         [JsonProperty]

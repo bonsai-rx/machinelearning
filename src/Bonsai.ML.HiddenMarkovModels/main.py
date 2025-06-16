@@ -23,8 +23,8 @@ class HiddenMarkovModel(HMM):
         self,
         num_states: int,
         dimensions: int,
-        observations_model_type: str,
-        transitions_model_type: str,
+        observation_model_type: str,
+        transition_model_type: str,
         initial_state_distribution: list[float] = None,
         observations_params: tuple = None,
         observations_kwargs: dict = None,
@@ -34,8 +34,8 @@ class HiddenMarkovModel(HMM):
 
         self.num_states = num_states
         self.dimensions = dimensions
-        self.observations_model_type = observations_model_type
-        self.transitions_model_type = transitions_model_type
+        self.observation_model_type = observation_model_type
+        self.transition_model_type = transition_model_type
 
         if observations_kwargs is not None:
             for (key, value) in observations_kwargs.items():
@@ -56,16 +56,16 @@ class HiddenMarkovModel(HMM):
         super(HiddenMarkovModel, self).__init__(
             K=self.num_states, 
             D=self.dimensions, 
-            observations=self.observations_model_type, 
+            observations=self.observation_model_type, 
             observation_kwargs=observations_kwargs,
-            transitions=self.transitions_model_type,
+            transitions=self.transition_model_type,
             transition_kwargs=transitions_kwargs
         )
 
         self.update_params(initial_state_distribution,
                            transitions_params, observations_params)
         
-        if self.transitions_model_type == "nn_recurrent":
+        if self.transition_model_type == "nn_recurrent":
             hidden_layer_sizes = np.array([len(layer) for layer in self.transitions.weights[1:]])
             self.transitions.hidden_layer_sizes = hidden_layer_sizes
 
@@ -213,7 +213,7 @@ class HiddenMarkovModel(HMM):
 
                 def on_completion(future):
 
-                    if self.observations_model_type == "gaussian":
+                    if self.observation_model_type == "gaussian":
                         permutation = calculate_permutation(
                             self.observations_params[0], self.params[2][0])
                         super(HiddenMarkovModel, self).permute(permutation)

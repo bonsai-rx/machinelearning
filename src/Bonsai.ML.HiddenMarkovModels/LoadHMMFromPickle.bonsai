@@ -86,8 +86,8 @@
         <Combinator xsi:type="p2:ModelParameters">
           <p2:NumStates>2</p2:NumStates>
           <p2:Dimensions>2</p2:Dimensions>
-          <p2:ObservationsModelType>Gaussian</p2:ObservationsModelType>
-          <p2:TransitionsModelType>Stationary</p2:TransitionsModelType>
+          <p2:ObservationModelType>Gaussian</p2:ObservationModelType>
+          <p2:TransitionModelType>Stationary</p2:TransitionModelType>
         </Combinator>
       </Expression>
       <Expression xsi:type="WorkflowOutput" />

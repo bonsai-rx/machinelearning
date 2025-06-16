@@ -18,7 +18,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
     [Description("Creates an observable sequence of ConstrainedStationaryTransitions objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class ConstrainedStationaryTransitions : TransitionsModel
+    public class ConstrainedStationaryTransitions : TransitionModel
     {
         private int[,] transitionMask = new int[,] { { 1, 1 }, { 1, 1 } };
 
@@ -43,9 +43,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        [JsonConverter(typeof(TransitionModelTypeJsonConverter))]
         [Browsable(false)]
-        public override TransitionsModelType TransitionsModelType => TransitionsModelType.ConstrainedStationary;
+        public override TransitionModelType TransitionModelType => TransitionModelType.ConstrainedStationary;
 
         /// <inheritdoc/>
         [JsonProperty]

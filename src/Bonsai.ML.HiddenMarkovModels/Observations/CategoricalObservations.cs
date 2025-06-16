@@ -17,7 +17,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("Creates an observable sequence of CategoricalObservations objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class CategoricalObservations : ObservationsModel
+    public class CategoricalObservations : ObservationModel
     {
         /// <summary>
         /// The number of categories in the observations.
@@ -34,9 +34,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [JsonConverter(typeof(ObservationModelTypeJsonConverter))]
         [Browsable(false)]
-        public override ObservationsModelType ObservationsModelType => ObservationsModelType.Categorical;
+        public override ObservationModelType ObservationModelType => ObservationModelType.Categorical;
 
         /// <inheritdoc/>
         [JsonProperty]
