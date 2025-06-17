@@ -15,17 +15,17 @@ namespace Bonsai.ML.HiddenMarkovModels
         public override ModelParameters ReadJson(JsonReader reader, Type objectType, ModelParameters existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             JObject jo = JObject.Load(reader);
-            ModelParameters result = new ModelParameters();
+            ModelParameters result = new();
 
             result.NumStates = jo["num_states"]?.ToObject<int>() ?? result.NumStates;
             result.Dimensions = jo["dimensions"]?.ToObject<int>() ?? result.Dimensions;
             result.StateParameters = jo["StateParameters"]?.ToObject<StateParameters>();
 
-            result.ObservationsModelType = result.StateParameters?.Observations?.ObservationsModelType 
-                ?? ObservationsModelLookup.GetFromString(jo["observations_model_type"]?.ToObject<string>());
+            result.ObservationModelType = result.StateParameters?.Observations?.ObservationModelType 
+                ?? ObservationModelLookup.GetFromString(jo["observation_model_type"]?.ToObject<string>());
 
-            result.TransitionsModelType = result.StateParameters?.Transitions?.TransitionsModelType 
-                ?? TransitionsModelLookup.GetFromString(jo["transitions_model_type"]?.ToObject<string>());
+            result.TransitionModelType = result.StateParameters?.Transitions?.TransitionModelType 
+                ?? TransitionModelLookup.GetFromString(jo["transition_model_type"]?.ToObject<string>());
 
             return result;
         }
@@ -48,23 +48,23 @@ namespace Bonsai.ML.HiddenMarkovModels
 
                 if (value.StateParameters.Observations == null)
                 {
-                    writer.WritePropertyName("observations_model_type");
-                    serializer.Serialize(writer, value.ObservationsModelType);
+                    writer.WritePropertyName("observation_model_type");
+                    serializer.Serialize(writer, value.ObservationModelType);
                 }
 
                 if (value.StateParameters.Transitions == null)
                 {
-                    writer.WritePropertyName("transitions_model_type");
-                    serializer.Serialize(writer, value.TransitionsModelType);
+                    writer.WritePropertyName("transition_model_type");
+                    serializer.Serialize(writer, value.TransitionModelType);
                 }
             }
             else
             {
-                writer.WritePropertyName("observations_model_type");
-                serializer.Serialize(writer, ObservationsModelLookup.GetString(value.ObservationsModelType));
+                writer.WritePropertyName("observation_model_type");
+                serializer.Serialize(writer, ObservationModelLookup.GetString(value.ObservationModelType));
 
-                writer.WritePropertyName("transitions_model_type");
-                serializer.Serialize(writer, TransitionsModelLookup.GetString(value.TransitionsModelType));
+                writer.WritePropertyName("transition_model_type");
+                serializer.Serialize(writer, TransitionModelLookup.GetString(value.TransitionModelType));
             }
 
             writer.WriteEndObject();

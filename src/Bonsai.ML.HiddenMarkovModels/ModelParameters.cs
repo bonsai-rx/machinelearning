@@ -24,8 +24,8 @@ namespace Bonsai.ML.HiddenMarkovModels
     {
         private int numStates;
         private int dimensions;
-        private ObservationsModelType observationsModelType;
-        private TransitionsModelType transitionsModelType;
+        private ObservationModelType observationModelType;
+        private TransitionModelType transitionModelType;
         private StateParameters stateParameters = null;
 
         /// <summary>
@@ -63,12 +63,12 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         [Description("The type of distribution that the HMM will use to model the emission of data observations.")]
         [Category("ModelSpecification")]
-        public ObservationsModelType ObservationsModelType 
+        public ObservationModelType ObservationModelType 
         { 
-            get => observationsModelType; 
+            get => observationModelType; 
             set 
             { 
-                observationsModelType = value; 
+                observationModelType = value; 
                 UpdateString(); 
             } 
         }
@@ -78,12 +78,12 @@ namespace Bonsai.ML.HiddenMarkovModels
         /// </summary>
         [Description("The type of transition model that the HMM will use to calculate the probabilities of transitioning between states.")]
         [Category("ModelSpecification")]
-        public TransitionsModelType TransitionsModelType 
+        public TransitionModelType TransitionModelType 
         { 
-            get => transitionsModelType; 
+            get => transitionModelType; 
             set 
             { 
-                transitionsModelType = value; 
+                transitionModelType = value; 
                 UpdateString(); 
             } 
         }
@@ -104,11 +104,11 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     if (stateParameters.Observations != null)
                     {
-                        ObservationsModelType = stateParameters.Observations.ObservationsModelType;
+                        ObservationModelType = stateParameters.Observations.ObservationModelType;
                     }
                     if (stateParameters.Transitions != null)
                     {
-                        TransitionsModelType = stateParameters.Transitions.TransitionsModelType;
+                        TransitionModelType = stateParameters.Transitions.TransitionModelType;
                     }
                 }
                 UpdateString();
@@ -122,8 +122,8 @@ namespace Bonsai.ML.HiddenMarkovModels
         {
             NumStates = 2;
             Dimensions = 2;
-            ObservationsModelType = ObservationsModelType.Gaussian;
-            TransitionsModelType = TransitionsModelType.Stationary;
+            ObservationModelType = ObservationModelType.Gaussian;
+            TransitionModelType = TransitionModelType.Stationary;
         }
 
         /// <summary>
@@ -136,8 +136,8 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     NumStates = NumStates,
                     Dimensions = Dimensions,
-                    ObservationsModelType = ObservationsModelType,
-                    TransitionsModelType = TransitionsModelType,
+                    ObservationModelType = ObservationModelType,
+                    TransitionModelType = TransitionModelType,
                     StateParameters = StateParameters
                 });
         }
@@ -154,8 +154,8 @@ namespace Bonsai.ML.HiddenMarkovModels
                 {
                     NumStates = NumStates,
                     Dimensions = Dimensions,
-                    ObservationsModelType = ObservationsModelType,
-                    TransitionsModelType = TransitionsModelType,
+                    ObservationModelType = ObservationModelType,
+                    TransitionModelType = TransitionModelType,
                     StateParameters = StateParameters
                 };
             });
@@ -173,18 +173,18 @@ namespace Bonsai.ML.HiddenMarkovModels
             {
                 numStates = pyObject.GetAttr<int>("num_states");
                 dimensions = pyObject.GetAttr<int>("dimensions");
-                var observationsModelTypeStrPyObj = pyObject.GetAttr<string>("observations_model_type");
-                var transitionsModelTypeStrPyObj = pyObject.GetAttr<string>("transitions_model_type");
+                var observationModelTypeStrPyObj = pyObject.GetAttr<string>("observation_model_type");
+                var transitionModelTypeStrPyObj = pyObject.GetAttr<string>("transition_model_type");
 
-                observationsModelType = ObservationsModelLookup.GetFromString(observationsModelTypeStrPyObj);
-                transitionsModelType = TransitionsModelLookup.GetFromString(transitionsModelTypeStrPyObj);
+                observationModelType = ObservationModelLookup.GetFromString(observationModelTypeStrPyObj);
+                transitionModelType = TransitionModelLookup.GetFromString(transitionModelTypeStrPyObj);
 
                 return new ModelParameters()
                 {
                     NumStates = NumStates,
                     Dimensions = Dimensions,
-                    ObservationsModelType = ObservationsModelType,
-                    TransitionsModelType = TransitionsModelType
+                    ObservationModelType = ObservationModelType,
+                    TransitionModelType = TransitionModelType
                 };
             }).Zip(stateParametersObservable, (modelParameters, stateParameters) =>
             {
@@ -201,19 +201,19 @@ namespace Bonsai.ML.HiddenMarkovModels
                 .Append($"dimensions={dimensions},");
             if (stateParameters == null || string.IsNullOrEmpty(stateParameters.ToString()))
             {
-                StringBuilder.Append($"observations_model_type=\"{ObservationsModelLookup.GetString(observationsModelType)}\",");
-                StringBuilder.Append($"transitions_model_type=\"{TransitionsModelLookup.GetString(transitionsModelType)}\"");
+                StringBuilder.Append($"observation_model_type=\"{ObservationModelLookup.GetString(observationModelType)}\",");
+                StringBuilder.Append($"transition_model_type=\"{TransitionModelLookup.GetString(transitionModelType)}\"");
             }
             else
             {
                 StringBuilder.Append($"{stateParameters},");
                 if (stateParameters.Observations == null)
                 {
-                    StringBuilder.Append($"observations_model_type=\"{ObservationsModelLookup.GetString(observationsModelType)}\",");
+                    StringBuilder.Append($"observation_model_type=\"{ObservationModelLookup.GetString(observationModelType)}\",");
                 }
                 if (stateParameters.Transitions == null)
                 {
-                    StringBuilder.Append($"transitions_model_type=\"{TransitionsModelLookup.GetString(transitionsModelType)}\",");
+                    StringBuilder.Append($"transition_model_type=\"{TransitionModelLookup.GetString(transitionModelType)}\",");
                 }
                 StringBuilder.Remove(StringBuilder.Length - 1, 1);
             }

@@ -1,9 +1,9 @@
-﻿namespace Bonsai.ML.HiddenMarkovModels.Observations
+namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
     /// <summary>
     /// Represents the type of observations in a hidden Markov model.
     /// </summary>
-    public enum ObservationsModelType
+    public enum ObservationModelType
     {
         /// <summary>
         /// Gaussian observations.

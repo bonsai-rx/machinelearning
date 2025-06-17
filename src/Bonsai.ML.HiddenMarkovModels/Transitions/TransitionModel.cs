@@ -5,28 +5,28 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
     /// <summary>
     /// An abstract class for creating a Transitions model.
     /// </summary>
-    public abstract class TransitionsModel : PythonModel
+    public abstract class TransitionModel : PythonModel
     {
         /// <summary>
         /// The type of Transitions model.
         /// </summary>
-        public abstract TransitionsModelType TransitionsModelType { get; }
+        public abstract TransitionModelType TransitionModelType { get; }
 
         /// <inheritdoc/>
         [Browsable(false)]
-        protected override string ModelName => "transitions";
+        protected override string ModelName => "transition";
 
         /// <inheritdoc/>
         [Browsable(false)]
-        protected override string ModelType => TransitionsModelLookup.GetString(TransitionsModelType);
+        protected override string ModelType => TransitionModelLookup.GetString(TransitionModelType);
 
         /// <inheritdoc/>
-        public TransitionsModel() : base()
+        public TransitionModel() : base()
         {
         }
 
         /// <inheritdoc/>
-        public TransitionsModel(params object[] kwargs) : base(kwargs)
+        public TransitionModel(params object[] kwargs) : base(kwargs)
         {
         }
     }

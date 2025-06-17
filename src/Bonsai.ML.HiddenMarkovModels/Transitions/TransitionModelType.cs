@@ -3,7 +3,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
     /// <summary>
     /// Represents the type of transitions in a hidden Markov model.
     /// </summary>
-    public enum TransitionsModelType
+    public enum TransitionModelType
     {
         /// <summary>
         /// Stationary transitions.

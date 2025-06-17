@@ -16,7 +16,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("Creates an observable sequence of PoissonObservations objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class PoissonObservations : ObservationsModel
+    public class PoissonObservations : ObservationModel
     {
 
         /// <summary>
@@ -28,9 +28,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [JsonConverter(typeof(ObservationModelTypeJsonConverter))]
         [Browsable(false)]
-        public override ObservationsModelType ObservationsModelType => ObservationsModelType.Poisson;
+        public override ObservationModelType ObservationModelType => ObservationModelType.Poisson;
 
         /// <inheritdoc/>
         [JsonProperty]

@@ -16,7 +16,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("Creates an observable sequence of ExponentialObservations objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class ExponentialObservations : ObservationsModel
+    public class ExponentialObservations : ObservationModel
     {
 
         /// <summary>
@@ -28,9 +28,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [JsonConverter(typeof(ObservationModelTypeJsonConverter))]
         [Browsable(false)]
-        public override ObservationsModelType ObservationsModelType => ObservationsModelType.Exponential;
+        public override ObservationModelType ObservationModelType => ObservationModelType.Exponential;
 
         /// <inheritdoc/>
         [JsonProperty]

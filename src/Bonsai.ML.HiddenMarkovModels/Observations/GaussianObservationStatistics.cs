@@ -9,12 +9,12 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 {
     /// <summary>
     /// Represents an operator that will transform an observable sequence of
-    /// <see cref="PyObject"/> into an observable sequence of <see cref="GaussianObservationsStatistics"/>.
+    /// <see cref="PyObject"/> into an observable sequence of <see cref="GaussianObservationStatistics"/>.
     /// </summary>
     [Combinator]
     [Description("")]
     [WorkflowElementCategory(ElementCategory.Transform)]
-    public class GaussianObservationsStatistics
+    public class GaussianObservationStatistics
     {
         /// <summary>
         /// The means of the observations for each state.
@@ -53,9 +53,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <summary>
         /// Transforms an observable sequence of <see cref="PyObject"/> into an observable sequence 
-        /// of <see cref="GaussianObservationsStatistics"/> objects by accessing internal attributes of the <see cref="PyObject"/>.
+        /// of <see cref="GaussianObservationStatistics"/> objects by accessing internal attributes of the <see cref="PyObject"/>.
         /// </summary>
-        public IObservable<GaussianObservationsStatistics> Process(IObservable<PyObject> source)
+        public IObservable<GaussianObservationStatistics> Process(IObservable<PyObject> source)
         {
             return Observable.Select(source, pyObject =>
             {
@@ -66,7 +66,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
                 var batchObservationsPyObj = (double[,])pyObject.GetArrayAttr("batch_observations");
                 var predictedStatesPyObj = (long[])pyObject.GetArrayAttr("predicted_states");
 
-                return new GaussianObservationsStatistics
+                return new GaussianObservationStatistics
                 {
                     Means = meansPyObj,
                     StdDevs = stdDevsPyObj,

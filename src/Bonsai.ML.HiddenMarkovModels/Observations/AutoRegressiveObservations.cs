@@ -17,7 +17,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("Creates an observable sequence of AutoRegressiveObservations objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class AutoRegressiveObservations : ObservationsModel
+    public class AutoRegressiveObservations : ObservationModel
     {
         /// <summary>
         /// The lags of the observations for each state.
@@ -55,9 +55,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [JsonConverter(typeof(ObservationModelTypeJsonConverter))]
         [Browsable(false)]
-        public override ObservationsModelType ObservationsModelType => ObservationsModelType.AutoRegressive;
+        public override ObservationModelType ObservationModelType => ObservationModelType.AutoRegressive;
 
         /// <inheritdoc/>
         [JsonProperty]

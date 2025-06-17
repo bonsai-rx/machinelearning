@@ -16,7 +16,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("Creates an observable sequence of BernoulliObservations objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class BernoulliObservations : ObservationsModel
+    public class BernoulliObservations : ObservationModel
     {
         /// <summary>
         /// The logit P of the observations for each state.
@@ -27,9 +27,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [JsonConverter(typeof(ObservationModelTypeJsonConverter))]
         [Browsable(false)]
-        public override ObservationsModelType ObservationsModelType => ObservationsModelType.Bernoulli;
+        public override ObservationModelType ObservationModelType => ObservationModelType.Bernoulli;
 
         /// <inheritdoc/>
         [JsonProperty]

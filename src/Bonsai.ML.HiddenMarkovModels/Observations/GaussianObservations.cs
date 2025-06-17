@@ -16,7 +16,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
     [Description("Creates an observable sequence of GaussianObservations objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class GaussianObservations : ObservationsModel
+    public class GaussianObservations : ObservationModel
     {
         /// <summary>
         /// The means of the observations for each state.
@@ -34,9 +34,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Observations
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(ObservationsModelTypeJsonConverter))]
+        [JsonConverter(typeof(ObservationModelTypeJsonConverter))]
         [Browsable(false)]
-        public override ObservationsModelType ObservationsModelType => ObservationsModelType.Gaussian;
+        public override ObservationModelType ObservationModelType => ObservationModelType.Gaussian;
 
         /// <inheritdoc/>
         [JsonProperty]

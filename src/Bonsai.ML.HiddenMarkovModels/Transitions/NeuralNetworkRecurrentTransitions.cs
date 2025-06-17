@@ -18,7 +18,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
     [Description("Creates an observable sequence of NeuralNetworkRecurrentTransitions objects.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     [JsonObject(MemberSerialization.OptIn)]
-    public class NeuralNetworkRecurrentTransitions : TransitionsModel
+    public class NeuralNetworkRecurrentTransitions : TransitionModel
     {
         /// <summary>
         /// The sizes of the hidden layers.
@@ -55,9 +55,9 @@ namespace Bonsai.ML.HiddenMarkovModels.Transitions
 
         /// <inheritdoc/>
         [JsonProperty]
-        [JsonConverter(typeof(TransitionsModelTypeJsonConverter))]
+        [JsonConverter(typeof(TransitionModelTypeJsonConverter))]
         [Browsable(false)]
-        public override TransitionsModelType TransitionsModelType => TransitionsModelType.NeuralNetworkRecurrent;
+        public override TransitionModelType TransitionModelType => TransitionModelType.NeuralNetworkRecurrent;
 
         private static readonly Dictionary<NonlinearityType, string> nonlinearityTypeLookup = new Dictionary<NonlinearityType, string>
         {

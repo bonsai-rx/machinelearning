@@ -23,7 +23,7 @@ namespace Bonsai.ML.HiddenMarkovModels
             };
 
             var transitionsObj = (JObject)jo["Transitions"];
-            var transitionsModelType = TransitionsModelLookup.GetFromString(transitionsObj["TransitionsModelType"]?.ToString());
+            var transitionModelType = TransitionModelLookup.GetFromString(transitionsObj["TransitionModelType"]?.ToString());
 
             object[] transitionsKwargsArray = null;
             object[] transitionsParamsArray = [];
@@ -40,7 +40,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 }
             }
 
-            var transitions = (TransitionsModel)Activator.CreateInstance(TransitionsModelLookup.GetTransitionsClassType(transitionsModelType), transitionsKwargsArray);
+            var transitions = (TransitionModel)Activator.CreateInstance(TransitionModelLookup.GetTransitionsClassType(transitionModelType), transitionsKwargsArray);
 
             if (transitionsObj.ContainsKey("Params"))
             {
@@ -57,7 +57,7 @@ namespace Bonsai.ML.HiddenMarkovModels
             result.Transitions = transitions;
             
             var observationsObj = (JObject)jo["Observations"];
-            var observationsModelType = ObservationsModelLookup.GetFromString(observationsObj["ObservationsModelType"]?.ToString());
+            var observationModelType = ObservationModelLookup.GetFromString(observationsObj["ObservationModelType"]?.ToString());
 
             object[] observationsKwargsArray = null;
             object[] observationsParamsArray = [];
@@ -74,7 +74,7 @@ namespace Bonsai.ML.HiddenMarkovModels
                 }
             }
 
-            var observations = (ObservationsModel)Activator.CreateInstance(ObservationsModelLookup.GetObservationsClassType(observationsModelType), observationsKwargsArray);
+            var observations = (ObservationModel)Activator.CreateInstance(ObservationModelLookup.GetObservationsClassType(observationModelType), observationsKwargsArray);
 
             if (observationsObj.ContainsKey("Params"))
             {

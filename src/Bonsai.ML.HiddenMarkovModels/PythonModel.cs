@@ -113,7 +113,7 @@ namespace Bonsai.ML.HiddenMarkovModels
 
             if (Params is not null && Params.Length > 0 && Params.All(param => param is not null)) 
             {
-                StringBuilder.Append($",{ModelName}_params=(");
+                StringBuilder.Append($",{ModelName}s_params=(");
 
                 foreach (var param in Params) {
                     StringBuilder.Append(StringFormatter.FormatToPython(param));
@@ -124,7 +124,7 @@ namespace Bonsai.ML.HiddenMarkovModels
 
             if (Kwargs is not null && Kwargs.Count > 0)
             {
-                StringBuilder.Append($",{ModelName}_kwargs=");
+                StringBuilder.Append($",{ModelName}s_kwargs=");
                 StringBuilder.Append(StringFormatter.FormatToPython(Kwargs));
             }
 
