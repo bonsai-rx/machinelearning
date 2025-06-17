@@ -9,7 +9,7 @@ using OxyPlot.Series;
 using OxyPlot.Axes;
 using OxyPlot.WindowsForms;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationStatisticsClustersVisualizer),
+[assembly: TypeVisualizer(typeof(Bonsai.ML.HiddenMarkovModels.Design.GaussianObservationStatisticsClusterVisualizer),
     Target = typeof(Bonsai.ML.HiddenMarkovModels.Observations.GaussianObservationStatistics))]
 
 namespace Bonsai.ML.HiddenMarkovModels.Design
@@ -18,7 +18,7 @@ namespace Bonsai.ML.HiddenMarkovModels.Design
     /// Provides a type visualizer of <see cref="Observations.GaussianObservationStatistics"/> to display how the observations 
     /// cluster with respect to the mean and covariance of each state of an HMM with gaussian observations model.
     /// </summary>
-    public class GaussianObservationStatisticsClustersVisualizer : DialogTypeVisualizer
+    public class GaussianObservationStatisticsClusterVisualizer : DialogTypeVisualizer
     {
         private PlotView view;
         private PlotModel model;
