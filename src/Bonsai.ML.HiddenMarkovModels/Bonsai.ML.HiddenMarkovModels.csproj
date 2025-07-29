@@ -6,8 +6,8 @@
     <TargetFrameworks>net472</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Bonsai.Scripting.Expressions" Version="2.8.0" />
-    <PackageReference Include="Bonsai.Scripting.Python" Version="0.2.1" />
+    <PackageReference Include="Bonsai.Scripting.Expressions" Version="2.9.0" />
+    <PackageReference Include="Bonsai.Scripting.Python" Version="0.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
