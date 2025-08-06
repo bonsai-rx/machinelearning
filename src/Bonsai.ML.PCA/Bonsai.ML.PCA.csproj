@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Bonsai.ML.PCA Bonsai library.</Description>
+    <PackageTags>$(PackageTags) Point Process Neural Decoder</PackageTags>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Torch\Bonsai.ML.Torch.csproj" />
+  </ItemGroup>
+
+</Project>
