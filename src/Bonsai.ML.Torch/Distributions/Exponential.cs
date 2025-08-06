@@ -12,7 +12,7 @@ namespace Bonsai.ML.Torch.Distributions;
 [ResetCombinator]
 [Description("")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class Poisson : IScalarTypeProvider
+public class Exponential : IScalarTypeProvider
 {
     [XmlIgnore]
     [Browsable(false)]
@@ -37,22 +37,22 @@ public class Poisson : IScalarTypeProvider
     [XmlIgnore]
     public torch.Generator Generator { get; set; } = null;
 
-    public IObservable<TorchSharp.Modules.Poisson> Process()
+    public IObservable<TorchSharp.Modules.Exponential> Process()
     {
-        return Observable.Return(distributions.Poisson(Rate, generator: Generator));
+        return Observable.Return(distributions.Exponential(Rate, generator: Generator));
     }
 
-    public IObservable<TorchSharp.Modules.Poisson> Process(IObservable<torch.Generator> source)
+    public IObservable<TorchSharp.Modules.Exponential> Process(IObservable<torch.Generator> source)
     {
         return source.Select((generator) =>
         {
             Generator = generator;
-            return distributions.Poisson(Rate, generator: Generator);
+            return distributions.Exponential(Rate, generator: Generator);
         });
     }
 
-    public IObservable<TorchSharp.Modules.Poisson> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Exponential> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ => distributions.Poisson(Rate, generator: Generator));
+        return source.Select(_ => distributions.Exponential(Rate, generator: Generator));
     }
 }

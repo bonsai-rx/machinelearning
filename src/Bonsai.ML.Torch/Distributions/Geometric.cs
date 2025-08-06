@@ -12,8 +12,9 @@ namespace Bonsai.ML.Torch.Distributions;
 [ResetCombinator]
 [Description("")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class Bernoulli : IScalarTypeProvider
+public class Geometric : IScalarTypeProvider
 {
+    [XmlIgnore]
     [Browsable(false)]
     public ScalarType Type => ScalarType.Float32;
 
@@ -36,22 +37,22 @@ public class Bernoulli : IScalarTypeProvider
     [XmlIgnore]
     public torch.Generator Generator { get; set; } = null;
 
-    public IObservable<TorchSharp.Modules.Bernoulli> Process()
+    public IObservable<TorchSharp.Modules.Geometric> Process()
     {
-        return Observable.Return(distributions.Bernoulli(Probabilities, generator: Generator));
+        return Observable.Return(distributions.Geometric(Probabilities, generator: Generator));
     }
 
-    public IObservable<TorchSharp.Modules.Bernoulli> Process(IObservable<torch.Generator> source)
+    public IObservable<TorchSharp.Modules.Geometric> Process(IObservable<torch.Generator> source)
     {
         return source.Select((generator) =>
         {
             Generator = generator;
-            return distributions.Bernoulli(Probabilities, generator: Generator);
+            return distributions.Geometric(Probabilities, generator: Generator);
         });
     }
 
-    public IObservable<TorchSharp.Modules.Bernoulli> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Geometric> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ => distributions.Bernoulli(Probabilities, generator: Generator));
+        return source.Select(_ => distributions.Geometric(Probabilities, generator: Generator));
     }
 }
