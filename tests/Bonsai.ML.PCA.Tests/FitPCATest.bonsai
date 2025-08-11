@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.9.0"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:dsp="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp"
+                 xmlns:p1="clr-namespace:Bonsai.ML.Torch;assembly=Bonsai.ML.Torch"
+                 xmlns:scr="clr-namespace:Bonsai.Scripting.Expressions;assembly=Bonsai.Scripting.Expressions"
+                 xmlns:p2="clr-namespace:Bonsai.ML.PCA;assembly=Bonsai.ML.PCA"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LoadTrainingData</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="rx:Defer">
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixReader">
+                      <dsp:Path>Z:/home/nicholas/Downloads/xfads-2/workflows/data/y_train.bin</dsp:Path>
+                      <dsp:Offset>0</dsp:Offset>
+                      <dsp:SampleRate>0</dsp:SampleRate>
+                      <dsp:ChannelCount>50</dsp:ChannelCount>
+                      <dsp:BufferLength>1</dsp:BufferLength>
+                      <dsp:Depth>F64</dsp:Depth>
+                      <dsp:Layout>RowMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Disable">
+                    <Builder xsi:type="Combinator">
+                      <Combinator xsi:type="rx:Take">
+                        <rx:Count>1000</rx:Count>
+                      </Combinator>
+                    </Builder>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="p1:ToTensor">
+                      <p1:Type xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="p1:Clone" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="p1:ConvertScalarType">
+                      <p1:Type>Float32</p1:Type>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:ToArray" />
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="4" Label="Source1" />
+                  <Edge From="4" To="5" Label="Source1" />
+                  <Edge From="5" To="6" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Concat">
+                <p1:Dimension>1</p1:Dimension>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="scr:ExpressionTransform">
+              <scr:Expression>it.squeeze(null).T</scr:Expression>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Mean">
+                <p1:Dimensions>
+                  <p1:long>0</p1:long>
+                </p1:Dimensions>
+                <p1:KeepDimensions>true</p1:KeepDimensions>
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="Subtract" />
+            <Expression xsi:type="scr:ExpressionTransform">
+              <scr:Expression>it.T</scr:Expression>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="2" To="4" Label="Source1" />
+            <Edge From="3" To="4" Label="Source2" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>YTrain</Name>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LoadValidationData</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="rx:Defer">
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="dsp:MatrixReader">
+                      <dsp:Path>Z:/home/nicholas/Downloads/xfads-2/workflows/data/y_valid.bin</dsp:Path>
+                      <dsp:Offset>0</dsp:Offset>
+                      <dsp:SampleRate>0</dsp:SampleRate>
+                      <dsp:ChannelCount>50</dsp:ChannelCount>
+                      <dsp:BufferLength>1</dsp:BufferLength>
+                      <dsp:Depth>F64</dsp:Depth>
+                      <dsp:Layout>RowMajor</dsp:Layout>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Disable">
+                    <Builder xsi:type="Combinator">
+                      <Combinator xsi:type="rx:Take">
+                        <rx:Count>1000</rx:Count>
+                      </Combinator>
+                    </Builder>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="p1:ToTensor">
+                      <p1:Type xsi:nil="true" />
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="p1:Clone" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="p1:ConvertScalarType">
+                      <p1:Type>Float32</p1:Type>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="rx:ToArray" />
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="1" Label="Source1" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="4" Label="Source1" />
+                  <Edge From="4" To="5" Label="Source1" />
+                  <Edge From="5" To="6" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Concat">
+                <p1:Dimension>1</p1:Dimension>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="scr:ExpressionTransform">
+              <scr:Expression>it.squeeze(null).T</scr:Expression>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Mean">
+                <p1:Dimensions>
+                  <p1:long>0</p1:long>
+                </p1:Dimensions>
+                <p1:KeepDimensions>true</p1:KeepDimensions>
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="Subtract" />
+            <Expression xsi:type="scr:ExpressionTransform">
+              <scr:Expression>it.T</scr:Expression>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="2" To="4" Label="Source1" />
+            <Edge From="3" To="4" Label="Source2" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>YValid</Name>
+      </Expression>
+      <Expression xsi:type="SubscribeSubject">
+        <Name>YTrain</Name>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p2:CreatePCA">
+          <p2:NumComponents>2</p2:NumComponents>
+          <p2:ModelType>ProbabilisticPCA</p2:ModelType>
+          <p2:InitialVariance>1</p2:InitialVariance>
+          <p2:Iterations>100</p2:Iterations>
+          <p2:Tolerance>1E-05</p2:Tolerance>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Zip" />
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p2:Fit" />
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Item2</Selector>
+      </Expression>
+      <Expression xsi:type="MemberSelector">
+        <Selector>Components</Selector>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="1" Label="Source1" />
+      <Edge From="2" To="3" Label="Source1" />
+      <Edge From="4" To="6" Label="Source1" />
+      <Edge From="5" To="6" Label="Source2" />
+      <Edge From="6" To="7" Label="Source1" />
+      <Edge From="7" To="8" Label="Source1" />
+      <Edge From="8" To="9" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>
