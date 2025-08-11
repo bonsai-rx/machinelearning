@@ -21,11 +21,15 @@ namespace Bonsai.ML.PCA
         private bool _isFitted = false;
 
         public PPCA(int numComponents,
+            Device? device = null,
+            ScalarType? scalarType = ScalarType.Float32,
             double initialVariance = 1.0,
             Generator? generator = null,
             int iterations = 100,
             double tolerance = 1e-5
-            ) : base(numComponents)
+            ) : base(numComponents,
+                device,
+                scalarType)
         {
             if (initialVariance < 0)
             {

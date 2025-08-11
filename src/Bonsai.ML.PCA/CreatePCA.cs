@@ -19,6 +19,10 @@ namespace Bonsai.ML.PCA
     {
         public int NumComponents { get; set; } = 2;
 
+        [XmlIgnore]
+        public Device Device { get; set; }
+        public ScalarType? ScalarType { get; set; }
+
         [RefreshProperties(RefreshProperties.All)]
         public PCAModelType ModelType { get; set; } = PCAModelType.PCA;
 
@@ -28,7 +32,8 @@ namespace Bonsai.ML.PCA
 
         public double? Rho { get; set; } = 0.1;
         public double? Kappa { get; set; } = 0.9;
-        public int? BurnInCount { get; set; } = null;
+        public int? TimeOffset { get; set; } = null;
+        public int? ReorthogonalizePeriod { get; set; } = null;
 
         [XmlIgnore]
         public Generator? Generator { get; set; } = null;
@@ -36,6 +41,8 @@ namespace Bonsai.ML.PCA
         internal IEnumerable<string> GetModelProperties()
         {
             yield return nameof(NumComponents);
+            yield return nameof(Device);
+            yield return nameof(ScalarType);
             yield return nameof(ModelType);
 
             if (ModelType == PCAModelType.ProbabilisticPCA)
@@ -51,7 +58,8 @@ namespace Bonsai.ML.PCA
                 yield return nameof(InitialVariance);
                 yield return nameof(Rho);
                 yield return nameof(Kappa);
-                yield return nameof(BurnInCount);
+                yield return nameof(TimeOffset);
+                yield return nameof(ReorthogonalizePeriod);
                 yield return nameof(Generator);
             }
         }
@@ -60,20 +68,28 @@ namespace Bonsai.ML.PCA
         {
             return instance.ModelType switch
             {
-                PCAModelType.PCA => new PCA(instance.NumComponents),
+                PCAModelType.PCA => new PCA(
+                    numComponents: instance.NumComponents,
+                    device: instance.Device,
+                    scalarType: instance.ScalarType),
                 PCAModelType.ProbabilisticPCA => new PPCA(
-                    instance.NumComponents,
-                    instance.InitialVariance,
-                    instance.Generator,
-                    instance.Iterations,
-                    instance.Tolerance),
+                    numComponents: instance.NumComponents,
+                    device: instance.Device,
+                    scalarType: instance.ScalarType,
+                    initialVariance: instance.InitialVariance,
+                    generator: instance.Generator,
+                    iterations: instance.Iterations,
+                    tolerance: instance.Tolerance),
                 PCAModelType.OnlinePPCA => new OnlinePPCA(
-                    instance.NumComponents,
-                    instance.InitialVariance,
-                    instance.Generator,
-                    instance.Rho,
-                    instance.Kappa,
-                    instance.BurnInCount),
+                    numComponents: instance.NumComponents,
+                    device: instance.Device,
+                    scalarType: instance.ScalarType,
+                    initialVariance: instance.InitialVariance,
+                    generator: instance.Generator,
+                    rho: instance.Rho,
+                    kappa: instance.Kappa,
+                    timeOffset: instance.TimeOffset,
+                    reorthogonalizePeriod: instance.ReorthogonalizePeriod),
                 _ => throw new NotSupportedException($"Model type {instance.ModelType} is not supported."),
             };
         }

@@ -14,30 +14,39 @@ namespace Bonsai.ML.PCA
     {
         public double? Rho { get; private set; }
         public double? Kappa { get; private set; }
-        public int? BurnInCount { get; private set; }
-        public double Variance { get; private set; }
+        public double Variance => _sigma2.to_type(ScalarType.Float64).item<double>();
+        public int? ReorthogonalizePeriod { get; private set; }
+        public int? TimeOffset { get; private set; }
         public Tensor Components => _W;
         public Generator Generator { get; private set; }
+
         private Tensor _mu;
         private Tensor _W;
         private Tensor _Iq;
-        private Tensor _Id;
-        private Tensor _Sx;
-        private double _Sxxtrace;
-        private Tensor _Sxz;
-        private Tensor _Szz;
+        private Tensor _mx; // E[x]
+        private Tensor _Cxz; // E[xz^T]
+        private Tensor _mz; // E[z]
+        private Tensor _Czz; // E[zz^T]
+        private Tensor _sxx; // E[||x||^2]
+        private Tensor _sigma2; // Variance
+
         private bool _initializedParameters = false;
-        private int _count = 0;
-        private int _burnInCount = 0;
-        private Func<double> UpdateRho;
+        private readonly Func<double> UpdateSchedule;
+        private readonly Action Reorthogonalize;
+        private int _stepCount = 0;
 
         public OnlinePPCA(int numComponents,
+            Device? device = null,
+            ScalarType? scalarType = ScalarType.Float32,
             double initialVariance = 1.0,
             Generator? generator = null,
             double? rho = 0.1,
             double? kappa = null,
-            int? burnInCount = null
-            ) : base(numComponents)
+            int? timeOffset = 3000,
+            int? reorthogonalizePeriod = null
+            ) : base(numComponents,
+                device,
+                scalarType)
         {
             if (initialVariance <= 0)
             {
@@ -56,7 +65,7 @@ namespace Bonsai.ML.PCA
 
             if (rho.HasValue)
             {
-                UpdateRho = () => rho.Value;
+                UpdateSchedule = () => rho.Value;
                 if (rho <= 0 || rho >= 1)
                 {
                     throw new ArgumentException("Rho must be in the range (0, 1).", nameof(rho));
@@ -65,25 +74,60 @@ namespace Bonsai.ML.PCA
 
             if (kappa.HasValue)
             {
-                UpdateRho = () => Math.Pow(_count + 10, -kappa.Value);
+                if (timeOffset is null or <= 0)
+                {
+                    throw new ArgumentException("Time offset must be a positive integer.", nameof(timeOffset));
+                }
+
+                UpdateSchedule = () => Math.Pow(_stepCount + timeOffset.Value, -kappa.Value);
                 if (kappa <= 0.5 || kappa > 1)
                 {
                     throw new ArgumentException("Kappa must be in the range (0.5, 1].", nameof(kappa));
                 }
             }
 
-            if (burnInCount.HasValue && burnInCount <= 0)
+            if (reorthogonalizePeriod.HasValue)
             {
-                throw new ArgumentException("Warmup iterations must be greater than zero.", nameof(burnInCount));
+                Reorthogonalize = () =>
+                {
+                    if (_initializedParameters && _stepCount % ReorthogonalizePeriod == 0)
+                    {
+                        var (U, S, Vh) = svd(_W, fullMatrices: false); // W = U S V^T
+                        var R = Vh.T;
+                        _W = U.matmul(diag(S)); // keep per-component scale
+                        _Cxz = _Cxz.matmul(R.T);
+                        _Czz = R.matmul(_Czz).matmul(R.T);
+                        _mz = R.matmul(_mz);
+                    }
+                };
+            }
+            else
+            {
+                Reorthogonalize = () => { };
             }
 
-
-            Variance = initialVariance;
             Generator = generator ?? manual_seed(0);
             Rho = rho;
             Kappa = kappa;
-            BurnInCount = burnInCount;
-            _burnInCount = burnInCount ?? 0;
+            ReorthogonalizePeriod = reorthogonalizePeriod;
+            TimeOffset = timeOffset;
+            _sigma2 = initialVariance;
+        }
+
+        private Tensor InvertSPD(Tensor spdMatrix, Tensor rhs, double regularization = 1e-6)
+        {
+            var diagShape = spdMatrix.size(-1);
+            Tensor L;
+            try
+            {
+                L = linalg.cholesky(spdMatrix);
+            }
+            catch (Exception)
+            {
+                var regularizer = eye(diagShape, device: Device, dtype: ScalarType) * regularization;
+                L = linalg.cholesky(spdMatrix + regularizer);
+            }
+            return cholesky_solve(rhs, L);
         }
 
         public override void Fit(Tensor data)
@@ -94,84 +138,100 @@ namespace Bonsai.ML.PCA
                 throw new ArgumentException("Input data must be a 2D tensor.");
             }
 
-            var Xt = data.T; // n x d
-
-            // Initialize dimensions
-            var q = NumComponents;
-            var n = Xt.size(0);
-            var d = Xt.size(1);
-
-            // Initialize parameters
-            if (!_initializedParameters)
+            using (no_grad())
             {
-                _mu = zeros(1, d); // 1 x d
-                var wScale = Math.Sqrt(Variance / d);
-                _W = randn(d, q, generator: Generator) * wScale; // d x q
-                _Iq = eye(q); // q x q
-                _Id = eye(d); // d x d
-                _Sx = zeros(1, d); // d
-                _Sxz = zeros(d, q); // d x q
-                _Szz = zeros(q, q); // q x q
-                _Sxxtrace = 0.0; // scalar
-
-                _burnInCount = Math.Max(_burnInCount, (int)d);
-                _initializedParameters = true;
-            }
-
-            // Update rho
-            var rho = UpdateRho();
-
-            using (var _ = NewDisposeScope())
-            {
-                // E-step using current parameters
-                var M = _W.T.matmul(_W) + _Iq * Variance; // q x q
-                M = 0.5 * (M + M.T); // Ensure symmetry
-                var Xc = Xt - _mu; // n x d
-                var Lm = linalg.cholesky(M); // q x q
-                var XcW = Xc.matmul(_W); // n x q
-                var Ez = cholesky_solve(XcW.T, Lm).T; // n x q
-                var EzInv = cholesky_inverse(Lm); // q x q
-                var Ezzmu = (Variance * EzInv) + Ez.T.matmul(Ez);
-
-                // Batch statistics
-                var Xmu = Xt.mean([0], keepdim: true); // 1 x d
-                var Xzmu = Xc.T.matmul(Ez); // d x q
-                var Xcmu = Xc.pow(2).sum(1).mean();
-
-                // Update parameters with new statistics
-                _Sx = (1 - rho) * _Sx + rho * Xmu;
-                _Sxz = (1 - rho) * _Sxz + rho * Xzmu;
-
-                var SzzNew = (1 - rho) * _Szz + rho * Ezzmu;
-                _Szz = 0.5 * (SzzNew + SzzNew.T); // Ensure symmetry
-                _Sxxtrace = (1 - rho) * _Sxxtrace + rho * Xcmu.to_type(ScalarType.Float64).cpu().ReadCpuDouble(0);
-
-                _Sx = _Sx.MoveToOuterDisposeScope();
-                _Sxz = _Sxz.MoveToOuterDisposeScope();
-                _Szz = _Szz.MoveToOuterDisposeScope();
-                _Iq.MoveToOuterDisposeScope();
-                _Id.MoveToOuterDisposeScope();
-
-                // During burn-in, we do not update W or variance
-                if (_count <= _burnInCount)
+                using (NewDisposeScope())
                 {
-                    _count++;
-                    return;
+
+                    _stepCount++;
+                    var rho = UpdateSchedule();
+
+                    var Xt = data.T; // n x d
+
+                    // Initialize dimensions
+                    var q = NumComponents;
+                    var n = Xt.size(0);
+                    var d = Xt.size(1);
+
+                    // Initialize parameters
+                    if (!_initializedParameters)
+                    {
+                        _mu = zeros(d, device: Device, dtype: ScalarType).MoveToOuterDisposeScope();
+                        var randW = randn(d, q, generator: Generator, device: Device, dtype: ScalarType);
+                        var orthonormalBases = linalg.qr(randW).Q;
+                        _W = (orthonormalBases * _sigma2).MoveToOuterDisposeScope(); // d x q
+                        _Iq = eye(q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q x q
+
+                        _mx = zeros(d, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // d
+                        _Cxz = zeros(d, q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // d x q
+                        _mz = zeros(q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q
+                        _Czz = zeros(q, q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q x q
+                        _sxx = zeros(1, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // scalar
+
+                        _initializedParameters = true;
+                    }
+
+                    // Covariance matrix
+                    var cov = _Iq * _sigma2;
+
+                    // Center data using current mean
+                    var Xc = Xt - _mu;
+
+                    // E-step
+                    var M = _W.T.matmul(_W) + cov;
+                    var MInv = InvertSPD(M, _Iq);
+
+                    var XcW = Xc.matmul(_W);
+                    var EzT = InvertSPD(M, XcW.T);
+                    var Ez = EzT.T;
+
+                    // Update statistics
+                    var mx = Xt.mean([0]);
+                    var sxx = Xt.pow(2).sum(1).mean();
+                    var Cxz = Xt.T.matmul(Ez) / n;
+                    var mz = Ez.mean([0]);
+                    var Czz = EzT.matmul(Ez) / n + _sigma2 * MInv;
+
+                    // Update parameters
+                    var rhoFactor = 1 - rho;
+                    _mx = (rhoFactor * _mx + rho * mx).MoveToOuterDisposeScope();
+                    _Cxz = rhoFactor * _Cxz + rho * Cxz;
+                    _mz = rhoFactor * _mz + rho * mz;
+                    _sxx = (rhoFactor * _sxx + rho * sxx).MoveToOuterDisposeScope();
+                    _Czz = rhoFactor * _Czz + rho * Czz;
+
+                    // Update mean
+                    _mu = _mx.MoveToOuterDisposeScope();
+
+                    // Centered statistics
+                    var Sxz = _Cxz - outer(_mu, _mz);
+                    var Szz = _Czz;
+                    var Sxx = _sxx - _mu.dot(_mu);
+
+                    // M-step
+                    _W = InvertSPD(Szz, Sxz.T).T;
+
+                    // Reorthogonalize W
+                    Reorthogonalize();
+
+                    // Reorder components based on the strength of the components
+                    var strength = sum(_W * _W, dim: 0);
+                    var indices = argsort(strength, descending: true);
+                    _W = _W.index_select(1, indices).MoveToOuterDisposeScope();
+                    _Cxz = _Cxz.index_select(1, indices).MoveToOuterDisposeScope();
+                    _mz = _mz.index_select(0, indices).MoveToOuterDisposeScope();
+                    _Czz = _Czz.index_select(0, indices).index_select(1, indices).MoveToOuterDisposeScope();
+
+                    Sxz = _Cxz - outer(_mu, _mz);
+                    Szz = _Czz;
+
+                    // Update variance
+                    _sigma2 = ((Sxx - 2 * trace(_W.T.matmul(Sxz)) + trace(_W.T.matmul(_W).matmul(Szz))) / (double)d)
+                        .clamp_min(0.0)
+                        .MoveToOuterDisposeScope();
                 }
-
-                // M-step: Update W and variance
-                _mu = _Sx.MoveToOuterDisposeScope();
-                var Lzz = linalg.cholesky(_Szz); // q x q
-                var WNew = cholesky_solve(_Sxz.T, Lzz).T; // d x q
-                // _W = WNew.MoveToOuterDisposeScope();
-                var WUpdated = (1 - rho) * _W + rho * WNew;
-                _W = WUpdated.MoveToOuterDisposeScope();
-
-                var trWSt = WNew.mul(_Sxz).sum().to_type(ScalarType.Float64).cpu().ReadCpuDouble(0);
-                var newVar = (_Sxxtrace - trWSt) / d;
-                Variance = !double.IsNaN(newVar) && newVar > 0 ? newVar : Variance;
             }
-        }
+        }   
 
         public override Tensor Transform(Tensor data)
         {
@@ -181,11 +241,10 @@ namespace Bonsai.ML.PCA
             }
 
             var Xt = data.T; // n x d
-            var X = Xt - _mu; // n x d
-            var W = Components; // d x q
-            var M = W.T.matmul(W) + eye(NumComponents) * Variance; // q x q
-            var MInv = inverse(M); // q x q
-            return X.matmul(W).matmul(MInv); // n x q
+            var Xc = Xt - _mu; // n x d
+            var M = _W.T.matmul(_W) + _Iq * _sigma2; // q x q
+            var XcW = Xc.matmul(_W);
+            return InvertSPD(M, XcW.T).T; // n x q
         }
     }
 }
