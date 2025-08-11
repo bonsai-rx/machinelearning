@@ -65,7 +65,7 @@ namespace Bonsai.ML.PCA
             var variance = Variance;
 
             // Initialize log likelihood
-            LogLikelihood = ones(_iterations) * double.NegativeInfinity;
+            LogLikelihood = ones(_iterations, device: Device, dtype: ScalarType) * double.NegativeInfinity;
 
             // Initialize dimensions for components
             var q = NumComponents;
@@ -78,9 +78,9 @@ namespace Bonsai.ML.PCA
             }
 
             // Initialize W and I
-            var W = randn(d, q, generator: Generator); // d x q
-            var MI = eye(q); // q x q
-            var CI = eye(d); // d x d
+            var W = randn(d, q, generator: Generator, device: Device, dtype: ScalarType); // d x q
+            var Iq = eye(q, device: Device, dtype: ScalarType); // q x q
+            var Id = eye(d, device: Device, dtype: ScalarType); // d x d
 
             // Calculate the sample mean
             var mean = Xt.mean([0], keepdim: true); // 1 x d
@@ -96,7 +96,7 @@ namespace Bonsai.ML.PCA
             var term1 = trace(XTX);
 
             // Compute log likelihood constant
-            var logLikelihoodConst = d * log(2 * Math.PI);
+            var logLikelihoodConst = d * log(2 * Math.PI).to(Device).to_type(ScalarType);
 
             double diffW;
             double diffVariance;
@@ -104,10 +104,10 @@ namespace Bonsai.ML.PCA
             // Repeat until convergence
             for (int i = 0; i < _iterations; i++)
             {
-                using (var _ = NewDisposeScope())
+                using (NewDisposeScope())
                 {
                     // E-step: Compute the posterior distribution of the latent variables
-                    var M = W.T.matmul(W) + MI * variance; // q x q
+                    var M = W.T.matmul(W) + Iq * variance; // q x q
                     var MInv = inv(M); // q x q
                     var mu = MInv.matmul(W.T).matmul(X.T).T; // n x q
                     var SSum = n * MInv * variance; // q x q
@@ -124,7 +124,7 @@ namespace Bonsai.ML.PCA
                     var varianceNew = (term1 - term2 + term3) / (n * d); // scalar
 
                     // Compute the log likelihood
-                    var C = W.matmul(W.T) + CI * variance; // d x d
+                    var C = W.matmul(W.T) + Id * variance; // d x d
                     var CInv = inv(C); // d x d
                     var logLikelihood = -0.5 * n * (logLikelihoodConst + logdet(C) + trace(CInv.matmul(sampleCov))); // scalar
 
@@ -166,7 +166,7 @@ namespace Bonsai.ML.PCA
             }
 
             var Xt = data.T;
-            var mean = Xt.mean([ 0 ], keepdim: true); // 1 x d
+            var mean = Xt.mean([0], keepdim: true); // 1 x d
             var X = Xt - mean; // n x d
             var W = Components; // d x q
             var M = W.T.matmul(W) + eye(NumComponents) * Variance; // q x q

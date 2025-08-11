@@ -41,7 +41,10 @@ namespace Bonsai.ML.PCA
                 throw new ArgumentException("Number of components cannot be greater than the number of features.", nameof(data));
             }
 
-            Covariance = cov(data);
+            var Xt = data.T;
+            var mean = Xt.mean([0], keepdim: true);
+            var Xc = Xt - mean;
+            Covariance = cov(Xc.T);
             var eigen = eigh(Covariance);
             var sortedIndices = argsort(eigen.Item1, dim: -1, descending: true);
             EigenValues = eigen.Item1[sortedIndices];
