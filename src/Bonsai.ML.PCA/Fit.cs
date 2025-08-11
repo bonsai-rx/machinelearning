@@ -23,7 +23,24 @@ namespace Bonsai.ML.PCA
                 FitModel(value.Item1, value.Item2);
             });
         }
+
         public IObservable<Tuple<Tensor, PCA>> Process(IObservable<Tuple<Tensor, PCA>> source)
+        {
+            return source.Do((value) =>
+            {
+                FitModel(value.Item2, value.Item1);
+            });
+        }
+
+        public IObservable<Tuple<PPCA, Tensor>> Process(IObservable<Tuple<PPCA, Tensor>> source)
+        {
+            return source.Do((value) =>
+            {
+                FitModel(value.Item1, value.Item2);
+            });
+        }
+
+        public IObservable<Tuple<Tensor, PPCA>> Process(IObservable<Tuple<Tensor, PPCA>> source)
         {
             return source.Do((value) =>
             {
