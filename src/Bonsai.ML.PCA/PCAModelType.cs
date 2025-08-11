@@ -13,6 +13,7 @@ namespace Bonsai.ML.PCA
     public enum PCAModelType
     {
         PCA,
-        ProbabilisticPCA
+        ProbabilisticPCA,
+        OnlinePPCA
     }
 }

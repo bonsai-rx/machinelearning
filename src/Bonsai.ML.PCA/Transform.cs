@@ -47,5 +47,21 @@ namespace Bonsai.ML.PCA
                 return TransformData(value.Item2, value.Item1);
             });
         }
+
+        public IObservable<Tensor> Process(IObservable<Tuple<OnlinePPCA, Tensor>> source)
+        {
+            return source.Select(value =>
+            {
+                return TransformData(value.Item1, value.Item2);
+            });
+        }
+
+        public IObservable<Tensor> Process(IObservable<Tuple<Tensor, OnlinePPCA>> source)
+        {
+            return source.Select(value =>
+            {
+                return TransformData(value.Item2, value.Item1);
+            });
+        }
     }
 }
