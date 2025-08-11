@@ -16,6 +16,7 @@ namespace Bonsai.ML.PCA
         public Tensor EigenValues { get; private set; } = empty(0);
         public Tensor EigenVectors { get; private set; } = empty(0);
         public Tensor Components { get; private set; } = empty(0);
+        private bool _isFitted = false;
 
         public PCA(int numComponents) : base(numComponents) { }
 
@@ -23,7 +24,15 @@ namespace Bonsai.ML.PCA
         {
             if (data.NumberOfElements == 0 || data.dim() < 2)
             {
-                throw new ArgumentException("Data must be a non-empty 2D tensor.", nameof(data));
+                throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
+            }
+
+            var n = data.size(0);
+            var d = data.size(1);
+
+            if (NumComponents > d)
+            {
+                throw new ArgumentException("Number of components cannot be greater than the number of features.", nameof(data));
             }
 
             Covariance = cov(data);
@@ -32,18 +41,19 @@ namespace Bonsai.ML.PCA
             EigenValues = eigen.Item1[sortedIndices];
             EigenVectors = eigen.Item2.index_select(1, sortedIndices);
             Components = EigenVectors.slice(1, 0, NumComponents, 1);
+            _isFitted = true;
         }
 
         public override Tensor Transform(Tensor data)
         {
             if (data.NumberOfElements == 0 || data.dim() < 2)
             {
-                throw new ArgumentException("Data must be a non-empty 2D tensor.", nameof(data));
+                throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
             }
 
-            if (Components.NumberOfElements == 0)
+            if (!_isFitted)
             {
-                throw new InvalidOperationException("Model has not been fit to data. Call the Fit() method first.");
+                throw new InvalidOperationException("Model has not yet been fitted. You should call the Fit() or the FitAndTransform() methods first.");
             }
 
             return data.T.matmul(Components);

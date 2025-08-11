@@ -18,7 +18,13 @@ namespace Bonsai.ML.PCA
 
         [RefreshProperties(RefreshProperties.All)]
         public PCAModelType ModelType { get; set; } = PCAModelType.PCA;
-        public double Variance { get; set; } = 1.0;
+
+        public double InitialVariance { get; set; } = 1.0;
+        public int Iterations { get; set; } = 100;
+        public double Tolerance { get; set; } = 1e-5;
+
+        [XmlIgnore]
+        public Generator? Generator { get; set; } = null;
 
         internal IEnumerable<string> GetModelProperties()
         {
@@ -27,7 +33,11 @@ namespace Bonsai.ML.PCA
 
             if (ModelType == PCAModelType.ProbabilisticPCA)
             {
-                yield return "Variance";
+                yield return nameof(InitialVariance);
+                yield return nameof(Iterations);
+                yield return nameof(Tolerance);
+                yield return nameof(Generator);
+            }
             }
         }
 
@@ -36,6 +46,12 @@ namespace Bonsai.ML.PCA
             return instance.ModelType switch
             {
                 PCAModelType.PCA => new PCA(instance.NumComponents),
+                PCAModelType.ProbabilisticPCA => new PPCA(
+                    instance.NumComponents,
+                    instance.InitialVariance,
+                    instance.Generator,
+                    instance.Iterations,
+                    instance.Tolerance),
                 _ => throw new NotSupportedException($"Model type {instance.ModelType} is not supported."),
             };
         }
@@ -45,6 +61,7 @@ namespace Bonsai.ML.PCA
             return modelType switch
             {
                 PCAModelType.PCA => typeof(PCA),
+                PCAModelType.ProbabilisticPCA => typeof(PPCA),
                 _ => throw new NotSupportedException($"Model type {modelType} is not supported."),
             };
         }
