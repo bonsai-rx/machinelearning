@@ -38,5 +38,7 @@ namespace Bonsai.ML.PCA
             Fit(data);
             return Transform(data);
         }
+
+        public abstract Tensor Reconstruct(Tensor data);
     }
 }

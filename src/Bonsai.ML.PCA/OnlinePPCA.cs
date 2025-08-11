@@ -235,7 +235,29 @@ namespace Bonsai.ML.PCA
             var Xc = Xt - _mu; // n x d
             var M = _W.T.matmul(_W) + _Iq * _sigma2; // q x q
             var XcW = Xc.matmul(_W);
-            return InvertSPD(M, XcW.T).T; // n x q
+            return Utils.InvertSPD(M, XcW.T).T; // n x q
+        }
+        
+        public override Tensor Reconstruct(Tensor data)
+        {
+            if (data.NumberOfElements == 0 || data.dim() < 2)
+            {
+                throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
+            }
+
+            if (!_initializedParameters)
+            {
+                throw new InvalidOperationException("Model has not yet been fitted. You should call the Fit() or the FitAndTransform() methods first.");
+            }
+
+            var Xt = data.T; // n x d
+            var Xc = Xt - _mu; // n x d
+            var M = _W.T.matmul(_W) + _Iq * _sigma2; // q x q
+            var XcW = Xc.matmul(_W);
+            var EzT = Utils.InvertSPD(M, XcW.T);
+            var Ez = EzT.T;
+
+            return Ez.matmul(_W.T) + _mu.T; // n x d
         }
     }
 }

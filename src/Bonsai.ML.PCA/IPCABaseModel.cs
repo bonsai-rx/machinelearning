@@ -17,5 +17,6 @@ namespace Bonsai.ML.PCA
         public abstract void Fit(Tensor data);
         public abstract Tensor Transform(Tensor data);
         public abstract Tensor FitAndTransform(Tensor data);
+        public abstract Tensor Reconstruct(Tensor data);
     }
 }

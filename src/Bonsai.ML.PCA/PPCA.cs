@@ -173,5 +173,24 @@ namespace Bonsai.ML.PCA
             var MInv = inverse(M); // q x q
             return X.matmul(W).matmul(MInv); // n x q
         }
+        
+        public override Tensor Reconstruct(Tensor data)
+        {
+            if (data.NumberOfElements == 0 || data.dim() < 2)
+            {
+                throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
+            }
+
+            if (!_isFitted)
+            {
+                throw new InvalidOperationException("Model has not yet been fitted. You should call the Fit() or the FitAndTransform() methods first.");
+            }
+
+            var Xt = data.T;
+            var mean = Xt.mean([0], keepdim: true); // 1 x d
+            var Xc = Xt - mean; // n x d
+            var W = Components; // d x q
+            return Xc.matmul(W).matmul(W.T) + mean.T; // n x d
+        }
     }
 }

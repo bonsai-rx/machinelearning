@@ -62,7 +62,29 @@ namespace Bonsai.ML.PCA
                 throw new InvalidOperationException("Model has not yet been fitted. You should call the Fit() or the FitAndTransform() methods first.");
             }
 
-            return data.T.matmul(Components);
+            var X = data.T;
+            var mean = X.mean([0], keepdim: true); // 1 x d
+            var Xc = X - mean;
+            return Xc.matmul(Components); // n x q
+        }
+
+        public override Tensor Reconstruct(Tensor data)
+        {
+            if (data.NumberOfElements == 0 || data.dim() < 2)
+            {
+                throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
+            }
+
+            if (!_isFitted)
+            {
+                throw new InvalidOperationException("Model has not yet been fitted. You should call the Fit() or the FitAndTransform() methods first.");
+            }
+
+            var X = data.T;
+            var mean = X.mean([0], keepdim: true); // 1 x d
+            var Xc = X - mean;
+            var reconstructed = Transform(Xc);
+            return reconstructed.matmul(Components.T) + mean.T;
         }
     }
 }
