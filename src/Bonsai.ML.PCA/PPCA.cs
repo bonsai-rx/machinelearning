@@ -170,7 +170,7 @@ namespace Bonsai.ML.PCA
             var X = Xt - mean; // n x d
             var W = Components; // d x q
             var M = W.T.matmul(W) + eye(NumComponents) * Variance; // q x q
-            var MInv = inverse(M); // q x q
+            var MInv = Utils.InvertSPD(M, eye(NumComponents)); // q x q
             return X.matmul(W).matmul(MInv); // n x q
         }
         
