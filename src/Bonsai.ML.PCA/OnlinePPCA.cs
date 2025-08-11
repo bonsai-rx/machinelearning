@@ -34,7 +34,7 @@ namespace Bonsai.ML.PCA
         private readonly Func<double> UpdateSchedule;
         private int _stepCount = 0;
         private readonly bool _reorthogonalize = false;
-        
+
         public OnlinePPCA(int numComponents,
             Device? device = null,
             ScalarType? scalarType = ScalarType.Float32,
@@ -99,22 +99,6 @@ namespace Bonsai.ML.PCA
             _sigma2 = initialVariance;
         }
 
-        private Tensor InvertSPD(Tensor spdMatrix, Tensor rhs, double regularization = 1e-6)
-        {
-            var diagShape = spdMatrix.size(-1);
-            Tensor L;
-            try
-            {
-                L = linalg.cholesky(spdMatrix);
-            }
-            catch (Exception)
-            {
-                var regularizer = eye(diagShape, device: Device, dtype: ScalarType) * regularization;
-                L = linalg.cholesky(spdMatrix + regularizer);
-            }
-            return cholesky_solve(rhs, L);
-        }
-
         public override void Fit(Tensor data)
         {
             // throw new NotImplementedException();
@@ -163,10 +147,10 @@ namespace Bonsai.ML.PCA
 
                 // E-step
                 var M = _W.T.matmul(_W) + cov;
-                var MInv = InvertSPD(M, _Iq);
+                var MInv = Utils.InvertSPD(M, _Iq);
 
                 var XcW = Xc.matmul(_W);
-                var EzT = InvertSPD(M, XcW.T);
+                var EzT = Utils.InvertSPD(M, XcW.T);
                 var Ez = EzT.T;
 
                 // Update statistics
@@ -193,7 +177,7 @@ namespace Bonsai.ML.PCA
                 var Sxx = _sxx - _mu.dot(_mu);
 
                 // M-step
-                var WNew = InvertSPD(Szz, Sxz.T).T;
+                var WNew = Utils.InvertSPD(Szz, Sxz.T).T;
 
                 if (_reorthogonalize &&
                     _stepCount % ReorthogonalizePeriod == 0)
