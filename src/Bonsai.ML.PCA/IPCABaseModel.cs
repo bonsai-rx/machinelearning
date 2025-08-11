@@ -12,6 +12,8 @@ namespace Bonsai.ML.PCA
 {
     public interface IPCABaseModel
     {
+        public Device Device { get; }
+        public ScalarType ScalarType { get; }
         public abstract void Fit(Tensor data);
         public abstract Tensor Transform(Tensor data);
         public abstract Tensor FitAndTransform(Tensor data);

@@ -14,7 +14,12 @@ namespace Bonsai.ML.PCA
     {
         public int NumComponents { get; private set; }
 
-        public PCABaseModel(int numComponents)
+        public Device Device { get; private set; }
+        public ScalarType ScalarType { get; private set; }
+
+        public PCABaseModel(int numComponents,
+            Device? device = null,
+            ScalarType? scalarType = null)
         {
             if (numComponents <= 0)
             {
@@ -22,6 +27,8 @@ namespace Bonsai.ML.PCA
             }
 
             NumComponents = numComponents;
+            Device = device ?? CPU;
+            ScalarType = scalarType ?? ScalarType.Float32;
         }
 
         public abstract void Fit(Tensor data);

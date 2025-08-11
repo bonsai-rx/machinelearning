@@ -18,7 +18,13 @@ namespace Bonsai.ML.PCA
         public Tensor Components { get; private set; } = empty(0);
         private bool _isFitted = false;
 
-        public PCA(int numComponents) : base(numComponents) { }
+        public PCA(int numComponents,
+            Device? device = null,
+            ScalarType? scalarType = ScalarType.Float32)
+            : base(numComponents,
+                device,
+                scalarType)
+        { }
 
         public override void Fit(Tensor data)
         {
