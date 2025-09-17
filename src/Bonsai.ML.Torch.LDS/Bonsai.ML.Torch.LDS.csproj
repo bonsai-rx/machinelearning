@@ -7,4 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.9.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.Torch\Bonsai.ML.Torch.csproj" />
+  </ItemGroup>
 </Project>
