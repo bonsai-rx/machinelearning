@@ -77,8 +77,8 @@ install_requirements(os.path.join(base_dir, "requirements.txt"), venv_path)
 
 python_path = get_python_path(venv_path)
 
-script_path = os.path.join(base_dir, "receptive_field.py")
-process = subprocess.Popen([python_path, script_path, base_dir, str(args.n_samples)])
+script_path = os.path.join(base_dir, "estimate_neural_latents.py")
+process = subprocess.Popen([python_path, script_path, base_dir])
 return_code = process.wait()
 
 if return_code == 0:
