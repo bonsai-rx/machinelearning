@@ -6,9 +6,9 @@ using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Bonsai.ML.Tests;
+using Bonsai.ML.Tests.Utilities;
 
-namespace Bonsai.ML.LinearDynamicalSystems.Tests.ReceptiveFieldSimpleCell;
+namespace Bonsai.ML.LinearDynamicalSystems.Tests;
 
 /// <summary>
 /// Tests for the ReceptiveFieldSimpleCell workflow.
@@ -16,44 +16,9 @@ namespace Bonsai.ML.LinearDynamicalSystems.Tests.ReceptiveFieldSimpleCell;
 [TestClass]
 public class ReceptiveFieldSimpleCellTest
 {
-    private string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
-    private int nSamples = 10000;
+    private readonly string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
 
-    private void RunProcess(string fileName, string fmtArg)
-    {
-        var start = new ProcessStartInfo
-        {
-            FileName = fileName,
-            Arguments = fmtArg,
-            RedirectStandardOutput = true,
-            RedirectStandardInput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-        };
-
-        using (var process = new Process {StartInfo = start})
-        {
-            process.Start();
-            var output = process.StandardOutput.ReadToEnd();
-            var error = process.StandardError.ReadToEnd();
-            process.WaitForExit();
-
-            if (!string.IsNullOrEmpty(output))
-            {
-                Console.WriteLine("Standard Output: ");
-                Console.WriteLine(output);
-            }
-
-            if (!string.IsNullOrEmpty(error))
-            {
-                Console.WriteLine("Standard Error: ");
-                Console.WriteLine(error);
-            }
-        }
-    }
-
-    private void DownloadData(string basePath)
+    private static void DownloadData(string basePath)
     {
         string zipFileUrl = "https://zenodo.org/records/10879253/files/ReceptiveFieldSimpleCell.zip";
         string outputPath = Path.Combine(basePath, "data");
@@ -78,13 +43,13 @@ public class ReceptiveFieldSimpleCellTest
         }
     }
 
-    private void RunPythonScript(string basePath)
+    private static void RunPythonScript(string basePath)
     {
         var pythonExec = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "python"
             : "python3";
         var scriptPath = Path.Combine(basePath, "bootstrap_test_environment.py");
-        RunProcess(pythonExec, $"\"{scriptPath}\" {basePath} {nSamples}");
+        ProcessHelper.RunProcess(pythonExec, $"\"{scriptPath}\" {basePath} 10000");
 
         Console.WriteLine("Run python script finished.");
     }
@@ -98,20 +63,20 @@ public class ReceptiveFieldSimpleCellTest
             var workflowPath = Path.Combine(basePath, "receptive_field.bonsai");
             await WorkflowHelper.RunWorkflow(
                 workflowPath,
-                properties: [("NSamples", nSamples)]);
+                properties: [("NSamples", 10000)]);
             Console.WriteLine("Run bonsai workflow finished.");
         }
         finally { Environment.CurrentDirectory = currentDirectory; }
     }
 
-    private State GetStateFromJson(string jsonFileName)
+    private static State GetStateFromJson(string jsonFileName)
     {
         string jsonString = File.ReadAllText(jsonFileName);
         State state = JsonConvert.DeserializeObject<State>(jsonString) ?? new State();
         return state;
     }
 
-    private bool CompareJSONData(string basePath, double tolerance = 1e-9)
+    private static bool CompareJSONData(string basePath, double tolerance = 1e-9)
     {
         var originalFileName = Path.Combine(basePath, "original-receptivefield.json");
         var bonsaiFileName = Path.Combine(basePath, "bonsai-receptivefield.json");
