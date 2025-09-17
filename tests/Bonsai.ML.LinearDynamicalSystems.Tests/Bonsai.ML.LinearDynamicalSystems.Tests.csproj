@@ -16,11 +16,12 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ReceptiveFieldSimpleCell/*" Exclude="ReceptiveFieldSimpleCell/*.cs">
+    <Content Include="*" Exclude="*.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-</ItemGroup>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Bonsai.ML.LinearDynamicalSystems\Bonsai.ML.LinearDynamicalSystems.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Tests.Utilities\Bonsai.ML.Tests.Utilities.csproj" />
   </ItemGroup>
 </Project>

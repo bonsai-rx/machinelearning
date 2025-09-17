@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Bonsai.ML.Tests;
 
 namespace Bonsai.ML.LinearDynamicalSystems.Tests.ReceptiveFieldSimpleCell;
 
@@ -15,7 +16,7 @@ namespace Bonsai.ML.LinearDynamicalSystems.Tests.ReceptiveFieldSimpleCell;
 [TestClass]
 public class ReceptiveFieldSimpleCellTest
 {
-    private string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ReceptiveFieldSimpleCell");
+    private string basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
     private int nSamples = 10000;
 
     private void RunProcess(string fileName, string fmtArg)
@@ -82,7 +83,7 @@ public class ReceptiveFieldSimpleCellTest
         var pythonExec = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "python"
             : "python3";
-        var scriptPath = Path.Combine(basePath, "run_python_test.py");
+        var scriptPath = Path.Combine(basePath, "bootstrap_test_environment.py");
         RunProcess(pythonExec, $"\"{scriptPath}\" {basePath} {nSamples}");
 
         Console.WriteLine("Run python script finished.");
@@ -156,7 +157,7 @@ public class ReceptiveFieldSimpleCellTest
     /// Setup for the test.
     /// </summary>
     [TestInitialize]
-    [DeploymentItem("run_python_test.py")]
+    [DeploymentItem("bootstrap_test_environment.py")]
     [DeploymentItem("receptive_field.py")]
     [DeploymentItem("receptive_field.bonsai")]
     [DeploymentItem("original-receptivefield.json")]
