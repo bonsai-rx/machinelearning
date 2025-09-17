@@ -1,0 +1,806 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.9.0"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:p1="clr-namespace:Bonsai.ML.Torch;assembly=Bonsai.ML.Torch"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:p2="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp"
+                 xmlns:p3="clr-namespace:;assembly=Extensions"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="p1:InitializeTorchDevice">
+          <p1:DeviceType>CUDA</p1:DeviceType>
+          <p1:DeviceIndex>-1</p1:DeviceIndex>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="rx:BehaviorSubject">
+        <Name>CUDA</Name>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LoadData</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/transformed_binned_spikes.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>142</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>-1</p1:long>
+                  <p1:long>142</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>ObservationT</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/stop_times.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>1</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>-1</p1:long>
+                  <p1:long>1</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>TrialEnd</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/JoaquinModelParameters/covariance.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>10</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>10</p1:long>
+                  <p1:long>10</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>Covariance</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/JoaquinModelParameters/state.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>10</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>10</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>State</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/JoaquinModelParameters/measurementFunction.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>10</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>142</p1:long>
+                  <p1:long>10</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>MeasurementFunction</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/JoaquinModelParameters/measurementNoiseCovariance.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>142</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>142</p1:long>
+                  <p1:long>142</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>MeasurementNoiseCovariance</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/JoaquinModelParameters/transitionMatrix.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>10</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>10</p1:long>
+                  <p1:long>10</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>TransitionMatrix</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/JoaquinModelParameters/processNoiseCovariance.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>10</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>10</p1:long>
+                  <p1:long>10</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>ProcessNoiseCovariance</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:MatrixReader">
+                <p2:Path>../data/bin_centers.bin</p2:Path>
+                <p2:Offset>0</p2:Offset>
+                <p2:SampleRate>0</p2:SampleRate>
+                <p2:ChannelCount>1</p2:ChannelCount>
+                <p2:BufferLength>0</p2:BufferLength>
+                <p2:Depth>F64</p2:Depth>
+                <p2:Layout>RowMajor</p2:Layout>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToTensor">
+                <p1:Type xsi:nil="true" />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ToDevice" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:ConvertScalarType">
+                <p1:Type>Float32</p1:Type>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Reshape">
+                <p1:Dimensions>
+                  <p1:long>-1</p1:long>
+                  <p1:long>1</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>Time</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="4" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source2" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="12" Label="Source1" />
+            <Edge From="10" To="11" Label="Source1" />
+            <Edge From="11" To="12" Label="Source2" />
+            <Edge From="12" To="13" Label="Source1" />
+            <Edge From="13" To="14" Label="Source1" />
+            <Edge From="14" To="15" Label="Source1" />
+            <Edge From="16" To="17" Label="Source1" />
+            <Edge From="17" To="20" Label="Source1" />
+            <Edge From="18" To="19" Label="Source1" />
+            <Edge From="19" To="20" Label="Source2" />
+            <Edge From="20" To="21" Label="Source1" />
+            <Edge From="21" To="22" Label="Source1" />
+            <Edge From="22" To="23" Label="Source1" />
+            <Edge From="24" To="25" Label="Source1" />
+            <Edge From="25" To="28" Label="Source1" />
+            <Edge From="26" To="27" Label="Source1" />
+            <Edge From="27" To="28" Label="Source2" />
+            <Edge From="28" To="29" Label="Source1" />
+            <Edge From="29" To="30" Label="Source1" />
+            <Edge From="30" To="31" Label="Source1" />
+            <Edge From="32" To="33" Label="Source1" />
+            <Edge From="33" To="36" Label="Source1" />
+            <Edge From="34" To="35" Label="Source1" />
+            <Edge From="35" To="36" Label="Source2" />
+            <Edge From="36" To="37" Label="Source1" />
+            <Edge From="37" To="38" Label="Source1" />
+            <Edge From="38" To="39" Label="Source1" />
+            <Edge From="40" To="41" Label="Source1" />
+            <Edge From="41" To="44" Label="Source1" />
+            <Edge From="42" To="43" Label="Source1" />
+            <Edge From="43" To="44" Label="Source2" />
+            <Edge From="44" To="45" Label="Source1" />
+            <Edge From="45" To="46" Label="Source1" />
+            <Edge From="46" To="47" Label="Source1" />
+            <Edge From="48" To="49" Label="Source1" />
+            <Edge From="49" To="52" Label="Source1" />
+            <Edge From="50" To="51" Label="Source1" />
+            <Edge From="51" To="52" Label="Source2" />
+            <Edge From="52" To="53" Label="Source1" />
+            <Edge From="53" To="54" Label="Source1" />
+            <Edge From="54" To="55" Label="Source1" />
+            <Edge From="56" To="57" Label="Source1" />
+            <Edge From="57" To="60" Label="Source1" />
+            <Edge From="58" To="59" Label="Source1" />
+            <Edge From="59" To="60" Label="Source2" />
+            <Edge From="60" To="61" Label="Source1" />
+            <Edge From="61" To="62" Label="Source1" />
+            <Edge From="62" To="63" Label="Source1" />
+            <Edge From="64" To="65" Label="Source1" />
+            <Edge From="65" To="68" Label="Source1" />
+            <Edge From="66" To="67" Label="Source1" />
+            <Edge From="67" To="68" Label="Source2" />
+            <Edge From="68" To="69" Label="Source1" />
+            <Edge From="69" To="70" Label="Source1" />
+            <Edge From="70" To="71" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LoadModel</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>TransitionMatrix</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>MeasurementFunction</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ProcessNoiseCovariance</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>MeasurementNoiseCovariance</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>State</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Covariance</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="InputMapping">
+              <PropertyMappings>
+                <Property Name="TransitionMatrix" Selector="Item1" />
+                <Property Name="MeasurementFunction" Selector="Item2" />
+                <Property Name="ProcessNoiseCovariance" Selector="Item3" />
+                <Property Name="MeasurementNoiseCovariance" Selector="Item4" />
+                <Property Name="InitialState" Selector="Item5" />
+                <Property Name="InitialCovariance" Selector="Item6" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:CreateKalmanFilterParameters" />
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>CUDA</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Device" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:CreateKalmanFilter">
+                <p3:NumStates>10</p3:NumStates>
+                <p3:NumObservations>142</p3:NumObservations>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="6" Label="Source1" />
+            <Edge From="1" To="6" Label="Source2" />
+            <Edge From="2" To="6" Label="Source3" />
+            <Edge From="3" To="6" Label="Source4" />
+            <Edge From="4" To="6" Label="Source5" />
+            <Edge From="5" To="6" Label="Source6" />
+            <Edge From="6" To="7" Label="Source1" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="8" To="11" Label="Source1" />
+            <Edge From="9" To="10" Label="Source1" />
+            <Edge From="10" To="11" Label="Source2" />
+            <Edge From="11" To="12" Label="Source1" />
+            <Edge From="12" To="13" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LearnParameters</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ObservationT</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:ExpectationMaximization">
+                <p3:MaxIterations>5</p3:MaxIterations>
+                <p3:Tolerance>0.1</p3:Tolerance>
+                <p3:Verbose>true</p3:Verbose>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>ExpectationMaximizationResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:SubscribeWhen" />
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ExpectationMaximizationResult</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>LogLikelihood</Selector>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:Iterate">
+                <p3:Dimension>0</p3:Dimension>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="p1:ConvertToArray">
+              <p1:Type>Float32</p1:Type>
+            </Expression>
+            <Expression xsi:type="Index">
+              <Operand xsi:type="IntProperty">
+                <Value>0</Value>
+              </Operand>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="3" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source2" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="4" To="6" Label="Source1" />
+            <Edge From="5" To="6" Label="Source2" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="10" Label="Source1" />
+            <Edge From="10" To="11" Label="Source1" />
+            <Edge From="11" To="12" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>UpdateParameters</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ExpectationMaximizationResult</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Parameters</Selector>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:UpdateParameters" />
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>ParametersUpdated</Name>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="4" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source2" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>Filter</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ObservationT</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:Filter" />
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>UpdatedFilteredResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ParametersUpdated</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:SubscribeWhen" />
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>UpdatedFilteredResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:Smooth" />
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>UpdatedSmoothedResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ParametersUpdated</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:SubscribeWhen" />
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>UpdatedSmoothedResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:Orthogonalize" />
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>OrthogonalizedResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ParametersUpdated</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:SubscribeWhen" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Timer">
+                <rx:DueTime>PT0S</rx:DueTime>
+                <rx:Period>PT0.01S</rx:Period>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>OrthogonalizedResult</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:SubscribeWhen" />
+            </Expression>
+            <Expression xsi:type="rx:PublishSubject">
+              <Name>TimerSource</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>OrthogonalizedResult</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>OrthogonalizedState</Selector>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Index">
+                <p1:Value>5000:5500,0</p1:Value>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p3:Iterate">
+                <p3:Dimension>0</p3:Dimension>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="p1:ConvertToArray">
+              <p1:Type>Float32</p1:Type>
+            </Expression>
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="3" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source2" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="4" To="6" Label="Source1" />
+            <Edge From="5" To="6" Label="Source2" />
+            <Edge From="7" To="10" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="10" Label="Source2" />
+            <Edge From="10" To="11" Label="Source1" />
+            <Edge From="11" To="13" Label="Source1" />
+            <Edge From="12" To="13" Label="Source2" />
+            <Edge From="14" To="17" Label="Source1" />
+            <Edge From="15" To="16" Label="Source1" />
+            <Edge From="16" To="17" Label="Source2" />
+            <Edge From="17" To="18" Label="Source1" />
+            <Edge From="18" To="20" Label="Source1" />
+            <Edge From="19" To="20" Label="Source2" />
+            <Edge From="21" To="23" Label="Source1" />
+            <Edge From="22" To="23" Label="Source2" />
+            <Edge From="23" To="24" Label="Source1" />
+            <Edge From="25" To="26" Label="Source1" />
+            <Edge From="26" To="27" Label="Source1" />
+            <Edge From="27" To="28" Label="Source1" />
+            <Edge From="28" To="29" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="1" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>
