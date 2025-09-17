@@ -133,6 +133,9 @@ public class TensorConverter : TypeConverter
     {
         object tensorData;
 
+        if (tensor is null)
+            return string.Empty;
+
         if (tensor.Dimensions == 0)
         {
             if (scalarType == ScalarType.Byte)
