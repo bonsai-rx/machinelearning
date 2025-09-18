@@ -14,26 +14,19 @@ import argparse
 import os
 
 # Parse arguments
-parser = argparse.ArgumentParser()
-parser.add_argument("base_dir", type=str, default=None)
-args = parser.parse_args()
+try:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("base_dir", type=str, default=None)
+    args = parser.parse_args()
 
-base_dir = args.base_dir
+    base_dir = args.base_dir
+except:
+    base_dir = os.path.realpath(os.path.dirname(__file__))
 
 # data
 dandiset_ID = "000140"
 dandi_filepath = "sub-Jenkins/sub-Jenkins_ses-small_desc-train_behavior+ecephys.nwb"
 bin_size = 0.02
-
-# plot
-events_names = ["start_time", "target_on_time", "go_cue_time",
-                "move_onset_time", "stop_time"]
-events_linetypes = ["dot", "dash", "dashdot", "longdash", "solid"]
-events_colors_spikes = ["white", "white", "white", "white", "white"]
-events_colors_latents = ["black", "black", "black", "black", "black"]
-cb_alpha = 0.3
-from_time = 100.0
-to_time = 130.0
 
 # model
 n_latents = 10
@@ -47,8 +40,8 @@ sigma_m0 = 0.1
 sigma_V0 = 0.1
 
 # estimation parameters
-max_iter = 5
-tol = 1e-1
+max_iter = 1
+tol = 0.1
 vars_to_estimate = {"B": True, "Q": True, "Z": True, "R": True,
                     "m0": True, "V0": True, }
 
