@@ -59,70 +59,58 @@ public class ExpectationMaximization
 
     public IObservable<ExpectationMaximizationResult> Process(IObservable<torch.Tensor> source)
     {
-        return source.SelectMany(input =>
+        return source.Select(input =>
         {
             var model = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            return Observable.FromAsync(cancellationToken =>
+            var previousLogLikelihood = double.NegativeInfinity;
+            var logLikelihood = torch.zeros(new long[] { MaxIterations }, device: input.device);
+
+            for (int i = 0; i < MaxIterations; i++)
             {
-                return Task.Run(() =>
+                ExpectationMaximizationResult result;
+                using (KalmanFilterModelManager.Read(model))
                 {
-                    var previousLogLikelihood = double.NegativeInfinity;
-                    var logLikelihood = torch.zeros(new long[] { MaxIterations }, device: input.device);
+                    result = model.ExpectationMaximization(input, 1, Tolerance, false);
+                }
 
-                    for (int i = 0; i < MaxIterations; i++)
+                var logLikelihoodSum = result.LogLikelihood
+                    .cpu()
+                    .to_type(torch.ScalarType.Float32)
+                    .ReadCpuSingle(0);
+
+                logLikelihood[i] = logLikelihoodSum;
+
+                if (Verbose)
+                {
+                    Console.WriteLine("Iteration " + (i + 1) + ", Log Likelihood: " + logLikelihoodSum);
+                    if (i == MaxIterations - 1)
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        ExpectationMaximizationResult result;
-                        using (KalmanFilterModelManager.Read(model))
-                        {
-                            result = model.ExpectationMaximization(input, 1, Tolerance, false);
-                        }
-
-                        var logLikelihoodSum = result.LogLikelihood
-                            .cpu()
-                            .to_type(torch.ScalarType.Float32)
-                            .ReadCpuSingle(0);
-
-                        logLikelihood[i] = logLikelihoodSum;
-
-                        if (Verbose)
-                        {
-                            Console.WriteLine("Iteration " + (i + 1) + ", Log Likelihood: " + logLikelihoodSum);
-                            if (i == MaxIterations - 1)
-                            {
-                                Console.WriteLine("EM reached the maximum number of iterations.");
-                            }
-                        }
-
-                        if (logLikelihoodSum - previousLogLikelihood < Tolerance)
-                        {
-                            if (Verbose)
-                            {
-                                Console.WriteLine("EM converged after " + (i + 1) + " iterations.");
-                            }
-                            logLikelihood = logLikelihood[torch.TensorIndex.Slice(0, i + 1)];
-                            break;
-                        }
-                        previousLogLikelihood = logLikelihoodSum;
-
-                        using (KalmanFilterModelManager.Write(model))
-                        {
-                            model.UpdateParameters(result.Parameters);
-                        }
+                        Console.WriteLine("EM reached the maximum number of iterations.");
                     }
+                }
 
-                    var expectationMaximizationResult = new ExpectationMaximizationResult(
-                        logLikelihood,
-                        model.Parameters);
+                if (logLikelihoodSum - previousLogLikelihood < Tolerance)
+                {
+                    if (Verbose)
+                    {
+                        Console.WriteLine("EM converged after " + (i + 1) + " iterations.");
+                    }
+                    logLikelihood = logLikelihood[torch.TensorIndex.Slice(0, i + 1)];
+                    break;
+                }
+                previousLogLikelihood = logLikelihoodSum;
 
-                    return expectationMaximizationResult;
-                },
-                cancellationToken);
-            });
+                using (KalmanFilterModelManager.Write(model))
+                {
+                    model.UpdateParameters(result.Parameters);
+                }
+            }
+
+            var expectationMaximizationResult = new ExpectationMaximizationResult(
+                logLikelihood,
+                model.Parameters);
+
+            return expectationMaximizationResult;
         });
     }
 }
