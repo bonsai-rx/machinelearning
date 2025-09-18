@@ -222,31 +222,40 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     public IObservable<nn.Module> Process()
     {
-        return Observable.Return(
-            new KalmanFilter(
-                    numStates: NumStates,
-                    numObservations: NumObservations,
-                    transitionMatrix: _transitionMatrix,
-                    measurementFunction: _measurementFunction,
-                    initialState: _initialState,
-                    initialCovariance: _initialCovariance,
-                    processNoiseVariance: _processNoiseVariance,
-                    measurementNoiseVariance: _measurementNoiseVariance,
-                    device: Device,
-                    scalarType: Type
-                ));
+        return Observable.Using(() => KalmanFilterModelManager.Reserve(
+                ModelName,
+                NumStates,
+                NumObservations,
+                _transitionMatrix,
+                _measurementFunction,
+                _initialState,
+                _initialCovariance,
+                _processNoiseVariance,
+                _measurementNoiseVariance,
+                Device,
+                Type
+            ), resource => Observable.Return(resource.Model)
+                .Concat(Observable.Never(resource.Model))
+                .Finally(resource.Dispose)
+        );
     }
-    
+
     /// <summary>
     /// Creates a Kalman filter model using the parameters provided in the input sequence.
     /// </summary>
     public IObservable<nn.Module> Process(IObservable<KalmanFilterParameters> source)
     {
-        return source.Select(parameters =>
-            new KalmanFilter(
-                    parameters: parameters,
-                    device: Device,
-                    scalarType: Type
-                ));
+        return source.SelectMany(parameters =>
+        {
+            return Observable.Using(() => KalmanFilterModelManager.Reserve(
+                ModelName,
+                parameters,
+                Device,
+                Type
+            ), resource => Observable.Return(resource.Model)
+                .Concat(Observable.Never(resource.Model))
+                .Finally(resource.Dispose)
+            );
+        });
     }
 }
