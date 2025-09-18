@@ -102,6 +102,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// The measurement function.
     /// </summary>
     [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor MeasurementFunction
     {
         get => _measurementFunction;
@@ -125,6 +126,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// The process noise variance.
     /// </summary>
     [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor ProcessNoiseVariance
     {
         get => _processNoiseVariance;
@@ -148,6 +150,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// The measurement noise variance.
     /// </summary>
     [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor MeasurementNoiseVariance
     {
         get => _measurementNoiseVariance;
@@ -171,6 +174,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// The initial state.
     /// </summary>
     [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor InitialState
     {
         get => _initialState;
@@ -194,6 +198,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// The initial covariance.
     /// </summary>
     [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor InitialCovariance
     {
         get => _initialCovariance;
