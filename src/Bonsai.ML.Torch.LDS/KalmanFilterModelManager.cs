@@ -85,6 +85,33 @@ internal sealed class KalmanFilterModelManager
         }));
     }
 
+    internal static KalmanFilterDisposable Reserve(
+        string name,
+        KalmanFilterParameters parameters,
+        Device? device = null,
+        ScalarType? scalarType = null
+    )
+    {
+        if (_models.ContainsKey(name))
+        {
+            throw new InvalidOperationException($"A Kalman filter with name {name} already exists.");
+        }
+
+        var kalmanFilter = new KalmanFilter(
+            parameters: parameters,
+            device: device,
+            scalarType: scalarType ?? ScalarType.Float32
+        );
+
+        _models.Add(name, kalmanFilter);
+
+        return new KalmanFilterDisposable(kalmanFilter, Disposable.Create(() =>
+        {
+            _models.Remove(name);
+            kalmanFilter.Dispose();
+        }));
+    }
+
     private readonly struct ManagedLock(
         ReaderWriterLockSlim lockObject,
         Mode mode) : IDisposable
