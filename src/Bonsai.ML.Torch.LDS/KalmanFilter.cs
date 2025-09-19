@@ -46,8 +46,8 @@ internal class KalmanFilter : nn.Module
 
         _identityStates = eye(_numStates, dtype: _scalarType, device: _device);
 
-        _state = empty(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        _covariance = empty([_numStates, _numStates], dtype: _scalarType, device: _device).requires_grad_(false);
+        _state = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
+        _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
     }
 
     public KalmanFilter(
@@ -88,8 +88,8 @@ internal class KalmanFilter : nn.Module
         _processNoiseCovariance = CreateCovarianceMatrix(processNoiseVariance, _scalarType, _device, numStates, "Process noise variance");
         _measurementNoiseCovariance = CreateCovarianceMatrix(measurementNoiseVariance, _scalarType, _device, numObservations, "Measurement noise variance");
 
-        _state = empty(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        _covariance = empty([_numStates, _numStates], dtype: _scalarType, device: _device).requires_grad_(false);
+        _state = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
+        _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
 
         RegisterComponents();
     }
