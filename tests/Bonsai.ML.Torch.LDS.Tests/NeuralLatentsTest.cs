@@ -7,6 +7,8 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Bonsai.ML.Tests.Utilities;
+using static TorchSharp.torch;
+using TorchSharp;
 
 namespace Bonsai.ML.Torch.LDS.Tests;
 
@@ -29,22 +31,9 @@ public class NeuralLatentsTest
         Console.WriteLine("Run python script finished.");
     }
 
-    private static async Task RunBonsaiWorkflow(string basePath)
-    {
-        var currentDirectory = Environment.CurrentDirectory;
-        Environment.CurrentDirectory = basePath;
-        try
-        {
-            var workflowPath = Path.Combine(basePath, "NeuralLatentsTest.bonsai");
-            await WorkflowHelper.RunWorkflow(
-                workflowPath);
-            Console.WriteLine("Run bonsai workflow finished.");
-        }
-        finally { Environment.CurrentDirectory = currentDirectory; }
-    }
-    
     private static double[] ReadBinaryFile(string fileName)
     {
+        Console.WriteLine($"Reading binary file: {fileName}");
         using var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
         using var binaryReader = new BinaryReader(fileStream);
         var fileLength = fileStream.Length;
@@ -54,45 +43,64 @@ public class NeuralLatentsTest
         {
             data[i] = binaryReader.ReadDouble();
         }
+        Console.WriteLine($"Read {numDoubles} doubles from {fileName}");
         return data;
     }
 
-    private static bool CompareBinaryData(string basePath, double tolerance = 1e-4)
+    private static void WriteToTensor(string fileName, long[] shape)
     {
-        var bonsaiMeansFileName = Path.Combine(basePath, "bonsai_means.bin");
-        var bonsaiCovariancesFileName = Path.Combine(basePath, "bonsai_covs.bin");
+        Console.WriteLine($"Reading filename: {fileName} and creating tensor with shape [{string.Join(", ", shape)}]");
+        var data = ReadBinaryFile(fileName);
+        var tensor = from_array(data).reshape(shape);
+        var outputFileName = Path.ChangeExtension(fileName, ".pt");
+        tensor.Save(outputFileName);
+        Console.WriteLine($"Saved tensor to {outputFileName}");
+    }
 
-        var pythonMeansFileName = Path.Combine(basePath, "python_means.bin");
-        var pythonCovariancesFileName = Path.Combine(basePath, "python_covs.bin");
+    private static void ConvertBinaryFiles(string basePath)
+    {
+        var transformedBinnedSpikesFileName = Path.Combine(basePath, "transformed_binned_spikes.bin");
+        WriteToTensor(transformedBinnedSpikesFileName, [142, -1]);
 
-        var bonsaiMeans = ReadBinaryFile(bonsaiMeansFileName);
-        var bonsaiCovariances = ReadBinaryFile(bonsaiCovariancesFileName);
-        var pythonMeans = ReadBinaryFile(pythonMeansFileName);
-        var pythonCovariances = ReadBinaryFile(pythonCovariancesFileName);
-        
-        if (bonsaiMeans.Length != pythonMeans.Length ||
-            bonsaiCovariances.Length != pythonCovariances.Length)
+        var transitionMatrixFileName = Path.Combine(basePath, "python_B0.bin");
+        WriteToTensor(transitionMatrixFileName, [10, 10]);
+
+        var measurementFunctionFileName = Path.Combine(basePath, "python_Z0.bin");
+        WriteToTensor(measurementFunctionFileName, [142, 10]);
+
+        var processNoiseFileName = Path.Combine(basePath, "python_Q0.bin");
+        WriteToTensor(processNoiseFileName, [10, 10]);
+
+        var observationNoiseFileName = Path.Combine(basePath, "python_R0.bin");
+        WriteToTensor(observationNoiseFileName, [142, 142]);
+
+        var initialStateFileName = Path.Combine(basePath, "python_m0_0.bin");
+        WriteToTensor(initialStateFileName, [10]);
+
+        var initialCovarianceFileName = Path.Combine(basePath, "python_V0_0.bin");
+        WriteToTensor(initialCovarianceFileName, [10, 10]);
+
+        var outputMeansFileName = Path.Combine(basePath, "python_means.bin");
+        WriteToTensor(outputMeansFileName, [10, -1]);
+
+        var outputCovariancesFileName = Path.Combine(basePath, "python_covs.bin");
+        WriteToTensor(outputCovariancesFileName, [10, 10, -1]);
+    }
+
+    private static async Task RunBonsaiWorkflow(string basePath)
+    {
+        Console.WriteLine($"Running Bonsai workflow...");
+        var currentDirectory = Environment.CurrentDirectory;
+        Environment.CurrentDirectory = basePath;
+
+        try
         {
-            return false;
+            var workflowPath = Path.Combine(basePath, "NeuralLatentsTest.bonsai");
+            await WorkflowHelper.RunWorkflow(
+                workflowPath);
+            Console.WriteLine("Run bonsai workflow finished.");
         }
-
-        for (int i = 0; i < bonsaiMeans.Length; i++)
-        {
-            if (Math.Abs(bonsaiMeans[i] - pythonMeans[i]) > tolerance)
-            {
-                return false;
-            }
-        }
-
-        for (int i = 0; i < bonsaiCovariances.Length; i++)
-        {
-            if (Math.Abs(bonsaiCovariances[i] - pythonCovariances[i]) > tolerance)
-            {
-                return false;
-            }
-        }
-
-        return true;
+        finally { Environment.CurrentDirectory = currentDirectory; }
     }
 
     /// <summary>
@@ -106,6 +114,7 @@ public class NeuralLatentsTest
     {
         Directory.CreateDirectory(basePath);
         RunPythonScript(basePath);
+        ConvertBinaryFiles(basePath);
         await RunBonsaiWorkflow(basePath);
     }
 
@@ -113,9 +122,20 @@ public class NeuralLatentsTest
     /// Compares the results from the Python script and the Bonsai workflow.
     /// </summary>
     [TestMethod]
-    public void CompareResults()
+    public void CompareTensorData()
     {
-        var result = CompareBinaryData(basePath);
-        Assert.IsTrue(result);
+        var bonsaiMeansFileName = Path.Combine(basePath, "bonsai_means.pt");
+        var bonsaiCovariancesFileName = Path.Combine(basePath, "bonsai_covs.pt");
+
+        var pythonMeansFileName = Path.Combine(basePath, "python_means.pt");
+        var pythonCovariancesFileName = Path.Combine(basePath, "python_covs.pt");
+
+        var bonsaiMeans = Tensor.Load(bonsaiMeansFileName);
+        var bonsaiCovariances = Tensor.Load(bonsaiCovariancesFileName);
+        var pythonMeans = Tensor.Load(pythonMeansFileName).permute(1, 0);
+        var pythonCovariances = Tensor.Load(pythonCovariancesFileName).permute(2, 0, 1);
+
+        Assert.IsTrue(allclose(bonsaiMeans, pythonMeans));
+        Assert.IsTrue(allclose(bonsaiCovariances, pythonCovariances));
     }
 }
