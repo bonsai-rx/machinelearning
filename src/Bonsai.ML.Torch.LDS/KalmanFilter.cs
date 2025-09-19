@@ -589,7 +589,13 @@ internal class KalmanFilter : nn.Module
         var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: _device);
         var previousLogLikelihood = double.NegativeInfinity;
         var logLikelihoodConst = -0.5 * timeBins * _numObservations * log(2.0 * Math.PI);
-        var updatedParameters = Parameters;
+
+        var transitionMatrix = _transitionMatrix;
+        var measurementFunction = _measurementFunction;
+        var processNoiseCovariance = _processNoiseCovariance;
+        var measurementNoiseCovariance = _measurementNoiseCovariance;
+        var initialState = _initialState;
+        var initialCovariance = _initialCovariance;
 
         for (int iteration = 0; iteration < maxIterations; iteration++)
         {
@@ -599,12 +605,12 @@ internal class KalmanFilter : nn.Module
                 timeBins: timeBins,
                 numStates: _numStates,
                 numObservations: _numObservations,
-                transitionMatrix: _transitionMatrix,
-                measurementFunction: _measurementFunction,
-                processNoiseCovariance: _processNoiseCovariance,
-                measurementNoiseCovariance: _measurementNoiseCovariance,
-                initialState: _initialState,
-                initialCovariance: _initialCovariance,
+                transitionMatrix: transitionMatrix,
+                measurementFunction: measurementFunction,
+                processNoiseCovariance: processNoiseCovariance,
+                measurementNoiseCovariance: measurementNoiseCovariance,
+                initialState: initialState,
+                initialCovariance: initialCovariance,
                 scalarType: _scalarType,
                 device: _device);
 
@@ -631,10 +637,10 @@ internal class KalmanFilter : nn.Module
                 filteredResult: filteredResult,
                 timeBins: timeBins,
                 numStates: _numStates,
-                transitionMatrix: _transitionMatrix,
-                measurementFunction: _measurementFunction,
-                initialState: _initialState,
-                initialCovariance: _initialCovariance,
+                transitionMatrix: transitionMatrix,
+                measurementFunction: measurementFunction,
+                initialState: initialState,
+                initialCovariance: initialCovariance,
                 identityStates: _identityStates,
                 scalarType: _scalarType,
                 device: _device);
@@ -648,29 +654,31 @@ internal class KalmanFilter : nn.Module
             var autoCorrelationObservations = einsum("tp,tq->pq", observation, observation);
 
             // Update parameters
-            var updatedTransitionMatrix = InverseCholesky(crossCorrelationStates, autoCorrelationStatesCurrent);
-            var updatedMeasurementFunction = InverseCholesky(crossCorrelationObservations, autoCorrelationStatesNext);
-            var updatedProcessNoiseCovariance = WrappedTensorDisposeScope(() =>
+            transitionMatrix = InverseCholesky(crossCorrelationStates, autoCorrelationStatesCurrent);
+            measurementFunction = InverseCholesky(crossCorrelationObservations, autoCorrelationStatesNext);
+            processNoiseCovariance = WrappedTensorDisposeScope(() =>
                 EnsureSymmetric((autoCorrelationStatesNext - InverseCholesky(crossCorrelationStates, autoCorrelationStatesCurrent).matmul(crossCorrelationStates.T)) / timeBins));
 
-            var CSyzT = updatedMeasurementFunction.matmul(crossCorrelationObservations.mT);
-            var updatedMeasurementNoiseCovariance = WrappedTensorDisposeScope(() =>
-                EnsureSymmetric((autoCorrelationObservations - CSyzT - CSyzT.mT
-                    + updatedMeasurementFunction.matmul(autoCorrelationStatesNext)
-                        .matmul(updatedMeasurementFunction.mT)) / timeBins));
+            var explainedObservationCovariance = measurementFunction.matmul(crossCorrelationObservations.mT);
+            measurementNoiseCovariance = WrappedTensorDisposeScope(() =>
+                EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT + measurementFunction.matmul(autoCorrelationStatesNext)
+                        .matmul(measurementFunction.mT)) / timeBins));
 
-            updatedParameters = new KalmanFilterParameters(
-                transitionMatrix: updatedTransitionMatrix,
-                measurementFunction: updatedMeasurementFunction,
-                processNoiseCovariance: updatedProcessNoiseCovariance,
-                measurementNoiseCovariance: updatedMeasurementNoiseCovariance,
-                initialState: smoothedResult.SmoothedInitialState,
-                initialCovariance: smoothedResult.SmoothedInitialCovariance
-            );
-
-            if (updateParameters)
-                UpdateParameters(updatedParameters);
+            initialState = smoothedResult.SmoothedInitialState;
+            initialCovariance = smoothedResult.SmoothedInitialCovariance;
         }
+
+        var updatedParameters = new KalmanFilterParameters(
+            transitionMatrix: transitionMatrix,
+            measurementFunction: measurementFunction,
+            processNoiseCovariance: processNoiseCovariance,
+            measurementNoiseCovariance: measurementNoiseCovariance,
+            initialState: initialState,
+            initialCovariance: initialCovariance
+        );
+
+        if (updateParameters)
+            UpdateParameters(updatedParameters);
 
         return new ExpectationMaximizationResult(logLikelihood, updatedParameters);
     }
