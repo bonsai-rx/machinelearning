@@ -73,7 +73,12 @@ args = parser.parse_args()
 base_dir = get_base_dir(args.base_dir)
 venv_path = create_venv(base_dir)
 activate_venv(venv_path)
-install_requirements(os.path.join(base_dir, "requirements.txt"), venv_path)
+
+install("torch", venv_path)
+install("plotly", venv_path)
+install("remfile", venv_path)
+install("dandi", venv_path)
+install("ssm@git+https://github.com/ncguilbeault/lds_python@75e3e5e92ce6344009b62a5034db49b238db63ef", venv_path)
 
 python_path = get_python_path(venv_path)
 
