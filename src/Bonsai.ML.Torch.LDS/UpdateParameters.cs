@@ -1,25 +1,30 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices;
-using System.Xml.Serialization;
-using Bonsai;
-using Bonsai.ML.Torch;
-using Bonsai.ML.Torch.NeuralNets;
-using TorchSharp;
-using TorchSharp.Modules;
 
 namespace Bonsai.ML.Torch.LDS;
 
+/// <summary>
+/// Updates the parameters of a Kalman filter model instance using the provided Kalman filter parameters.
+/// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Learn the parameters kalman filter using the batch EM update algorithm.")]
+[Description("Updates the parameters of a Kalman filter model instance using the provided Kalman filter parameters.")]
 [WorkflowElementCategory(ElementCategory.Sink)]
 public class UpdateParameters
 {
+    /// <summary>
+    /// The name of the Kalman filter model to be used.
+    /// </summary>
     [TypeConverter(typeof(KalmanFilterNameConverter))]
+    [Description("The name of the Kalman filter model to be used.")]
     public string ModelName { get; set; } = "KalmanFilter";
 
+    /// <summary>
+    /// Updates the parameters of a Kalman filter model using elements from the input sequence.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     public IObservable<KalmanFilterParameters> Process(IObservable<KalmanFilterParameters> source)
     {
         return source.Do((input) =>

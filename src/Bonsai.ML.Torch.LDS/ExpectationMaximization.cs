@@ -1,69 +1,72 @@
 using System;
 using System.ComponentModel;
-using System.Reactive;
 using System.Reactive.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Bonsai;
-using Bonsai.ML.Torch;
-using Bonsai.ML.Torch.NeuralNets;
-using Bonsai.Reactive;
 using TorchSharp;
-using TorchSharp.Modules;
+using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.LDS;
 
 /// <summary>
-/// Learn the parameters kalman filter using the batch EM update algorithm.
+/// Learn the parameters of a kalman filter using the batch EM update algorithm.
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Learn the parameters kalman filter using the batch EM update algorithm.")]
+[Description("Learn the parameters of a kalman filter using the batch EM update algorithm.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class ExpectationMaximization
 {
+    /// <summary>
+    /// The name of the Kalman filter model to be trained.
+    /// </summary>
     [TypeConverter(typeof(KalmanFilterNameConverter))]
+    [Description("The name of the Kalman filter model to be trained.")]
     public string ModelName { get; set; } = "KalmanFilter";
 
     private int _maxIterations = 10;
+    /// <summary>
+    /// The maximum number of EM iterations to perform.
+    /// </summary>
+    [Description("The maximum number of EM iterations to perform.")]
     public int MaxIterations
     {
         get => _maxIterations;
-        set
-        {
-            if (value < 1) throw new ArgumentOutOfRangeException("MaxIterations must be at least 1.");
-            _maxIterations = value;
-        }
+        set => _maxIterations = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(MaxIterations), "Must be greater than zero.");
     }
 
     private double _tolerance = 1e-4;
+    /// <summary>
+    /// The convergence tolerance for the EM algorithm.
+    /// </summary>
+    [Description("The convergence tolerance for the EM algorithm.")]
     public double Tolerance
     {
         get => _tolerance;
-        set
-        {
-            if (value < 0) throw new ArgumentOutOfRangeException("Tolerance must be non-negative.");
-            _tolerance = value;
-        }
+        set => _tolerance = value >= 0 ? value : throw new ArgumentOutOfRangeException(nameof(Tolerance), "Must be greater than or equal to zero.");
     }
 
     private bool _verbose = true;
+    /// <summary>
+    /// If true, prints progress messages to the console.
+    /// </summary>
+    [Description("If true, prints progress messages to the console.")]
     public bool Verbose
     {
         get => _verbose;
         set => _verbose = value;
     }
 
-    public IObservable<ExpectationMaximizationResult> Process(IObservable<torch.Tensor> source)
+    /// <summary>
+    /// Processes an observable sequence of input tensors, applying the Expectation-Maximization algorithm to learn the parameters of a Kalman filter model.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<ExpectationMaximizationResult> Process(IObservable<Tensor> source)
     {
         return source.Select(input =>
         {
             var model = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var previousLogLikelihood = double.NegativeInfinity;
-            var logLikelihood = torch.zeros(new long[] { MaxIterations }, device: input.device);
+            var logLikelihood = zeros(new long[] { MaxIterations }, device: input.device);
 
             for (int i = 0; i < MaxIterations; i++)
             {
@@ -75,7 +78,7 @@ public class ExpectationMaximization
 
                 var logLikelihoodSum = result.LogLikelihood
                     .cpu()
-                    .to_type(torch.ScalarType.Float32)
+                    .to_type(ScalarType.Float32)
                     .ReadCpuSingle(0);
 
                 logLikelihood[i] = logLikelihoodSum;
@@ -102,7 +105,7 @@ public class ExpectationMaximization
 
                 using (KalmanFilterModelManager.Write(model))
                 {
-                    model.UpdateParameters(result.Parameters);
+                model.UpdateParameters(result.Parameters);
                 }
             }
 
