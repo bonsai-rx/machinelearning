@@ -28,10 +28,7 @@ public class Filter
         return source.Select((input) =>
         {
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            using (KalmanFilterModelManager.Read(kalmanFilter))
-            {
-                return kalmanFilter.Filter(input);
-            }
+            return kalmanFilter.Filter(input);
         });
     }
 }

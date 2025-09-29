@@ -32,10 +32,7 @@ public class Orthogonalize
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var smoothedState = input.SmoothedState;
             var smoothedCovariance = input.SmoothedCovariance;
-            using (KalmanFilterModelManager.Read(kalmanFilter))
-            {
-                return kalmanFilter.OrthogonalizeStateAndCovariance(smoothedState, smoothedCovariance);
-            }
+            return kalmanFilter.OrthogonalizeStateAndCovariance(smoothedState, smoothedCovariance);
         });
     }
 
@@ -51,10 +48,7 @@ public class Orthogonalize
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var filteredState = input.UpdatedState;
             var filteredCovariance = input.UpdatedCovariance;
-            using (KalmanFilterModelManager.Read(kalmanFilter))
-            {
-                return kalmanFilter.OrthogonalizeStateAndCovariance(filteredState, filteredCovariance);
-            }
+            return kalmanFilter.OrthogonalizeStateAndCovariance(filteredState, filteredCovariance);
         });
     }
 
@@ -70,10 +64,7 @@ public class Orthogonalize
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var state = input.Item1;
             var covariance = input.Item2;
-            using (KalmanFilterModelManager.Read(kalmanFilter))
-            {
-                return kalmanFilter.OrthogonalizeStateAndCovariance(state, covariance);
-            }
+            return kalmanFilter.OrthogonalizeStateAndCovariance(state, covariance);
         });
     }
 }
