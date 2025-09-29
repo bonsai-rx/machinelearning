@@ -11,31 +11,6 @@ using Bonsai.ML.Torch.LDS;
 // </summary>
 internal sealed class KalmanFilterModelManager
 {
-    private static readonly ConditionalWeakTable<KalmanFilter, ReaderWriterLockSlim> _moduleLocks = new();
-
-    public static ReaderWriterLockSlim GetLock(KalmanFilter instance) =>
-        _moduleLocks.GetValue(instance, _ => new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion));
-
-    public static IDisposable Read(KalmanFilter instance)
-    {
-        var lockObject = GetLock(instance);
-        lockObject.EnterReadLock();
-        return new ManagedLock(lockObject, Mode.Read);
-    }
-
-    public static IDisposable Write(KalmanFilter instance)
-    {
-        var lockObject = GetLock(instance);
-        lockObject.EnterWriteLock();
-        return new ManagedLock(lockObject, Mode.Write);
-    }
-
-    private enum Mode
-    {
-        Read,
-        Write
-    }
-
     private static readonly Dictionary<string, KalmanFilter> _models = new();
 
     public static KalmanFilter GetKalmanFilter(string name)
@@ -109,24 +84,6 @@ internal sealed class KalmanFilterModelManager
             _models.Remove(name);
             kalmanFilter.Dispose();
         }));
-    }
-
-    private readonly struct ManagedLock(
-        ReaderWriterLockSlim lockObject,
-        Mode mode) : IDisposable
-    {
-        private readonly ReaderWriterLockSlim _lockObject = lockObject;
-        private readonly Mode _mode = mode;
-
-        public void Dispose()
-        {
-            // Exit in the reverse mode we entered.
-            switch (_mode)
-            {
-                case Mode.Read when _lockObject.IsReadLockHeld: _lockObject.ExitReadLock(); break;
-                case Mode.Write when _lockObject.IsWriteLockHeld: _lockObject.ExitWriteLock(); break;
-            }
-        }
     }
 
     internal sealed class KalmanFilterDisposable(KalmanFilter model, IDisposable disposable) : IDisposable
