@@ -31,10 +31,7 @@ public class Smooth
         return source.Select((input) =>
         {
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            using (KalmanFilterModelManager.Read(kalmanFilter))
-            {
-                return kalmanFilter.Smooth(input);
-            }
+            return kalmanFilter.Smooth(input);
         });
     }
 

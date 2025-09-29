@@ -70,11 +70,7 @@ public class ExpectationMaximization
 
             for (int i = 0; i < MaxIterations; i++)
             {
-                ExpectationMaximizationResult result;
-                using (KalmanFilterModelManager.Read(model))
-                {
-                    result = model.ExpectationMaximization(input, 1, Tolerance, false);
-                }
+                var result = model.ExpectationMaximization(input, 1, Tolerance, false);
 
                 var logLikelihoodSum = result.LogLikelihood
                     .cpu()
@@ -102,11 +98,7 @@ public class ExpectationMaximization
                     break;
                 }
                 previousLogLikelihood = logLikelihoodSum;
-
-                using (KalmanFilterModelManager.Write(model))
-                {
                 model.UpdateParameters(result.Parameters);
-                }
             }
 
             var expectationMaximizationResult = new ExpectationMaximizationResult(

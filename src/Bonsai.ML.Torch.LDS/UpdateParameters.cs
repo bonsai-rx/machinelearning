@@ -30,10 +30,7 @@ public class UpdateParameters
         return source.Do((input) =>
         {
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            using (KalmanFilterModelManager.Write(kalmanFilter))
-            {
-                kalmanFilter.UpdateParameters(input);
-            }
+            kalmanFilter.UpdateParameters(input);
         });
     }
 }
