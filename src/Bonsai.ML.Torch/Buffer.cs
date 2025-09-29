@@ -26,14 +26,9 @@ public class Buffer
     public int Count
     {
         get => _count;
-        set
-        {
-            if (value <= 0)
-            {
-                throw new ArgumentOutOfRangeException("Count must be greater than zero.");
-            }
-            _count = value;
-        }
+        set => _count = value <= 0
+            ? throw new ArgumentOutOfRangeException("Count must be greater than zero.")
+            : value;
     }
 
     private int _skip = 1;
@@ -44,14 +39,9 @@ public class Buffer
     public int Skip
     {
         get => _skip;
-        set
-        {
-            if (value <= 0)
-            {
-                throw new ArgumentOutOfRangeException("Skip must be greater than zero.");
-            }
-            _skip = value;
-        }
+        set => _skip = value < 0
+            ? throw new ArgumentOutOfRangeException("Skip must be non-negative.")
+            : value;
     }
 
     private torch.Tensor _buffer = null;
