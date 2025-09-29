@@ -110,12 +110,37 @@ public class NeuralLatentsTest
     [DeploymentItem("bootstrap_test_environment.py")]
     [DeploymentItem("estimate_neural_latents.py")]
     [DeploymentItem("NeuralLatentsTest.bonsai")]
+    [DeploymentItem("requirements.txt")]
     public async Task TestSetup()
     {
         Directory.CreateDirectory(basePath);
         RunPythonScript(basePath);
         ConvertBinaryFiles(basePath);
         await RunBonsaiWorkflow(basePath);
+    }
+
+    /// <summary>
+    /// Cleanup files generated for test.
+    /// </summary>
+    [TestCleanup]
+    public void TestCleanup()
+    {
+        var ptFiles = Directory.GetFiles(basePath, "*.pt");
+        var binFiles = Directory.GetFiles(basePath, "*.bin");
+        foreach (var file in ptFiles) File.Delete(file);
+        foreach (var file in binFiles) File.Delete(file);
+
+        var virtualEnvPath = Path.Combine(basePath, ".venv");
+        if (Directory.Exists(virtualEnvPath))
+        {
+            Directory.Delete(virtualEnvPath, true);
+        }
+
+        var remfileCachePath = Path.Combine(basePath, "remfile_cache");
+        if (Directory.Exists(remfileCachePath))
+        {
+            Directory.Delete(remfileCachePath, true);
+        }
     }
 
     /// <summary>
