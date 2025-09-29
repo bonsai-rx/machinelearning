@@ -1,5 +1,4 @@
 using System;
-using TorchSharp;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.LDS;
@@ -256,6 +255,8 @@ internal class KalmanFilter : nn.Module
 
     public FilteredResult Filter(Tensor observation)
     {
+        using var g = no_grad();
+
         var obs = observation.atleast_2d();
         var timeBins = obs.size(0);
 
@@ -389,6 +390,8 @@ internal class KalmanFilter : nn.Module
 
     public SmoothedResult Smooth(FilteredResult filteredResult)
     {
+        using var g = no_grad();
+        
         var predictedState = filteredResult.PredictedState;
         var predictedCovariance = filteredResult.PredictedCovariance;
         var updatedState = filteredResult.UpdatedState;
@@ -448,17 +451,17 @@ internal class KalmanFilter : nn.Module
         Tensor smoothedCovariance,
         Tensor smoothedInitialState,
         Tensor smoothedInitialCovariance,
-        Tensor autoCorrelationStatesCurrent,
-        Tensor crossCorrelationStates,
-        Tensor autoCorrelationStatesNext)
+        Tensor S00,
+        Tensor S10,
+        Tensor S11)
     {
         public readonly Tensor SmoothedState = smoothedState;
         public readonly Tensor SmoothedCovariance = smoothedCovariance;
         public readonly Tensor SmoothedInitialState = smoothedInitialState;
         public readonly Tensor SmoothedInitialCovariance = smoothedInitialCovariance;
-        public readonly Tensor AutoCorrelationStatesCurrent = autoCorrelationStatesCurrent;
-        public readonly Tensor CrossCorrelationStates = crossCorrelationStates;
-        public readonly Tensor AutoCorrelationStatesNext = autoCorrelationStatesNext;
+        public readonly Tensor S00 = S00;
+        public readonly Tensor S10 = S10;
+        public readonly Tensor S11 = S11;
     }
 
     private static SmoothedResultWithAuxiliaryVariables Smooth(
@@ -486,9 +489,9 @@ internal class KalmanFilter : nn.Module
         var smoothedState = empty_like(updatedState);
         var smoothedCovariance = empty_like(updatedCovariance);
 
-        var autoCorrelationStatesCurrent = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
-        var crossCorrelationStates = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
-        var autoCorrelationStatesNext = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
+        var S00 = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
+        var S10 = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
+        var S11 = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
 
         // Fix the last time point
         smoothedState[-1] = updatedState[-1];
@@ -499,7 +502,7 @@ internal class KalmanFilter : nn.Module
                     .matmul(transitionMatrix)
                     .matmul(updatedCovariance[-2]));
 
-        autoCorrelationStatesNext[-1] = outer(updatedState[-1], updatedState[-1]) + updatedCovariance[-1];
+        S11[-1] = outer(updatedState[-1], updatedState[-1]) + updatedCovariance[-1];
 
         var smoothingGain = empty([numStates, numStates], dtype: scalarType, device: device);
         var smoothingGainNext = null as Tensor;
@@ -525,9 +528,9 @@ internal class KalmanFilter : nn.Module
             );
 
             var expectationUpdate = outer(smoothedState[time], smoothedState[time]) + smoothedCovariance[time];
-            autoCorrelationStatesNext[time] = expectationUpdate;
-            autoCorrelationStatesCurrent[time + 1] = expectationUpdate;
-            crossCorrelationStates[time + 1] = outer(smoothedState[time + 1], smoothedState[time]) + smoothedLagOneCovariance;
+            S11[time] = expectationUpdate;
+            S00[time + 1] = expectationUpdate;
+            S10[time + 1] = outer(smoothedState[time + 1], smoothedState[time]) + smoothedLagOneCovariance;
 
             // Compute next smoothing gain for lag one covariance
             if (time > 0)
@@ -565,17 +568,17 @@ internal class KalmanFilter : nn.Module
                 - transitionMatrix.matmul(updatedCovariance[0]))
                 .matmul(smoothingGain0.mT));
 
-        crossCorrelationStates[0] = outer(smoothedState[0], smoothedInitialState) + smoothedLagOneCovariance;
-        autoCorrelationStatesCurrent[0] = outer(smoothedInitialState, smoothedInitialState) + smoothedInitialCovariance;
+        S10[0] = outer(smoothedState[0], smoothedInitialState) + smoothedLagOneCovariance;
+        S00[0] = outer(smoothedInitialState, smoothedInitialState) + smoothedInitialCovariance;
 
         return new SmoothedResultWithAuxiliaryVariables(
             smoothedState: smoothedState,
             smoothedCovariance: smoothedCovariance,
             smoothedInitialState: smoothedInitialState,
             smoothedInitialCovariance: smoothedInitialCovariance,
-            autoCorrelationStatesCurrent: autoCorrelationStatesCurrent,
-            crossCorrelationStates: crossCorrelationStates,
-            autoCorrelationStatesNext: autoCorrelationStatesNext
+            S00: S00,
+            S10: S10,
+            S11: S11
         );
     }
 
@@ -588,7 +591,7 @@ internal class KalmanFilter : nn.Module
         var timeBins = observation.size(0);
         var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: _device);
         var previousLogLikelihood = double.NegativeInfinity;
-        var logLikelihoodConst = -0.5 * timeBins * _numObservations * log(2.0 * Math.PI);
+        var logLikelihoodConst = -0.5 * timeBins * _numObservations * Math.Log(2.0 * Math.PI);
 
         var transitionMatrix = _transitionMatrix;
         var measurementFunction = _measurementFunction;
@@ -597,75 +600,85 @@ internal class KalmanFilter : nn.Module
         var initialState = _initialState;
         var initialCovariance = _initialCovariance;
 
-        for (int iteration = 0; iteration < maxIterations; iteration++)
+        // Precompute constant observation terms reused across EM iterations
+        var observationT = observation.mT;
+        var autoCorrelationObservations = observationT.matmul(observation);
+
+        using (var _ = no_grad())
         {
-            // Filter observations
-            var filteredResult = Filter(
-                observation: observation,
-                timeBins: timeBins,
-                numStates: _numStates,
-                numObservations: _numObservations,
-                transitionMatrix: transitionMatrix,
-                measurementFunction: measurementFunction,
-                processNoiseCovariance: processNoiseCovariance,
-                measurementNoiseCovariance: measurementNoiseCovariance,
-                initialState: initialState,
-                initialCovariance: initialCovariance,
-                scalarType: _scalarType,
-                device: _device);
-
-            // Compute log likelihood
-            var filteredLogLikelihood = logLikelihoodConst + 0.5 * filteredResult.LogLikelihood.sum();
-            var filteredLogLikelihoodSum = filteredLogLikelihood.to_type(ScalarType.Float64).item<double>();
-
-            logLikelihood[iteration] = filteredLogLikelihoodSum;
-
-            // Check for convergence
-            if (filteredLogLikelihoodSum <= previousLogLikelihood)
+            for (int iteration = 0; iteration < maxIterations; iteration++)
             {
-                Console.WriteLine($"Warning: Log likelihood decreased! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
-                break;
+                // Filter observations
+                var filteredResult = Filter(
+                    observation: observation,
+                    timeBins: timeBins,
+                    numStates: _numStates,
+                    numObservations: _numObservations,
+                    transitionMatrix: transitionMatrix,
+                    measurementFunction: measurementFunction,
+                    processNoiseCovariance: processNoiseCovariance,
+                    measurementNoiseCovariance: measurementNoiseCovariance,
+                    initialState: initialState,
+                    initialCovariance: initialCovariance,
+                    scalarType: _scalarType,
+                    device: _device);
+
+                // Compute log likelihood (avoid creating intermediate tensors)
+                var llSumDouble = filteredResult.LogLikelihood.sum()
+                    .to_type(ScalarType.Float64).item<double>();
+                var filteredLogLikelihoodSum = logLikelihoodConst + 0.5 * llSumDouble;
+
+                logLikelihood[iteration] = filteredLogLikelihoodSum;
+
+                // Check for convergence
+                if (filteredLogLikelihoodSum <= previousLogLikelihood)
+                {
+                    Console.WriteLine($"Warning: Log likelihood decreased! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
+                    break;
+                }
+
+                if (filteredLogLikelihoodSum - previousLogLikelihood < tolerance)
+                    break;
+
+                previousLogLikelihood = filteredLogLikelihoodSum;
+
+                // Smooth the filtered results
+                var smoothedResult = Smooth(
+                    filteredResult: filteredResult,
+                    timeBins: timeBins,
+                    numStates: _numStates,
+                    transitionMatrix: transitionMatrix,
+                    measurementFunction: measurementFunction,
+                    initialState: initialState,
+                    initialCovariance: initialCovariance,
+                    identityStates: _identityStates,
+                    scalarType: _scalarType,
+                    device: _device);
+
+                // Sufficient statistics
+                var S00 = smoothedResult.S00.sum([0]);
+                var S11 = smoothedResult.S11.sum([0]);
+                var S10 = smoothedResult.S10.sum([0]);
+
+                // Replace einsum with faster matmul
+                var crossCorrelationObservations = observationT.matmul(smoothedResult.SmoothedState);
+
+                // Update parameters
+                transitionMatrix = InverseCholesky(S10, S00);
+                measurementFunction = InverseCholesky(crossCorrelationObservations, S11);
+
+                // Reuse transitionMatrix (avoid an extra solve)
+                processNoiseCovariance = WrappedTensorDisposeScope(() =>
+                    EnsureSymmetric((S11 - transitionMatrix.matmul(S10.mT)) / timeBins));
+
+                var explainedObservationCovariance = measurementFunction.matmul(crossCorrelationObservations.mT);
+                measurementNoiseCovariance = WrappedTensorDisposeScope(() =>
+                    EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
+                        + measurementFunction.matmul(S11).matmul(measurementFunction.mT)) / timeBins));
+
+                initialState = smoothedResult.SmoothedInitialState;
+                initialCovariance = smoothedResult.SmoothedInitialCovariance;
             }
-
-            if (filteredLogLikelihoodSum - previousLogLikelihood < tolerance)
-                break;
-
-            previousLogLikelihood = filteredLogLikelihoodSum;
-
-            // Smooth the filtered results
-            var smoothedResult = Smooth(
-                filteredResult: filteredResult,
-                timeBins: timeBins,
-                numStates: _numStates,
-                transitionMatrix: transitionMatrix,
-                measurementFunction: measurementFunction,
-                initialState: initialState,
-                initialCovariance: initialCovariance,
-                identityStates: _identityStates,
-                scalarType: _scalarType,
-                device: _device);
-
-            // Sufficient statistics
-            var autoCorrelationStatesCurrent = smoothedResult.AutoCorrelationStatesCurrent.sum([0]);
-            var autoCorrelationStatesNext = smoothedResult.AutoCorrelationStatesNext.sum([0]);
-            var crossCorrelationStates = smoothedResult.CrossCorrelationStates.sum([0]);
-
-            var crossCorrelationObservations = einsum("tp,tn->pn", observation, smoothedResult.SmoothedState);
-            var autoCorrelationObservations = einsum("tp,tq->pq", observation, observation);
-
-            // Update parameters
-            transitionMatrix = InverseCholesky(crossCorrelationStates, autoCorrelationStatesCurrent);
-            measurementFunction = InverseCholesky(crossCorrelationObservations, autoCorrelationStatesNext);
-            processNoiseCovariance = WrappedTensorDisposeScope(() =>
-                EnsureSymmetric((autoCorrelationStatesNext - InverseCholesky(crossCorrelationStates, autoCorrelationStatesCurrent).matmul(crossCorrelationStates.T)) / timeBins));
-
-            var explainedObservationCovariance = measurementFunction.matmul(crossCorrelationObservations.mT);
-            measurementNoiseCovariance = WrappedTensorDisposeScope(() =>
-                EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT + measurementFunction.matmul(autoCorrelationStatesNext)
-                        .matmul(measurementFunction.mT)) / timeBins));
-
-            initialState = smoothedResult.SmoothedInitialState;
-            initialCovariance = smoothedResult.SmoothedInitialCovariance;
         }
 
         var updatedParameters = new KalmanFilterParameters(
@@ -685,13 +698,13 @@ internal class KalmanFilter : nn.Module
 
     public OrthogonalizedResult OrthogonalizeStateAndCovariance(Tensor state, Tensor covariance)
     {
-        var (U, S, Vt) = linalg.svd(_measurementFunction);
+        var (_, S, Vt) = linalg.svd(_measurementFunction);
         var SVt = diag(S).matmul(Vt);
 
-        var orthogonalizedState = einsum("tk,kj->tj", state, SVt.mT);
+        var orthogonalizedState = matmul(state, SVt.mT);
 
-        var auxilary = einsum("ik,tkj->tij", SVt, covariance);
-        var orthogonalizedCovariance = einsum("tij,jk->tik", auxilary, SVt.mT);
+        var auxilary = matmul(SVt, covariance);
+        var orthogonalizedCovariance = matmul(auxilary, SVt.mT);
 
         return new OrthogonalizedResult(orthogonalizedState, orthogonalizedCovariance);
     }

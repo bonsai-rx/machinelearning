@@ -1,22 +1,29 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using Bonsai;
-using TorchSharp;
+using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.LDS;
 
+/// <summary>
+/// Applies a Kalman filter to the input tensor sequence.
+/// </summary>
 [Combinator]
-[ResetCombinator]
-[Description("")]
+[Description("Applies a Kalman filter to the input tensor sequence.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class Filter
 {
+    /// <summary>
+    /// The name of the Kalman filter model to be used.
+    /// </summary>
     [TypeConverter(typeof(KalmanFilterNameConverter))]
+    [Description("The name of the Kalman filter model to be used.")]
     public string ModelName { get; set; } = "KalmanFilter";
 
-    public IObservable<FilteredResult> Process(IObservable<torch.Tensor> source)
+    /// <summary>
+    /// Processes an observable sequence of input tensors, applying the Kalman filter to each tensor.
+    /// </summary>
+    public IObservable<FilteredResult> Process(IObservable<Tensor> source)
     {
         return source.Select((input) =>
         {

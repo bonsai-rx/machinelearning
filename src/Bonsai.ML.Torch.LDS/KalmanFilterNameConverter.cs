@@ -1,10 +1,12 @@
-using Bonsai;
 using Bonsai.Expressions;
 using System.Linq;
 using System.ComponentModel;
 
 namespace Bonsai.ML.Torch.LDS;
 
+/// <summary>
+/// Provides a type converter to select the name of an existing Kalman filter model in the workflow.
+/// </summary>
 public class KalmanFilterNameConverter : StringConverter
 {
     /// <inheritdoc/>
@@ -22,12 +24,12 @@ public class KalmanFilterNameConverter : StringConverter
             if (workflowBuilder != null)
             {
                 var models = (from builder in workflowBuilder.Workflow.Descendants()
-                                    where builder.GetType() != typeof(DisableBuilder)
-                                    let managedModelNode = ExpressionBuilder.GetWorkflowElement(builder)
-                                    where managedModelNode != null && managedModelNode is CreateKalmanFilter
-                                    let createKalmanFilter = (CreateKalmanFilter)managedModelNode
-                                    where createKalmanFilter != null && !string.IsNullOrEmpty(createKalmanFilter.ModelName)
-                                    select createKalmanFilter.ModelName)
+                              where builder.GetType() != typeof(DisableBuilder)
+                              let managedModelNode = ExpressionBuilder.GetWorkflowElement(builder)
+                              where managedModelNode != null && managedModelNode is CreateKalmanFilter
+                              let createKalmanFilter = (CreateKalmanFilter)managedModelNode
+                              where createKalmanFilter != null && !string.IsNullOrEmpty(createKalmanFilter.ModelName)
+                              select createKalmanFilter.ModelName)
                                     .Distinct()
                                     .ToList();
                 if (models.Count > 0)
