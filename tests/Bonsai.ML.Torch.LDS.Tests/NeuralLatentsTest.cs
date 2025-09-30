@@ -110,7 +110,6 @@ public class NeuralLatentsTest
     [DeploymentItem("bootstrap_test_environment.py")]
     [DeploymentItem("estimate_neural_latents.py")]
     [DeploymentItem("NeuralLatentsTest.bonsai")]
-    [DeploymentItem("requirements.txt")]
     public async Task TestSetup()
     {
         Directory.CreateDirectory(basePath);
