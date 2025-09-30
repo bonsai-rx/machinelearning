@@ -583,55 +583,13 @@ internal class KalmanFilter : nn.Module
         );
     }
 
-    private static Dictionary<string, bool> ValidateAndSetParametersToEstimate(Dictionary<string, bool> parametersToUpdate)
-    {
-        var validParameters = new HashSet<string>
-        {
-            "TransitionMatrix",
-            "MeasurementFunction",
-            "ProcessNoiseCovariance",
-            "MeasurementNoiseCovariance",
-            "InitialMean",
-            "InitialCovariance"
-        };
-
-        if (parametersToUpdate is null)
-            return new Dictionary<string, bool>
-            {
-                { "TransitionMatrix", true },
-                { "MeasurementFunction", true },
-                { "ProcessNoiseCovariance", true },
-                { "MeasurementNoiseCovariance", true },
-                { "InitialMean", true },
-                { "InitialCovariance", true }
-            };
-
-        // Check for invalid parameter names
-        foreach (var key in parametersToUpdate.Keys)
-        {
-            if (!validParameters.Contains(key))
-                throw new ArgumentException($"Invalid parameter name '{key}' in parametersToUpdate. Valid names are: {string.Join(", ", validParameters)}");
-        }
-
-        // Ensure all valid parameters are present in the dictionary
-        foreach (var param in validParameters)
-        {
-            if (!parametersToUpdate.ContainsKey(param))
-                parametersToUpdate[param] = false;
-        }
-
-        return parametersToUpdate;
-    }
-
     public ExpectationMaximizationResult ExpectationMaximization(
         Tensor observation,
         int maxIterations = 100,
         double tolerance = 1e-4,
-        Dictionary<string, bool> parametersToUpdate = null,
+        ParametersToEstimate parametersToEstimate = new(),
         bool updateParameters = true)
     {
-        parametersToUpdate = ValidateAndSetParametersToEstimate(parametersToUpdate);
-
         var timeBins = observation.size(0);
         var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: _device);
         var previousLogLikelihood = double.NegativeInfinity;
@@ -708,27 +666,27 @@ internal class KalmanFilter : nn.Module
                 var crossCorrelationObservations = observationT.matmul(smoothedResult.SmoothedMean);
 
                 // Update parameters
-                if (parametersToUpdate["TransitionMatrix"])
+                if (parametersToEstimate.TransitionMatrix)
                     transitionMatrix = InverseCholesky(S10, S00);
 
-                if (parametersToUpdate["MeasurementFunction"])
+                if (parametersToEstimate.MeasurementFunction)
                     measurementFunction = InverseCholesky(crossCorrelationObservations, S11);
 
-                if (parametersToUpdate["ProcessNoiseCovariance"])
+                if (parametersToEstimate.ProcessNoiseCovariance)
                     processNoiseCovariance = WrappedTensorDisposeScope(() =>
                         EnsureSymmetric((S11 - transitionMatrix.matmul(S10.mT)) / timeBins));
 
                 var explainedObservationCovariance = measurementFunction.matmul(crossCorrelationObservations.mT);
 
-                if (parametersToUpdate["MeasurementNoiseCovariance"])
+                if (parametersToEstimate.MeasurementNoiseCovariance)
                     measurementNoiseCovariance = WrappedTensorDisposeScope(() =>
                         EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
                             + measurementFunction.matmul(S11).matmul(measurementFunction.mT)) / timeBins));
 
-                if (parametersToUpdate["InitialMean"])
+                if (parametersToEstimate.InitialMean)
                     initialMean = smoothedResult.SmoothedInitialMean;
 
-                if (parametersToUpdate["InitialCovariance"])
+                if (parametersToEstimate.InitialCovariance)
                     initialCovariance = smoothedResult.SmoothedInitialCovariance;
             }
         }
