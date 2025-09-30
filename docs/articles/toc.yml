@@ -20,3 +20,5 @@
 - name: Torch
 - name: Overview
   href: Torch/torch-overview.md
+- name: Torch.LDS
+  href: Torch.LDS/torch-lds-overview.md
