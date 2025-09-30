@@ -52,7 +52,7 @@
               <Combinator xsi:type="p1:Clone" />
             </Expression>
             <Expression xsi:type="rx:ReplaySubject">
-              <Name>State</Name>
+              <Name>Mean</Name>
               <rx:BufferSize xsi:nil="true" />
             </Expression>
             <Expression xsi:type="Combinator">
@@ -140,7 +140,7 @@
               <Name>MeasurementNoiseCovariance</Name>
             </Expression>
             <Expression xsi:type="SubscribeSubject">
-              <Name>State</Name>
+              <Name>Mean</Name>
             </Expression>
             <Expression xsi:type="SubscribeSubject">
               <Name>Covariance</Name>
@@ -154,7 +154,7 @@
                 <Property Name="MeasurementFunction" Selector="Item2" />
                 <Property Name="ProcessNoiseCovariance" Selector="Item3" />
                 <Property Name="MeasurementNoiseCovariance" Selector="Item4" />
-                <Property Name="InitialState" Selector="Item5" />
+                <Property Name="InitialMean" Selector="Item5" />
                 <Property Name="InitialCovariance" Selector="Item6" />
               </PropertyMappings>
             </Expression>
@@ -165,7 +165,7 @@
                 <p2:MeasurementFunction>[]</p2:MeasurementFunction>
                 <p2:ProcessNoiseCovariance>[]</p2:ProcessNoiseCovariance>
                 <p2:MeasurementNoiseCovariance>[]</p2:MeasurementNoiseCovariance>
-                <p2:InitialState>[]</p2:InitialState>
+                <p2:InitialMean />
                 <p2:InitialCovariance>[]</p2:InitialCovariance>
               </Combinator>
             </Expression>
@@ -179,7 +179,7 @@
                 <p2:MeasurementFunction>[]</p2:MeasurementFunction>
                 <p2:ProcessNoiseVariance>[]</p2:ProcessNoiseVariance>
                 <p2:MeasurementNoiseVariance>[]</p2:MeasurementNoiseVariance>
-                <p2:InitialState>[]</p2:InitialState>
+                <p2:InitialMean />
                 <p2:InitialCovariance>[]</p2:InitialCovariance>
               </Combinator>
             </Expression>
@@ -216,6 +216,12 @@
                 <p2:MaxIterations>1</p2:MaxIterations>
                 <p2:Tolerance>0.1</p2:Tolerance>
                 <p2:Verbose>true</p2:Verbose>
+                <p2:EstimateTransitionMatrix>true</p2:EstimateTransitionMatrix>
+                <p2:EstimateMeasurementFunction>true</p2:EstimateMeasurementFunction>
+                <p2:EstimateProcessNoiseCovariance>true</p2:EstimateProcessNoiseCovariance>
+                <p2:EstimateMeasurementNoiseCovariance>true</p2:EstimateMeasurementNoiseCovariance>
+                <p2:EstimateInitialMean>true</p2:EstimateInitialMean>
+                <p2:EstimateInitialCovariance>true</p2:EstimateInitialCovariance>
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
@@ -283,7 +289,7 @@
               <Name>OrthogonalizedResult</Name>
             </Expression>
             <Expression xsi:type="MemberSelector">
-              <Selector>OrthogonalizedState</Selector>
+              <Selector>OrthogonalizedMean</Selector>
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:SaveTensor">
