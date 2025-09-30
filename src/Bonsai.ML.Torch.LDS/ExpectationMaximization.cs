@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using TorchSharp;
+using System.Collections.Generic;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.LDS;
@@ -55,6 +56,72 @@ public class ExpectationMaximization
         set => _verbose = value;
     }
 
+    private bool _estimateTransitionMatrix = true;
+    /// <summary>
+    /// If true, the transition matrix will be estimated during the EM algorithm.
+    /// </summary>
+    [Description("If true, the transition matrix will be estimated during the EM algorithm.")]
+    public bool EstimateTransitionMatrix
+    {
+        get => _estimateTransitionMatrix;
+        set => _estimateTransitionMatrix = value;
+    }
+
+    private bool _estimateMeasurementFunction = true;
+    /// <summary>
+    /// If true, the measurement function will be estimated during the EM algorithm.
+    /// </summary>
+    [Description("If true, the measurement function will be estimated during the EM algorithm.")]
+    public bool EstimateMeasurementFunction
+    {
+        get => _estimateMeasurementFunction;
+        set => _estimateMeasurementFunction = value;
+    }
+
+    private bool _estimateProcessNoiseCovariance = true;
+    /// <summary>
+    /// If true, the process noise covariance will be estimated during the EM algorithm.
+    /// </summary>
+    [Description("If true, the process noise covariance will be estimated during the EM algorithm.")]
+    public bool EstimateProcessNoiseCovariance
+    {
+        get => _estimateProcessNoiseCovariance;
+        set => _estimateProcessNoiseCovariance = value;
+    }
+
+    private bool _estimateMeasurementNoiseCovariance = true;
+    /// <summary>
+    /// If true, the measurement noise covariance will be estimated during the EM algorithm.
+    /// </summary>
+    [Description("If true, the measurement noise covariance will be estimated during the EM algorithm.")]
+    public bool EstimateMeasurementNoiseCovariance
+    {
+        get => _estimateMeasurementNoiseCovariance;
+        set => _estimateMeasurementNoiseCovariance = value;
+    }
+
+    private bool _estimateInitialMean = true;
+    /// <summary>
+    /// If true, the initial mean will be estimated during the EM algorithm.
+    /// </summary>
+    [Description("If true, the initial mean will be estimated during the EM algorithm.")]
+    public bool EstimateInitialMean
+    {
+        get => _estimateInitialMean;
+        set => _estimateInitialMean = value;
+    }
+
+    private bool _estimateInitialCovariance = true;
+    /// <summary>
+    /// If true, the initial covariance will be estimated during the EM algorithm.
+    /// </summary>
+    [Description("If true, the initial covariance will be estimated during the EM algorithm.")]
+    public bool EstimateInitialCovariance
+    {
+        get => _estimateInitialCovariance;
+        set => _estimateInitialCovariance = value;
+    }
+
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Expectation-Maximization algorithm to learn the parameters of a Kalman filter model.
     /// </summary>
@@ -68,9 +135,19 @@ public class ExpectationMaximization
             var previousLogLikelihood = double.NegativeInfinity;
             var logLikelihood = zeros(new long[] { MaxIterations }, device: input.device);
 
+            var parametersToEstimate = new Dictionary<string, bool>
+            {
+                { "TransitionMatrix", EstimateTransitionMatrix },
+                { "MeasurementFunction", EstimateMeasurementFunction },
+                { "ProcessNoiseCovariance", EstimateProcessNoiseCovariance },
+                { "MeasurementNoiseCovariance", EstimateMeasurementNoiseCovariance },
+                { "InitialState", EstimateInitialMean },
+                { "InitialCovariance", EstimateInitialCovariance }
+            };
+
             for (int i = 0; i < MaxIterations; i++)
             {
-                var result = model.ExpectationMaximization(input, 1, Tolerance, false);
+                var result = model.ExpectationMaximization(input, 1, Tolerance, parametersToEstimate, false);
 
                 var logLikelihoodSum = result.LogLikelihood
                     .cpu()

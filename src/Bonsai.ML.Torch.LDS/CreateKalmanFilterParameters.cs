@@ -127,28 +127,28 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
         set => MeasurementNoiseCovariance = TensorConverter.ConvertFromString(value, _scalarType);
     }
 
-    private Tensor _initialState = null;
+    private Tensor _initialMean = null;
     /// <summary>
-    /// The initial state.
+    /// The initial mean.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
-    public Tensor InitialState
+    public Tensor InitialMean
     {
-        get => _initialState;
-        set => _initialState = value?.to_type(Type);
+        get => _initialMean;
+        set => _initialMean = value?.to_type(Type);
     }
 
     /// <summary>
     /// The XML string representation of the initial state for serialization.
     /// </summary>
     [Browsable(false)]
-    [XmlElement(nameof(InitialState))]
+    [XmlElement(nameof(InitialMean))]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public string InitialStateXml
+    public string InitialMeanXml
     {
-        get => TensorConverter.ConvertToString(InitialState, _scalarType);
-        set => InitialState = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(InitialMean, _scalarType);
+        set => InitialMean = TensorConverter.ConvertFromString(value, _scalarType);
     }
 
     private Tensor _initialCovariance = null;
@@ -181,7 +181,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
         _measurementFunction = _measurementFunction?.to_type(scalarType);
         _processNoiseCovariance = _processNoiseCovariance?.to_type(scalarType);
         _measurementNoiseCovariance = _measurementNoiseCovariance?.to_type(scalarType);
-        _initialState = _initialState?.to_type(scalarType);
+        _initialMean = _initialMean?.to_type(scalarType);
         _initialCovariance = _initialCovariance?.to_type(scalarType);
     }
 
@@ -196,7 +196,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
                 MeasurementFunction,
                 ProcessNoiseCovariance,
                 MeasurementNoiseCovariance,
-                InitialState,
+                InitialMean,
                 InitialCovariance
             )
         );
@@ -213,7 +213,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
                 MeasurementFunction,
                 ProcessNoiseCovariance,
                 MeasurementNoiseCovariance,
-                InitialState,
+                InitialMean,
                 InitialCovariance
             )
         );
