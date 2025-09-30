@@ -3,21 +3,21 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch.LDS;
 
 /// <summary>
-/// Represents the result of orthogonalizing the state and covariance estimates.
+/// Represents the result of orthogonalizing the mean and covariance estimates.
 /// </summary>
 /// <remarks>
 /// Initializes a new instance of the <see cref="OrthogonalizedResult"/> struct.
 /// </remarks>
-/// <param name="orthogonalizedState"></param>
+/// <param name="orthogonalizedMean"></param>
 /// <param name="orthogonalizedCovariance"></param>
 public struct OrthogonalizedResult(
-    Tensor orthogonalizedState,
+    Tensor orthogonalizedMean,
     Tensor orthogonalizedCovariance)
 {
     /// <summary>
-    /// The orthogonalized state estimate.
+    /// The orthogonalized mean estimate.
     /// </summary>
-    public Tensor OrthogonalizedState = orthogonalizedState;
+    public Tensor OrthogonalizedMean = orthogonalizedMean;
 
     /// <summary>
     /// The orthogonalized covariance estimate.

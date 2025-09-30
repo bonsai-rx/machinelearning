@@ -26,7 +26,7 @@ internal sealed class KalmanFilterModelManager
         Tensor measurementFunction,
         Tensor processNoiseVariance,
         Tensor measurementNoiseVariance,
-        Tensor initialState,
+        Tensor initialMean,
         Tensor initialCovariance,
         Device? device = null,
         ScalarType? scalarType = null
@@ -44,7 +44,7 @@ internal sealed class KalmanFilterModelManager
             measurementFunction: measurementFunction,
             processNoiseVariance: processNoiseVariance,
             measurementNoiseVariance: measurementNoiseVariance,
-            initialState: initialState,
+            initialMean: initialMean,
             initialCovariance: initialCovariance,
             device: device,
             scalarType: scalarType ?? ScalarType.Float32

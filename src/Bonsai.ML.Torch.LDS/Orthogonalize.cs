@@ -21,7 +21,7 @@ public class Orthogonalize
     public string ModelName { get; set; } = "KalmanFilter";
 
     /// <summary>
-    /// Processes an observable sequence of smoothed results, orthogonalizing the state and covariance estimates.
+    /// Processes an observable sequence of smoothed results, orthogonalizing the mean and covariance estimates.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -30,14 +30,14 @@ public class Orthogonalize
         return source.Select(input =>
         {
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            var smoothedState = input.SmoothedState;
+            var smoothedMean = input.SmoothedMean;
             var smoothedCovariance = input.SmoothedCovariance;
-            return kalmanFilter.OrthogonalizeStateAndCovariance(smoothedState, smoothedCovariance);
+            return kalmanFilter.OrthogonalizeMeanAndCovariance(smoothedMean, smoothedCovariance);
         });
     }
 
     /// <summary>
-    /// Processes an observable sequence of filtered results, orthogonalizing the state and covariance estimates.
+    /// Processes an observable sequence of filtered results, orthogonalizing the mean and covariance estimates.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -46,14 +46,14 @@ public class Orthogonalize
         return source.Select(input =>
         {
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            var filteredState = input.UpdatedState;
+            var filteredMean = input.UpdatedMean;
             var filteredCovariance = input.UpdatedCovariance;
-            return kalmanFilter.OrthogonalizeStateAndCovariance(filteredState, filteredCovariance);
+            return kalmanFilter.OrthogonalizeMeanAndCovariance(filteredMean, filteredCovariance);
         });
     }
 
     /// <summary>
-    /// Processes an observable sequence of state and covariance tuples, orthogonalizing the state and covariance estimates.
+    /// Processes an observable sequence of mean and covariance tuples, orthogonalizing the mean and covariance estimates.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -62,9 +62,9 @@ public class Orthogonalize
         return source.Select(input =>
         {
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            var state = input.Item1;
+            var mean = input.Item1;
             var covariance = input.Item2;
-            return kalmanFilter.OrthogonalizeStateAndCovariance(state, covariance);
+            return kalmanFilter.OrthogonalizeMeanAndCovariance(mean, covariance);
         });
     }
 }
