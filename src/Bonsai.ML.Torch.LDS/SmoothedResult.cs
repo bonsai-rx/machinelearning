@@ -5,20 +5,20 @@ namespace Bonsai.ML.Torch.LDS;
 /// <summary>
 /// Represents the result of a Kalman smoother.
 /// </summary>
-/// <param name="smoothedState"></param>
+/// <param name="smoothedMean"></param>
 /// <param name="smoothedCovariance"></param>
-/// <param name="smoothedInitialState"></param>
+/// <param name="smoothedInitialMean"></param>
 /// <param name="smoothedInitialCovariance"></param>
 public struct SmoothedResult(
-    Tensor smoothedState,
+    Tensor smoothedMean,
     Tensor smoothedCovariance,
-    Tensor smoothedInitialState = null,
+    Tensor smoothedInitialMean = null,
     Tensor smoothedInitialCovariance = null)
 {
     /// <summary>
     /// The smoothed state after the smoothing step.
     /// </summary>
-    public Tensor SmoothedState = smoothedState;
+    public Tensor SmoothedMean = smoothedMean;
 
     /// <summary>
     /// The smoothed covariance after the smoothing step.
@@ -28,7 +28,7 @@ public struct SmoothedResult(
     /// <summary>
     /// The smoothed initial state after the smoothing step.
     /// </summary>
-    public Tensor SmoothedInitialState = smoothedInitialState;
+    public Tensor SmoothedInitialMean = smoothedInitialMean;
 
     /// <summary>
     /// The smoothed initial covariance after the smoothing step.

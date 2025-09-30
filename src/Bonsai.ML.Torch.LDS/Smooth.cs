@@ -36,7 +36,7 @@ public class Smooth
     }
 
     /// <summary>
-    /// Processes an observable sequence of tuples containing the components of a filtered result (predictedState, predictedCovariance, updatedState, updatedCovariance), applying the Kalman smoother to each result.
+    /// Processes an observable sequence of tuples containing the components of a filtered result (predictedMean, predictedCovariance, updatedMean, updatedCovariance), applying the Kalman smoother to each result.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>

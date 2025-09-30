@@ -68,7 +68,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
         _measurementFunction = _measurementFunction?.to_type(scalarType);
         _processNoiseVariance = _processNoiseVariance?.to_type(scalarType);
         _measurementNoiseVariance = _measurementNoiseVariance?.to_type(scalarType);
-        _initialState = _initialState?.to_type(scalarType);
+        _initialMean = _initialMean?.to_type(scalarType);
         _initialCovariance = _initialCovariance?.to_type(scalarType);
     }
 
@@ -169,28 +169,28 @@ public class CreateKalmanFilter : IScalarTypeProvider
         set => MeasurementNoiseVariance = TensorConverter.ConvertFromString(value, _scalarType);
     }
 
-    private Tensor _initialState;
+    private Tensor _initialMean;
     /// <summary>
-    /// The initial state.
+    /// The initial mean.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
-    public Tensor InitialState
+    public Tensor InitialMean
     {
-        get => _initialState;
-        set => _initialState = value?.to_type(Type);
+        get => _initialMean;
+        set => _initialMean = value?.to_type(Type);
     }
 
     /// <summary>
-    /// The XML string representation of the initial state for serialization.
+    /// The XML string representation of the initial mean for serialization.
     /// </summary>
     [Browsable(false)]
-    [XmlElement(nameof(InitialState))]
+    [XmlElement(nameof(InitialMean))]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public string InitialStateXml
+    public string InitialMeanXml
     {
-        get => TensorConverter.ConvertToString(InitialState, _scalarType);
-        set => InitialState = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(InitialMean, _scalarType);
+        set => InitialMean = TensorConverter.ConvertFromString(value, _scalarType);
     }
 
     private Tensor _initialCovariance;
@@ -228,7 +228,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
                 NumObservations,
                 _transitionMatrix,
                 _measurementFunction,
-                _initialState,
+                _initialMean,
                 _initialCovariance,
                 _processNoiseVariance,
                 _measurementNoiseVariance,
