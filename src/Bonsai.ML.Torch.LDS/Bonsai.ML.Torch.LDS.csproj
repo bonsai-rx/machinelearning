@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>Bonsai.ML.Torch.LDS Bonsai library.</Description>
-    <PackageTags>Bonsai Rx Bonsai ML Torch TorchSharp LDS LinearDynamicalSystems</PackageTags>
+    <Description>A Bonsai package building on the Bonsai.ML.Torch library that implements Linear Dynamical Systems.</Description>
+    <PackageTags>$(PackageTags) Torch TorchSharp LDS LinearDynamicalSystems</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
