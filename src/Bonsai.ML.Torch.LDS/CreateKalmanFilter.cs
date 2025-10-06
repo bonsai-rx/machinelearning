@@ -223,17 +223,17 @@ public class CreateKalmanFilter : IScalarTypeProvider
     public IObservable<nn.Module> Process()
     {
         return Observable.Using(() => KalmanFilterModelManager.Reserve(
-                ModelName,
-                NumStates,
-                NumObservations,
-                _transitionMatrix,
-                _measurementFunction,
-                _initialMean,
-                _initialCovariance,
-                _processNoiseVariance,
-                _measurementNoiseVariance,
-                Device,
-                Type
+                name: ModelName,
+                numStates: NumStates,
+                numObservations: NumObservations,
+                transitionMatrix: _transitionMatrix.NumberOfElements > 0 ? _transitionMatrix : null,
+                measurementFunction: _measurementFunction.NumberOfElements > 0 ? _measurementFunction : null,
+                initialMean: _initialMean.NumberOfElements > 0 ? _initialMean : null,
+                initialCovariance: _initialCovariance.NumberOfElements > 0 ? _initialCovariance : null,
+                processNoiseVariance: _processNoiseVariance.NumberOfElements > 0 ? _processNoiseVariance : null,
+                measurementNoiseVariance: _measurementNoiseVariance.NumberOfElements > 0 ? _measurementNoiseVariance : null,
+                device: Device,
+                scalarType: Type
             ), resource => Observable.Return(resource.Model)
                 .Concat(Observable.Never(resource.Model))
                 .Finally(resource.Dispose)
@@ -248,10 +248,10 @@ public class CreateKalmanFilter : IScalarTypeProvider
         return source.SelectMany(parameters =>
         {
             return Observable.Using(() => KalmanFilterModelManager.Reserve(
-                ModelName,
-                parameters,
-                Device,
-                Type
+                name: ModelName,
+                parameters: parameters,
+                device: Device,
+                scalarType: Type
             ), resource => Observable.Return(resource.Model)
                 .Concat(Observable.Never(resource.Model))
                 .Finally(resource.Dispose)
