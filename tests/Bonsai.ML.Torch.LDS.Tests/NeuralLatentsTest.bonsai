@@ -161,12 +161,12 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p2:CreateKalmanFilterParameters">
                 <p2:Type>Float64</p2:Type>
-                <p2:TransitionMatrix>[]</p2:TransitionMatrix>
-                <p2:MeasurementFunction>[]</p2:MeasurementFunction>
-                <p2:ProcessNoiseCovariance>[]</p2:ProcessNoiseCovariance>
-                <p2:MeasurementNoiseCovariance>[]</p2:MeasurementNoiseCovariance>
+                <p2:TransitionMatrix />
+                <p2:MeasurementFunction />
+                <p2:ProcessNoiseCovariance />
+                <p2:MeasurementNoiseCovariance />
                 <p2:InitialMean />
-                <p2:InitialCovariance>[]</p2:InitialCovariance>
+                <p2:InitialCovariance />
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -175,12 +175,12 @@
                 <p2:NumStates>2</p2:NumStates>
                 <p2:NumObservations>2</p2:NumObservations>
                 <p2:Type>Float64</p2:Type>
-                <p2:TransitionMatrix>[]</p2:TransitionMatrix>
-                <p2:MeasurementFunction>[]</p2:MeasurementFunction>
-                <p2:ProcessNoiseVariance>[]</p2:ProcessNoiseVariance>
-                <p2:MeasurementNoiseVariance>[]</p2:MeasurementNoiseVariance>
+                <p2:TransitionMatrix />
+                <p2:MeasurementFunction />
+                <p2:ProcessNoiseVariance />
+                <p2:MeasurementNoiseVariance />
                 <p2:InitialMean />
-                <p2:InitialCovariance>[]</p2:InitialCovariance>
+                <p2:InitialCovariance />
               </Combinator>
             </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
