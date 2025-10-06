@@ -15,12 +15,12 @@ namespace Bonsai.ML.Torch.LDS;
 /// <param name="initialMean"></param>
 /// <param name="initialCovariance"></param>
 public struct KalmanFilterParameters(
-    Tensor transitionMatrix,
-    Tensor measurementFunction,
-    Tensor processNoiseCovariance,
-    Tensor measurementNoiseCovariance,
-    Tensor initialMean,
-    Tensor initialCovariance)
+    Tensor transitionMatrix = null,
+    Tensor measurementFunction = null,
+    Tensor processNoiseCovariance = null,
+    Tensor measurementNoiseCovariance = null,
+    Tensor initialMean = null,
+    Tensor initialCovariance = null)
 {
     /// <summary>
     /// The state transition matrix.
