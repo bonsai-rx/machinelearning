@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Visualizers for the Bonsai.ML.Torch.LDS library.</Description>
+    <PackageTags>$(PackageTags) Torch LDS Design</PackageTags>
+    <TargetFramework>net472</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.9.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.Torch.LDS\Bonsai.ML.Torch.LDS.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Design\Bonsai.ML.Design.csproj" />
+  </ItemGroup>
+</Project>
