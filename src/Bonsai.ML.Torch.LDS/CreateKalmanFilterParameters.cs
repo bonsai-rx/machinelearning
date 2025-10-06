@@ -15,9 +15,7 @@ namespace Bonsai.ML.Torch.LDS;
 [WorkflowElementCategory(ElementCategory.Source)]
 public class CreateKalmanFilterParameters : IScalarTypeProvider
 {
-    /// <summary>
-    /// The data type of the tensor elements.
-    /// </summary>
+    /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
     [TypeConverter(typeof(ScalarTypeConverter))]
     public ScalarType Type
@@ -191,12 +189,12 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     public IObservable<KalmanFilterParameters> Process()
     {
         var parameters = new KalmanFilterParameters(
-            TransitionMatrix.NumberOfElements > 0 ? TransitionMatrix : null,
-            MeasurementFunction.NumberOfElements > 0 ? MeasurementFunction : null,
-            ProcessNoiseCovariance.NumberOfElements > 0 ? ProcessNoiseCovariance : null,
-            MeasurementNoiseCovariance.NumberOfElements > 0 ? MeasurementNoiseCovariance : null,
-            InitialMean.NumberOfElements > 0 ? InitialMean : null,
-            InitialCovariance.NumberOfElements > 0 ? InitialCovariance : null
+            transitionMatrix: _transitionMatrix,
+            measurementFunction: _measurementFunction,
+            processNoiseCovariance: _processNoiseCovariance,
+            measurementNoiseCovariance: _measurementNoiseCovariance,
+            initialMean: _initialMean,
+            initialCovariance: _initialCovariance
         );
 
         return Observable.Return(parameters);
@@ -210,12 +208,12 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
         return source.Select(_ =>
         {
             var parameters = new KalmanFilterParameters(
-                TransitionMatrix.NumberOfElements > 0 ? TransitionMatrix : null,
-                MeasurementFunction.NumberOfElements > 0 ? MeasurementFunction : null,
-                ProcessNoiseCovariance.NumberOfElements > 0 ? ProcessNoiseCovariance : null,
-                MeasurementNoiseCovariance.NumberOfElements > 0 ? MeasurementNoiseCovariance : null,
-                InitialMean.NumberOfElements > 0 ? InitialMean : null,
-                InitialCovariance.NumberOfElements > 0 ? InitialCovariance : null
+                transitionMatrix: _transitionMatrix,
+                measurementFunction: _measurementFunction,
+                processNoiseCovariance: _processNoiseCovariance,
+                measurementNoiseCovariance: _measurementNoiseCovariance,
+                initialMean: _initialMean,
+                initialCovariance: _initialCovariance
             );
 
             return parameters;

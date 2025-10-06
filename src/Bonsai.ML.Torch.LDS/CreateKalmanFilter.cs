@@ -40,9 +40,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     }
 
     private ScalarType _scalarType = ScalarType.Float32;
-    /// <summary>
-    /// The data type of the tensor elements.
-    /// </summary>
+    /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
     [TypeConverter(typeof(ScalarTypeConverter))]
     public ScalarType Type
@@ -224,16 +222,16 @@ public class CreateKalmanFilter : IScalarTypeProvider
     {
         return Observable.Using(() => KalmanFilterModelManager.Reserve(
                 name: ModelName,
-                numStates: NumStates,
-                numObservations: NumObservations,
-                transitionMatrix: _transitionMatrix.NumberOfElements > 0 ? _transitionMatrix : null,
-                measurementFunction: _measurementFunction.NumberOfElements > 0 ? _measurementFunction : null,
-                initialMean: _initialMean.NumberOfElements > 0 ? _initialMean : null,
-                initialCovariance: _initialCovariance.NumberOfElements > 0 ? _initialCovariance : null,
-                processNoiseVariance: _processNoiseVariance.NumberOfElements > 0 ? _processNoiseVariance : null,
-                measurementNoiseVariance: _measurementNoiseVariance.NumberOfElements > 0 ? _measurementNoiseVariance : null,
+                numStates: _numStates,
+                numObservations: _numObservations,
+                transitionMatrix: _transitionMatrix,
+                measurementFunction: _measurementFunction,
+                initialMean: _initialMean,
+                initialCovariance: _initialCovariance,
+                processNoiseVariance: _processNoiseVariance,
+                measurementNoiseVariance: _measurementNoiseVariance,
                 device: Device,
-                scalarType: Type
+                scalarType: _scalarType
             ), resource => Observable.Return(resource.Model)
                 .Concat(Observable.Never(resource.Model))
                 .Finally(resource.Dispose)
@@ -251,7 +249,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
                 name: ModelName,
                 parameters: parameters,
                 device: Device,
-                scalarType: Type
+                scalarType: _scalarType
             ), resource => Observable.Return(resource.Model)
                 .Concat(Observable.Never(resource.Model))
                 .Finally(resource.Dispose)
