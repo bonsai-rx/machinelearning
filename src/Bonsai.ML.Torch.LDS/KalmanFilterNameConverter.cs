@@ -28,8 +28,8 @@ public class KalmanFilterNameConverter : StringConverter
                               let managedModelNode = ExpressionBuilder.GetWorkflowElement(builder)
                               where managedModelNode != null && managedModelNode is CreateKalmanFilter
                               let createKalmanFilter = (CreateKalmanFilter)managedModelNode
-                              where createKalmanFilter != null && !string.IsNullOrEmpty(createKalmanFilter.ModelName)
-                              select createKalmanFilter.ModelName)
+                              where createKalmanFilter != null && !string.IsNullOrEmpty(createKalmanFilter.Name)
+                              select createKalmanFilter.Name)
                                     .Distinct()
                                     .ToList();
                 if (models.Count > 0)
