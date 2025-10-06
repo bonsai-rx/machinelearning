@@ -190,16 +190,16 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     /// </summary>
     public IObservable<KalmanFilterParameters> Process()
     {
-        return Observable.Return(
-            new KalmanFilterParameters(
-                TransitionMatrix,
-                MeasurementFunction,
-                ProcessNoiseCovariance,
-                MeasurementNoiseCovariance,
-                InitialMean,
-                InitialCovariance
-            )
+        var parameters = new KalmanFilterParameters(
+            TransitionMatrix.NumberOfElements > 0 ? TransitionMatrix : null,
+            MeasurementFunction.NumberOfElements > 0 ? MeasurementFunction : null,
+            ProcessNoiseCovariance.NumberOfElements > 0 ? ProcessNoiseCovariance : null,
+            MeasurementNoiseCovariance.NumberOfElements > 0 ? MeasurementNoiseCovariance : null,
+            InitialMean.NumberOfElements > 0 ? InitialMean : null,
+            InitialCovariance.NumberOfElements > 0 ? InitialCovariance : null
         );
+
+        return Observable.Return(parameters);
     }
 
     /// <summary>
@@ -208,14 +208,17 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     public IObservable<KalmanFilterParameters> Process<T>(IObservable<T> source)
     {
         return source.Select(_ =>
-            new KalmanFilterParameters(
-                TransitionMatrix,
-                MeasurementFunction,
-                ProcessNoiseCovariance,
-                MeasurementNoiseCovariance,
-                InitialMean,
-                InitialCovariance
-            )
-        );
+        {
+            var parameters = new KalmanFilterParameters(
+                TransitionMatrix.NumberOfElements > 0 ? TransitionMatrix : null,
+                MeasurementFunction.NumberOfElements > 0 ? MeasurementFunction : null,
+                ProcessNoiseCovariance.NumberOfElements > 0 ? ProcessNoiseCovariance : null,
+                MeasurementNoiseCovariance.NumberOfElements > 0 ? MeasurementNoiseCovariance : null,
+                InitialMean.NumberOfElements > 0 ? InitialMean : null,
+                InitialCovariance.NumberOfElements > 0 ? InitialCovariance : null
+            );
+
+            return parameters;
+        });
     }
 }
