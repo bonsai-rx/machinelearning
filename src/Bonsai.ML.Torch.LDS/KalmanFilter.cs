@@ -37,22 +37,37 @@ internal class KalmanFilter : nn.Module
         _device = device ?? CPU;
         _scalarType = scalarType;
 
-        ValidateAndSetMatrix(parameters.TransitionMatrix, "Transition matrix", _scalarType, _device, out _transitionMatrix, out _numStates, out _, isSquare: true);
-        ValidateAndSetMatrix(parameters.MeasurementFunction, "Measurement function", _scalarType, _device, out _measurementFunction, out _numObservations, out _);
-        ValidateAndSetVector(parameters.InitialMean, "Initial mean", _scalarType, _device, out _initialMean, out _, expectedLength: _numStates);
-        ValidateAndSetMatrix(parameters.InitialCovariance, "Initial covariance", _scalarType, _device, out _initialCovariance, out _, out _, isSquare: true, expectedDimension1: _numStates);
-        ValidateAndSetMatrix(parameters.ProcessNoiseCovariance, "Process noise covariance", _scalarType, _device, out _processNoiseCovariance, out _, out _, isSquare: true, expectedDimension1: _numStates);
-        ValidateAndSetMatrix(parameters.MeasurementNoiseCovariance, "Measurement noise covariance", _scalarType, _device, out _measurementNoiseCovariance, out _, out _, isSquare: true, expectedDimension1: _numObservations);
+        ValidateNumStates(parameters.TransitionMatrix, parameters.MeasurementFunction, parameters.InitialMean, parameters.InitialCovariance, parameters.ProcessNoiseCovariance, out _numStates);
+        ValidateNumObservations(parameters.MeasurementFunction, parameters.MeasurementNoiseCovariance, out _numObservations);
 
         _identityStates = eye(_numStates, dtype: _scalarType, device: _device);
+
+        _transitionMatrix = parameters.TransitionMatrix?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
+            ?? eye(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
+        ValidateMatrix(_transitionMatrix, "Transition matrix", isSquare: true, expectedDimension1: _numStates);
+
+        _measurementFunction = parameters.MeasurementFunction?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
+            ?? eye(_numObservations, _numStates, dtype: _scalarType, device: _device).requires_grad_(false);
+        ValidateMatrix(_measurementFunction, "Measurement function", expectedDimension1: _numObservations, expectedDimension2: _numStates);
+
+        _initialMean = parameters.InitialMean?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
+            ?? zeros(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
+        ValidateVector(_initialMean, "Initial mean", expectedLength: _numStates);
+
+        _initialCovariance = parameters.InitialCovariance?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
+            ?? eye(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
+        ValidateMatrix(_initialCovariance, "Initial covariance", isSquare: true, expectedDimension1: _numStates);
+        
+        _processNoiseCovariance = parameters.ProcessNoiseCovariance ?? CreateCovarianceMatrix(tensor(1.0), _scalarType, _device, _numStates, "Process noise variance");
+        _measurementNoiseCovariance = parameters.MeasurementNoiseCovariance ?? CreateCovarianceMatrix(tensor(1.0), _scalarType, _device, _numObservations, "Measurement noise variance");
 
         _mean = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
         _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
     }
 
     public KalmanFilter(
-        int numStates,
-        int numObservations,
+        int? numStates = null,
+        int? numObservations = null,
         Tensor transitionMatrix = null,
         Tensor measurementFunction = null,
         Tensor initialMean = null,
@@ -64,29 +79,46 @@ internal class KalmanFilter : nn.Module
     {
         _device = device ?? CPU;
         _scalarType = scalarType;
-        _numStates = numStates;
-        _numObservations = numObservations;
+
+        if (numStates is null)
+        {
+            ValidateNumStates(transitionMatrix, measurementFunction, initialMean, initialCovariance, processNoiseVariance, out var inferredNumStates);
+            _numStates = inferredNumStates;
+        }
+        else
+            _numStates = numStates.Value > 0 ? numStates.Value : throw new ArgumentOutOfRangeException(nameof(numStates), "Number of states must be greater than zero.");
+
+        if (numObservations is null)
+        {
+            ValidateNumObservations(measurementFunction, measurementNoiseVariance, out var inferredNumObservations);
+            _numObservations = inferredNumObservations;
+        }
+        else
+            _numObservations = numObservations.Value > 0 ? numObservations.Value : throw new ArgumentOutOfRangeException(nameof(numObservations), "Number of observations must be greater than zero.");
 
         _identityStates = eye(_numStates, dtype: _scalarType, device: _device);
 
         _transitionMatrix = transitionMatrix?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numStates, dtype: _scalarType, device: _device);
+            ?? eye(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
         ValidateMatrix(_transitionMatrix, "Transition matrix", isSquare: true, expectedDimension1: _numStates);
 
         _measurementFunction = measurementFunction?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numObservations, _numStates, dtype: _scalarType, device: _device);
+            ?? eye(_numObservations, _numStates, dtype: _scalarType, device: _device).requires_grad_(false);
         ValidateMatrix(_measurementFunction, "Measurement function", expectedDimension1: _numObservations, expectedDimension2: _numStates);
 
         _initialMean = initialMean?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? zeros(_numStates, dtype: _scalarType, device: _device);
+            ?? zeros(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
         ValidateVector(_initialMean, "Initial mean", _numStates);
 
         _initialCovariance = initialCovariance?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numStates, dtype: _scalarType, device: _device);
+            ?? eye(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
         ValidateMatrix(_initialCovariance, "Initial covariance", isSquare: true, expectedDimension1: _numStates);
 
-        _processNoiseCovariance = CreateCovarianceMatrix(processNoiseVariance, _scalarType, _device, numStates, "Process noise variance");
-        _measurementNoiseCovariance = CreateCovarianceMatrix(measurementNoiseVariance, _scalarType, _device, numObservations, "Measurement noise variance");
+        processNoiseVariance ??= tensor(1.0, dtype: _scalarType, device: _device);
+        measurementNoiseVariance ??= tensor(1.0, dtype: _scalarType, device: _device);
+
+        _processNoiseCovariance = CreateCovarianceMatrix(processNoiseVariance, _scalarType, _device, _numStates, "Process noise variance");
+        _measurementNoiseCovariance = CreateCovarianceMatrix(measurementNoiseVariance, _scalarType, _device, _numObservations, "Measurement noise variance");
 
         _mean = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
         _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
@@ -94,32 +126,62 @@ internal class KalmanFilter : nn.Module
         RegisterComponents();
     }
 
-    private static void ValidateAndSetMatrix(Tensor matrix, string name, ScalarType scalarType, Device device, out Tensor result, out int rows, out int columns, bool isSquare = false, int? expectedDimension1 = null, int? expectedDimension2 = null)
+    private static void ValidateNumStates(Tensor transitionMatrix, Tensor measurementFunction, Tensor initialMean, Tensor initialCovariance, Tensor processNoiseCovariance, out int numStates)
     {
-        ValidateMatrix(matrix, name, isSquare, expectedDimension1, expectedDimension2);
-        result = matrix.clone().to_type(scalarType).to(device).requires_grad_(false);
-        rows = (int)matrix.size(0);
-        columns = (int)matrix.size(1);
+        if (transitionMatrix is not null)
+        {
+            ValidateMatrix(transitionMatrix, "Transition matrix", isSquare: true);
+            numStates = (int)transitionMatrix.size(0);
+        }
+        else if (measurementFunction is not null)
+        {
+            ValidateMatrix(measurementFunction, "Measurement function");
+            numStates = (int)measurementFunction.size(1);
+        }
+        else if (initialMean is not null)
+        {
+            ValidateVector(initialMean, "Initial mean");
+            numStates = (int)initialMean.size(0);
+        }
+        else if (initialCovariance is not null)
+        {
+            ValidateMatrix(initialCovariance, "Initial covariance", isSquare: true);
+            numStates = (int)initialCovariance.size(0);
+        }
+        else if (processNoiseCovariance is not null)
+        {
+            ValidateMatrix(processNoiseCovariance, "Process noise covariance", isSquare: true);
+            numStates = (int)processNoiseCovariance.size(0);
+        }
+        else
+        {
+            throw new ArgumentException("At least one of the parameters must be provided to infer the number of states.");
+        }
     }
 
-    private static void ValidateAndSetVector(Tensor vector, string name, ScalarType scalarType, Device device, out Tensor result, out int length, int? expectedLength = null)
+    private static void ValidateNumObservations(Tensor measurementFunction, Tensor measurementNoiseCovariance, out int numObservations)
     {
-        ValidateVector(vector, name, expectedLength);
-        result = vector.clone().to_type(scalarType).to(device).requires_grad_(false);
-        length = (int)vector.size(0);
-    }
-
-    private static void ValidateAndSetScalar(Tensor scalar, string name, ScalarType scalarType, Device device, out Tensor result)
-    {
-        ValidateScalar(scalar, name);
-        result = scalar.clone().squeeze().to_type(scalarType).to(device).requires_grad_(false);
+        if (measurementFunction is not null)
+        {
+            ValidateMatrix(measurementFunction, "Measurement function");
+            numObservations = (int)measurementFunction.size(0);
+        }
+        else if (measurementNoiseCovariance is not null)
+        {
+            ValidateMatrix(measurementNoiseCovariance, "Measurement noise covariance", isSquare: true);
+            numObservations = (int)measurementNoiseCovariance.size(0);
+        }
+        else
+        {
+            throw new ArgumentException("At least one of the measurement function or measurement noise covariance must be provided to infer the number of observations.");
+        }
     }
 
     private static void ValidateMatrix(Tensor matrix, string name, bool isSquare = false, int? expectedDimension1 = null, int? expectedDimension2 = null)
     {
-        if (matrix is null)
-            throw new ArgumentException($"{name} cannot be null.");
-
+        if (matrix.NumberOfElements == 0)
+            throw new ArgumentException($"{name} must be a non-empty matrix.");
+            
         if (matrix.Dimensions != 2)
             throw new ArgumentException($"{name} must be 2-dimensional.");
 
@@ -135,8 +197,8 @@ internal class KalmanFilter : nn.Module
 
     private static void ValidateVector(Tensor vector, string name, int? expectedLength = null)
     {
-        if (vector is null)
-            throw new ArgumentException($"{name} cannot be null.");
+        if (vector.NumberOfElements == 0)
+            throw new ArgumentException($"{name} must be a non-empty vector.");
 
         if (vector.Dimensions != 1)
             throw new ArgumentException($"{name} must be a vector.");
@@ -147,16 +209,14 @@ internal class KalmanFilter : nn.Module
 
     private static void ValidateScalar(Tensor scalar, string name)
     {
-        if (scalar is null)
-            throw new ArgumentException($"{name} cannot be null.");
-
         if (scalar.NumberOfElements != 1)
             throw new ArgumentException($"{name} must be a scalar.");
     }
 
     private Tensor CreateCovarianceMatrix(Tensor variance, ScalarType scalarType, Device device, int dimension, string name)
     {
-        ValidateAndSetScalar(variance, name, scalarType, device, out var scalar);
+        ValidateScalar(variance, name);
+        var scalar = variance.clone().squeeze().to_type(scalarType).to(device);
         return (scalar * eye(dimension, dtype: scalarType, device: device)).requires_grad_(false);
     }
 
