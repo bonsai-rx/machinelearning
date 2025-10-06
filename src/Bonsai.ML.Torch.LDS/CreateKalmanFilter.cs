@@ -17,32 +17,14 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// <summary>
     /// A unique name for the Kalman filter model.
     /// </summary>
-    public string ModelName { get; set; } = "KalmanFilter";
-
-    private int _numStates = 2;
-    /// <summary>
-    /// The number of states in the Kalman filter model.
-    /// </summary>
-    public int NumStates
-    {
-        get => _numStates;
-        set => _numStates = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of states must be greater than zero.");
-    }
-
-    private int _numObservations = 2;
-    /// <summary>
-    /// The number of observations in the Kalman filter model.
-    /// </summary>
-    public int NumObservations
-    {
-        get => _numObservations;
-        set => _numObservations = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of observations must be greater than zero.");
-    }
+    [Category("Required Parameters")]
+    public string Name { get; set; } = "KalmanFilter";
 
     private ScalarType _scalarType = ScalarType.Float32;
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
     [TypeConverter(typeof(ScalarTypeConverter))]
+    [Category("Required Parameters")]
     public ScalarType Type
     {
         get => _scalarType;
@@ -58,16 +40,29 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     [Description("The device on which to create the tensor.")]
     [XmlIgnore]
+    [Category("Required Parameters")]
     public Device Device { get; set; }
 
-    private void ConvertTensorsScalarType(ScalarType scalarType)
+    private int _numStates = 2;
+    /// <summary>
+    /// The number of states in the Kalman filter model.
+    /// </summary>
+    [Category("Required Parameters")]
+    public int NumStates
     {
-        _transitionMatrix = _transitionMatrix?.to_type(scalarType);
-        _measurementFunction = _measurementFunction?.to_type(scalarType);
-        _processNoiseVariance = _processNoiseVariance?.to_type(scalarType);
-        _measurementNoiseVariance = _measurementNoiseVariance?.to_type(scalarType);
-        _initialMean = _initialMean?.to_type(scalarType);
-        _initialCovariance = _initialCovariance?.to_type(scalarType);
+        get => _numStates;
+        set => _numStates = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of states must be greater than zero.");
+    }
+
+    private int _numObservations = 2;
+    /// <summary>
+    /// The number of observations in the Kalman filter model.
+    /// </summary>
+    [Category("Required Parameters")]
+    public int NumObservations
+    {
+        get => _numObservations;
+        set => _numObservations = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of observations must be greater than zero.");
     }
 
     // Tensor properties with XML serialization support
@@ -77,6 +72,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Category("Optional Parameters")]
     public Tensor TransitionMatrix
     {
         get => _transitionMatrix;
@@ -101,6 +97,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Category("Optional Parameters")]
     public Tensor MeasurementFunction
     {
         get => _measurementFunction;
@@ -125,6 +122,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Category("Optional Parameters")]
     public Tensor ProcessNoiseVariance
     {
         get => _processNoiseVariance;
@@ -149,6 +147,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Category("Optional Parameters")]
     public Tensor MeasurementNoiseVariance
     {
         get => _measurementNoiseVariance;
@@ -173,6 +172,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Category("Optional Parameters")]
     public Tensor InitialMean
     {
         get => _initialMean;
@@ -197,6 +197,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Category("Optional Parameters")]
     public Tensor InitialCovariance
     {
         get => _initialCovariance;
@@ -215,13 +216,23 @@ public class CreateKalmanFilter : IScalarTypeProvider
         set => InitialCovariance = TensorConverter.ConvertFromString(value, _scalarType);
     }
 
+    private void ConvertTensorsScalarType(ScalarType scalarType)
+    {
+        _transitionMatrix = _transitionMatrix?.to_type(scalarType);
+        _measurementFunction = _measurementFunction?.to_type(scalarType);
+        _processNoiseVariance = _processNoiseVariance?.to_type(scalarType);
+        _measurementNoiseVariance = _measurementNoiseVariance?.to_type(scalarType);
+        _initialMean = _initialMean?.to_type(scalarType);
+        _initialCovariance = _initialCovariance?.to_type(scalarType);
+    }
+
     /// <summary>
     /// Creates a Kalman filter model using the properties of this class.
     /// </summary>
     public IObservable<nn.Module> Process()
     {
         return Observable.Using(() => KalmanFilterModelManager.Reserve(
-                name: ModelName,
+                name: Name,
                 numStates: _numStates,
                 numObservations: _numObservations,
                 transitionMatrix: _transitionMatrix,
@@ -246,7 +257,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
         return source.SelectMany(parameters =>
         {
             return Observable.Using(() => KalmanFilterModelManager.Reserve(
-                name: ModelName,
+                name: Name,
                 parameters: parameters,
                 device: Device,
                 scalarType: _scalarType
