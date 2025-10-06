@@ -56,7 +56,7 @@ public class TensorConverter : TypeConverter
 
         if (string.IsNullOrEmpty(value))
         {
-            return empty(0, dtype: scalarType);
+            return null;
         }
 
         var tensorData = PythonDataHelper.Parse(value, returnType);
