@@ -22,6 +22,9 @@ using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.LDS.Design;
 
+/// <summary>
+/// Provides a visualizer for the state means and covariances from a Kalman filter or smoother.
+/// </summary>
 public class StateVisualizer : BufferedVisualizer
 {
     private TimeSeriesOxyPlotBase _plot;
