@@ -41,6 +41,11 @@ public class StateVisualizer : BufferedVisualizer
     /// </summary>
     public bool BufferData { get; set; } = false;
 
+    /// <summary>
+    /// Gets the underlying plot control.
+    /// </summary>
+    public TimeSeriesOxyPlotBase Plot => _plot;
+
     /// <inheritdoc/>
     public override void Load(IServiceProvider provider)
     {
@@ -55,11 +60,13 @@ public class StateVisualizer : BufferedVisualizer
         var capacityStatusLabel = new ToolStripStatusLabel
         {
             Text = "Capacity: ",
+            AutoSize = true
         };
 
         var capacityStatusControl = new ToolStripTextBox
         {
             Text = Capacity.ToString(),
+            AutoSize = true
         };
 
         capacityStatusControl.TextChanged += (sender, e) =>
@@ -74,14 +81,15 @@ public class StateVisualizer : BufferedVisualizer
         var bufferDataStatusLabel = new ToolStripStatusLabel
         {
             Text = "Buffer Data: ",
+            AutoSize = true
         };
 
         var bufferDataStatusControl = new ToolStripComboBox
         {
-            Width = 100,
+            AutoSize = true
         };
 
-        bufferDataStatusControl.Items.AddRange(new[] { "True", "False" });
+        bufferDataStatusControl.Items.AddRange(["True", "False"]);
         bufferDataStatusControl.SelectedIndex = BufferData ? 0 : 1;
 
         bufferDataStatusControl.SelectedIndexChanged += (sender, e) =>
@@ -172,7 +180,7 @@ public class StateVisualizer : BufferedVisualizer
                     value: meanVal
                 );
 
-                var sigmaVal = covarianceDiagonal[i,j].sqrt().to_type(ScalarType.Float64).item<double>();
+                var sigmaVal = covarianceDiagonal[i, j].sqrt().to_type(ScalarType.Float64).item<double>();
 
                 _plot.AddToAreaSeries(
                     areaSeries: _areaSeries[j],
