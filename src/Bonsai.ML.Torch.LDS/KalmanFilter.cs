@@ -429,21 +429,9 @@ internal class KalmanFilter : nn.Module
             );
         }
 
-        // Smoothed initial mean
-        var smoothedInitialMean = WrappedTensorDisposeScope(() => _initialMean + smoothingGain.matmul(
-            (smoothedMean[0] - predictedMean[0]).unsqueeze(-1)
-        ).squeeze(-1));
-
-        // Smoothed initial covariance
-        var smoothedInitialCovariance = WrappedTensorDisposeScope(() => _initialCovariance[0] + smoothingGain
-                .matmul(smoothedCovariance[0] - predictedCovariance[0])
-                .matmul(smoothingGain.mT));
-
         return new SmoothedResult(
             smoothedMean,
-            smoothedCovariance,
-            smoothedInitialMean,
-            smoothedInitialCovariance
+            smoothedCovariance
         );
     }
 
