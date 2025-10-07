@@ -25,7 +25,7 @@ public class Orthogonalize
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<OrthogonalizedResult> Process(IObservable<SmoothedResult> source)
+    public IObservable<OrthogonalizedState> Process(IObservable<SmoothedState> source)
     {
         return source.Select(input =>
         {
@@ -41,7 +41,7 @@ public class Orthogonalize
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<OrthogonalizedResult> Process(IObservable<FilteredResult> source)
+    public IObservable<OrthogonalizedState> Process(IObservable<FilteredState> source)
     {
         return source.Select(input =>
         {
@@ -53,11 +53,43 @@ public class Orthogonalize
     }
 
     /// <summary>
+    /// Processes an observable sequence of filtered results, orthogonalizing the mean and covariance estimates.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<OrthogonalizedState> Process(IObservable<LdsState> source)
+    {
+        return source.Select(input =>
+        {
+            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
+            var mean = input.Mean;
+            var covariance = input.Covariance;
+            return kalmanFilter.OrthogonalizeMeanAndCovariance(mean, covariance);
+        });
+    }
+
+    /// <summary>
+    /// Processes an observable sequence of LDS states, orthogonalizing the mean and covariance estimates.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<OrthogonalizedState> Process(IObservable<ILdsState> source)
+    {
+        return source.Select(input =>
+        {
+            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
+            var mean = input.Mean;
+            var covariance = input.Covariance;
+            return kalmanFilter.OrthogonalizeMeanAndCovariance(mean, covariance);
+        });
+    }
+
+    /// <summary>
     /// Processes an observable sequence of mean and covariance tuples, orthogonalizing the mean and covariance estimates.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<OrthogonalizedResult> Process(IObservable<Tuple<Tensor, Tensor>> source)
+    public IObservable<OrthogonalizedState> Process(IObservable<Tuple<Tensor, Tensor>> source)
     {
         return source.Select(input =>
         {
