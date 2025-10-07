@@ -9,7 +9,6 @@ namespace Bonsai.ML.Torch.LDS;
 /// Applies a Kalman smoother to the input filtered result sequence.
 /// </summary>
 [Combinator]
-[ResetCombinator]
 [Description("Applies a Kalman smoother to the input filtered result sequence.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class Smooth
