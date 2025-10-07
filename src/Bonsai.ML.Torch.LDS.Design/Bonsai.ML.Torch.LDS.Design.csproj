@@ -12,4 +12,8 @@
     <ProjectReference Include="..\Bonsai.ML.Torch.LDS\Bonsai.ML.Torch.LDS.csproj" />
     <ProjectReference Include="..\Bonsai.ML.Design\Bonsai.ML.Design.csproj" />
   </ItemGroup>
+  <PropertyGroup>
+    <!-- This property is needed to avoid repacking the native SkiaSharp libraries, which should already be included with the Bonsai.ML.Torch -->
+    <ShouldIncludeNativeSkiaSharp>false</ShouldIncludeNativeSkiaSharp>
+  </PropertyGroup>
 </Project>
