@@ -3,13 +3,13 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch.LDS;
 
 /// <summary>
-/// Represents the result of a Kalman smoother.
+/// Represents the state of a Kalman smoother.
 /// </summary>
 /// <param name="smoothedMean"></param>
 /// <param name="smoothedCovariance"></param>
-public struct SmoothedResult(
+public struct SmoothedState(
     Tensor smoothedMean,
-    Tensor smoothedCovariance)
+    Tensor smoothedCovariance) : ILdsState
 {
     /// <summary>
     /// The smoothed state after the smoothing step.
@@ -20,4 +20,10 @@ public struct SmoothedResult(
     /// The smoothed covariance after the smoothing step.
     /// </summary>
     public Tensor SmoothedCovariance = smoothedCovariance;
+
+    /// <inheritdoc/>
+    public readonly Tensor Mean => SmoothedMean;
+
+    /// <inheritdoc/>
+    public readonly Tensor Covariance => SmoothedCovariance;
 }
