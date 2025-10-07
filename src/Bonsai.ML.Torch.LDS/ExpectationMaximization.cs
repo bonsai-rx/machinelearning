@@ -2,8 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using TorchSharp;
-using System.Collections.Generic;
 using static TorchSharp.torch;
+using System.Threading.Tasks;
 
 namespace Bonsai.ML.Torch.LDS;
 
@@ -98,58 +98,76 @@ public class ExpectationMaximization
     /// <returns></returns>
     public IObservable<ExpectationMaximizationResult> Process(IObservable<Tensor> source)
     {
-        return source.Select(input =>
+        return source.SelectMany(input => Observable.Create<ExpectationMaximizationResult>((observer, cancellationToken) =>
         {
-            var model = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            var previousLogLikelihood = double.NegativeInfinity;
-            var logLikelihood = zeros(new long[] { MaxIterations }, device: input.device);
-
-            var parametersToEstimate = new ParametersToEstimate(
-                transitionMatrix: EstimateTransitionMatrix,
-                measurementFunction: EstimateMeasurementFunction,
-                processNoiseCovariance: EstimateProcessNoiseCovariance,
-                measurementNoiseCovariance: EstimateMeasurementNoiseCovariance,
-                initialMean: EstimateInitialMean,
-                initialCovariance: EstimateInitialCovariance);
-
-            for (int i = 0; i < MaxIterations; i++)
+            return Task.Run(() =>
             {
-                var result = model.ExpectationMaximization(input, 1, Tolerance, parametersToEstimate, false);
+                var model = KalmanFilterModelManager.GetKalmanFilter(ModelName);
+                var previousLogLikelihood = double.NegativeInfinity;
+                var logLikelihood = zeros(new long[] { MaxIterations }, device: input.device);
 
-                var logLikelihoodSum = result.LogLikelihood
-                    .cpu()
-                    .to_type(ScalarType.Float32)
-                    .ReadCpuSingle(0);
+                var parametersToEstimate = new ParametersToEstimate(
+                    transitionMatrix: EstimateTransitionMatrix,
+                    measurementFunction: EstimateMeasurementFunction,
+                    processNoiseCovariance: EstimateProcessNoiseCovariance,
+                    measurementNoiseCovariance: EstimateMeasurementNoiseCovariance,
+                    initialMean: EstimateInitialMean,
+                    initialCovariance: EstimateInitialCovariance);
 
-                logLikelihood[i] = logLikelihoodSum;
-
-                if (Verbose)
+                for (int i = 0; i < MaxIterations; i++)
                 {
-                    Console.WriteLine("Iteration " + (i + 1) + ", Log Likelihood: " + logLikelihoodSum);
-                    if (i == MaxIterations - 1)
+                    // Check for cancellation before each iteration
+                    if (cancellationToken.IsCancellationRequested)
                     {
-                        Console.WriteLine("EM reached the maximum number of iterations.");
+                        observer.OnCompleted();
+                        return System.Reactive.Disposables.Disposable.Empty;
                     }
-                }
 
-                if (logLikelihoodSum - previousLogLikelihood < Tolerance)
-                {
+                    var result = model.ExpectationMaximization(input, 1, Tolerance, parametersToEstimate, false);
+
+                    var logLikelihoodSum = result.LogLikelihood
+                        .cpu()
+                        .to_type(ScalarType.Float32)
+                        .ReadCpuSingle(0);
+
+                    logLikelihood[i] = logLikelihoodSum;
+
                     if (Verbose)
                     {
-                        Console.WriteLine("EM converged after " + (i + 1) + " iterations.");
+                        Console.WriteLine("Iteration " + (i + 1) + ", Log Likelihood: " + logLikelihoodSum);
+                        if (i == MaxIterations - 1)
+                        {
+                            Console.WriteLine("EM reached the maximum number of iterations.");
+                        }
                     }
-                    logLikelihood = logLikelihood[torch.TensorIndex.Slice(0, i + 1)];
-                    break;
+
+                    if (logLikelihoodSum - previousLogLikelihood < Tolerance)
+                    {
+                        if (Verbose)
+                        {
+                            Console.WriteLine("EM converged after " + (i + 1) + " iterations.");
+                        }
+                        logLikelihood = logLikelihood[torch.TensorIndex.Slice(0, i + 1)];
+                        break;
+                    }
+                    previousLogLikelihood = logLikelihoodSum;
+                    model.UpdateParameters(result.Parameters);
+
+                    observer.OnNext(new ExpectationMaximizationResult(
+                        logLikelihood: logLikelihood[torch.TensorIndex.Slice(0, i + 1)],
+                        parameters: model.Parameters,
+                        finished: false));
                 }
-                previousLogLikelihood = logLikelihoodSum;
-                model.UpdateParameters(result.Parameters);
-            }
 
-            var expectationMaximizationResult = new ExpectationMaximizationResult(
-                logLikelihood,
-                model.Parameters);
+                observer.OnNext(new ExpectationMaximizationResult(
+                    logLikelihood: logLikelihood,
+                    parameters: model.Parameters,
+                    finished: true));
 
-            return expectationMaximizationResult;
-        });
+                observer.OnCompleted();
+                return System.Reactive.Disposables.Disposable.Empty;
+            },
+            cancellationToken);
+        }));
     }
 }
