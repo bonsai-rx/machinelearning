@@ -25,7 +25,7 @@ public class Smooth
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<SmoothedResult> Process(IObservable<FilteredResult> source)
+    public IObservable<SmoothedState> Process(IObservable<FilteredState> source)
     {
         return source.Select((input) =>
         {
@@ -39,13 +39,13 @@ public class Smooth
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<SmoothedResult> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor>> source)
+    public IObservable<SmoothedState> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor>> source)
     {
         return source.Select((input) =>
         {
             var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            var filteredResult = new FilteredResult(input.Item1, input.Item2, input.Item3, input.Item4);
-            return kalmanFilter.Smooth(filteredResult);
+            var filteredState = new FilteredState(input.Item1, input.Item2, input.Item3, input.Item4);
+            return kalmanFilter.Smooth(filteredState);
         });
     }
 }

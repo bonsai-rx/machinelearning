@@ -23,7 +23,7 @@ public class Filter
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Kalman filter to each tensor.
     /// </summary>
-    public IObservable<FilteredResult> Process(IObservable<Tensor> source)
+    public IObservable<FilteredState> Process(IObservable<Tensor> source)
     {
         return source.Select((input) =>
         {

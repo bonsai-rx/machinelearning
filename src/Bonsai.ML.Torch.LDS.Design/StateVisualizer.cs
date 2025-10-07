@@ -14,11 +14,13 @@ using OxyPlot.Series;
 using static TorchSharp.torch;
 
 [assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Torch.LDS.FilteredResult))]
+    Target = typeof(Bonsai.ML.Torch.LDS.FilteredState))]
 [assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Torch.LDS.SmoothedResult))]
+    Target = typeof(Bonsai.ML.Torch.LDS.SmoothedState))]
 [assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Torch.LDS.OrthogonalizedResult))]
+    Target = typeof(Bonsai.ML.Torch.LDS.OrthogonalizedState))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.StateVisualizer),
+    Target = typeof(Bonsai.ML.Torch.LDS.LdsState))]
 
 namespace Bonsai.ML.Torch.LDS.Design;
 
@@ -117,21 +119,13 @@ public class StateVisualizer : BufferedVisualizer
     {
         if (value is null) return;
 
-        var mean = value switch
-        {
-            FilteredResult filteredResult => filteredResult.UpdatedMean,
-            SmoothedResult smoothedResult => smoothedResult.SmoothedMean,
-            OrthogonalizedResult orthogonalizedResult => orthogonalizedResult.OrthogonalizedMean,
-            _ => throw new ArgumentException($"Expected value to be of type {nameof(FilteredResult)}, {nameof(SmoothedResult)}, or {nameof(OrthogonalizedResult)}.", nameof(value))
-        };
+        if (value is not ILdsState state)
+            throw new ArgumentException($"Expected value to be a type of {nameof(ILdsState)}.", nameof(value));
 
-        var covariance = value switch
-        {
-            FilteredResult filteredResult => filteredResult.UpdatedCovariance,
-            SmoothedResult smoothedResult => smoothedResult.SmoothedCovariance,
-            OrthogonalizedResult orthogonalizedResult => orthogonalizedResult.OrthogonalizedCovariance,
-            _ => throw new ArgumentException($"Expected value to be of type {nameof(FilteredResult)}, {nameof(SmoothedResult)}, or {nameof(OrthogonalizedResult)}.", nameof(value))
-        };
+        var mean = state.Mean;
+        var covariance = state.Covariance;
+
+        if (mean is null || covariance is null) return;
 
         if (mean.Dimensions == 1)
         {
