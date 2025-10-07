@@ -10,6 +10,7 @@ namespace Bonsai.ML.Torch.LDS;
 /// Creates a Kalman filter model.
 /// </summary>
 [Combinator]
+[ResetCombinator]
 [Description("Creates a Kalman filter model.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class CreateKalmanFilter : IScalarTypeProvider

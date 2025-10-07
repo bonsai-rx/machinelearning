@@ -11,6 +11,7 @@ namespace Bonsai.ML.Torch.LDS;
 /// Initializes the parameters for a new Kalman filter model.
 /// </summary>
 [Combinator]
+[ResetCombinator]
 [Description("Initializes the parameters for a new Kalman filter model.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class CreateKalmanFilterParameters : IScalarTypeProvider
