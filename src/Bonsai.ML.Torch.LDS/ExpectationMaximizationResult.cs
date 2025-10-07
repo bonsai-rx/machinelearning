@@ -7,9 +7,11 @@ namespace Bonsai.ML.Torch.LDS;
 /// </summary>
 /// <param name="logLikelihood"></param>
 /// <param name="parameters"></param>
+/// <param name="finished"></param>
 public struct ExpectationMaximizationResult(
     Tensor logLikelihood,
-    KalmanFilterParameters parameters)
+    KalmanFilterParameters parameters,
+    bool finished = false)
 {
     /// <summary>
     /// The log likelihood of the observed data given the model parameters after each iteration.
@@ -20,4 +22,9 @@ public struct ExpectationMaximizationResult(
     /// The final updated Kalman filter parameters after the last expectation-maximization step.
     /// </summary>
     public KalmanFilterParameters Parameters = parameters;
+
+    /// <summary>
+    /// Indicates whether the EM algorithm has finished.
+    /// </summary>
+    public bool Finished = finished;
 }
