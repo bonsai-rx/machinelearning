@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using TorchSharp;
 using static TorchSharp.torch;
 using System.Xml.Serialization;
 
@@ -33,11 +34,10 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// Loads the TorchScript module from the specified file path.
         /// </summary>
         /// <returns></returns>
-        public IObservable<ITorchModule> Process()
+        public IObservable<nn.IModule<Tensor, Tensor>> Process()
         {
             var scriptModule = Device is null ? jit.load<Tensor, Tensor>(ModelPath) : jit.load<Tensor, Tensor>(ModelPath, Device);
-            var torchModule = new TorchModuleAdapter(scriptModule);
-            return Observable.Return((ITorchModule)torchModule);
+            return Observable.Return(scriptModule);
         }
     }
 }

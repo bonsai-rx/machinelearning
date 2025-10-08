@@ -15,14 +15,14 @@ namespace Bonsai.ML.Torch.NeuralNets
     [ResetCombinator]
     [Description("Saves the model to a file.")]
     [WorkflowElementCategory(ElementCategory.Sink)]
-    public class SaveModel
+    public class LoadModule
     {
         /// <summary>
         /// The model to save.
         /// </summary>
         [Description("The model to save.")]
         [XmlIgnore]
-        public IModule<Tensor, Tensor> Model { get; set; }
+        public Module Module { get; set; }
 
         /// <summary>
         /// The path to save the model.
@@ -34,16 +34,10 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// <summary>
         /// Saves the model to the specified file path.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
         /// <returns></returns>
-        public IObservable<T> Process<T>(IObservable<T> source)
+        public IObservable<Module> Process()
         {
-            var model = Model as Module;
-            return source.Do(input =>
-            {
-                model.save(ModelPath);
-            });
+            return Observable.Return(Module.load(ModelPath));
         }
     }
 }

@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 using System.Xml.Serialization;
+using TorchSharp;
+using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets
 {
@@ -61,7 +63,7 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public IObservable<ITorchModule> Process()
+        public IObservable<IModule<Tensor, Tensor>> Process()
         {
             var device = Device;
             nn.Module<Tensor,Tensor> module = ModelArchitecture switch
@@ -74,8 +76,7 @@ namespace Bonsai.ML.Torch.NeuralNets
 
             if (ModelWeightsPath is not null) module.load(ModelWeightsPath);
 
-            var torchModule = new TorchModuleAdapter(module);
-            return Observable.Return((ITorchModule)torchModule);
+            return Observable.Return(module);
         }
     }
 }
