@@ -35,4 +35,12 @@ public class Generator
     {
         return Observable.Return(new torch.Generator(Seed, Device));
     }
+
+    /// <summary>
+    /// Generates an observable sequence of random number generators for each element of the input sequence.
+    /// </summary>
+    public IObservable<torch.Generator> Process<T>(IObservable<T> source)
+    {
+        return source.Select(value => new torch.Generator(Seed, Device));
+    }
 }
