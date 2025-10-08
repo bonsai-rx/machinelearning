@@ -52,6 +52,7 @@ public class RandomIntegers
     /// <summary>
     /// The random number generator to use.
     /// </summary>
+    [XmlIgnore]
     public torch.Generator Generator { get; set; } = null;
 
     /// <summary>
@@ -63,6 +64,19 @@ public class RandomIntegers
         return Observable.Return(randint(MinValue, MaxValue, Size, dtype: Type, device: Device, generator: Generator));
     }
 
+    /// <summary>
+    /// Generates an observable sequence of tensors filled with random integers and uses the input generator.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tensor> Process(IObservable<torch.Generator> source)
+    {
+        return source.Select(value =>
+        {
+            Generator = value;
+            return randint(MinValue, MaxValue, Size, dtype: Type, device: Device, generator: Generator);
+        });
+    }
 
     /// <summary>
     /// Generates an observable sequence of tensors filled with random integers for each element of the input sequence.

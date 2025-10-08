@@ -38,6 +38,7 @@ public class RandomPermutation
     /// <summary>
     /// The random number generator to use.
     /// </summary>
+    [XmlIgnore]
     public torch.Generator Generator { get; set; } = null;
 
     /// <summary>
@@ -46,6 +47,20 @@ public class RandomPermutation
     public IObservable<Tensor> Process()
     {
         return Observable.Return(randperm(Size, dtype: Type, device: Device, generator: Generator));
+    }
+
+    /// <summary>
+    /// Generates an observable sequence of tensors filled with random values and uses the input generator.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tensor> Process(IObservable<torch.Generator> source)
+    {
+        return source.Select(value =>
+        {
+            Generator = value;
+            return randperm(Size, dtype: Type, device: Device, generator: Generator);
+        });
     }
 
     /// <summary>
