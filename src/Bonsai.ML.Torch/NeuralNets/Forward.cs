@@ -19,7 +19,7 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// The model to use for inference.
         /// </summary>
         [XmlIgnore]
-        public ITorchModule Model { get; set; }
+        public IModule<Tensor, Tensor> Model { get; set; }
 
         /// <summary>
         /// Runs forward inference on the input tensor using the specified model.

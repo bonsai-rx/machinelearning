@@ -26,12 +26,12 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// The model to train.
         /// </summary>
         [XmlIgnore]
-        public ITorchModule Model { get; set; }
+        public IModule<Tensor, Tensor> Model { get; set; }
 
         /// <summary>
         /// The loss function to use for training.
         /// </summary>
-        public Loss Loss { get; set; }
+        public IModule<Tensor, Tensor, Tensor> Loss { get; set; }
 
         /// <summary>
         /// Trains the model using backpropagation.
@@ -40,33 +40,23 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor>> source)
         {
-            optim.Optimizer optimizer = Optimizer switch
-            {
-                Optimizer.Adam => Adam(Model.Module.parameters()),
-                _ => throw new ArgumentException($"Selected optimizer, {Optimizer} is currently not supported.")
-            };
-
-            Module<Tensor, Tensor, Tensor> loss = Loss switch
-            {
-                Loss.NegativeLogLikelihood => NLLLoss(),
-                _ => throw new ArgumentException($"Selected loss, {Loss} is currently not supported.")
-            };
-
-            var scheduler = lr_scheduler.StepLR(optimizer, 1, 0.7);
-            Model.Module.train();
+            var model = Model as Module<Tensor, Tensor>;
+            var loss = Loss as Module<Tensor, Tensor, Tensor>;
+            var scheduler = lr_scheduler.StepLR(Optimizer, 1, 0.7);
+            model.train();
 
             return source.Select((input) => {
                 var (data, target) = input;
                 using (_ = NewDisposeScope())
                 {
-                    optimizer.zero_grad();
+                    Optimizer.zero_grad();
                     
-                    var prediction = Model.Forward(data);
+                    var prediction = model.forward(data);
                     var output = loss.forward(prediction, target);
 
                     output.backward();
 
-                    optimizer.step();
+                    Optimizer.step();
                     return output.MoveToOuterDisposeScope();
                 }
             });
