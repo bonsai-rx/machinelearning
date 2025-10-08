@@ -12,7 +12,7 @@ namespace Bonsai.ML.Torch.LDS;
 /// </summary>
 [Combinator]
 [Description("Learn the parameters of a kalman filter using the batch EM update algorithm.")]
-[WorkflowElementCategory(ElementCategory.Transform)]
+[WorkflowElementCategory(ElementCategory.Combinator)]
 public class ExpectationMaximization
 {
     /// <summary>
