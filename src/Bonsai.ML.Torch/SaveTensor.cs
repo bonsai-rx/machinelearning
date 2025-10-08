@@ -22,13 +22,29 @@ namespace Bonsai.ML.Torch
         public string Path { get; set; } = string.Empty;
 
         /// <summary>
+        /// Indicates whether to use the native torch save method for the tensor.
+        /// </summary>
+        /// <remarks>
+        /// If set to true, the native torch save method will be used. 
+        /// If set to false, the tensor will be saved using the TorchSharp method which is specific to .NET formats.
+        /// </remarks>
+        [Description("Indicates whether to use the native torch save method for the tensor.")]
+        public bool UseNativeMethod { get; set; } = true;
+
+        /// <summary>
         /// Saves the input tensor to the specified file.
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            return source.Do(tensor => tensor.save(Path));
+            return source.Do(tensor =>
+            {
+                if (UseNativeMethod)
+                    tensor.save(Path);
+                else
+                    tensor.Save(Path);
+            });
         }
     }
 }
