@@ -104,6 +104,17 @@ public class Buffer
             _current = count - skip;
             send = false;
             return output;
+        })
+        .Finally(() =>
+        {
+            _buffer?.Dispose();
+            _buffer = null;
+            _idxSrc?.Dispose();
+            _idxSrc = null;
+            _idxDst?.Dispose();
+            _idxDst = null;
+            _current = 0;
+            send = false;
         });
     }
 }
