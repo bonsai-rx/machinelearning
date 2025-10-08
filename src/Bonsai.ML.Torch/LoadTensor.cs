@@ -16,7 +16,7 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The path to the file containing the tensor.
         /// </summary>
-        [FileNameFilter("Binary files(*.bin)|*.bin|All files|*.*")]
+        [FileNameFilter("Binary files(*.bin)|*.bin|Tensor files(*.pt)|*.pt|All files|*.*")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         [Description("The path to the file containing the tensor.")]
         public string Path { get; set; }

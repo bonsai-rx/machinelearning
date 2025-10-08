@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using TorchSharp;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch
@@ -16,7 +17,7 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// The path to the file where the tensor will be saved.
         /// </summary>
-        [FileNameFilter("Binary files(*.bin)|*.bin|All files|*.*")]
+        [FileNameFilter("Binary files(*.bin)|*.bin|Tensor files(*.pt)|*.pt|All files|*.*")]
         [Editor("Bonsai.Design.SaveFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         [Description("The path to the file where the tensor will be saved.")]
         public string Path { get; set; } = string.Empty;
