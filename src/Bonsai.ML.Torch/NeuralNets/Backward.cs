@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.optim;
+using static TorchSharp.torch.optim.lr_scheduler;
 
 namespace Bonsai.ML.Torch.NeuralNets
 {
@@ -20,7 +21,12 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// <summary>
         /// The optimizer to use for training.
         /// </summary>
-        public Optimizer Optimizer { get; set; }
+        public Optimizer Optimizer { get; set; } = null;
+
+        /// <summary>
+        /// The learning rate scheduler to use for training.
+        /// </summary>
+        public LRScheduler LRScheduler { get; set; } = null;
 
         /// <summary>
         /// The model to train.
@@ -31,7 +37,7 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// <summary>
         /// The loss function to use for training.
         /// </summary>
-        public IModule<Tensor, Tensor, Tensor> Loss { get; set; }
+        public IModule<Tensor, Tensor, Tensor> Loss { get; set; } = null;
 
         /// <summary>
         /// Trains the model using backpropagation.
@@ -41,8 +47,12 @@ namespace Bonsai.ML.Torch.NeuralNets
         public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor>> source)
         {
             var model = Model as Module<Tensor, Tensor>;
+
+            Loss ??= NLLLoss();
             var loss = Loss as Module<Tensor, Tensor, Tensor>;
-            var scheduler = lr_scheduler.StepLR(Optimizer, 1, 0.7);
+
+            Optimizer ??= SGD(model.parameters(), 0.01);
+            LRScheduler ??= StepLR(Optimizer, 1, 0.7);
             model.train();
 
             return source.Select((input) => {
