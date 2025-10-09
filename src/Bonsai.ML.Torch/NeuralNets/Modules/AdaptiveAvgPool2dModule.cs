@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a 2D adaptive average pooling layer module.
+/// Creates a 2D adaptive average pooling layer.
 /// </summary>
 [Combinator]
-[Description("Creates a 2D adaptive average pooling layer module.")]
+[Description("Creates a 2D adaptive average pooling layer.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class AdaptiveAvgPool2dModule
 {
@@ -25,7 +26,7 @@ public class AdaptiveAvgPool2dModule
     public long[] OutputSize { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a AdaptiveAvgPool2d module.
+    /// Generates an observable sequence that creates a AdaptiveAvgPool2dModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

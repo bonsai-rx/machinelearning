@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a EmbeddingBag module module.
+/// Creates a EmbeddingBag module.
 /// </summary>
 [Combinator]
-[Description("Creates a EmbeddingBag module module.")]
+[Description("Creates a EmbeddingBag module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class EmbeddingBagModule
 {
@@ -39,7 +40,7 @@ public class EmbeddingBagModule
     /// The norm_type parameter for the EmbeddingBag module.
     /// </summary>
     [Description("The norm_type parameter for the EmbeddingBag module")]
-    public double NormType { get; set; } = 2;
+    public double NormType { get; set; } = 2D;
 
     /// <summary>
     /// The scale_grad_by_freq parameter for the EmbeddingBag module.
@@ -75,8 +76,7 @@ public class EmbeddingBagModule
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
@@ -86,7 +86,7 @@ public class EmbeddingBagModule
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a EmbeddingBag module.
+    /// Generates an observable sequence that creates a EmbeddingBagModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor, Tensor, Tensor>> Process()
     {

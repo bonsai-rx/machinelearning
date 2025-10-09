@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a PReLU module module.
+/// Creates a PReLU module.
 /// </summary>
 [Combinator]
-[Description("Creates a PReLU module module.")]
+[Description("Creates a PReLU module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class PReLUModule
 {
@@ -27,14 +28,13 @@ public class PReLUModule
     /// The init parameter for the PReLU module.
     /// </summary>
     [Description("The init parameter for the PReLU module")]
-    public double Init { get; set; } = 0.25;
+    public double Init { get; set; } = 0.25D;
 
     /// <summary>
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
@@ -44,7 +44,7 @@ public class PReLUModule
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a PReLU module.
+    /// Generates an observable sequence that creates a PReLUModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

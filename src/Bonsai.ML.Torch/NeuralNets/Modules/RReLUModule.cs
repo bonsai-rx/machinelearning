@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a RReLU module module.
+/// Creates a RReLU module.
 /// </summary>
 [Combinator]
-[Description("Creates a RReLU module module.")]
+[Description("Creates a RReLU module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class RReLUModule
 {
@@ -21,13 +22,13 @@ public class RReLUModule
     /// The lower parameter for the RReLU module.
     /// </summary>
     [Description("The lower parameter for the RReLU module")]
-    public double Lower { get; set; } = 0.125;
+    public double Lower { get; set; } = 0.125D;
 
     /// <summary>
     /// The upper parameter for the RReLU module.
     /// </summary>
     [Description("The upper parameter for the RReLU module")]
-    public double Upper { get; set; } = 0.3333333333333333;
+    public double Upper { get; set; } = 0.3333333333333333D;
 
     /// <summary>
     /// If set to true, will do this operation in-place.
@@ -36,7 +37,7 @@ public class RReLUModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a RReLU module.
+    /// Generates an observable sequence that creates a RReLUModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

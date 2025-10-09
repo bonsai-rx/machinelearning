@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Linear transformation layer module.
+/// Creates a Linear transformation layer.
 /// </summary>
 [Combinator]
-[Description("Creates a Linear transformation layer module.")]
+[Description("Creates a Linear transformation layer.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class LinearModule
 {
@@ -39,8 +40,7 @@ public class LinearModule
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
@@ -50,7 +50,7 @@ public class LinearModule
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Linear module.
+    /// Generates an observable sequence that creates a LinearModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

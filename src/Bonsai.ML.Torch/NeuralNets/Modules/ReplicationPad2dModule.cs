@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a ReplicationPad2d module module.
+/// Creates a ReplicationPad2d module.
 /// </summary>
 [Combinator]
-[Description("Creates a ReplicationPad2d module module.")]
+[Description("Creates a ReplicationPad2d module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class ReplicationPad2dModule
 {
@@ -24,7 +25,7 @@ public class ReplicationPad2dModule
     public long Padding { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a ReplicationPad2d module.
+    /// Generates an observable sequence that creates a ReplicationPad2dModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

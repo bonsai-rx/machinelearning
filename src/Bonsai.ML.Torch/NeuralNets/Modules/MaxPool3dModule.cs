@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a 3D max pooling layer module.
+/// Creates a 3D max pooling layer.
 /// </summary>
 [Combinator]
-[Description("Creates a 3D max pooling layer module.")]
+[Description("Creates a 3D max pooling layer.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class MaxPool3dModule
 {
@@ -48,7 +49,7 @@ public class MaxPool3dModule
     public bool CeilMode { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a MaxPool3d module.
+    /// Generates an observable sequence that creates a MaxPool3dModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Threshold module module.
+/// Creates a Threshold module.
 /// </summary>
 [Combinator]
-[Description("Creates a Threshold module module.")]
+[Description("Creates a Threshold module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class ThresholdModule
 {
@@ -36,7 +37,7 @@ public class ThresholdModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Threshold module.
+    /// Generates an observable sequence that creates a ThresholdModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Hardswish module module.
+/// Creates a Hardswish module.
 /// </summary>
 [Combinator]
-[Description("Creates a Hardswish module module.")]
+[Description("Creates a Hardswish module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class HardswishModule
 {
@@ -24,7 +25,7 @@ public class HardswishModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Hardswish module.
+    /// Generates an observable sequence that creates a HardswishModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

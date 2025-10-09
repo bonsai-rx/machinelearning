@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a Long Short-Term Memory layer module.
+/// Creates a Long Short-Term Memory layer.
 /// </summary>
 [Combinator]
-[Description("Creates a Long Short-Term Memory layer module.")]
+[Description("Creates a Long Short-Term Memory layer.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class LSTMModule
 {
@@ -51,7 +52,7 @@ public class LSTMModule
     /// The dropout parameter for the LSTM module.
     /// </summary>
     [Description("The dropout parameter for the LSTM module")]
-    public double Dropout { get; set; } = 0;
+    public double Dropout { get; set; } = 0D;
 
     /// <summary>
     /// The bidirectional parameter for the LSTM module.
@@ -63,8 +64,7 @@ public class LSTMModule
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
@@ -74,7 +74,7 @@ public class LSTMModule
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a LSTM module.
+    /// Generates an observable sequence that creates a LSTMModule module.
     /// </summary>
     public IObservable<IModule<Tensor, (Tensor, Tensor)?, (Tensor, Tensor, Tensor)>> Process()
     {

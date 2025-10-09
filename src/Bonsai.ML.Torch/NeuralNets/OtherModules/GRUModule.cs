@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a Gated Recurrent Unit layer module.
+/// Creates a Gated Recurrent Unit layer.
 /// </summary>
 [Combinator]
-[Description("Creates a Gated Recurrent Unit layer module.")]
+[Description("Creates a Gated Recurrent Unit layer.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class GRUModule
 {
@@ -51,7 +52,7 @@ public class GRUModule
     /// The dropout parameter for the GRU module.
     /// </summary>
     [Description("The dropout parameter for the GRU module")]
-    public double Dropout { get; set; } = 0;
+    public double Dropout { get; set; } = 0D;
 
     /// <summary>
     /// The bidirectional parameter for the GRU module.
@@ -63,8 +64,7 @@ public class GRUModule
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
@@ -74,7 +74,7 @@ public class GRUModule
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a GRU module.
+    /// Generates an observable sequence that creates a GRUModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor, (Tensor, Tensor)>> Process()
     {

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Flatten module module.
+/// Creates a Flatten module.
 /// </summary>
 [Combinator]
-[Description("Creates a Flatten module module.")]
+[Description("Creates a Flatten module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class FlattenModule
 {
@@ -30,7 +31,7 @@ public class FlattenModule
     public long EndDim { get; set; } = -1;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Flatten module.
+    /// Generates an observable sequence that creates a FlattenModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a Transformer module module.
+/// Creates a Transformer module.
 /// </summary>
 [Combinator]
-[Description("Creates a Transformer module module.")]
+[Description("Creates a Transformer module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class TransformerModule
 {
@@ -51,7 +52,7 @@ public class TransformerModule
     /// The dropout parameter for the Transformer module.
     /// </summary>
     [Description("The dropout parameter for the Transformer module")]
-    public double Dropout { get; set; } = 0.1;
+    public double Dropout { get; set; } = 0.1D;
 
     /// <summary>
     /// The activation parameter for the Transformer module.
@@ -60,7 +61,7 @@ public class TransformerModule
     public Activations Activation { get; set; } = Activations.ReLU;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Transformer module.
+    /// Generates an observable sequence that creates a TransformerModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
     {

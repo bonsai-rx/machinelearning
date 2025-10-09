@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a ReLU6 module module.
+/// Creates a ReLU6 module.
 /// </summary>
 [Combinator]
-[Description("Creates a ReLU6 module module.")]
+[Description("Creates a ReLU6 module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class ReLU6Module
 {
@@ -24,7 +25,7 @@ public class ReLU6Module
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a ReLU6 module.
+    /// Generates an observable sequence that creates a ReLU6Module module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

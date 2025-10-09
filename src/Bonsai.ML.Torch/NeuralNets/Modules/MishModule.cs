@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,15 +11,15 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Mish module module.
+/// Creates a Mish module.
 /// </summary>
 [Combinator]
-[Description("Creates a Mish module module.")]
+[Description("Creates a Mish module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class MishModule
 {
     /// <summary>
-    /// Generates an observable sequence that creates a Mish module.
+    /// Generates an observable sequence that creates a MishModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

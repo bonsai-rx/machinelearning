@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Hardshrink module module.
+/// Creates a Hardshrink module.
 /// </summary>
 [Combinator]
-[Description("Creates a Hardshrink module module.")]
+[Description("Creates a Hardshrink module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class HardshrinkModule
 {
@@ -21,10 +22,10 @@ public class HardshrinkModule
     /// The lambda parameter for the Hardshrink module.
     /// </summary>
     [Description("The lambda parameter for the Hardshrink module")]
-    public double Lambda { get; set; } = 0.5;
+    public double Lambda { get; set; } = 0.5D;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Hardshrink module.
+    /// Generates an observable sequence that creates a HardshrinkModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

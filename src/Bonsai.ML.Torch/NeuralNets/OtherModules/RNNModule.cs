@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a Basic RNN layer module.
+/// Creates a Basic RNN layer.
 /// </summary>
 [Combinator]
-[Description("Creates a Basic RNN layer module.")]
+[Description("Creates a Basic RNN layer.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class RNNModule
 {
@@ -57,7 +58,7 @@ public class RNNModule
     /// The dropout parameter for the RNN module.
     /// </summary>
     [Description("The dropout parameter for the RNN module")]
-    public double Dropout { get; set; } = 0;
+    public double Dropout { get; set; } = 0D;
 
     /// <summary>
     /// The bidirectional parameter for the RNN module.
@@ -69,8 +70,7 @@ public class RNNModule
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
@@ -80,9 +80,9 @@ public class RNNModule
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a RNN module.
+    /// Generates an observable sequence that creates a RNNModule module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor?, (Tensor, Tensor)>> Process()
+    public IObservable<IModule<Tensor, Tensor, (Tensor, Tensor)>> Process()
     {
         return Observable.Return(RNN(InputSize, HiddenSize, NumLayers, NonLinearity, Bias, BatchFirst, Dropout, Bidirectional, Device, Type));
     }

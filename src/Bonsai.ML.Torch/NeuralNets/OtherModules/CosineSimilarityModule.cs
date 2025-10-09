@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a CosineSimilarity module module.
+/// Creates a CosineSimilarity module.
 /// </summary>
 [Combinator]
-[Description("Creates a CosineSimilarity module module.")]
+[Description("Creates a CosineSimilarity module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class CosineSimilarityModule
 {
@@ -27,10 +28,10 @@ public class CosineSimilarityModule
     /// A value added to the denominator for numerical stability.
     /// </summary>
     [Description("A value added to the denominator for numerical stability")]
-    public double Eps { get; set; } = 1E-08;
+    public double Eps { get; set; } = 1E-08D;
 
     /// <summary>
-    /// Generates an observable sequence that creates a CosineSimilarity module.
+    /// Generates an observable sequence that creates a CosineSimilarityModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
     {

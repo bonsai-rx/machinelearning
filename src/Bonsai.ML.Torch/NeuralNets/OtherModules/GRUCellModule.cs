@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a GRUCell module module.
+/// Creates a GRUCell module.
 /// </summary>
 [Combinator]
-[Description("Creates a GRUCell module module.")]
+[Description("Creates a GRUCell module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class GRUCellModule
 {
@@ -39,8 +40,7 @@ public class GRUCellModule
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
@@ -50,7 +50,7 @@ public class GRUCellModule
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a GRUCell module.
+    /// Generates an observable sequence that creates a GRUCellModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
     {
