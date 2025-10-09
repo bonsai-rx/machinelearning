@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Dropout regularization layer module.
+/// Creates a Dropout regularization layer.
 /// </summary>
 [Combinator]
-[Description("Creates a Dropout regularization layer module.")]
+[Description("Creates a Dropout regularization layer.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class DropoutModule
 {
@@ -21,7 +22,7 @@ public class DropoutModule
     /// The p parameter for the Dropout module.
     /// </summary>
     [Description("The p parameter for the Dropout module")]
-    public double P { get; set; } = 0.5;
+    public double P { get; set; } = 0.5D;
 
     /// <summary>
     /// If set to true, will do this operation in-place.
@@ -30,7 +31,7 @@ public class DropoutModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Dropout module.
+    /// Generates an observable sequence that creates a DropoutModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a LeakyReLU activation function module.
+/// Creates a LeakyReLU activation function.
 /// </summary>
 [Combinator]
-[Description("Creates a LeakyReLU activation function module.")]
+[Description("Creates a LeakyReLU activation function.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class LeakyReLUModule
 {
@@ -21,7 +22,7 @@ public class LeakyReLUModule
     /// The negative_slope parameter for the LeakyReLU module.
     /// </summary>
     [Description("The negative_slope parameter for the LeakyReLU module")]
-    public double NegativeSlope { get; set; } = 0.01;
+    public double NegativeSlope { get; set; } = 0.01D;
 
     /// <summary>
     /// If set to true, will do this operation in-place.
@@ -30,7 +31,7 @@ public class LeakyReLUModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a LeakyReLU module.
+    /// Generates an observable sequence that creates a LeakyReLUModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

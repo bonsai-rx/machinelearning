@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a ZeroPad2d module module.
+/// Creates a ZeroPad2d module.
 /// </summary>
 [Combinator]
-[Description("Creates a ZeroPad2d module module.")]
+[Description("Creates a ZeroPad2d module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class ZeroPad2dModule
 {
@@ -24,7 +25,7 @@ public class ZeroPad2dModule
     public long Padding { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a ZeroPad2d module.
+    /// Generates an observable sequence that creates a ZeroPad2dModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

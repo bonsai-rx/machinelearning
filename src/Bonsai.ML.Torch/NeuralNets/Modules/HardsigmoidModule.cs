@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Hardsigmoid module module.
+/// Creates a Hardsigmoid module.
 /// </summary>
 [Combinator]
-[Description("Creates a Hardsigmoid module module.")]
+[Description("Creates a Hardsigmoid module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class HardsigmoidModule
 {
@@ -24,7 +25,7 @@ public class HardsigmoidModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Hardsigmoid module.
+    /// Generates an observable sequence that creates a HardsigmoidModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

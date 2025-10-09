@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a TransformerDecoder module module.
+/// Creates a TransformerDecoder module.
 /// </summary>
 [Combinator]
-[Description("Creates a TransformerDecoder module module.")]
+[Description("Creates a TransformerDecoder module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class TransformerDecoderModule
 {
@@ -30,7 +31,7 @@ public class TransformerDecoderModule
     public long NumLayers { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a TransformerDecoder module.
+    /// Generates an observable sequence that creates a TransformerDecoderModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor>> Process()
     {

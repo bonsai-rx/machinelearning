@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a SELU activation function module.
+/// Creates a SELU activation function.
 /// </summary>
 [Combinator]
-[Description("Creates a SELU activation function module.")]
+[Description("Creates a SELU activation function.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class SELUModule
 {
@@ -24,7 +25,7 @@ public class SELUModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a SELU module.
+    /// Generates an observable sequence that creates a SELUModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

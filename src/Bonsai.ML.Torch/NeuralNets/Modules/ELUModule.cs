@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a ELU activation function module.
+/// Creates a ELU activation function.
 /// </summary>
 [Combinator]
-[Description("Creates a ELU activation function module.")]
+[Description("Creates a ELU activation function.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class ELUModule
 {
@@ -21,7 +22,7 @@ public class ELUModule
     /// The alpha parameter for the ELU module.
     /// </summary>
     [Description("The alpha parameter for the ELU module")]
-    public double Alpha { get; set; } = 1;
+    public double Alpha { get; set; } = 1D;
 
     /// <summary>
     /// If set to true, will do this operation in-place.
@@ -30,7 +31,7 @@ public class ELUModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a ELU module.
+    /// Generates an observable sequence that creates a ELUModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

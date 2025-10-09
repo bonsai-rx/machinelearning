@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a FractionalMaxPool2d module module.
+/// Creates a FractionalMaxPool2d module.
 /// </summary>
 [Combinator]
-[Description("Creates a FractionalMaxPool2d module module.")]
+[Description("Creates a FractionalMaxPool2d module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class FractionalMaxPool2dModule
 {
@@ -36,7 +37,7 @@ public class FractionalMaxPool2dModule
     public double? OutputRatio { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a FractionalMaxPool2d module.
+    /// Generates an observable sequence that creates a FractionalMaxPool2dModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a Multi-head attention mechanism module.
+/// Creates a Multi-head attention mechanism.
 /// </summary>
 [Combinator]
-[Description("Creates a Multi-head attention mechanism module.")]
+[Description("Creates a Multi-head attention mechanism.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class MultiheadAttentionModule
 {
@@ -33,7 +34,7 @@ public class MultiheadAttentionModule
     /// The dropout parameter for the MultiheadAttention module.
     /// </summary>
     [Description("The dropout parameter for the MultiheadAttention module")]
-    public double Dropout { get; set; } = 0;
+    public double Dropout { get; set; } = 0D;
 
     /// <summary>
     /// If true, adds a learnable bias to the output.
@@ -66,9 +67,9 @@ public class MultiheadAttentionModule
     public long? Vdim { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a MultiheadAttention module.
+    /// Generates an observable sequence that creates a MultiheadAttentionModule module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor, Tensor?, bool, Tensor?, Tuple<Tensor, Tensor>>> Process()
+    public IObservable<IModule<Tensor, Tensor, Tensor, Tensor, bool, Tensor, Tuple<Tensor, Tensor>>> Process()
     {
         return Observable.Return(MultiheadAttention(EmbeddedDim, NumHeads, Dropout, Bias, AddBiasKv, AddZeroAttn, Kdim, Vdim));
     }

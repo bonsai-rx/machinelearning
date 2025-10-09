@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,15 +11,15 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Softsign module module.
+/// Creates a Softsign module.
 /// </summary>
 [Combinator]
-[Description("Creates a Softsign module module.")]
+[Description("Creates a Softsign module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class SoftsignModule
 {
     /// <summary>
-    /// Generates an observable sequence that creates a Softsign module.
+    /// Generates an observable sequence that creates a SoftsignModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

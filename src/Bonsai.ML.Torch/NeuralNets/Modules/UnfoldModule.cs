@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Unfold module module.
+/// Creates a Unfold module.
 /// </summary>
 [Combinator]
-[Description("Creates a Unfold module module.")]
+[Description("Creates a Unfold module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class UnfoldModule
 {
@@ -42,7 +43,7 @@ public class UnfoldModule
     public long Stride { get; set; } = 1;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Unfold module.
+    /// Generates an observable sequence that creates a UnfoldModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

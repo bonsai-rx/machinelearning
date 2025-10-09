@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Upsample module module.
+/// Creates a Upsample module.
 /// </summary>
 [Combinator]
-[Description("Creates a Upsample module module.")]
+[Description("Creates a Upsample module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class UpsampleModule
 {
@@ -44,7 +45,7 @@ public class UpsampleModule
     public bool? AlignCorners { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Upsample module.
+    /// Generates an observable sequence that creates a UpsampleModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

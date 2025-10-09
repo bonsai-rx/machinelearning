@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a FeatureAlphaDropout module module.
+/// Creates a FeatureAlphaDropout module.
 /// </summary>
 [Combinator]
-[Description("Creates a FeatureAlphaDropout module module.")]
+[Description("Creates a FeatureAlphaDropout module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class FeatureAlphaDropoutModule
 {
@@ -21,10 +22,10 @@ public class FeatureAlphaDropoutModule
     /// The p parameter for the FeatureAlphaDropout module.
     /// </summary>
     [Description("The p parameter for the FeatureAlphaDropout module")]
-    public double P { get; set; } = 0.5;
+    public double P { get; set; } = 0.5D;
 
     /// <summary>
-    /// Generates an observable sequence that creates a FeatureAlphaDropout module.
+    /// Generates an observable sequence that creates a FeatureAlphaDropoutModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

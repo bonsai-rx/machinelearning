@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a ConstantPad1d module module.
+/// Creates a ConstantPad1d module.
 /// </summary>
 [Combinator]
-[Description("Creates a ConstantPad1d module module.")]
+[Description("Creates a ConstantPad1d module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class ConstantPad1dModule
 {
@@ -30,7 +31,7 @@ public class ConstantPad1dModule
     public double Value { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a ConstantPad1d module.
+    /// Generates an observable sequence that creates a ConstantPad1dModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

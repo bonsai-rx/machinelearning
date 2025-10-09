@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a Bilinear module module.
+/// Creates a Bilinear module.
 /// </summary>
 [Combinator]
-[Description("Creates a Bilinear module module.")]
+[Description("Creates a Bilinear module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class BilinearModule
 {
@@ -45,8 +46,7 @@ public class BilinearModule
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
@@ -56,7 +56,7 @@ public class BilinearModule
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Bilinear module.
+    /// Generates an observable sequence that creates a BilinearModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
     {

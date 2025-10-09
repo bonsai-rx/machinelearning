@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,20 +11,18 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.OtherModules;
 
 /// <summary>
-/// Creates a EmbeddingBag_from_pretrained module module.
+/// Creates a EmbeddingbagFromPretrained module.
 /// </summary>
 [Combinator]
-[Description("Creates a EmbeddingBag_from_pretrained module module.")]
+[Description("Creates a EmbeddingbagFromPretrained module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class EmbeddingbagFromPretrainedModule : IScalarTypeProvider
+public class EmbeddingbagFromPretrainedModule
 {
     /// <summary>
     /// The embeddings parameter for the EmbeddingBag_from_pretrained module.
     /// </summary>
     [Description("The embeddings parameter for the EmbeddingBag_from_pretrained module")]
-    [XmlIgnore]
-    [TypeConverter(typeof(TensorConverter))]
-    public Tensor Embeddings { get; set; }
+    public torch.Tensor Embeddings { get; set; }
 
     /// <summary>
     /// The freeze parameter for the EmbeddingBag_from_pretrained module.
@@ -41,7 +40,7 @@ public class EmbeddingbagFromPretrainedModule : IScalarTypeProvider
     /// The norm_type parameter for the EmbeddingBag_from_pretrained module.
     /// </summary>
     [Description("The norm_type parameter for the EmbeddingBag_from_pretrained module")]
-    public double NormType { get; set; } = 2;
+    public double NormType { get; set; } = 2D;
 
     /// <summary>
     /// The scale_grad_by_freq parameter for the EmbeddingBag_from_pretrained module.
@@ -77,18 +76,17 @@ public class EmbeddingbagFromPretrainedModule : IScalarTypeProvider
     /// The desired device of returned tensor.
     /// </summary>
     [Description("The desired device of returned tensor")]
-    [XmlIgnore]
-    public Device Device { get; set; } = null;
+    public torch.Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
     /// </summary>
     [Description("The desired data type of returned tensor")]
     [TypeConverter(typeof(ScalarTypeConverter))]
-    public ScalarType Type { get; set; } = ScalarType.Float32;
+    public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a EmbeddingbagFromPretrained module.
+    /// Generates an observable sequence that creates a EmbeddingbagFromPretrainedModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor, Tensor, Tensor>> Process()
     {

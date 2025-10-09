@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Softshrink module module.
+/// Creates a Softshrink module.
 /// </summary>
 [Combinator]
-[Description("Creates a Softshrink module module.")]
+[Description("Creates a Softshrink module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class SoftshrinkModule
 {
@@ -21,10 +22,10 @@ public class SoftshrinkModule
     /// The lambda parameter for the Softshrink module.
     /// </summary>
     [Description("The lambda parameter for the Softshrink module")]
-    public double Lambda { get; set; } = 0.5;
+    public double Lambda { get; set; } = 0.5D;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Softshrink module.
+    /// Generates an observable sequence that creates a SoftshrinkModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

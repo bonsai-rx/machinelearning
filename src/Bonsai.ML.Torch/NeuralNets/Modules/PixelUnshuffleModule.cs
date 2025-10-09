@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a PixelUnshuffle module module.
+/// Creates a PixelUnshuffle module.
 /// </summary>
 [Combinator]
-[Description("Creates a PixelUnshuffle module module.")]
+[Description("Creates a PixelUnshuffle module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class PixelUnshuffleModule
 {
@@ -24,7 +25,7 @@ public class PixelUnshuffleModule
     public long DownscaleFactor { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a PixelUnshuffle module.
+    /// Generates an observable sequence that creates a PixelUnshuffleModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

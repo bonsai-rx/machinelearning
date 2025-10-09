@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a Hardtanh module module.
+/// Creates a Hardtanh module.
 /// </summary>
 [Combinator]
-[Description("Creates a Hardtanh module module.")]
+[Description("Creates a Hardtanh module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class HardtanhModule
 {
@@ -21,13 +22,13 @@ public class HardtanhModule
     /// The min_val parameter for the Hardtanh module.
     /// </summary>
     [Description("The min_val parameter for the Hardtanh module")]
-    public double MinVal { get; set; } = -1;
+    public double MinVal { get; set; } = -1D;
 
     /// <summary>
     /// The max_val parameter for the Hardtanh module.
     /// </summary>
     [Description("The max_val parameter for the Hardtanh module")]
-    public double MaxVal { get; set; } = 1;
+    public double MaxVal { get; set; } = 1D;
 
     /// <summary>
     /// If set to true, will do this operation in-place.
@@ -36,7 +37,7 @@ public class HardtanhModule
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Hardtanh module.
+    /// Generates an observable sequence that creates a HardtanhModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {

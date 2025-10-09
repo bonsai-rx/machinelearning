@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
@@ -10,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Modules;
 
 /// <summary>
-/// Creates a 1D average pooling layer module.
+/// Creates a 1D average pooling layer.
 /// </summary>
 [Combinator]
-[Description("Creates a 1D average pooling layer module.")]
+[Description("Creates a 1D average pooling layer.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class AvgPool1dModule
 {
@@ -48,7 +49,7 @@ public class AvgPool1dModule
     public bool CountIncludePad { get; set; } = true;
 
     /// <summary>
-    /// Generates an observable sequence that creates a AvgPool1d module.
+    /// Generates an observable sequence that creates a AvgPool1dModule module.
     /// </summary>
     public IObservable<IModule<Tensor, Tensor>> Process()
     {
