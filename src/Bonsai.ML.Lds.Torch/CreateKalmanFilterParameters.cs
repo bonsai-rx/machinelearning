@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using static TorchSharp.torch;
+using Bonsai.ML.Torch;
 
 namespace Bonsai.ML.Lds.Torch;
 
