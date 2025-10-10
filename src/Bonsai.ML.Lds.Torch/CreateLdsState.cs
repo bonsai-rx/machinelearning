@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using System.Xml.Serialization;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Creates a generic state object for a linear gaussian dynamical system.

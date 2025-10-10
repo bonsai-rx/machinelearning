@@ -40,11 +40,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{DEE5DD87
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Tests.Utilities", "tests\Bonsai.ML.Tests.Utilities\Bonsai.ML.Tests.Utilities.csproj", "{DB1090D3-38DD-404B-96DF-66BF3C39E508}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Torch.LDS", "src\Bonsai.ML.Torch.LDS\Bonsai.ML.Torch.LDS.csproj", "{41D4BEC7-AB1F-41E4-95FE-4DB23970FF4B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Lds.Torch", "src\Bonsai.ML.Lds.Torch\Bonsai.ML.Lds.Torch.csproj", "{41D4BEC7-AB1F-41E4-95FE-4DB23970FF4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Torch.LDS.Tests", "tests\Bonsai.ML.Torch.LDS.Tests\Bonsai.ML.Torch.LDS.Tests.csproj", "{0B258929-0B07-4CE7-BE8D-A86BBC46AAD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Lds.Torch.Tests", "tests\Bonsai.ML.Lds.Torch.Tests\Bonsai.ML.Lds.Torch.Tests.csproj", "{0B258929-0B07-4CE7-BE8D-A86BBC46AAD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Torch.LDS.Design", "src\Bonsai.ML.Torch.LDS.Design\Bonsai.ML.Torch.LDS.Design.csproj", "{1F52DECD-1B2C-4F6C-996C-14C715283B80}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bonsai.ML.Lds.Torch.Design", "src\Bonsai.ML.Lds.Torch.Design\Bonsai.ML.Lds.Torch.Design.csproj", "{1F52DECD-1B2C-4F6C-996C-14C715283B80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

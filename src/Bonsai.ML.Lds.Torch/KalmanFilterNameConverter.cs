@@ -2,7 +2,7 @@ using Bonsai.Expressions;
 using System.Linq;
 using System.ComponentModel;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Provides a type converter to select the name of an existing Kalman filter model in the workflow.

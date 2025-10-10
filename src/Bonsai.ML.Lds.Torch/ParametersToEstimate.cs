@@ -1,9 +1,7 @@
-using static TorchSharp.torch;
-
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
-/// Represents the parameters of a Kalman filter model.
+/// Represents the parameters to estimate for a Kalman filter model.
 /// </summary>
 /// <remarks>
 /// Initializes a new instance of the <see cref="KalmanFilterParameters"/> struct with the specified parameters.
@@ -14,41 +12,41 @@ namespace Bonsai.ML.Torch.LDS;
 /// <param name="measurementNoiseCovariance"></param>
 /// <param name="initialMean"></param>
 /// <param name="initialCovariance"></param>
-public struct KalmanFilterParameters(
-    Tensor transitionMatrix = null,
-    Tensor measurementFunction = null,
-    Tensor processNoiseCovariance = null,
-    Tensor measurementNoiseCovariance = null,
-    Tensor initialMean = null,
-    Tensor initialCovariance = null)
+public struct ParametersToEstimate(
+    bool transitionMatrix = true,
+    bool measurementFunction = true,
+    bool processNoiseCovariance = true,
+    bool measurementNoiseCovariance = true,
+    bool initialMean = true,
+    bool initialCovariance = true)
 {
     /// <summary>
     /// The state transition matrix.
     /// </summary>
-    public Tensor TransitionMatrix = transitionMatrix;
+    public bool TransitionMatrix = transitionMatrix;
 
     /// <summary>
     /// The measurement function.
     /// </summary>
-    public Tensor MeasurementFunction = measurementFunction;
+    public bool MeasurementFunction = measurementFunction;
 
     /// <summary>
     /// The process noise covariance.
     /// </summary>
-    public Tensor ProcessNoiseCovariance = processNoiseCovariance;
+    public bool ProcessNoiseCovariance = processNoiseCovariance;
 
     /// <summary>
     /// The measurement noise covariance.
     /// </summary>
-    public Tensor MeasurementNoiseCovariance = measurementNoiseCovariance;
+    public bool MeasurementNoiseCovariance = measurementNoiseCovariance;
 
     /// <summary>
     /// The initial mean.
     /// </summary>
-    public Tensor InitialMean = initialMean;
+    public bool InitialMean = initialMean;
 
     /// <summary>
     /// The initial covariance.
     /// </summary>
-    public Tensor InitialCovariance = initialCovariance;
+    public bool InitialCovariance = initialCovariance;
 }
