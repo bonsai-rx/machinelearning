@@ -13,16 +13,16 @@ using OxyPlot.Series;
 
 using static TorchSharp.torch;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Torch.LDS.FilteredState))]
-[assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Torch.LDS.SmoothedState))]
-[assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Torch.LDS.OrthogonalizedState))]
-[assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Torch.LDS.LdsState))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.StateVisualizer),
+    Target = typeof(Bonsai.ML.Lds.Torch.FilteredState))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.StateVisualizer),
+    Target = typeof(Bonsai.ML.Lds.Torch.SmoothedState))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.StateVisualizer),
+    Target = typeof(Bonsai.ML.Lds.Torch.OrthogonalizedState))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.StateVisualizer),
+    Target = typeof(Bonsai.ML.Lds.Torch.LdsState))]
 
-namespace Bonsai.ML.Torch.LDS.Design;
+namespace Bonsai.ML.Lds.Torch.Design;
 
 /// <summary>
 /// Provides a visualizer for the state means and covariances from a Kalman filter or smoother.

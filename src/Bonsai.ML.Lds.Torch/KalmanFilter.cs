@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 internal class KalmanFilter : nn.Module
 {

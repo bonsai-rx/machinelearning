@@ -13,10 +13,10 @@ using OxyPlot.Series;
 
 using static TorchSharp.torch;
 
-[assembly: TypeVisualizer(typeof(Bonsai.ML.Torch.LDS.Design.ExpectationMaximizationVisualizer),
-    Target = typeof(Bonsai.ML.Torch.LDS.ExpectationMaximizationResult))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.ExpectationMaximizationVisualizer),
+    Target = typeof(Bonsai.ML.Lds.Torch.ExpectationMaximizationResult))]
 
-namespace Bonsai.ML.Torch.LDS.Design;
+namespace Bonsai.ML.Lds.Torch.Design;
 
 /// <summary>
 /// Provides a visualizer for the state means and covariances from a Kalman filter or smoother.

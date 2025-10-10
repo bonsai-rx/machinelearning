@@ -1,6 +1,6 @@
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Represents the result of an expectation-maximization step for a Kalman filter model.

@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bonsai.ML.Tests.Utilities\Bonsai.ML.Tests.Utilities.csproj" />
-    <ProjectReference Include="..\..\src\Bonsai.ML.Torch.LDS\Bonsai.ML.Torch.LDS.csproj" />
+    <ProjectReference Include="..\..\src\Bonsai.ML.Lds.Torch\Bonsai.ML.Lds.Torch.csproj" />
     <ProjectReference Include="..\..\src\Bonsai.ML.Torch-cpu\Bonsai.ML.Torch-cpu.csproj" />
   </ItemGroup>
 

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Applies a Kalman smoother to the input filtered result sequence.

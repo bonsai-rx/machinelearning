@@ -1,6 +1,6 @@
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Represents the state of an LDS after orthogonalizing the state mean and covariance estimates.
