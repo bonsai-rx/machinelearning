@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Orthogonalizes the state and covariance estimates from a Kalman filter or smoother.

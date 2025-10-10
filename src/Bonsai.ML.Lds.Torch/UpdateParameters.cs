@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Updates the parameters of a Kalman filter model instance using the provided Kalman filter parameters.

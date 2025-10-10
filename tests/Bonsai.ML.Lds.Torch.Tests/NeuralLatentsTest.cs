@@ -10,7 +10,7 @@ using Bonsai.ML.Tests.Utilities;
 using static TorchSharp.torch;
 using TorchSharp;
 
-namespace Bonsai.ML.Torch.LDS.Tests;
+namespace Bonsai.ML.Lds.Torch.Tests;
 
 /// <summary>
 /// Tests for the neural latents workflow.

@@ -5,7 +5,7 @@ using TorchSharp;
 using static TorchSharp.torch;
 using System.Threading.Tasks;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Learn the parameters of a kalman filter using the batch EM update algorithm.

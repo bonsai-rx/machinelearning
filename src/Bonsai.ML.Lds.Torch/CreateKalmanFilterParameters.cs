@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 using System.Xml.Serialization;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.LDS;
+namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
 /// Initializes the parameters for a new Kalman filter model.

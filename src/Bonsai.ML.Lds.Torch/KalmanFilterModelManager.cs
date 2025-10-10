@@ -4,7 +4,7 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using static TorchSharp.torch;
-using Bonsai.ML.Torch.LDS;
+using Bonsai.ML.Lds.Torch;
 
 // <summary>
 // Manages instances of the Kalman Filter model with a thread-safe locking mechanism for reading state tensors and writing parameters.
