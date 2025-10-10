@@ -5,6 +5,6 @@
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Bonsai.Core" Version="2.8.1" />
+    <PackageReference Include="Bonsai.Core" Version="2.9.0" />
   </ItemGroup>
 </Project>
