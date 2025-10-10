@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Bonsai.ML.Torch</Title>
-    <Description>A Bonsai package for the TorchSharp package - a C# wrapper for torch. For running on CPU, this package requires installing the Bonsai.ML.Torch-cpu package. For running on GPU, please visit https://bonsai-rx.org/machinelearning/articles/Torch/torch-overview.html for more details.</Description>
+    <Description>A Bonsai package for the TorchSharp package. For running on CPU, this package requires installing the Bonsai.ML.Torch-cpu package. For running on GPU, please visit https://bonsai-rx.org/machinelearning/articles/Torch/torch-overview.html for more details.</Description>
     <PackageTags>$(PackageTags) Torch Tensor</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
