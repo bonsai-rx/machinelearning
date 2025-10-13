@@ -2,10 +2,19 @@
 using System.Reactive.Linq;
 using System.Xml;
 
-namespace Bonsai.ML.LinearDynamicalSystems.Tests;
+namespace Bonsai.ML.Tests.Utilities;
 
-internal static class WorkflowHelper
+/// <summary>
+/// Helper class to run Bonsai workflows in unit tests.
+/// </summary>
+public static class WorkflowHelper
 {
+    /// <summary>
+    /// Runs a Bonsai workflow from the specified file path and sets the specified workflow properties.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="properties"></param>
+    /// <returns></returns>
     public static async Task RunWorkflow(string path, params (string name, object value)[] properties)
     {
         using var reader = XmlReader.Create(path);
