@@ -22,22 +22,34 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// </summary>
         [Description("The model to save.")]
         [XmlIgnore]
-        public Module Module { get; set; }
+        public nn.Module Module { get; set; }
 
         /// <summary>
-        /// The path to save the model.
+        /// The path to the modules state.
         /// </summary>
-        [Description("The path to save the model.")]
+        [Description("The path to the modules state.")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-        public string ModelPath { get; set; }
+        public string ModulePath { get; set; }
 
         /// <summary>
-        /// Saves the model to the specified file path.
+        /// Loads the modules state from the specified file path.
         /// </summary>
         /// <returns></returns>
-        public IObservable<Module> Process()
+        public IObservable<nn.Module> Process()
         {
-            return Observable.Return(Module.load(ModelPath));
+            return Observable.Return(Module.load(ModulePath));
+        }
+
+        /// <summary>
+        /// Loads the module's state from the specified file path.
+        /// </summary>
+        /// <returns></returns>
+        public IObservable<nn.Module> Process(IObservable<nn.Module> source)
+        {
+            return source.Select(module =>
+            {
+                return module.load(ModulePath);
+            });
         }
     }
 }

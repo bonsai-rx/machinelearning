@@ -39,7 +39,24 @@ public class CreateSequential
     {
         return Observable.Defer(() =>
         {
-            var sequential = Sequential([..Modules.Select(m => (Module<Tensor, Tensor>)m)]);
+            var sequential = Sequential([.. Modules.Select(m => (Module<Tensor, Tensor>)m)]);
+            if (Device is not null && Device != CPU)
+            {
+                sequential.to(Device);
+            }
+            return Observable.Return(sequential);
+        });
+    }
+    
+    /// <summary>
+    /// Generates an observable sequence that creates a sequential model from the input modules.
+    /// </summary>
+    /// <returns></returns>
+    public IObservable<IModule<Tensor, Tensor>> Process(IObservable<IModule<Tensor, Tensor>[]> source)
+    {
+        return source.SelectMany(modules =>
+        {
+            var sequential = Sequential([.. modules.Select(m => (Module<Tensor, Tensor>)m)]);
             if (Device is not null && Device != CPU)
             {
                 sequential.to(Device);
@@ -54,14 +71,14 @@ public class CreateSequential
     /// <returns></returns>
     public IObservable<IModule<Tensor, Tensor>> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ =>
+        return source.SelectMany(_ =>
         {
             var sequential = Sequential([..Modules.Select(m => (Module<Tensor, Tensor>)m)]);
             if (Device is not null && Device != CPU)
             {
                 sequential.to(Device);
             }
-            return sequential;
+            return Observable.Return(sequential);
         });
     }
 }
