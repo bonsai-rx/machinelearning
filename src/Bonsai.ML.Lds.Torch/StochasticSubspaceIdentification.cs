@@ -35,7 +35,7 @@ public class StochasticSubspaceIdentification
     public double Threshold
     {
         get => _threshold;
-        set => _threshold = value >= 0 ? value : throw new ArgumentOutOfRangeException(nameof(Threshold), "Must be greater than or equal to zero.");
+        set => _threshold = value >= 0 && value < 1 ? value : throw new ArgumentOutOfRangeException(nameof(Threshold), "Must be greater than or equal to zero and less than one.");
     }
 
     /// <summary>
@@ -81,21 +81,27 @@ public class StochasticSubspaceIdentification
     /// <returns></returns>
     public IObservable<StochasticSubspaceIdentificationResult> Process(IObservable<Tensor> source)
     {
-        return source.Select(input =>
+        return source.Select(input => Observable.Create<StochasticSubspaceIdentificationResult>(observer =>
         {
-            var parametersToEstimate = new ParametersToEstimate(
-                transitionMatrix: EstimateTransitionMatrix,
-                measurementFunction: EstimateMeasurementFunction,
-                processNoiseCovariance: EstimateProcessNoiseCovariance,
-                measurementNoiseCovariance: EstimateMeasurementNoiseCovariance,
-                initialMean: EstimateInitialMean,
-                initialCovariance: EstimateInitialCovariance);
+            return Task.Run(() =>
+            {
+                var parametersToEstimate = new ParametersToEstimate(
+                    transitionMatrix: EstimateTransitionMatrix,
+                    measurementFunction: EstimateMeasurementFunction,
+                    processNoiseCovariance: EstimateProcessNoiseCovariance,
+                    measurementNoiseCovariance: EstimateMeasurementNoiseCovariance,
+                    initialMean: EstimateInitialMean,
+                    initialCovariance: EstimateInitialCovariance);
 
-            return KalmanFilter.StochasticSubspaceIdentification(
-                observations: input,
-                maxLag: MaxLag,
-                threshold: Threshold,
-                parametersToEstimate: parametersToEstimate);
-        });
+                observer.OnNext(KalmanFilter.StochasticSubspaceIdentification(
+                    observations: input,
+                    maxLag: MaxLag,
+                    threshold: Threshold,
+                    parametersToEstimate: parametersToEstimate));
+
+                observer.OnCompleted();
+                return System.Reactive.Disposables.Disposable.Empty;
+            });
+        })).Concat();
     }
 }

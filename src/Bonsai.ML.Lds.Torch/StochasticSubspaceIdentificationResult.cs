@@ -10,7 +10,7 @@ namespace Bonsai.ML.Lds.Torch;
 /// <param name="singularValues">The singular values from the SVD decomposition.</param>
 public struct StochasticSubspaceIdentificationResult(
     KalmanFilterParameters parameters,
-    int effectiveStates,
+    long effectiveStates,
     Tensor singularValues)
 {
     /// <summary>
@@ -21,7 +21,7 @@ public struct StochasticSubspaceIdentificationResult(
     /// <summary>
     /// The effective states of the system determined by SVD truncation.
     /// </summary>
-    public int EffectiveStates = effectiveStates;
+    public long EffectiveStates = effectiveStates;
 
     /// <summary>
     /// The singular values from the SVD decomposition of the Hankel matrix.

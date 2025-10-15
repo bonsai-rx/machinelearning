@@ -786,19 +786,12 @@ internal class KalmanFilter : nn.Module
         // Compute SVD of the past observations
         var (U, S, Vt) = linalg.svd(projection, fullMatrices: false);
 
-        // Truncate to estimated state dimension
-        // var rankTolerance = S[0] * effectiveRankCutoff;
-        // var effectiveRank = 0;
-        // for (int i = 0; i < S.shape[0]; i++)
-        // {
-        //     if (S[i].item<double>() > rankTolerance.item<double>())
-        //         effectiveRank = i + 1;
-        // }
-        // effectiveRank = Math.Min(effectiveRank, numStates);
-        var effectiveStates = (int)argmax(S < threshold).item<long>();
+        // Compute the effective rank
+        var effectiveRank = (S > (threshold * S[0])).to_type(ScalarType.Int64).sum().item<long>();
+        var effectiveStates = Math.Max(effectiveRank, 1);
 
         var Ur = U[TensorIndex.Colon, TensorIndex.Slice(0, effectiveStates)];
-        var SrSqrt = S[TensorIndex.Slice(0, effectiveStates)].sqrt();
+        var SrSqrt = S[TensorIndex.Slice(0, effectiveStates)].diag().sqrt();
         var Vrt = Vt[TensorIndex.Slice(0, effectiveStates)];
 
         // Estimate observability matrix
@@ -808,9 +801,9 @@ internal class KalmanFilter : nn.Module
         var measurementFunction = observability[TensorIndex.Slice(0, numObs)];
 
         // Estimate state sequence
-        var states = SrSqrt.diag().matmul(Vrt);
+        var states = SrSqrt.matmul(Vrt);
 
-        // Estimate transition matrix A using shifted states
+        // Estimate transition matrix using shifted states
         var statesShifted = states[TensorIndex.Colon, TensorIndex.Slice(0, numCols - 1)];
         var statesNext = states[TensorIndex.Colon, TensorIndex.Slice(1, numCols)];
         
@@ -822,7 +815,7 @@ internal class KalmanFilter : nn.Module
         var stateResiduals = statesNext - transitionMatrix.matmul(statesShifted);
         var processNoiseCovariance = WrappedTensorDisposeScope(() => stateResiduals.matmul(stateResiduals.mT) / (numCols - 1));
 
-        // Vectorized computation of observation residuals
+        // Compute the observation residuals
         var observationPredictions = measurementFunction.matmul(states);
         var observationWindow = observations[TensorIndex.Slice(maxLag, maxLag + numCols)].mT;
         var observationResiduals = observationWindow - observationPredictions;
