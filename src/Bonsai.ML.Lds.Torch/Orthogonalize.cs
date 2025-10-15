@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Lds.Torch;
@@ -9,16 +10,17 @@ namespace Bonsai.ML.Lds.Torch;
 /// Orthogonalizes the state and covariance estimates from a Kalman filter or smoother.
 /// </summary>
 [Combinator]
+[ResetCombinator]
 [Description("Orthogonalizes the state and covariance estimates from a Kalman filter or smoother.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class Orthogonalize
 {
     /// <summary>
-    /// The name of the Kalman filter model to be used.
+    /// The Kalman filter model.
     /// </summary>
-    [TypeConverter(typeof(KalmanFilterNameConverter))]
-    [Description("The name of the Kalman filter model to be used.")]
-    public string ModelName { get; set; } = "KalmanFilter";
+    [Description("The Kalman filter model.")]
+    [XmlIgnore]
+    public KalmanFilter Model { get; set; }
 
     /// <summary>
     /// Processes an observable sequence of smoothed results, orthogonalizing the mean and covariance estimates.
@@ -29,10 +31,9 @@ public class Orthogonalize
     {
         return source.Select(input =>
         {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var smoothedMean = input.SmoothedMean;
             var smoothedCovariance = input.SmoothedCovariance;
-            return kalmanFilter.OrthogonalizeMeanAndCovariance(smoothedMean, smoothedCovariance);
+            return Model.OrthogonalizeMeanAndCovariance(smoothedMean, smoothedCovariance);
         });
     }
 
@@ -45,10 +46,9 @@ public class Orthogonalize
     {
         return source.Select(input =>
         {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var filteredMean = input.UpdatedMean;
             var filteredCovariance = input.UpdatedCovariance;
-            return kalmanFilter.OrthogonalizeMeanAndCovariance(filteredMean, filteredCovariance);
+            return Model.OrthogonalizeMeanAndCovariance(filteredMean, filteredCovariance);
         });
     }
 
@@ -61,10 +61,9 @@ public class Orthogonalize
     {
         return source.Select(input =>
         {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var mean = input.Mean;
             var covariance = input.Covariance;
-            return kalmanFilter.OrthogonalizeMeanAndCovariance(mean, covariance);
+            return Model.OrthogonalizeMeanAndCovariance(mean, covariance);
         });
     }
 
@@ -77,10 +76,9 @@ public class Orthogonalize
     {
         return source.Select(input =>
         {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var mean = input.Mean;
             var covariance = input.Covariance;
-            return kalmanFilter.OrthogonalizeMeanAndCovariance(mean, covariance);
+            return Model.OrthogonalizeMeanAndCovariance(mean, covariance);
         });
     }
 
@@ -93,10 +91,9 @@ public class Orthogonalize
     {
         return source.Select(input =>
         {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var mean = input.Item1;
             var covariance = input.Item2;
-            return kalmanFilter.OrthogonalizeMeanAndCovariance(mean, covariance);
+            return Model.OrthogonalizeMeanAndCovariance(mean, covariance);
         });
     }
 }

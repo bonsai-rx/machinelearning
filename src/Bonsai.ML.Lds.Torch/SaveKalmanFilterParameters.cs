@@ -66,13 +66,6 @@ public class SaveKalmanFilterParameters
     [Editor("Bonsai.Design.SaveFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
     public string InitialCovarianceFilePath { get; set; } = "initial_covariance.bin";
 
-    /// <summary>
-    /// The name of the Kalman filter model to be used.
-    /// </summary>
-    [TypeConverter(typeof(KalmanFilterNameConverter))]
-    [Description("The name of the Kalman filter model to be used.")]
-    public string ModelName { get; set; } = "KalmanFilter";
-
     private void SaveTensorToFile(Tensor tensor, string filePath)
     {
         if (filePath != null)
@@ -84,12 +77,11 @@ public class SaveKalmanFilterParameters
     /// <summary>
     /// Creates parameters for a Kalman filter model using the properties of this class.
     /// </summary>
-    public IObservable<T> Process<T>(IObservable<T> source)
+    public IObservable<KalmanFilter> Process(IObservable<KalmanFilter> source)
     {
-        return source.Do(input =>
+        return source.Do(model =>
         {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            var parameters = kalmanFilter.Parameters;
+            var parameters = model.Parameters;
             SaveTensorToFile(parameters.TransitionMatrix, TransitionMatrixFilePath);
             SaveTensorToFile(parameters.MeasurementFunction, MeasurementFunctionFilePath);
             SaveTensorToFile(parameters.ProcessNoiseCovariance, ProcessNoiseCovarianceFilePath);

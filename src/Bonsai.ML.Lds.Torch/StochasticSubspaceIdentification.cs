@@ -16,6 +16,17 @@ namespace Bonsai.ML.Lds.Torch;
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class StochasticSubspaceIdentification
 {
+    private int? _targetNumStates = 2;
+    /// <summary>
+    /// The target number of states in the Kalman filter model.
+    /// </summary>
+    [Description("The target number of states in the Kalman filter model.")]
+    public int? TargetNumStates
+    {
+        get => _targetNumStates;
+        set => _targetNumStates = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of states must be greater than zero.");
+    }
+
     private int _maxLag = 20;
     /// <summary>
     /// The maximum lag to consider for the subspace identification.
@@ -95,6 +106,7 @@ public class StochasticSubspaceIdentification
 
                 observer.OnNext(KalmanFilter.StochasticSubspaceIdentification(
                     observations: input,
+                    targetNumStates: TargetNumStates,
                     maxLag: MaxLag,
                     threshold: Threshold,
                     parametersToEstimate: parametersToEstimate));
