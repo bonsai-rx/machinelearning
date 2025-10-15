@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Lds.Torch;
@@ -9,16 +10,17 @@ namespace Bonsai.ML.Lds.Torch;
 /// Applies a Kalman smoother to the input filtered result sequence.
 /// </summary>
 [Combinator]
+[ResetCombinator]
 [Description("Applies a Kalman smoother to the input filtered result sequence.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class Smooth
 {
     /// <summary>
-    /// The name of the Kalman filter model to be used.
+    /// The Kalman filter model.
     /// </summary>
-    [TypeConverter(typeof(KalmanFilterNameConverter))]
-    [Description("The name of the Kalman filter model to be used.")]
-    public string ModelName { get; set; } = "KalmanFilter";
+    [Description("The Kalman filter model.")]
+    [XmlIgnore]
+    public KalmanFilter Model { get; set; }
 
     /// <summary>
     /// Processes an observable sequence of filtered results, applying the Kalman smoother to each result.
@@ -27,11 +29,7 @@ public class Smooth
     /// <returns></returns>
     public IObservable<SmoothedState> Process(IObservable<FilteredState> source)
     {
-        return source.Select((input) =>
-        {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            return kalmanFilter.Smooth(input);
-        });
+        return source.Select(Model.Smooth);
     }
 
     /// <summary>
@@ -43,9 +41,8 @@ public class Smooth
     {
         return source.Select((input) =>
         {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
             var filteredState = new FilteredState(input.Item1, input.Item2, input.Item3, input.Item4);
-            return kalmanFilter.Smooth(filteredState);
+            return Model.Smooth(filteredState);
         });
     }
 }
