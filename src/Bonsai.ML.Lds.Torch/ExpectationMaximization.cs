@@ -1,5 +1,7 @@
 using System;
 using System.ComponentModel;
+using System.Reactive;
+using System.Linq;
 using System.Reactive.Linq;
 using TorchSharp;
 using static TorchSharp.torch;
@@ -98,7 +100,7 @@ public class ExpectationMaximization
     /// <returns></returns>
     public IObservable<ExpectationMaximizationResult> Process(IObservable<Tensor> source)
     {
-        return source.SelectMany(input => Observable.Create<ExpectationMaximizationResult>((observer, cancellationToken) =>
+        return source.Select(input => Observable.Create<ExpectationMaximizationResult>((observer, cancellationToken) =>
         {
             return Task.Run(() =>
             {
@@ -168,6 +170,6 @@ public class ExpectationMaximization
                 return System.Reactive.Disposables.Disposable.Empty;
             },
             cancellationToken);
-        }));
+        })).Concat();
     }
 }
