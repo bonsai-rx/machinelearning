@@ -113,7 +113,6 @@ public class Buffer
             _idxSrc = null;
             _idxDst?.Dispose();
             _idxDst = null;
-            _current = 0;
             send = false;
         });
     }
