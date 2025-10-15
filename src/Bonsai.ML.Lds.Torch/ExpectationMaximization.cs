@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive;
+using System.Xml.Serialization;
 using System.Linq;
 using System.Reactive.Linq;
 using TorchSharp;
@@ -13,16 +14,39 @@ namespace Bonsai.ML.Lds.Torch;
 /// Learn the parameters of a kalman filter using the batch EM update algorithm.
 /// </summary>
 [Combinator]
+[ResetCombinator]
 [Description("Learn the parameters of a kalman filter using the batch EM update algorithm.")]
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class ExpectationMaximization
 {
+    private int _numStates = 2;
     /// <summary>
-    /// The name of the Kalman filter model to be trained.
+    /// The number of states in the Kalman filter model.
     /// </summary>
-    [TypeConverter(typeof(KalmanFilterNameConverter))]
-    [Description("The name of the Kalman filter model to be trained.")]
-    public string ModelName { get; set; } = "KalmanFilter";
+    [Description("The number of states in the Kalman filter model.")]
+    public int NumStates
+    {
+        get => _numStates;
+        set => _numStates = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of states must be greater than zero.");
+    }
+
+    private int _numObservations = 10;
+    /// <summary>
+    /// The number of observations in the Kalman filter model.
+    /// </summary>
+    [Description("The number of observations in the Kalman filter model.")]
+    public int NumObservations
+    {
+        get => _numObservations;
+        set => _numObservations = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of observations must be greater than zero.");
+    }
+
+    /// <summary>
+    /// The Kalman filter parameters used to initialize the model.
+    /// </summary>
+    [Description("The Kalman filter parameters used to initialize the model.")]
+    [XmlIgnore]
+    public KalmanFilterParameters ModelParameters { get; set; } = new();
 
     private int _maxIterations = 10;
     /// <summary>
@@ -104,9 +128,9 @@ public class ExpectationMaximization
         {
             return Task.Run(() =>
             {
-                var model = KalmanFilterModelManager.GetKalmanFilter(ModelName);
                 var previousLogLikelihood = double.NegativeInfinity;
-                var logLikelihood = zeros(new long[] { MaxIterations }, device: input.device);
+                var logLikelihood = zeros([MaxIterations], device: input.device);
+                var maxIterationsReached = false;
 
                 var parametersToEstimate = new ParametersToEstimate(
                     transitionMatrix: EstimateTransitionMatrix,
@@ -115,6 +139,15 @@ public class ExpectationMaximization
                     measurementNoiseCovariance: EstimateMeasurementNoiseCovariance,
                     initialMean: EstimateInitialMean,
                     initialCovariance: EstimateInitialCovariance);
+
+                var parameters = new KalmanFilterParameters(
+                    transitionMatrix: ModelParameters.TransitionMatrix,
+                    measurementFunction: ModelParameters.MeasurementFunction,
+                    processNoiseCovariance: ModelParameters.ProcessNoiseCovariance,
+                    measurementNoiseCovariance: ModelParameters.MeasurementNoiseCovariance,
+                    initialMean: ModelParameters.InitialMean,
+                    initialCovariance: ModelParameters.InitialCovariance
+                );
 
                 for (int i = 0; i < MaxIterations; i++)
                 {
@@ -125,7 +158,16 @@ public class ExpectationMaximization
                         return System.Reactive.Disposables.Disposable.Empty;
                     }
 
-                    var result = model.ExpectationMaximization(input, 1, Tolerance, parametersToEstimate, false);
+                    var result = KalmanFilter.ExpectationMaximization(
+                        observation: input,
+                        numStates: _numStates,
+                        numObservations: _numObservations,
+                        parameters: parameters,
+                        maxIterations: MaxIterations,
+                        tolerance: Tolerance,
+                        parametersToEstimate: parametersToEstimate,
+                        device: input.device,
+                        scalarType: input.dtype);
 
                     var logLikelihoodSum = result.LogLikelihood
                         .cpu()
@@ -140,6 +182,7 @@ public class ExpectationMaximization
                         if (i == MaxIterations - 1)
                         {
                             Console.WriteLine("EM reached the maximum number of iterations.");
+                            maxIterationsReached = true;
                         }
                     }
 
@@ -149,21 +192,26 @@ public class ExpectationMaximization
                         {
                             Console.WriteLine("EM converged after " + (i + 1) + " iterations.");
                         }
-                        logLikelihood = logLikelihood[torch.TensorIndex.Slice(0, i + 1)];
+                        logLikelihood = logLikelihood[TensorIndex.Slice(0, i + 1)];
                         break;
                     }
-                    previousLogLikelihood = logLikelihoodSum;
-                    model.UpdateParameters(result.Parameters);
 
-                    observer.OnNext(new ExpectationMaximizationResult(
-                        logLikelihood: logLikelihood[torch.TensorIndex.Slice(0, i + 1)],
-                        parameters: model.Parameters,
-                        finished: false));
+                    parameters = result.Parameters;
+
+                    if (!maxIterationsReached)
+                    {
+                        previousLogLikelihood = logLikelihoodSum;
+
+                        observer.OnNext(new ExpectationMaximizationResult(
+                            logLikelihood: logLikelihood[TensorIndex.Slice(0, i + 1)],
+                            parameters: parameters,
+                            finished: false));
+                    }
                 }
 
                 observer.OnNext(new ExpectationMaximizationResult(
                     logLikelihood: logLikelihood,
-                    parameters: model.Parameters,
+                    parameters: parameters,
                     finished: true));
 
                 observer.OnCompleted();

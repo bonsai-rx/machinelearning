@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using System.Xml.Serialization;
 
 namespace Bonsai.ML.Lds.Torch;
 
@@ -14,11 +15,11 @@ namespace Bonsai.ML.Lds.Torch;
 public class UpdateParameters
 {
     /// <summary>
-    /// The name of the Kalman filter model to be used.
+    /// The Kalman filter model.
     /// </summary>
-    [TypeConverter(typeof(KalmanFilterNameConverter))]
-    [Description("The name of the Kalman filter model to be used.")]
-    public string ModelName { get; set; } = "KalmanFilter";
+    [XmlIgnore]
+    [Description("The Kalman filter model.")]
+    public KalmanFilter Model { get; set; }
 
     /// <summary>
     /// Updates the parameters of a Kalman filter model using elements from the input sequence.
@@ -27,10 +28,6 @@ public class UpdateParameters
     /// <returns></returns>
     public IObservable<KalmanFilterParameters> Process(IObservable<KalmanFilterParameters> source)
     {
-        return source.Do((input) =>
-        {
-            var kalmanFilter = KalmanFilterModelManager.GetKalmanFilter(ModelName);
-            kalmanFilter.UpdateParameters(input);
-        });
+        return source.Do(Model.UpdateParameters);
     }
 }
