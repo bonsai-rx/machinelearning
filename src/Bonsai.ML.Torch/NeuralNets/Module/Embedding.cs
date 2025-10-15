@@ -63,8 +63,9 @@ public class Embedding
     /// <summary>
     /// The desired device of returned tensor.
     /// </summary>
+    [XmlIgnore]
     [Description("The desired device of returned tensor")]
-    public torch.Device Device { get; set; } = null;
+    public Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
