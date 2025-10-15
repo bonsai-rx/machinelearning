@@ -21,7 +21,6 @@ public class AdaptiveAveragePooling
     /// <summary>
     /// The number of dimensions for the AdaptiveAvgPool module.
     /// </summary>
-    
     public Dimensions Dimensions { get; set; } = Dimensions.One;
 
     /// <summary>

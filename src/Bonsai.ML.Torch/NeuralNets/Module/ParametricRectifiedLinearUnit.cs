@@ -33,6 +33,7 @@ public class ParametricRectifiedLinearUnit
     /// <summary>
     /// The desired device of returned tensor.
     /// </summary>
+    [XmlIgnore]
     [Description("The desired device of returned tensor")]
     public Device Device { get; set; } = null;
 
