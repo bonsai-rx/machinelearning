@@ -676,7 +676,7 @@ public class KalmanFilter : nn.Module
                     scalarType: _scalarType,
                     device: _device);
 
-                // Compute log likelihood (avoid creating intermediate tensors)
+                // Compute log likelihood
                 var llSumDouble = filteredState.LogLikelihood.sum()
                     .to_type(ScalarType.Float64).item<double>();
                 var filteredLogLikelihoodSum = logLikelihoodConst + 0.5 * llSumDouble;
@@ -713,7 +713,7 @@ public class KalmanFilter : nn.Module
                 var S11 = smoothedState.S11.sum([0]);
                 var S10 = smoothedState.S10.sum([0]);
 
-                // Replace einsum with faster matmul
+                // Compute cross-correlation between observations and smoothed states
                 var crossCorrelationObservations = observationT.matmul(smoothedState.SmoothedMean);
 
                 // Update parameters
@@ -896,6 +896,7 @@ public class KalmanFilter : nn.Module
 
         var timeBins = observations.size(0);
         var numObs = observations.size(1);
+        var centered = observations - observations.mean([0], keepdim: true);
 
         // Build Hankel matrices from observations
         var numCols = (int)(timeBins - 2 * maxLag + 1);
@@ -903,11 +904,11 @@ public class KalmanFilter : nn.Module
         if (numCols <= 0)
             throw new ArgumentException($"Number of time bins ({timeBins}) must be greater than 2*maxLag ({2 * maxLag}) for subspace identification.");
 
-        var stride = observations.stride();
-        var pastView = observations.as_strided([maxLag, numCols, numObs], [stride[0], stride[0], stride[1]]);
+        var stride = centered.stride();
+        var pastView = centered.as_strided([maxLag, numCols, numObs], [stride[0], stride[0], stride[1]]);
         var past = pastView.permute(0, 2, 1).reshape(maxLag * numObs, numCols);
 
-        var futureView = observations.narrow(0, maxLag, timeBins - maxLag)
+        var futureView = centered.narrow(0, maxLag, timeBins - maxLag)
             .as_strided([maxLag, numCols, numObs], [stride[0], stride[0], stride[1]]);
         var future = futureView.permute(0, 2, 1).reshape(maxLag * numObs, numCols);
 
@@ -920,8 +921,7 @@ public class KalmanFilter : nn.Module
 
         // Compute the effective rank
         var effectiveRank = (S > (threshold * S[0])).to_type(ScalarType.Int64).sum().item<long>();
-
-        var effectiveStates = Math.Min(effectiveRank, targetNumStates ?? effectiveRank);
+        var effectiveStates = Math.Max(Math.Min(effectiveRank, targetNumStates ?? effectiveRank), 1);
 
         var Ur = U[TensorIndex.Colon, TensorIndex.Slice(0, effectiveStates)];
         var SrSqrt = S[TensorIndex.Slice(0, effectiveStates)].diag().sqrt();
@@ -946,13 +946,13 @@ public class KalmanFilter : nn.Module
 
         // Estimate noise covariances using residuals
         var stateResiduals = statesNext - transitionMatrix.matmul(statesShifted);
-        var processNoiseCovariance = WrappedTensorDisposeScope(() => stateResiduals.matmul(stateResiduals.mT) / (numCols - 1));
+        var processNoiseCovariance = WrappedTensorDisposeScope(() => EnsureSymmetric(stateResiduals.matmul(stateResiduals.mT) / (numCols - 1)));
 
         // Compute the observation residuals
         var observationPredictions = measurementFunction.matmul(states);
-        var observationWindow = observations[TensorIndex.Slice(maxLag, maxLag + numCols)].mT;
+        var observationWindow = centered[TensorIndex.Slice(maxLag, maxLag + numCols)].mT;
         var observationResiduals = observationWindow - observationPredictions;
-        var measurementNoiseCovariance = WrappedTensorDisposeScope(() => observationResiduals.matmul(observationResiduals.mT) / numCols);
+        var measurementNoiseCovariance = WrappedTensorDisposeScope(() => EnsureSymmetric(observationResiduals.matmul(observationResiduals.mT) / numCols));
 
         // Initial state estimates
         var initialMean = states[TensorIndex.Colon, 0];
