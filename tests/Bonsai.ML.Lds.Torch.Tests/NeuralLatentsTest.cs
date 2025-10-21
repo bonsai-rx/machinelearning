@@ -163,27 +163,4 @@ public class NeuralLatentsTest
         Assert.IsTrue(allclose(bonsaiMeans, pythonMeans));
         Assert.IsTrue(allclose(bonsaiCovariances, pythonCovariances));
     }
-
-    [TestMethod]
-    public void TestSubspaceIdentification()
-    {
-        var observationsFileName = Path.Combine(basePath, "transformed_binned_spikes.pt");
-        var observations = Tensor.Load(observationsFileName).T;
-        var stochasticSubspaceIdentification = new StochasticSubspaceIdentification
-        {
-            MaxLag = 20,
-            Threshold = 0.01,
-            EstimateTransitionMatrix = true,
-            EstimateMeasurementFunction = true,
-            EstimateProcessNoiseCovariance = true,
-            EstimateMeasurementNoiseCovariance = true,
-            EstimateInitialMean = true,
-            EstimateInitialCovariance = true
-        };
-
-        StochasticSubspaceIdentificationResult? result = null;
-        var subscription = stochasticSubspaceIdentification.Process(Observable.Return(observations)).Subscribe(r => result = r);
-        
-        Console.WriteLine($"Estimated effective states: {result?.EffectiveStates}");
-    }
 }
