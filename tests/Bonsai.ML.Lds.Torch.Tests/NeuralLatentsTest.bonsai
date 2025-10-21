@@ -242,6 +242,20 @@
                 <p2:EstimateInitialCovariance>true</p2:EstimateInitialCovariance>
               </Combinator>
             </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Parameters</Selector>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:UpdateParameters" />
+            </Expression>
             <Expression xsi:type="rx:BehaviorSubject">
               <Name>ExpectationMaximizationResult</Name>
             </Expression>
@@ -258,8 +272,12 @@
             <Edge From="2" To="3" Label="Source1" />
             <Edge From="3" To="4" Label="Source2" />
             <Edge From="4" To="5" Label="Source1" />
-            <Edge From="5" To="7" Label="Source1" />
-            <Edge From="6" To="7" Label="Source2" />
+            <Edge From="5" To="8" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
+            <Edge From="7" To="8" Label="Source2" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="11" Label="Source1" />
+            <Edge From="10" To="11" Label="Source2" />
           </Edges>
         </Workflow>
       </Expression>
