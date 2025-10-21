@@ -759,8 +759,6 @@ public class KalmanFilter : nn.Module
 
     public static ExpectationMaximizationResult ExpectationMaximization(
         Tensor observation,
-        int numStates,
-        int numObservations,
         KalmanFilterParameters parameters,
         int maxIterations = 100,
         double tolerance = 1e-4,
@@ -769,6 +767,9 @@ public class KalmanFilter : nn.Module
         ScalarType scalarType = ScalarType.Float32)
     {
         device ??= CPU;
+
+        ValidateNumStates(parameters.TransitionMatrix, parameters.MeasurementFunction, parameters.InitialMean, parameters.InitialCovariance, parameters.ProcessNoiseCovariance, out var numStates);
+        ValidateNumObservations(parameters.MeasurementFunction, parameters.MeasurementNoiseCovariance, out var numObservations);
 
         var timeBins = observation.size(0);
         var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: device);

@@ -160,8 +160,6 @@ public class ExpectationMaximization
 
                     var result = KalmanFilter.ExpectationMaximization(
                         observation: input,
-                        numStates: _numStates,
-                        numObservations: _numObservations,
                         parameters: parameters,
                         maxIterations: MaxIterations,
                         tolerance: Tolerance,
