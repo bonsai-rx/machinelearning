@@ -1,5 +1,4 @@
 import numpy as np
-import plotly.graph_objects as go
 import remfile, h5py
 
 from dandi.dandiapi import DandiAPIClient
