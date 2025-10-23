@@ -135,6 +135,30 @@ public class ReceptiveFieldSimpleCellTest
     }
 
     /// <summary>
+    /// Cleanup files generated for test.
+    /// </summary>
+    [TestCleanup]
+    public void TestCleanup()
+    {
+        var jsonFiles = Directory.GetFiles(basePath, "*.json");
+        var zipFiles = Directory.GetFiles(basePath, "*.zip");
+        foreach (var file in jsonFiles) File.Delete(file);
+        foreach (var file in zipFiles) File.Delete(file);
+
+        var virtualEnvPath = Path.Combine(basePath, ".venv");
+        if (Directory.Exists(virtualEnvPath))
+        {
+            Directory.Delete(virtualEnvPath, true);
+        }
+
+        var dataPath = Path.Combine(basePath, "data");
+        if (Directory.Exists(dataPath))
+        {
+            Directory.Delete(dataPath, true);
+        }
+    }
+
+    /// <summary>
     /// Compares the results from the Python script and the Bonsai workflow.
     /// </summary>
     [TestMethod]
