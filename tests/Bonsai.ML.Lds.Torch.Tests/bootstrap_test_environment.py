@@ -52,12 +52,14 @@ def activate_venv(venv_path: str = None):
         os.environ["PATH"] = os.pathsep.join([bin_path, *os.environ.get("PATH", "").split(os.pathsep)])
         sys.path.insert(0, os.path.join(venv_path, 'Lib', 'site-packages'))
 
-def install(package: str, venv_path: str = None):
+def install(venv_path: str = None, pip_args: list[str] = None):
     # function to install pip packages into a virtual environment
     if venv_path is None:
         venv_path = get_venv_path()
     pip_path = get_pip_path(venv_path)
-    subprocess.check_call([pip_path, "install", package])
+    if pip_args is None:
+        raise ValueError("pip_args must be provided")
+    subprocess.check_call([pip_path, "install", *pip_args])
 
 def install_requirements(requirements_file: str, venv_path: str = None):
     # function to install pip packages from a requirements file into a virtual environment
@@ -74,11 +76,11 @@ base_dir = get_base_dir(args.base_dir)
 venv_path = create_venv(base_dir)
 activate_venv(venv_path)
 
-install("torch", venv_path)
-install("plotly", venv_path)
-install("remfile", venv_path)
-install("dandi", venv_path)
-install("ssm@git+https://github.com/ncguilbeault/lds_python@75e3e5e92ce6344009b62a5034db49b238db63ef", venv_path)
+install(venv_path, ["--no-cache-dir", "torch"])
+install(venv_path, ["--no-cache-dir", "plotly"])
+install(venv_path, ["--no-cache-dir", "remfile"])
+install(venv_path, ["--no-cache-dir", "dandi"])
+install(venv_path, ["--no-cache-dir", "ssm@git+https://github.com/ncguilbeault/lds_python@75e3e5e92ce6344009b62a5034db49b238db63ef"])
 
 python_path = get_python_path(venv_path)
 
