@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Bonsai.ML.Torch-cpu</Title>
-    <Description>A Bonsai package for TorchSharp tensor manipulations. This package combines the Bonsai.ML.Torch package with LibTorch 2.5.1 CPU support.</Description>
+    <Description>A Bonsai package providing access to LibTorch via TorchSharp. This package combines the Bonsai.ML.Torch package with LibTorch 2.5.1 CPU support.</Description>
     <PackageTags>$(PackageTags) Torch Tensor cpu</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <IncludeBuildOutput>false</IncludeBuildOutput>

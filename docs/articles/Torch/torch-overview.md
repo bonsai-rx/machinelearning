@@ -26,6 +26,9 @@ Once complete, you need to install the CUDA-compatible torch libraries and place
 
 Finally, extract the zip folder and copy the contents of the `lib` folder into the `Extensions` folder of your bonsai installation directory.
 
+> [!NOTE]
+> The PyTorch website may not display older versions of the package compatible with CUDA 12.1. Here is a [direct link](https://download.pytorch.org/libtorch/cu121/libtorch-cxx11-abi-shared-with-deps-2.5.1%2Bcu121.zip) to the compatible Windows PyTorch version.
+
 ## Getting Started
 
 The `Bonsai.ML.Torch` package primarily provides tooling and functionality for users to interact with and manipulate `Tensor` objects, the core data type of torch which underlies most advanced operations. Additionally, the package provides some capabilities for defining neural network architectures, running forward inference, and learning via back propagation.
