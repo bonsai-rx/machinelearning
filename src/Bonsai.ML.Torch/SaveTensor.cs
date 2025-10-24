@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
+using TorchSharp;
 
 namespace Bonsai.ML.Torch
 {
@@ -28,7 +29,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            return source.Do(tensor => tensor.save(Path));
+            return source.Do(tensor => tensor.Save(Path));
         }
     }
 }
