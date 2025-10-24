@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Title>Bonsai.ML.Lds.Python.Design</Title>
+    <Description>A package for visualizing data from the Bonsai.ML.Lds.Python package.</Description>
+    <PackageTags>$(PackageTags) LinearDynamicalSystems LDS Design</PackageTags>
+    <TargetFramework>net472</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.Lds.Python\Bonsai.ML.Lds.Python.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Design\Bonsai.ML.Design.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Vision.Design" Version="2.9.0" />
+  </ItemGroup>
+
+</Project>
