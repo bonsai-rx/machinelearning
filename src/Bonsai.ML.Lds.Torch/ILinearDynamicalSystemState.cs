@@ -5,7 +5,7 @@ namespace Bonsai.ML.Lds.Torch;
 /// <summary>
 /// Represents the state of a linear gaussian dynamical system.
 /// </summary>
-public interface ILdsState
+public interface ILinearDynamicalSystemState
 {
     /// <summary>
     /// The mean of the state.

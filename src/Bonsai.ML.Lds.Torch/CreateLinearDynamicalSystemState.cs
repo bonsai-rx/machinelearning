@@ -14,7 +14,7 @@ namespace Bonsai.ML.Lds.Torch;
 [ResetCombinator]
 [Description("Creates a new state for a linear gaussian dynamical system.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class CreateLdsState : IScalarTypeProvider
+public class CreateLinearDynamicalSystemState : IScalarTypeProvider
 {
     private ScalarType _scalarType = ScalarType.Float32;
     /// <inheritdoc/>
@@ -95,14 +95,14 @@ public class CreateLdsState : IScalarTypeProvider
     /// Creates an observable sequence and emits the state for a linear gaussian dynamical system.
     /// </summary>
     /// <returns></returns>
-    public IObservable<LdsState> Process()
+    public IObservable<LinearDynamicalSystemState> Process()
     {
         return Observable.Defer(() =>
         {
             var device = Device ?? CPU;
             var mean = Mean?.to(device) ?? throw new InvalidOperationException("The mean of the state must be specified.");
             var covariance = Covariance?.to(device) ?? throw new InvalidOperationException("The covariance of the state must be specified.");
-            return Observable.Return(new LdsState(mean, covariance));
+            return Observable.Return(new LinearDynamicalSystemState(mean, covariance));
         });
     }
 
@@ -113,14 +113,14 @@ public class CreateLdsState : IScalarTypeProvider
     /// <param name="source"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public IObservable<LdsState> Process<T>(IObservable<T> source)
+    public IObservable<LinearDynamicalSystemState> Process<T>(IObservable<T> source)
     {
         return source.Select(_ =>
         {
             var device = Device ?? CPU;
             var mean = Mean?.to(device) ?? throw new InvalidOperationException("The mean of the state must be specified.");
             var covariance = Covariance?.to(device) ?? throw new InvalidOperationException("The covariance of the state must be specified.");
-            return new LdsState(mean, covariance);
+            return new LinearDynamicalSystemState(mean, covariance);
         });
     }
 }
