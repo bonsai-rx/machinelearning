@@ -222,10 +222,9 @@
             </Expression>
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p2:ExpectationMaximization">
-                <p2:NumStates>2</p2:NumStates>
-                <p2:NumObservations>10</p2:NumObservations>
+                <p2:NumStates xsi:nil="true" />
                 <p2:MaxIterations>1</p2:MaxIterations>
-                <p2:Tolerance>0.1</p2:Tolerance>
+                <p2:Tolerance>0.0001</p2:Tolerance>
                 <p2:Verbose>true</p2:Verbose>
                 <p2:EstimateTransitionMatrix>true</p2:EstimateTransitionMatrix>
                 <p2:EstimateMeasurementFunction>true</p2:EstimateMeasurementFunction>
