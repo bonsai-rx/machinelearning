@@ -37,26 +37,16 @@ public class CreateKalmanFilter : IScalarTypeProvider
     [XmlIgnore]
     public Device Device { get; set; }
 
-    private int _numStates = 2;
     /// <summary>
     /// The number of states in the Kalman filter model.
     /// </summary>
-    public int NumStates
-    {
-        get => _numStates;
-        set => _numStates = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of states must be greater than zero.");
-    }
+    public int? NumStates { get; set; } = null;
 
-    private int _numObservations = 2;
     /// <summary>
     /// The number of observations in the Kalman filter model.
     /// </summary>
-    public int NumObservations
-    {
-        get => _numObservations;
-        set => _numObservations = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of observations must be greater than zero.");
-    }
-
+    public int? NumObservations { get; set; } = null;
+    
     // Tensor properties with XML serialization support
     private Tensor _transitionMatrix;
     /// <summary>

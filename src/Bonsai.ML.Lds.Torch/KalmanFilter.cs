@@ -9,28 +9,12 @@ namespace Bonsai.ML.Lds.Torch;
 
 public class KalmanFilter : nn.Module
 {
-    private readonly Tensor _transitionMatrix;
-    private readonly Tensor _measurementFunction;
-    private readonly Tensor _initialMean;
-    private readonly Tensor _initialCovariance;
-    private readonly Tensor _processNoiseCovariance;
-    private readonly Tensor _measurementNoiseCovariance;
     private readonly Tensor _identityStates;
     private readonly Tensor _mean;
     private readonly Tensor _covariance;
-    private readonly int _numStates;
-    private readonly int _numObservations;
     private readonly Device _device;
     private readonly ScalarType _scalarType;
-
-    public KalmanFilterParameters Parameters => new(
-        _transitionMatrix,
-        _measurementFunction,
-        _processNoiseCovariance,
-        _measurementNoiseCovariance,
-        _initialMean,
-        _initialCovariance
-    );
+    public KalmanFilterParameters Parameters { get; private set; }
 
     public KalmanFilter(
         KalmanFilterParameters parameters,
@@ -40,30 +24,18 @@ public class KalmanFilter : nn.Module
         _device = device ?? CPU;
         _scalarType = scalarType;
 
-        ValidateNumStates(parameters.TransitionMatrix, parameters.MeasurementFunction, parameters.InitialMean, parameters.InitialCovariance, parameters.ProcessNoiseCovariance, out _numStates);
-        ValidateNumObservations(parameters.MeasurementFunction, parameters.MeasurementNoiseCovariance, out _numObservations);
+        Parameters = InitializeParameters(
+            transitionMatrix: parameters.TransitionMatrix,
+            measurementFunction: parameters.MeasurementFunction,
+            processNoiseCovariance: parameters.ProcessNoiseCovariance,
+            measurementNoiseCovariance: parameters.MeasurementNoiseCovariance,
+            initialMean: parameters.InitialMean,
+            initialCovariance: parameters.InitialCovariance,
+            device: _device,
+            scalarType: _scalarType
+        );
 
-        _identityStates = eye(_numStates, dtype: _scalarType, device: _device);
-
-        _transitionMatrix = parameters.TransitionMatrix?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        ValidateMatrix(_transitionMatrix, "Transition matrix", isSquare: true, expectedDimension1: _numStates);
-
-        _measurementFunction = parameters.MeasurementFunction?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numObservations, _numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        ValidateMatrix(_measurementFunction, "Measurement function", expectedDimension1: _numObservations, expectedDimension2: _numStates);
-
-        _initialMean = parameters.InitialMean?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? zeros(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        ValidateVector(_initialMean, "Initial mean", expectedLength: _numStates);
-
-        _initialCovariance = parameters.InitialCovariance?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        ValidateMatrix(_initialCovariance, "Initial covariance", isSquare: true, expectedDimension1: _numStates);
-
-        _processNoiseCovariance = parameters.ProcessNoiseCovariance ?? CreateCovarianceMatrix(tensor(1.0), _scalarType, _device, _numStates, "Process noise variance");
-        _measurementNoiseCovariance = parameters.MeasurementNoiseCovariance ?? CreateCovarianceMatrix(tensor(1.0), _scalarType, _device, _numObservations, "Measurement noise variance");
-
+        _identityStates = eye(Parameters.NumStates, dtype: _scalarType, device: _device).requires_grad_(false);
         _mean = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
         _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
     }
@@ -83,50 +55,114 @@ public class KalmanFilter : nn.Module
         _device = device ?? CPU;
         _scalarType = scalarType;
 
-        if (numStates is null)
-        {
-            ValidateNumStates(transitionMatrix, measurementFunction, initialMean, initialCovariance, processNoiseVariance, out var inferredNumStates);
-            _numStates = inferredNumStates;
-        }
-        else
-            _numStates = numStates.Value > 0 ? numStates.Value : throw new ArgumentOutOfRangeException(nameof(numStates), "Number of states must be greater than zero.");
+        Parameters = InitializeParameters(
+            numStates,
+            numObservations,
+            transitionMatrix,
+            measurementFunction,
+            processNoiseVariance,
+            measurementNoiseVariance,
+            initialMean,
+            initialCovariance,
+            _device,
+            _scalarType
+        );
 
-        if (numObservations is null)
-        {
-            ValidateNumObservations(measurementFunction, measurementNoiseVariance, out var inferredNumObservations);
-            _numObservations = inferredNumObservations;
-        }
-        else
-            _numObservations = numObservations.Value > 0 ? numObservations.Value : throw new ArgumentOutOfRangeException(nameof(numObservations), "Number of observations must be greater than zero.");
-
-        _identityStates = eye(_numStates, dtype: _scalarType, device: _device);
-
-        _transitionMatrix = transitionMatrix?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        ValidateMatrix(_transitionMatrix, "Transition matrix", isSquare: true, expectedDimension1: _numStates);
-
-        _measurementFunction = measurementFunction?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numObservations, _numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        ValidateMatrix(_measurementFunction, "Measurement function", expectedDimension1: _numObservations, expectedDimension2: _numStates);
-
-        _initialMean = initialMean?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? zeros(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        ValidateVector(_initialMean, "Initial mean", _numStates);
-
-        _initialCovariance = initialCovariance?.clone().to_type(_scalarType).to(_device).requires_grad_(false)
-            ?? eye(_numStates, dtype: _scalarType, device: _device).requires_grad_(false);
-        ValidateMatrix(_initialCovariance, "Initial covariance", isSquare: true, expectedDimension1: _numStates);
-
-        processNoiseVariance ??= tensor(1.0, dtype: _scalarType, device: _device);
-        measurementNoiseVariance ??= tensor(1.0, dtype: _scalarType, device: _device);
-
-        _processNoiseCovariance = CreateCovarianceMatrix(processNoiseVariance, _scalarType, _device, _numStates, "Process noise variance");
-        _measurementNoiseCovariance = CreateCovarianceMatrix(measurementNoiseVariance, _scalarType, _device, _numObservations, "Measurement noise variance");
-
+        _identityStates = eye(Parameters.NumStates, dtype: _scalarType, device: _device).requires_grad_(false);
         _mean = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
         _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
 
         RegisterComponents();
+    }
+
+    /// <summary>
+    /// Initializes the Kalman filter parameters.
+    /// </summary>
+    /// <param name="numStates"></param>
+    /// <param name="numObservations"></param>
+    /// <param name="transitionMatrix"></param>
+    /// <param name="measurementFunction"></param>
+    /// <param name="processNoiseCovariance"></param>
+    /// <param name="measurementNoiseCovariance"></param>
+    /// <param name="initialMean"></param>
+    /// <param name="initialCovariance"></param>
+    /// <param name="device"></param>
+    /// <param name="scalarType"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public static KalmanFilterParameters InitializeParameters(
+        int? numStates = null,
+        int? numObservations = null,
+        Tensor transitionMatrix = null,
+        Tensor measurementFunction = null,
+        Tensor processNoiseCovariance = null,
+        Tensor measurementNoiseCovariance = null,
+        Tensor initialMean = null,
+        Tensor initialCovariance = null,
+        Device device = null,
+        ScalarType scalarType = ScalarType.Float32
+    )
+    {
+        var trueNumStates = numStates ?? -1;
+        var trueNumObservations = numObservations ?? -1;
+        device ??= CPU;
+
+        if (numStates is null)
+        {
+            ValidateNumStates(transitionMatrix, measurementFunction, initialMean, initialCovariance, processNoiseCovariance, out trueNumStates);
+        }
+
+        if (trueNumStates <= 0)
+            throw new ArgumentOutOfRangeException(nameof(trueNumStates), "Number of states must be greater than zero.");
+
+        if (numObservations is null)
+        {
+            ValidateNumObservations(measurementFunction, measurementNoiseCovariance, out trueNumObservations);
+        }
+
+        if (trueNumObservations <= 0)
+            throw new ArgumentOutOfRangeException(nameof(numObservations), "Number of observations must be greater than zero.");
+
+        transitionMatrix = transitionMatrix.clone().to_type(scalarType).to(device).requires_grad_(false) ?? eye(trueNumStates, dtype: scalarType, device: device).requires_grad_(false);
+
+        ValidateMatrix(transitionMatrix, "Transition matrix", isSquare: true, expectedDimension1: trueNumStates);
+
+        measurementFunction = measurementFunction.clone().to_type(scalarType).to(device).requires_grad_(false) ?? eye(trueNumObservations, trueNumStates, dtype: scalarType, device: device).requires_grad_(false);
+
+        ValidateMatrix(measurementFunction, "Measurement function", expectedDimension1: trueNumObservations, expectedDimension2: trueNumStates);
+
+        initialMean = initialMean.clone().to_type(scalarType).to(device).requires_grad_(false) ?? zeros(trueNumStates, dtype: scalarType, device: device).requires_grad_(false);
+
+        ValidateVector(initialMean, "Initial mean", trueNumStates);
+
+        initialCovariance = initialCovariance.clone().to_type(scalarType).to(device).requires_grad_(false) ?? eye(trueNumStates, dtype: scalarType, device: device).requires_grad_(false);
+
+        ValidateMatrix(initialCovariance, "Initial covariance", isSquare: true, expectedDimension1: trueNumStates);
+
+        processNoiseCovariance = processNoiseCovariance.NumberOfElements == 1
+            ? CreateCovarianceMatrix(processNoiseCovariance, scalarType, device, trueNumStates, "Process noise variance")
+            : processNoiseCovariance.clone().to_type(scalarType).to(device).requires_grad_(false)
+            ?? CreateCovarianceMatrix(tensor(1.0), scalarType, device, trueNumStates, "Process noise variance");
+
+        ValidateMatrix(processNoiseCovariance, "Process noise covariance", isSquare: true, expectedDimension1: trueNumStates);
+
+        measurementNoiseCovariance = measurementNoiseCovariance.NumberOfElements == 1
+            ? CreateCovarianceMatrix(measurementNoiseCovariance, scalarType, device, trueNumObservations, "Measurement noise variance")
+            : measurementNoiseCovariance.clone().to_type(scalarType).to(device).requires_grad_(false)
+            ?? CreateCovarianceMatrix(tensor(1.0), scalarType, device, trueNumObservations, "Measurement noise variance");
+
+        ValidateMatrix(measurementNoiseCovariance, "Process noise covariance", isSquare: true, expectedDimension1: trueNumObservations);
+
+        return new KalmanFilterParameters(
+            trueNumStates,
+            trueNumObservations,
+            transitionMatrix,
+            measurementFunction,
+            processNoiseCovariance,
+            measurementNoiseCovariance,
+            initialMean,
+            initialCovariance
+        );
     }
 
     private static void ValidateNumStates(Tensor transitionMatrix, Tensor measurementFunction, Tensor initialMean, Tensor initialCovariance, Tensor processNoiseCovariance, out int numStates)
@@ -216,7 +252,7 @@ public class KalmanFilter : nn.Module
             throw new ArgumentException($"{name} must be a scalar.");
     }
 
-    private Tensor CreateCovarianceMatrix(Tensor variance, ScalarType scalarType, Device device, int dimension, string name)
+    private static Tensor CreateCovarianceMatrix(Tensor variance, ScalarType scalarType, Device device, int dimension, string name)
     {
         ValidateScalar(variance, name);
         var scalar = variance.clone().squeeze().to_type(scalarType).to(device);
@@ -234,9 +270,9 @@ public class KalmanFilter : nn.Module
     private PredictedState FilterPredict(
         Tensor mean,
         Tensor covariance) =>
-            new(_transitionMatrix.matmul(mean),
-                _transitionMatrix.matmul(covariance)
-                    .matmul(_transitionMatrix.mT) + _processNoiseCovariance);
+            new(Parameters.TransitionMatrix.matmul(mean),
+                Parameters.TransitionMatrix.matmul(covariance)
+                    .matmul(Parameters.TransitionMatrix.mT) + Parameters.ProcessNoiseCovariance);
 
     private static PredictedState FilterPredict(
         Tensor mean,
@@ -267,20 +303,20 @@ public class KalmanFilter : nn.Module
         Tensor observation)
     {
         // Innovation step
-        var innovation = observation - _measurementFunction.matmul(predictedMean);
+        var innovation = observation - Parameters.MeasurementFunction.matmul(predictedMean);
         var innovationCovariance = WrappedTensorDisposeScope(() => EnsureSymmetric(
-            _measurementFunction.matmul(predictedCovariance)
-                .matmul(_measurementFunction.mT) + _measurementNoiseCovariance));
+            Parameters.MeasurementFunction.matmul(predictedCovariance)
+                .matmul(Parameters.MeasurementFunction.mT) + Parameters.MeasurementNoiseCovariance));
 
         // Kalman gain
         var kalmanGain = WrappedTensorDisposeScope(() => InverseCholesky(
-            predictedCovariance.matmul(_measurementFunction.mT),
+            predictedCovariance.matmul(Parameters.MeasurementFunction.mT),
             innovationCovariance));
 
         // Update step
         var updatedMean = predictedMean + kalmanGain.matmul(innovation);
         var updatedCovariance = WrappedTensorDisposeScope(() => predictedCovariance
-                - kalmanGain.matmul(_measurementFunction).matmul(predictedCovariance));
+                - kalmanGain.matmul(Parameters.MeasurementFunction).matmul(predictedCovariance));
 
         return new UpdatedState(updatedMean, updatedCovariance, innovation, innovationCovariance, kalmanGain);
     }
@@ -324,15 +360,15 @@ public class KalmanFilter : nn.Module
         var obs = observation.atleast_2d();
         var timeBins = obs.size(0);
 
-        var predictedMean = empty(new long[] { timeBins, _numStates }, dtype: _scalarType, device: _device);
-        var predictedCovariance = empty(new long[] { timeBins, _numStates, _numStates }, dtype: _scalarType, device: _device);
-        var updatedMean = empty(new long[] { timeBins, _numStates }, dtype: _scalarType, device: _device);
-        var updatedCovariance = empty(new long[] { timeBins, _numStates, _numStates }, dtype: _scalarType, device: _device);
+        var predictedMean = empty([timeBins, Parameters.NumStates], dtype: _scalarType, device: _device);
+        var predictedCovariance = empty([timeBins, Parameters.NumStates, Parameters.NumStates], dtype: _scalarType, device: _device);
+        var updatedMean = empty([timeBins, Parameters.NumStates], dtype: _scalarType, device: _device);
+        var updatedCovariance = empty([timeBins, Parameters.NumStates, Parameters.NumStates], dtype: _scalarType, device: _device);
 
         if (_mean.NumberOfElements == 0)
-            _mean.set_(_initialMean);
+            _mean.set_(Parameters.InitialMean);
         if (_covariance.NumberOfElements == 0)
-            _covariance.set_(_initialCovariance);
+            _covariance.set_(Parameters.InitialCovariance);
 
         for (long time = 0; time < timeBins; time++)
         {
@@ -393,13 +429,13 @@ public class KalmanFilter : nn.Module
         Device device)
     {
         var logLikelihood = empty(timeBins, dtype: scalarType, device: device);
-        var predictedMean = empty(new long[] { timeBins, numStates }, dtype: scalarType, device: device);
-        var predictedCovariance = empty(new long[] { timeBins, numStates, numStates }, dtype: scalarType, device: device);
-        var updatedMean = empty(new long[] { timeBins, numStates }, dtype: scalarType, device: device);
-        var updatedCovariance = empty(new long[] { timeBins, numStates, numStates }, dtype: scalarType, device: device);
-        var innovation = empty(new long[] { timeBins, numObservations }, dtype: scalarType, device: device);
-        var innovationCovariance = empty(new long[] { timeBins, numObservations, numObservations }, dtype: scalarType, device: device);
-        var kalmanGain = empty(new long[] { timeBins, numStates, numObservations }, dtype: scalarType, device: device);
+        var predictedMean = empty([timeBins, numStates], dtype: scalarType, device: device);
+        var predictedCovariance = empty([timeBins, numStates, numStates], dtype: scalarType, device: device);
+        var updatedMean = empty([timeBins, numStates], dtype: scalarType, device: device);
+        var updatedCovariance = empty([timeBins, numStates, numStates], dtype: scalarType, device: device);
+        var innovation = empty([timeBins, numObservations], dtype: scalarType, device: device);
+        var innovationCovariance = empty([timeBins, numObservations, numObservations], dtype: scalarType, device: device);
+        var kalmanGain = empty([timeBins, numStates, numObservations], dtype: scalarType, device: device);
 
         var mean = initialMean;
         var covariance = initialCovariance;
@@ -469,14 +505,14 @@ public class KalmanFilter : nn.Module
         smoothedMean[-1] = updatedMean[-1];
         smoothedCovariance[-1] = updatedCovariance[-1];
 
-        var smoothingGain = empty(new long[] { _numStates, _numStates }, dtype: _scalarType, device: _device);
+        var smoothingGain = empty([Parameters.NumStates, Parameters.NumStates], dtype: _scalarType, device: _device);
 
         // Backward pass
         for (long time = timeBins - 2; time >= 0; time--)
         {
             // Smoothing gain
             smoothingGain = WrappedTensorDisposeScope(() => updatedCovariance[time].matmul(
-                InverseCholesky(_transitionMatrix.mT, predictedCovariance[time + 1])
+                InverseCholesky(Parameters.TransitionMatrix.mT, predictedCovariance[time + 1])
             ));
 
             // Smoothed mean
@@ -634,132 +670,9 @@ public class KalmanFilter : nn.Module
         );
     }
 
-    public ExpectationMaximizationResult ExpectationMaximization(
-        Tensor observation,
-        int maxIterations = 100,
-        double tolerance = 1e-4,
-        ParametersToEstimate parametersToEstimate = new(),
-        bool updateParameters = true)
-    {
-        var timeBins = observation.size(0);
-        var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: _device);
-        var previousLogLikelihood = double.NegativeInfinity;
-        var logLikelihoodConst = -0.5 * timeBins * _numObservations * Math.Log(2.0 * Math.PI);
-
-        var transitionMatrix = _transitionMatrix;
-        var measurementFunction = _measurementFunction;
-        var processNoiseCovariance = _processNoiseCovariance;
-        var measurementNoiseCovariance = _measurementNoiseCovariance;
-        var initialMean = _initialMean;
-        var initialCovariance = _initialCovariance;
-
-        // Precompute constant observation terms reused across EM iterations
-        var observationT = observation.mT;
-        var autoCorrelationObservations = observationT.matmul(observation);
-
-        using (var _ = no_grad())
-        {
-            for (int iteration = 0; iteration < maxIterations; iteration++)
-            {
-                // Filter observations
-                var filteredState = Filter(
-                    observation: observation,
-                    timeBins: timeBins,
-                    numStates: _numStates,
-                    numObservations: _numObservations,
-                    transitionMatrix: transitionMatrix,
-                    measurementFunction: measurementFunction,
-                    processNoiseCovariance: processNoiseCovariance,
-                    measurementNoiseCovariance: measurementNoiseCovariance,
-                    initialMean: initialMean,
-                    initialCovariance: initialCovariance,
-                    scalarType: _scalarType,
-                    device: _device);
-
-                // Compute log likelihood
-                var llSumDouble = filteredState.LogLikelihood.sum()
-                    .to_type(ScalarType.Float64).item<double>();
-                var filteredLogLikelihoodSum = logLikelihoodConst + 0.5 * llSumDouble;
-
-                logLikelihood[iteration] = filteredLogLikelihoodSum;
-
-                // Check for convergence
-                if (filteredLogLikelihoodSum <= previousLogLikelihood)
-                {
-                    Console.WriteLine($"Warning: Log likelihood decreased! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
-                    break;
-                }
-
-                if (filteredLogLikelihoodSum - previousLogLikelihood < tolerance)
-                    break;
-
-                previousLogLikelihood = filteredLogLikelihoodSum;
-
-                // Smooth the filtered results
-                var smoothedState = Smooth(
-                    filteredState: filteredState,
-                    timeBins: timeBins,
-                    numStates: _numStates,
-                    transitionMatrix: transitionMatrix,
-                    measurementFunction: measurementFunction,
-                    initialMean: initialMean,
-                    initialCovariance: initialCovariance,
-                    identityStates: _identityStates,
-                    scalarType: _scalarType,
-                    device: _device);
-
-                // Sufficient statistics
-                var S00 = smoothedState.S00.sum([0]);
-                var S11 = smoothedState.S11.sum([0]);
-                var S10 = smoothedState.S10.sum([0]);
-
-                // Compute cross-correlation between observations and smoothed states
-                var crossCorrelationObservations = observationT.matmul(smoothedState.SmoothedMean);
-
-                // Update parameters
-                if (parametersToEstimate.TransitionMatrix)
-                    transitionMatrix = InverseCholesky(S10, S00);
-
-                if (parametersToEstimate.MeasurementFunction)
-                    measurementFunction = InverseCholesky(crossCorrelationObservations, S11);
-
-                if (parametersToEstimate.ProcessNoiseCovariance)
-                    processNoiseCovariance = WrappedTensorDisposeScope(() =>
-                        EnsureSymmetric((S11 - transitionMatrix.matmul(S10.mT)) / timeBins));
-
-                var explainedObservationCovariance = measurementFunction.matmul(crossCorrelationObservations.mT);
-
-                if (parametersToEstimate.MeasurementNoiseCovariance)
-                    measurementNoiseCovariance = WrappedTensorDisposeScope(() =>
-                        EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
-                            + measurementFunction.matmul(S11).matmul(measurementFunction.mT)) / timeBins));
-
-                if (parametersToEstimate.InitialMean)
-                    initialMean = smoothedState.SmoothedInitialMean;
-
-                if (parametersToEstimate.InitialCovariance)
-                    initialCovariance = smoothedState.SmoothedInitialCovariance;
-            }
-        }
-
-        var updatedParameters = new KalmanFilterParameters(
-            transitionMatrix: transitionMatrix,
-            measurementFunction: measurementFunction,
-            processNoiseCovariance: processNoiseCovariance,
-            measurementNoiseCovariance: measurementNoiseCovariance,
-            initialMean: initialMean,
-            initialCovariance: initialCovariance
-        );
-
-        if (updateParameters)
-            UpdateParameters(updatedParameters);
-
-        return new ExpectationMaximizationResult(logLikelihood, updatedParameters);
-    }
-
     public static ExpectationMaximizationResult ExpectationMaximization(
         Tensor observation,
-        KalmanFilterParameters parameters,
+        KalmanFilterParameters? parameters = null,
         int maxIterations = 100,
         double tolerance = 1e-4,
         ParametersToEstimate parametersToEstimate = new(),
@@ -768,20 +681,31 @@ public class KalmanFilter : nn.Module
     {
         device ??= CPU;
 
-        ValidateNumStates(parameters.TransitionMatrix, parameters.MeasurementFunction, parameters.InitialMean, parameters.InitialCovariance, parameters.ProcessNoiseCovariance, out var numStates);
-        ValidateNumObservations(parameters.MeasurementFunction, parameters.MeasurementNoiseCovariance, out var numObservations);
-
         var timeBins = observation.size(0);
+        var numObservations = (int)observation.size(1);
         var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: device);
         var previousLogLikelihood = double.NegativeInfinity;
         var logLikelihoodConst = -0.5 * timeBins * numObservations * Math.Log(2.0 * Math.PI);
 
-        var transitionMatrix = parameters.TransitionMatrix;
-        var measurementFunction = parameters.MeasurementFunction;
-        var processNoiseCovariance = parameters.ProcessNoiseCovariance;
-        var measurementNoiseCovariance = parameters.MeasurementNoiseCovariance;
-        var initialMean = parameters.InitialMean;
-        var initialCovariance = parameters.InitialCovariance;
+        var kalmanFilterParameters = InitializeParameters(
+            numStates: parameters?.NumStates,
+            numObservations: numObservations,
+            transitionMatrix: parameters?.TransitionMatrix,
+            measurementFunction: parameters?.MeasurementFunction,
+            processNoiseCovariance: parameters?.ProcessNoiseCovariance,
+            measurementNoiseCovariance: parameters?.MeasurementNoiseCovariance,
+            initialMean: parameters?.InitialMean,
+            initialCovariance: parameters?.InitialCovariance,
+            device: device,
+            scalarType: scalarType);
+
+        var numStates = kalmanFilterParameters.NumStates;
+        var transitionMatrix = kalmanFilterParameters.TransitionMatrix;
+        var measurementFunction = kalmanFilterParameters.MeasurementFunction;
+        var processNoiseCovariance = kalmanFilterParameters.ProcessNoiseCovariance;
+        var measurementNoiseCovariance = kalmanFilterParameters.MeasurementNoiseCovariance;
+        var initialMean = kalmanFilterParameters.InitialMean;
+        var initialCovariance = kalmanFilterParameters.InitialCovariance;
 
         var identityStates = eye(numStates, dtype: scalarType, device: device);
 
@@ -875,12 +799,14 @@ public class KalmanFilter : nn.Module
         }
 
         var updatedParameters = new KalmanFilterParameters(
-            transitionMatrix: transitionMatrix,
-            measurementFunction: measurementFunction,
-            processNoiseCovariance: processNoiseCovariance,
-            measurementNoiseCovariance: measurementNoiseCovariance,
-            initialMean: initialMean,
-            initialCovariance: initialCovariance
+            numStates: numStates,
+            numObservations: numObservations,
+            transitionMatrix: parametersToEstimate.TransitionMatrix ? transitionMatrix : null,
+            measurementFunction: parametersToEstimate.MeasurementFunction ? measurementFunction : null,
+            processNoiseCovariance: parametersToEstimate.ProcessNoiseCovariance ? processNoiseCovariance : null,
+            measurementNoiseCovariance: parametersToEstimate.MeasurementNoiseCovariance ? measurementNoiseCovariance : null,
+            initialMean: parametersToEstimate.InitialMean ? initialMean : null,
+            initialCovariance: parametersToEstimate.InitialCovariance ? initialCovariance : null
         );
 
         return new ExpectationMaximizationResult(logLikelihood, updatedParameters);
@@ -896,7 +822,7 @@ public class KalmanFilter : nn.Module
         using var g = no_grad();
 
         var timeBins = observations.size(0);
-        var numObs = observations.size(1);
+        var numObservations = observations.size(1);
         var centered = observations - observations.mean([0], keepdim: true);
 
         // Build Hankel matrices from observations
@@ -906,12 +832,12 @@ public class KalmanFilter : nn.Module
             throw new ArgumentException($"Number of time bins ({timeBins}) must be greater than 2*maxLag ({2 * maxLag}) for subspace identification.");
 
         var stride = centered.stride();
-        var pastView = centered.as_strided([maxLag, numCols, numObs], [stride[0], stride[0], stride[1]]);
-        var past = pastView.permute(0, 2, 1).reshape(maxLag * numObs, numCols);
+        var pastView = centered.as_strided([maxLag, numCols, numObservations], [stride[0], stride[0], stride[1]]);
+        var past = pastView.permute(0, 2, 1).reshape(maxLag * numObservations, numCols);
 
         var futureView = centered.narrow(0, maxLag, timeBins - maxLag)
-            .as_strided([maxLag, numCols, numObs], [stride[0], stride[0], stride[1]]);
-        var future = futureView.permute(0, 2, 1).reshape(maxLag * numObs, numCols);
+            .as_strided([maxLag, numCols, numObservations], [stride[0], stride[0], stride[1]]);
+        var future = futureView.permute(0, 2, 1).reshape(maxLag * numObservations, numCols);
 
         // Compute the projection
         var Pp = past.matmul(past.mT);
@@ -932,7 +858,7 @@ public class KalmanFilter : nn.Module
         var observability = Ur.matmul(SrSqrt);
 
         // Extract measurement function from first block of observability matrix
-        var measurementFunction = observability[TensorIndex.Slice(0, numObs)];
+        var measurementFunction = observability[TensorIndex.Slice(0, numObservations)];
 
         // Estimate state sequence
         var states = SrSqrt.matmul(Vrt);
@@ -961,6 +887,8 @@ public class KalmanFilter : nn.Module
             states.matmul(states.mT) / numCols));
 
         var parameters = new KalmanFilterParameters(
+            numStates: (int)effectiveStates,
+            numObservations: (int)numObservations,
             transitionMatrix: parametersToEstimate.TransitionMatrix ? transitionMatrix : null,
             measurementFunction: parametersToEstimate.MeasurementFunction ? measurementFunction : null,
             processNoiseCovariance: parametersToEstimate.ProcessNoiseCovariance ? processNoiseCovariance : null,
@@ -978,7 +906,7 @@ public class KalmanFilter : nn.Module
 
     public LinearDynamicalSystemState OrthogonalizeMeanAndCovariance(Tensor mean, Tensor covariance)
     {
-        var (_, S, Vt) = linalg.svd(_measurementFunction);
+        var (_, S, Vt) = linalg.svd(Parameters.MeasurementFunction);
         var SVt = diag(S).matmul(Vt);
 
         Tensor orthogonalizedMean = null;
@@ -1001,17 +929,17 @@ public class KalmanFilter : nn.Module
     public void UpdateParameters(KalmanFilterParameters updatedParameters)
     {
         if (updatedParameters.TransitionMatrix is not null)
-            _transitionMatrix.set_(updatedParameters.TransitionMatrix);
+            Parameters.TransitionMatrix.set_(updatedParameters.TransitionMatrix);
         if (updatedParameters.MeasurementFunction is not null)
-            _measurementFunction.set_(updatedParameters.MeasurementFunction);
+            Parameters.MeasurementFunction.set_(updatedParameters.MeasurementFunction);
         if (updatedParameters.ProcessNoiseCovariance is not null)
-            _processNoiseCovariance.set_(updatedParameters.ProcessNoiseCovariance);
+            Parameters.ProcessNoiseCovariance.set_(updatedParameters.ProcessNoiseCovariance);
         if (updatedParameters.MeasurementNoiseCovariance is not null)
-            _measurementNoiseCovariance.set_(updatedParameters.MeasurementNoiseCovariance);
+            Parameters.MeasurementNoiseCovariance.set_(updatedParameters.MeasurementNoiseCovariance);
         if (updatedParameters.InitialMean is not null)
-            _initialMean.set_(updatedParameters.InitialMean);
+            Parameters.InitialMean.set_(updatedParameters.InitialMean);
         if (updatedParameters.InitialCovariance is not null)
-            _initialCovariance.set_(updatedParameters.InitialCovariance);
+            Parameters.InitialCovariance.set_(updatedParameters.InitialCovariance);
     }
 
     private static Tensor EnsureSymmetric(Tensor M) => 0.5 * (M + M.mT);

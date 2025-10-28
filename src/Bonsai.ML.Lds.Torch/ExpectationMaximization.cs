@@ -19,34 +19,18 @@ namespace Bonsai.ML.Lds.Torch;
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class ExpectationMaximization
 {
-    private int _numStates = 2;
     /// <summary>
     /// The number of states in the Kalman filter model.
     /// </summary>
     [Description("The number of states in the Kalman filter model.")]
-    public int NumStates
-    {
-        get => _numStates;
-        set => _numStates = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of states must be greater than zero.");
-    }
-
-    private int _numObservations = 10;
-    /// <summary>
-    /// The number of observations in the Kalman filter model.
-    /// </summary>
-    [Description("The number of observations in the Kalman filter model.")]
-    public int NumObservations
-    {
-        get => _numObservations;
-        set => _numObservations = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of observations must be greater than zero.");
-    }
+    public int? NumStates { get; set; } = null;
 
     /// <summary>
     /// The Kalman filter parameters used to initialize the model.
     /// </summary>
     [Description("The Kalman filter parameters used to initialize the model.")]
     [XmlIgnore]
-    public KalmanFilterParameters ModelParameters { get; set; } = new();
+    public KalmanFilterParameters? ModelParameters { get; set; } = null;
 
     private int _maxIterations = 10;
     /// <summary>
@@ -128,6 +112,7 @@ public class ExpectationMaximization
         {
             return Task.Run(() =>
             {
+                var numObservations = (int)input.size(1);
                 var previousLogLikelihood = double.NegativeInfinity;
                 var logLikelihood = zeros([MaxIterations], device: input.device);
                 var maxIterationsReached = false;
@@ -140,14 +125,17 @@ public class ExpectationMaximization
                     initialMean: EstimateInitialMean,
                     initialCovariance: EstimateInitialCovariance);
 
-                var parameters = new KalmanFilterParameters(
-                    transitionMatrix: ModelParameters.TransitionMatrix,
-                    measurementFunction: ModelParameters.MeasurementFunction,
-                    processNoiseCovariance: ModelParameters.ProcessNoiseCovariance,
-                    measurementNoiseCovariance: ModelParameters.MeasurementNoiseCovariance,
-                    initialMean: ModelParameters.InitialMean,
-                    initialCovariance: ModelParameters.InitialCovariance
-                );
+                var parameters = KalmanFilter.InitializeParameters(
+                    numStates: NumStates,
+                    numObservations: numObservations,
+                    transitionMatrix: ModelParameters?.TransitionMatrix,
+                    measurementFunction: ModelParameters?.MeasurementFunction,
+                    processNoiseCovariance: ModelParameters?.ProcessNoiseCovariance,
+                    measurementNoiseCovariance: ModelParameters?.MeasurementNoiseCovariance,
+                    initialMean: ModelParameters?.InitialMean,
+                    initialCovariance: ModelParameters?.InitialCovariance,
+                    device: input.device,
+                    scalarType: input.dtype);
 
                 for (int i = 0; i < MaxIterations; i++)
                 {

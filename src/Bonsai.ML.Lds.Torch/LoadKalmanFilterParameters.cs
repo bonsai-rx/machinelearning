@@ -103,14 +103,15 @@ public class LoadKalmanFilterParameters
         var initialMean = LoadTensorFromFile(InitialMeanFilePath);
         var initialCovariance = LoadTensorFromFile(InitialCovarianceFilePath);
 
-        var parameters = new KalmanFilterParameters(
+        var parameters = KalmanFilter.InitializeParameters(
             transitionMatrix: transitionMatrix,
             measurementFunction: measurementFunction,
             processNoiseCovariance: processNoiseCovariance,
             measurementNoiseCovariance: measurementNoiseCovariance,
             initialMean: initialMean,
-            initialCovariance: initialCovariance
-        );
+            initialCovariance: initialCovariance,
+            device: Device,
+            scalarType: Type);
 
         return Observable.Return(parameters);
     }

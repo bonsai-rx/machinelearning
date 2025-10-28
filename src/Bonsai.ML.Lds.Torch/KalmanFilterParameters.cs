@@ -8,6 +8,8 @@ namespace Bonsai.ML.Lds.Torch;
 /// <remarks>
 /// Initializes a new instance of the <see cref="KalmanFilterParameters"/> struct with the specified parameters.
 /// </remarks>
+/// <param name="numStates"></param>
+/// <param name="numObservations"></param>
 /// <param name="transitionMatrix"></param>
 /// <param name="measurementFunction"></param>
 /// <param name="processNoiseCovariance"></param>
@@ -15,6 +17,8 @@ namespace Bonsai.ML.Lds.Torch;
 /// <param name="initialMean"></param>
 /// <param name="initialCovariance"></param>
 public struct KalmanFilterParameters(
+    int numStates,
+    int numObservations,
     Tensor transitionMatrix = null,
     Tensor measurementFunction = null,
     Tensor processNoiseCovariance = null,
@@ -22,6 +26,16 @@ public struct KalmanFilterParameters(
     Tensor initialMean = null,
     Tensor initialCovariance = null)
 {
+    /// <summary>
+    /// The number of states in the system.
+    /// </summary>
+    public int NumStates = numStates;
+
+    /// <summary>
+    /// The number of observations in the system.
+    /// </summary>
+    public int NumObservations = numObservations;
+
     /// <summary>
     /// The state transition matrix.
     /// </summary>

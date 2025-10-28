@@ -31,6 +31,16 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     }
     private ScalarType _scalarType = ScalarType.Float32;
 
+    /// <summary>
+    /// The number of states in the Kalman filter model.
+    /// </summary>
+    public int? NumStates { get; set; } = null;
+
+    /// <summary>
+    /// The number of observations in the Kalman filter model.
+    /// </summary>
+    public int? NumObservations { get; set; } = null;
+
     private Tensor _transitionMatrix = null;
     /// <summary>
     /// The state transition matrix.
@@ -190,16 +200,17 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     /// </summary>
     public IObservable<KalmanFilterParameters> Process()
     {
-        var parameters = new KalmanFilterParameters(
+        return Observable.Return(KalmanFilter.InitializeParameters(
+            numStates: NumStates,
+            numObservations: NumObservations,
             transitionMatrix: _transitionMatrix,
             measurementFunction: _measurementFunction,
             processNoiseCovariance: _processNoiseCovariance,
             measurementNoiseCovariance: _measurementNoiseCovariance,
             initialMean: _initialMean,
-            initialCovariance: _initialCovariance
-        );
-
-        return Observable.Return(parameters);
+            initialCovariance: _initialCovariance,
+            scalarType: _scalarType
+        ));
     }
 
     /// <summary>
@@ -209,16 +220,17 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     {
         return source.Select(_ =>
         {
-            var parameters = new KalmanFilterParameters(
+            return KalmanFilter.InitializeParameters(
+                numStates: NumStates,
+                numObservations: NumObservations,
                 transitionMatrix: _transitionMatrix,
                 measurementFunction: _measurementFunction,
                 processNoiseCovariance: _processNoiseCovariance,
                 measurementNoiseCovariance: _measurementNoiseCovariance,
                 initialMean: _initialMean,
-                initialCovariance: _initialCovariance
+                initialCovariance: _initialCovariance,
+                scalarType: _scalarType
             );
-
-            return parameters;
         });
     }
 }
