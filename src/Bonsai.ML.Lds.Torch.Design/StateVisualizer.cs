@@ -16,11 +16,7 @@ using static TorchSharp.torch;
 [assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.StateVisualizer),
     Target = typeof(Bonsai.ML.Lds.Torch.FilteredState))]
 [assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Lds.Torch.SmoothedState))]
-[assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Lds.Torch.OrthogonalizedState))]
-[assembly: TypeVisualizer(typeof(Bonsai.ML.Lds.Torch.Design.StateVisualizer),
-    Target = typeof(Bonsai.ML.Lds.Torch.LdsState))]
+    Target = typeof(Bonsai.ML.Lds.Torch.LinearDynamicalSystemState))]
 
 namespace Bonsai.ML.Lds.Torch.Design;
 
@@ -119,8 +115,8 @@ public class StateVisualizer : BufferedVisualizer
     {
         if (value is null) return;
 
-        if (value is not ILdsState state)
-            throw new ArgumentException($"Expected value to be a type of {nameof(ILdsState)}.", nameof(value));
+        if (value is not ILinearDynamicalSystemState state)
+            throw new ArgumentException($"Expected value to be a type of {nameof(ILinearDynamicalSystemState)}.", nameof(value));
 
         var mean = state.Mean;
         var covariance = state.Covariance;
