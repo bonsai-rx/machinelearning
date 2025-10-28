@@ -13,7 +13,7 @@ public struct FilteredState(
     Tensor predictedMean,
     Tensor predictedCovariance,
     Tensor updatedMean,
-    Tensor updatedCovariance) : ILdsState
+    Tensor updatedCovariance) : ILinearDynamicalSystemState
 {
     /// <summary>
     /// The predicted mean after the prediction step.
