@@ -51,7 +51,7 @@ Interfaces with the [TorchSharp](https://github.com/dotnet/TorchSharp) package, 
 > [!NOTE]
 > Bonsai.ML packages can be installed through Bonsai's integrated package manager and are generally ready for immediate use. However, some packages may require additional installation steps. Refer to the specific package section for detailed installation guides and documentation.
 
-### Bonsai.ML.Torch.LDS
+### Bonsai.ML.Lds.Torch
 Linear dynamical systems implemented using the `Bonsai.ML.Torch` package for online filtering and smoothing of latent states and parameter estimation.
 
 ## Development Roadmap
