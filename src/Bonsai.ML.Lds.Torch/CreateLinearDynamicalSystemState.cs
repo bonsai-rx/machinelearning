@@ -123,4 +123,17 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
             return new LinearDynamicalSystemState(mean, covariance);
         });
     }
+
+    /// <summary>
+    /// Processes an observable sequence of a tuple of tensors (mean and covariance) and emits a state for a linear gaussian dynamical system.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LinearDynamicalSystemState> Process(IObservable<Tuple<Tensor, Tensor>> source)
+    {
+        return source.Select(input =>
+        {
+            return new LinearDynamicalSystemState(input.Item1, input.Item2);
+        });
+    }
 }
