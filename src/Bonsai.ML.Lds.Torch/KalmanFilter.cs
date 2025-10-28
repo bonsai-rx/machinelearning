@@ -452,7 +452,7 @@ public class KalmanFilter : nn.Module
         );
     }
 
-    public SmoothedState Smooth(FilteredState filteredState)
+    public LinearDynamicalSystemState Smooth(FilteredState filteredState)
     {
         using var g = no_grad();
 
@@ -492,7 +492,7 @@ public class KalmanFilter : nn.Module
             );
         }
 
-        return new SmoothedState(
+        return new LinearDynamicalSystemState(
             smoothedMean,
             smoothedCovariance
         );
@@ -976,7 +976,7 @@ public class KalmanFilter : nn.Module
         );
     }
 
-    public OrthogonalizedState OrthogonalizeMeanAndCovariance(Tensor mean, Tensor covariance)
+    public LinearDynamicalSystemState OrthogonalizeMeanAndCovariance(Tensor mean, Tensor covariance)
     {
         var (_, S, Vt) = linalg.svd(_measurementFunction);
         var SVt = diag(S).matmul(Vt);
@@ -992,9 +992,9 @@ public class KalmanFilter : nn.Module
             orthogonalizedCovariance = matmul(auxilary, SVt.mT);
         }
 
-        return new OrthogonalizedState(
-            orthogonalizedMean: orthogonalizedMean,
-            orthogonalizedCovariance: orthogonalizedCovariance
+        return new LinearDynamicalSystemState(
+            orthogonalizedMean,
+            orthogonalizedCovariance
         );
     }
 

@@ -27,7 +27,7 @@ public class Smooth
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<SmoothedState> Process(IObservable<FilteredState> source)
+    public IObservable<LinearDynamicalSystemState> Process(IObservable<FilteredState> source)
     {
         return source.Select(Model.Smooth);
     }
@@ -37,7 +37,7 @@ public class Smooth
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<SmoothedState> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor>> source)
+    public IObservable<LinearDynamicalSystemState> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor>> source)
     {
         return source.Select((input) =>
         {
