@@ -200,7 +200,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     /// </summary>
     public IObservable<KalmanFilterParameters> Process()
     {
-        return Observable.Return(KalmanFilter.InitializeParameters(
+        return Observable.Return(KalmanFilterParameters.Initialize(
             numStates: NumStates,
             numObservations: NumObservations,
             transitionMatrix: _transitionMatrix,
@@ -220,7 +220,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     {
         return source.Select(_ =>
         {
-            return KalmanFilter.InitializeParameters(
+            return KalmanFilterParameters.Initialize(
                 numStates: NumStates,
                 numObservations: NumObservations,
                 transitionMatrix: _transitionMatrix,

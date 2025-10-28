@@ -125,17 +125,17 @@ public class ExpectationMaximization
                     initialMean: EstimateInitialMean,
                     initialCovariance: EstimateInitialCovariance);
 
-                var parameters = KalmanFilter.InitializeParameters(
-                    numStates: NumStates,
-                    numObservations: numObservations,
-                    transitionMatrix: ModelParameters?.TransitionMatrix,
-                    measurementFunction: ModelParameters?.MeasurementFunction,
-                    processNoiseCovariance: ModelParameters?.ProcessNoiseCovariance,
-                    measurementNoiseCovariance: ModelParameters?.MeasurementNoiseCovariance,
-                    initialMean: ModelParameters?.InitialMean,
-                    initialCovariance: ModelParameters?.InitialCovariance,
-                    device: input.device,
-                    scalarType: input.dtype);
+
+                var parameters = ModelParameters?.Copy() ?? KalmanFilterParameters.Initialize(
+                        numStates: NumStates,
+                        numObservations: numObservations,
+                        scalarType: input.dtype,
+                        device: input.device);
+
+                if (!parameters.IsValidated)
+                {
+                    parameters.Validate();
+                }
 
                 for (int i = 0; i < MaxIterations; i++)
                 {
