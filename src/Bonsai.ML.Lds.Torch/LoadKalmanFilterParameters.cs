@@ -19,52 +19,11 @@ namespace Bonsai.ML.Lds.Torch;
 public class LoadKalmanFilterParameters
 {
     /// <summary>
-    /// Reads the path to a .bin file containing the transition matrix.
+    /// The path to the folder where the Kalman filter model parameters were saved.
     /// </summary>
-    [Description("Reads the path to a .bin file containing the transition matrix.")]
-    [FileNameFilter("Binary Data (*.bin)|*.bin|All Files|*.*")]
-    [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-    public string TransitionMatrixFilePath { get; set; } = "transition_matrix.bin";
-
-    /// <summary>
-    /// Reads the path to a .bin file containing the measurement function.
-    /// </summary>
-    [Description("Reads the path to a .bin file containing the measurement function.")]
-    [FileNameFilter("Binary Data (*.bin)|*.bin|All Files|*.*")]
-    [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-    public string MeasurementFunctionFilePath { get; set; } = "measurement_function.bin";
-
-    /// <summary>
-    /// Reads the path to a .bin file containing the process noise covariance.
-    /// </summary>
-    [Description("Reads the path to a .bin file containing the process noise covariance.")]
-    [FileNameFilter("Binary Data (*.bin)|*.bin|All Files|*.*")]
-    [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-    public string ProcessNoiseCovarianceFilePath { get; set; } = "process_noise_covariance.bin";
-
-    /// <summary>
-    /// Reads the path to a .bin file containing the measurement noise covariance.
-    /// </summary>
-    [Description("Reads the path to a .bin file containing the measurement noise covariance.")]
-    [FileNameFilter("Binary Data (*.bin)|*.bin|All Files|*.*")]
-    [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-    public string MeasurementNoiseCovarianceFilePath { get; set; } = "measurement_noise_covariance.bin";
-
-    /// <summary>
-    /// Reads the path to a .bin file containing the initial mean.
-    /// </summary>
-    [Description("Reads the path to a .bin file containing the initial mean.")]
-    [FileNameFilter("Binary Data (*.bin)|*.bin|All Files|*.*")]
-    [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-    public string InitialMeanFilePath { get; set; } = "initial_mean.bin";
-
-    /// <summary>
-    /// Reads the path to a .bin file containing the initial covariance.
-    /// </summary>
-    [Description("Reads the path to a .bin file containing the initial covariance.")]
-    [FileNameFilter("Binary Data (*.bin)|*.bin|All Files|*.*")]
-    [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-    public string InitialCovarianceFilePath { get; set; } = "initial_covariance.bin";
+    [Editor("Bonsai.Design.FolderNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
+    [Description("The path to the folder where the Kalman filter model parameters were saved.")]
+    public string Path { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the data type of the tensors.
@@ -96,14 +55,24 @@ public class LoadKalmanFilterParameters
     {
         Device ??= CPU;
 
-        var transitionMatrix = LoadTensorFromFile(TransitionMatrixFilePath);
-        var measurementFunction = LoadTensorFromFile(MeasurementFunctionFilePath);
-        var processNoiseCovariance = LoadTensorFromFile(ProcessNoiseCovarianceFilePath);
-        var measurementNoiseCovariance = LoadTensorFromFile(MeasurementNoiseCovarianceFilePath);
-        var initialMean = LoadTensorFromFile(InitialMeanFilePath);
-        var initialCovariance = LoadTensorFromFile(InitialCovarianceFilePath);
+        if (string.IsNullOrEmpty(Path))
+        {
+            throw new InvalidOperationException("The save path is not specified.");
+        }
 
-        var parameters = KalmanFilter.InitializeParameters(
+        if (!Directory.Exists(Path))
+        {
+            throw new InvalidOperationException("The save path does not exist.");
+        }
+
+        var transitionMatrix = LoadTensorFromFile("TransitionMatrix.bin");
+        var measurementFunction = LoadTensorFromFile("MeasurementFunction.bin");
+        var processNoiseCovariance = LoadTensorFromFile("ProcessNoiseCovariance.bin");
+        var measurementNoiseCovariance = LoadTensorFromFile("MeasurementNoiseCovariance.bin");
+        var initialMean = LoadTensorFromFile("InitialMean.bin");
+        var initialCovariance = LoadTensorFromFile("InitialCovariance.bin");
+
+        return Observable.Return(KalmanFilterParameters.Initialize(
             transitionMatrix: transitionMatrix,
             measurementFunction: measurementFunction,
             processNoiseCovariance: processNoiseCovariance,
@@ -111,8 +80,6 @@ public class LoadKalmanFilterParameters
             initialMean: initialMean,
             initialCovariance: initialCovariance,
             device: Device,
-            scalarType: Type);
-
-        return Observable.Return(parameters);
+            scalarType: Type));
     }
 }
