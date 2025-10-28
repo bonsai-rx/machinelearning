@@ -12,7 +12,7 @@ namespace Bonsai.ML.Lds.Torch;
 [ResetCombinator]
 [Description("Updates the parameters of a Kalman filter model instance using the provided Kalman filter parameters.")]
 [WorkflowElementCategory(ElementCategory.Sink)]
-public class UpdateParameters
+public class UpdateKalmanFilterParameters
 {
     /// <summary>
     /// The Kalman filter model.
