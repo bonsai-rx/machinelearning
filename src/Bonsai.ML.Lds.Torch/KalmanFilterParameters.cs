@@ -130,8 +130,6 @@ public struct KalmanFilterParameters(
     {
         var trueNumStates = numStates ?? -1;
         var trueNumObservations = numObservations ?? -1;
-        device ??= CPU;
-        scalarType ??= ScalarType.Float32;
 
         if (numStates is null)
         {
