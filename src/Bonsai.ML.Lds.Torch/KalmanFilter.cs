@@ -67,22 +67,14 @@ public class KalmanFilter : nn.Module
         RegisterComponents();
     }
 
-    private readonly struct PredictedState(
-        Tensor predictedMean,
-        Tensor predictedCovariance)
-    {
-        public readonly Tensor PredictedMean = predictedMean;
-        public readonly Tensor PredictedCovariance = predictedCovariance;
-    }
-
-    private PredictedState FilterPredict(
+    private LinearDynamicalSystemState FilterPredict(
         Tensor mean,
         Tensor covariance) =>
             new(Parameters.TransitionMatrix.matmul(mean),
                 Parameters.TransitionMatrix.matmul(covariance)
                     .matmul(Parameters.TransitionMatrix.mT) + Parameters.ProcessNoiseCovariance);
 
-    private static PredictedState FilterPredict(
+    private static LinearDynamicalSystemState FilterPredict(
         Tensor mean,
         Tensor covariance,
         Tensor transitionMatrix,
