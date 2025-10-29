@@ -217,7 +217,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
             initialMean: InitialMean,
             initialCovariance: InitialCovariance,
             device: Device,
-            scalarType: _scalarType
+            scalarType: Type
         ));
     }
 
@@ -231,7 +231,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
             return Observable.Return(new KalmanFilter(
                 parameters: parameters,
                 device: Device,
-                scalarType: _scalarType
+                scalarType: Type
             ));
         });
     }
