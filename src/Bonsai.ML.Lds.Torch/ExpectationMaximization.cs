@@ -131,7 +131,7 @@ public class ExpectationMaximization
                         scalarType: input.dtype,
                         device: input.device);
 
-                    parameters.Validate();
+                parameters.Validate();
 
                 for (int i = 0; i < MaxIterations; i++)
                 {
@@ -150,9 +150,8 @@ public class ExpectationMaximization
                         parametersToEstimate: parametersToEstimate);
 
                     var logLikelihoodSum = result.LogLikelihood
-                        .cpu()
                         .to_type(ScalarType.Float32)
-                        .ReadCpuSingle(0);
+                        .item<float>();
 
                     logLikelihood[i] = logLikelihoodSum;
 
