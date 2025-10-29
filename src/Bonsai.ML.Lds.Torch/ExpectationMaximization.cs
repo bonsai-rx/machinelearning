@@ -145,11 +145,9 @@ public class ExpectationMaximization
                     var result = KalmanFilter.ExpectationMaximization(
                         observation: input,
                         parameters: parameters,
-                        maxIterations: MaxIterations,
+                        maxIterations: 1,
                         tolerance: Tolerance,
-                        parametersToEstimate: parametersToEstimate,
-                        device: input.device,
-                        scalarType: input.dtype);
+                        parametersToEstimate: parametersToEstimate);
 
                     var logLikelihoodSum = result.LogLikelihood
                         .cpu()
