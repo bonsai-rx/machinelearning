@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Lds.Torch;
@@ -13,24 +12,26 @@ public class KalmanFilter : nn.Module
     private readonly Tensor _covariance;
     private readonly Device _device;
     private readonly ScalarType _scalarType;
-    public KalmanFilterParameters Parameters { get; private set; }
+    public readonly KalmanFilterParameters Parameters;
 
     public KalmanFilter(
         KalmanFilterParameters parameters,
         Device device = null,
-        ScalarType scalarType = ScalarType.Float32) : base("KalmanFilter")
+        ScalarType? scalarType = null) : base("KalmanFilter")
     {
-        _device = device ?? CPU;
-        _scalarType = scalarType;
+        Parameters = parameters.Copy();
 
-        if (!parameters.IsValidated)
-        {
-            KalmanFilterParameters.Validate(parameters);
-        }
+        Parameters.Validate();
+        Parameters.ToScalarType(scalarType);
+        Parameters.ToDevice(device);
 
-        Parameters = parameters;
+        _device = Parameters.Device;
+        _scalarType = Parameters.ScalarType;
+
         _mean = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
         _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
+
+        RegisterComponents();
     }
 
     public KalmanFilter(
@@ -43,11 +44,8 @@ public class KalmanFilter : nn.Module
         Tensor processNoiseVariance = null,
         Tensor measurementNoiseVariance = null,
         Device device = null,
-        ScalarType scalarType = ScalarType.Float32) : base("KalmanFilter")
+        ScalarType? scalarType = null) : base("KalmanFilter")
     {
-        _device = device ?? CPU;
-        _scalarType = scalarType;
-
         Parameters = KalmanFilterParameters.Initialize(
             numStates,
             numObservations,
@@ -57,9 +55,12 @@ public class KalmanFilter : nn.Module
             measurementNoiseVariance,
             initialMean,
             initialCovariance,
-            _device,
-            _scalarType
+            device,
+            scalarType
         );
+
+        _device = Parameters.Device;
+        _scalarType = Parameters.ScalarType;
 
         _mean = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
         _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
@@ -116,7 +117,7 @@ public class KalmanFilter : nn.Module
         // Update step
         var updatedMean = predictedMean + kalmanGain.matmul(innovation);
         var updatedCovariance = WrappedTensorDisposeScope(() => predictedCovariance
-                - kalmanGain.matmul(Parameters.MeasurementFunction).matmul(predictedCovariance));
+            - kalmanGain.matmul(Parameters.MeasurementFunction).matmul(predictedCovariance));
 
         return new UpdatedState(updatedMean, updatedCovariance, innovation, innovationCovariance, kalmanGain);
     }
@@ -166,9 +167,9 @@ public class KalmanFilter : nn.Module
         var updatedCovariance = empty([timeBins, Parameters.NumStates, Parameters.NumStates], dtype: _scalarType, device: _device);
 
         if (_mean.NumberOfElements == 0)
-            _mean.set_(Parameters.InitialMean);
+            _mean.set_(Parameters.InitialMean.clone());
         if (_covariance.NumberOfElements == 0)
-            _covariance.set_(Parameters.InitialCovariance);
+            _covariance.set_(Parameters.InitialCovariance.clone());
 
         for (long time = 0; time < timeBins; time++)
         {
@@ -176,10 +177,10 @@ public class KalmanFilter : nn.Module
             var prediction = FilterPredict(_mean, _covariance);
 
             // Update
-            var update = FilterUpdate(prediction.PredictedMean, prediction.PredictedCovariance, obs[time]);
+            var update = FilterUpdate(prediction.Mean, prediction.Covariance, obs[time]);
 
-            predictedMean[time] = prediction.PredictedMean;
-            predictedCovariance[time] = prediction.PredictedCovariance;
+            predictedMean[time] = prediction.Mean;
+            predictedCovariance[time] = prediction.Covariance;
             updatedMean[time] = update.UpdatedMean;
             updatedCovariance[time] = update.UpdatedCovariance;
 
@@ -251,8 +252,8 @@ public class KalmanFilter : nn.Module
 
             // Update
             var update = FilterUpdate(
-                predictedMean: prediction.PredictedMean,
-                predictedCovariance: prediction.PredictedCovariance,
+                predictedMean: prediction.Mean,
+                predictedCovariance: prediction.Covariance,
                 observation: observation[time],
                 measurementFunction: measurementFunction,
                 measurementNoiseCovariance: measurementNoiseCovariance);
@@ -264,8 +265,8 @@ public class KalmanFilter : nn.Module
 
             // Detach and assign
             logLikelihood[time] = logLikelihoodData;
-            predictedMean[time] = prediction.PredictedMean;
-            predictedCovariance[time] = prediction.PredictedCovariance;
+            predictedMean[time] = prediction.Mean;
+            predictedCovariance[time] = prediction.Covariance;
             updatedMean[time] = update.UpdatedMean;
             updatedCovariance[time] = update.UpdatedCovariance;
             innovation[time] = update.Innovation;
@@ -472,144 +473,114 @@ public class KalmanFilter : nn.Module
 
     public static ExpectationMaximizationResult ExpectationMaximization(
         Tensor observation,
-        KalmanFilterParameters? parameters = null,
+        KalmanFilterParameters parameters,
         int maxIterations = 100,
         double tolerance = 1e-4,
-        ParametersToEstimate parametersToEstimate = new(),
-        Device device = null,
-        ScalarType scalarType = ScalarType.Float32)
+        ParametersToEstimate parametersToEstimate = new())
     {
-        device ??= CPU;
+        parameters = parameters.Copy();
+        parameters.Validate();
 
         var timeBins = observation.size(0);
         var numObservations = (int)observation.size(1);
-        var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: device);
+        var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: parameters.Device);
         var previousLogLikelihood = double.NegativeInfinity;
         var logLikelihoodConst = -0.5 * timeBins * numObservations * Math.Log(2.0 * Math.PI);
 
-        var kalmanFilterParameters = parameters?.Copy()
-            ?? KalmanFilterParameters.Initialize(
-                numStates: null,
-                numObservations: numObservations,
-                scalarType: scalarType,
-                device: device);
+        if (parameters.NumObservations != numObservations)
+            throw new ArgumentException($"The number of observation dimensions in the parameters ({parameters.NumObservations}) does not match the observations ({numObservations}).");
 
-        if (!kalmanFilterParameters.IsValidated)
-        {
-            KalmanFilterParameters.Validate(kalmanFilterParameters);
-        }
-
-        var numStates = kalmanFilterParameters.NumStates;
-        var transitionMatrix = kalmanFilterParameters.TransitionMatrix;
-        var measurementFunction = kalmanFilterParameters.MeasurementFunction;
-        var processNoiseCovariance = kalmanFilterParameters.ProcessNoiseCovariance;
-        var measurementNoiseCovariance = kalmanFilterParameters.MeasurementNoiseCovariance;
-        var initialMean = kalmanFilterParameters.InitialMean;
-        var initialCovariance = kalmanFilterParameters.InitialCovariance;
-
-        var identityStates = eye(numStates, dtype: scalarType, device: device);
+        var identityStates = eye(parameters.NumStates, dtype: parameters.ScalarType, device: parameters.Device);
 
         // Precompute constant observation terms reused across EM iterations
         var observationT = observation.mT;
         var autoCorrelationObservations = observationT.matmul(observation);
 
-        using (var _ = no_grad())
+        using var g = no_grad();
+        
+        for (int iteration = 0; iteration < maxIterations; iteration++)
         {
-            for (int iteration = 0; iteration < maxIterations; iteration++)
+            // Filter observations
+            var filteredState = Filter(
+                observation: observation,
+                timeBins: timeBins,
+                numStates: parameters.NumStates,
+                numObservations: numObservations,
+                transitionMatrix: parameters.TransitionMatrix,
+                measurementFunction: parameters.MeasurementFunction,
+                processNoiseCovariance: parameters.ProcessNoiseCovariance,
+                measurementNoiseCovariance: parameters.MeasurementNoiseCovariance,
+                initialMean: parameters.InitialMean,
+                initialCovariance: parameters.InitialCovariance,
+                scalarType: parameters.ScalarType,
+                device: parameters.Device);
+
+            // Compute log likelihood (avoid creating intermediate tensors)
+            var llSumDouble = filteredState.LogLikelihood.sum()
+                .to_type(ScalarType.Float64).item<double>();
+            var filteredLogLikelihoodSum = logLikelihoodConst + 0.5 * llSumDouble;
+
+            logLikelihood[iteration] = filteredLogLikelihoodSum;
+
+            // Check for convergence
+            if (filteredLogLikelihoodSum <= previousLogLikelihood)
             {
-                // Filter observations
-                var filteredState = Filter(
-                    observation: observation,
-                    timeBins: timeBins,
-                    numStates: numStates,
-                    numObservations: numObservations,
-                    transitionMatrix: transitionMatrix,
-                    measurementFunction: measurementFunction,
-                    processNoiseCovariance: processNoiseCovariance,
-                    measurementNoiseCovariance: measurementNoiseCovariance,
-                    initialMean: initialMean,
-                    initialCovariance: initialCovariance,
-                    scalarType: scalarType,
-                    device: device);
-
-                // Compute log likelihood (avoid creating intermediate tensors)
-                var llSumDouble = filteredState.LogLikelihood.sum()
-                    .to_type(ScalarType.Float64).item<double>();
-                var filteredLogLikelihoodSum = logLikelihoodConst + 0.5 * llSumDouble;
-
-                logLikelihood[iteration] = filteredLogLikelihoodSum;
-
-                // Check for convergence
-                if (filteredLogLikelihoodSum <= previousLogLikelihood)
-                {
-                    Console.WriteLine($"Warning: Log likelihood decreased! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
-                    break;
-                }
-
-                if (filteredLogLikelihoodSum - previousLogLikelihood < tolerance)
-                    break;
-
-                previousLogLikelihood = filteredLogLikelihoodSum;
-
-                // Smooth the filtered results
-                var smoothedState = Smooth(
-                    filteredState: filteredState,
-                    timeBins: timeBins,
-                    numStates: numStates,
-                    transitionMatrix: transitionMatrix,
-                    measurementFunction: measurementFunction,
-                    initialMean: initialMean,
-                    initialCovariance: initialCovariance,
-                    identityStates: identityStates,
-                    scalarType: scalarType,
-                    device: device);
-
-                // Sufficient statistics
-                var S00 = smoothedState.S00.sum([0]);
-                var S11 = smoothedState.S11.sum([0]);
-                var S10 = smoothedState.S10.sum([0]);
-
-                // Replace einsum with faster matmul
-                var crossCorrelationObservations = observationT.matmul(smoothedState.SmoothedMean);
-
-                // Update parameters
-                if (parametersToEstimate.TransitionMatrix)
-                    transitionMatrix = InverseCholesky(S10, S00);
-
-                if (parametersToEstimate.MeasurementFunction)
-                    measurementFunction = InverseCholesky(crossCorrelationObservations, S11);
-
-                if (parametersToEstimate.ProcessNoiseCovariance)
-                    processNoiseCovariance = WrappedTensorDisposeScope(() =>
-                        EnsureSymmetric((S11 - transitionMatrix.matmul(S10.mT)) / timeBins));
-
-                var explainedObservationCovariance = measurementFunction.matmul(crossCorrelationObservations.mT);
-
-                if (parametersToEstimate.MeasurementNoiseCovariance)
-                    measurementNoiseCovariance = WrappedTensorDisposeScope(() =>
-                        EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
-                            + measurementFunction.matmul(S11).matmul(measurementFunction.mT)) / timeBins));
-
-                if (parametersToEstimate.InitialMean)
-                    initialMean = smoothedState.SmoothedInitialMean;
-
-                if (parametersToEstimate.InitialCovariance)
-                    initialCovariance = smoothedState.SmoothedInitialCovariance;
+                Console.WriteLine($"Warning: Log likelihood decreased! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
+                break;
             }
+
+            if (filteredLogLikelihoodSum - previousLogLikelihood < tolerance)
+                break;
+
+            previousLogLikelihood = filteredLogLikelihoodSum;
+
+            // Smooth the filtered results
+            var smoothedState = Smooth(
+                filteredState: filteredState,
+                timeBins: timeBins,
+                numStates: parameters.NumStates,
+                transitionMatrix: parameters.TransitionMatrix,
+                measurementFunction: parameters.MeasurementFunction,
+                initialMean: parameters.InitialMean,
+                initialCovariance: parameters.InitialCovariance,
+                identityStates: identityStates,
+                scalarType: parameters.ScalarType,
+                device: parameters.Device);
+
+            // Sufficient statistics
+            var S00 = smoothedState.S00.sum([0]);
+            var S11 = smoothedState.S11.sum([0]);
+            var S10 = smoothedState.S10.sum([0]);
+
+            // Replace einsum with faster matmul
+            var crossCorrelationObservations = observationT.matmul(smoothedState.SmoothedMean);
+
+            // Update parameters
+            if (parametersToEstimate.TransitionMatrix)
+                parameters.TransitionMatrix = InverseCholesky(S10, S00);
+
+            if (parametersToEstimate.MeasurementFunction)
+                parameters.MeasurementFunction = InverseCholesky(crossCorrelationObservations, S11);
+
+            if (parametersToEstimate.ProcessNoiseCovariance)
+                parameters.ProcessNoiseCovariance = WrappedTensorDisposeScope(() =>
+                    EnsureSymmetric((S11 - parameters.TransitionMatrix.matmul(S10.mT)) / timeBins));
+
+            var explainedObservationCovariance = parameters.MeasurementFunction.matmul(crossCorrelationObservations.mT);
+
+            if (parametersToEstimate.MeasurementNoiseCovariance)
+                parameters.MeasurementNoiseCovariance = WrappedTensorDisposeScope(() =>
+                    EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
+                        + parameters.MeasurementFunction.matmul(S11).matmul(parameters.MeasurementFunction.mT)) / timeBins));
+
+            if (parametersToEstimate.InitialMean)
+                parameters.InitialMean = smoothedState.SmoothedInitialMean;
+
+            if (parametersToEstimate.InitialCovariance)
+                parameters.InitialCovariance = smoothedState.SmoothedInitialCovariance;
         }
 
-        var updatedParameters = new KalmanFilterParameters(
-            numStates: numStates,
-            numObservations: numObservations,
-            transitionMatrix: parametersToEstimate.TransitionMatrix ? transitionMatrix : null,
-            measurementFunction: parametersToEstimate.MeasurementFunction ? measurementFunction : null,
-            processNoiseCovariance: parametersToEstimate.ProcessNoiseCovariance ? processNoiseCovariance : null,
-            measurementNoiseCovariance: parametersToEstimate.MeasurementNoiseCovariance ? measurementNoiseCovariance : null,
-            initialMean: parametersToEstimate.InitialMean ? initialMean : null,
-            initialCovariance: parametersToEstimate.InitialCovariance ? initialCovariance : null
-        );
-
-        return new ExpectationMaximizationResult(logLikelihood, updatedParameters);
+        return new ExpectationMaximizationResult(logLikelihood, parameters);
     }
 
     public static StochasticSubspaceIdentificationResult StochasticSubspaceIdentification(
