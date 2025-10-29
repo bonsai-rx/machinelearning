@@ -32,6 +32,13 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     private ScalarType _scalarType = ScalarType.Float32;
 
     /// <summary>
+    /// The device on which to create the tensor.
+    /// </summary>
+    [XmlIgnore]
+    [Description("The device on which to create the tensor.")]
+    public Device Device { get; set; }
+
+    /// <summary>
     /// The number of states in the Kalman filter model.
     /// </summary>
     public int? NumStates { get; set; } = null;
@@ -209,7 +216,8 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
             measurementNoiseCovariance: _measurementNoiseCovariance,
             initialMean: _initialMean,
             initialCovariance: _initialCovariance,
-            scalarType: _scalarType
+            scalarType: _scalarType,
+            device: Device
         ));
     }
 
@@ -229,7 +237,8 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
                 measurementNoiseCovariance: _measurementNoiseCovariance,
                 initialMean: _initialMean,
                 initialCovariance: _initialCovariance,
-                scalarType: _scalarType
+                scalarType: _scalarType,
+                device: Device
             );
         });
     }
