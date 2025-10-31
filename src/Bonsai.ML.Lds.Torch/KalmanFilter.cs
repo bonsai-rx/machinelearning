@@ -184,8 +184,16 @@ public class KalmanFilter : nn.Module
             updatedMean[time] = update.UpdatedMean;
             updatedCovariance[time] = update.UpdatedCovariance;
 
-            _mean.set_(update.UpdatedMean);
-            _covariance.set_(update.UpdatedCovariance);
+            if (!update.UpdatedMean.isnan().any().item<bool>())
+            {
+                _mean.set_(update.UpdatedMean);
+                _covariance.set_(update.UpdatedCovariance);
+            }
+            else
+            {
+                _mean.set_(prediction.Mean);
+                _covariance.set_(prediction.Covariance);
+            }
         }
 
         return new FilteredState(
@@ -273,8 +281,16 @@ public class KalmanFilter : nn.Module
             innovationCovariance[time] = update.InnovationCovariance;
             kalmanGain[time] = update.KalmanGain;
 
-            mean = update.UpdatedMean;
-            covariance = update.UpdatedCovariance;
+            if (!update.UpdatedMean.isnan().any().item<bool>())
+            {
+                mean = update.UpdatedMean;
+                covariance = update.UpdatedCovariance;
+            }
+            else
+            {
+                mean = prediction.Mean;
+                covariance = prediction.Covariance;
+            }
         }
 
         return new FilteredStateWithAuxiliaryVariables(
