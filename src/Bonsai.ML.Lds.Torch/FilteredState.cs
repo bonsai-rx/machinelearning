@@ -36,8 +36,8 @@ public struct FilteredState(
     public Tensor UpdatedCovariance = updatedCovariance;
 
     /// <inheritdoc/>
-    public readonly Tensor Mean => UpdatedMean;
+    public readonly Tensor Mean => UpdatedMean.isnan().any().item<bool>() ? PredictedMean : UpdatedMean;
 
     /// <inheritdoc/>
-    public readonly Tensor Covariance => UpdatedCovariance;
+    public readonly Tensor Covariance => UpdatedCovariance.isnan().any().item<bool>() ? PredictedCovariance : UpdatedCovariance;
 }
