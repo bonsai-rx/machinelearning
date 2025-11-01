@@ -9,12 +9,12 @@ using System.ComponentModel;
 namespace Bonsai.ML.Torch.Random;
 
 /// <summary>
-/// Creates a random number generator with the specified seed and device.
+/// Creates a specific instance of a random number generator with the specified seed and device.
 /// </summary>
 [Combinator]
-[Description("Creates a random number generator with the specified seed and device.")]
+[Description("Creates a specific instance of a random number generator with the specified seed and device.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class Generator
+public class CreateGenerator
 {
     /// <summary>
     /// The device on which to create the generator.
@@ -31,16 +31,16 @@ public class Generator
     /// Creates a random number generator with the specified seed and device.
     /// </summary>
     /// <returns></returns>
-    public IObservable<torch.Generator> Process()
+    public IObservable<Generator> Process()
     {
-        return Observable.Return(new torch.Generator(Seed, Device));
+        return Observable.Return(new Generator(Seed, Device));
     }
 
     /// <summary>
     /// Generates an observable sequence of random number generators for each element of the input sequence.
     /// </summary>
-    public IObservable<torch.Generator> Process<T>(IObservable<T> source)
+    public IObservable<Generator> Process<T>(IObservable<T> source)
     {
-        return source.Select(value => new torch.Generator(Seed, Device));
+        return source.Select(value => new Generator(Seed, Device));
     }
 }
