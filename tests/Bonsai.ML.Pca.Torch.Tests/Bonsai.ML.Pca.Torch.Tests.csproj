@@ -16,6 +16,6 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Bonsai.ML.PCA\Bonsai.ML.PCA.csproj" />
+    <ProjectReference Include="..\..\src\Bonsai.ML.Pca.Torch\Bonsai.ML.Pca.Torch.csproj" />
   </ItemGroup>
 </Project>
