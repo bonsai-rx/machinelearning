@@ -2,7 +2,7 @@ using System;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.PCA;
+namespace Bonsai.ML.Pca.Torch;
 
 internal static class Utils
 {

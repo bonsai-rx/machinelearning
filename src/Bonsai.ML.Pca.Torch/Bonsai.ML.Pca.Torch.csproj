@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Bonsai.ML.PCA Bonsai library.</Description>
-    <PackageTags>$(PackageTags) Point Process Neural Decoder</PackageTags>
+    <Description>Bonsai.ML.Pca.Torch Bonsai library.</Description>
+    <PackageTags>$(PackageTags) PCA Principal Component Analysis</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
