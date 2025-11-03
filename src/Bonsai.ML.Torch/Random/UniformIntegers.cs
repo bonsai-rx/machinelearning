@@ -15,14 +15,14 @@ namespace Bonsai.ML.Torch.Random;
 [ResetCombinator]
 [Description("Creates a tensor filled with random integers.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class RandomIntegers
+public class UniformIntegers
 {
     /// <summary>
     /// The size of the tensor.
     /// </summary>
     [Description("The size of the tensor.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
-    public long[] Size { get; set; } = new long[0];
+    public long[] Size { get; set; } = [];
 
     /// <summary>
     /// The minimum value of the random integers inclusive.
@@ -53,7 +53,7 @@ public class RandomIntegers
     /// The random number generator to use.
     /// </summary>
     [XmlIgnore]
-    public torch.Generator Generator { get; set; } = null;
+    public Generator Generator { get; set; } = null;
 
     /// <summary>
     /// Creates a tensor filled with random integers sampled from a uniform distribution over the
@@ -69,7 +69,7 @@ public class RandomIntegers
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Tensor> Process(IObservable<torch.Generator> source)
+    public IObservable<Tensor> Process(IObservable<Generator> source)
     {
         return source.Select(value =>
         {

@@ -8,20 +8,20 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch.Random;
 
 /// <summary>
-/// Creates a tensor filled with random values sampled from a uniform distribution over the interval [0, 1).
+/// Creates a tensor filled with random numbers sampled from a uniform distribution over the interval [MinSize, MaxSize).
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Creates a tensor filled with random floats.")]
+[Description("Creates a tensor filled with random numbers from a uniform distribution over the interval [MinSize, MaxSize).")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class RandomUniform
+public class Uniform
 {
     /// <summary>
     /// The size of the tensor.
     /// </summary>
     [Description("The size of the tensor.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
-    public long[] Size { get; set; } = new long[0];
+    public long[] Size { get; set; } = [];
 
     /// <summary>
     /// The data type of the tensor elements.
@@ -40,14 +40,28 @@ public class RandomUniform
     /// The random number generator to use.
     /// </summary>
     [XmlIgnore]
-    public torch.Generator Generator { get; set; } = null;
+    [Description("The random number generator to use.")]
+    public Generator Generator { get; set; } = null;
 
     /// <summary>
-    /// Creates a tensor filled with random values sampled from a uniform distribution over the interval [0, 1).
+    /// The minimum value of the random numbers inclusive.
+    /// </summary>
+    [Description("The minimum value of the random numbers.")]
+    public double MinValue { get; set; } = 0;
+
+    /// <summary>
+    /// The maximum value of the random numbers exclusive.
+    /// </summary>
+    [Description("The maximum value of the random numbers.")]
+    public double MaxValue { get; set; } = 1;
+
+
+    /// <summary>
+    /// Creates a tensor filled with random values sampled from a uniform distribution over the interval [MinValue, MaxValue).
     /// </summary>
     public IObservable<Tensor> Process()
     {
-        return Observable.Return(rand(Size, dtype: Type, device: Device, generator: Generator));
+        return Observable.Return(rand(Size, dtype: Type, device: Device, generator: Generator) * (MaxValue - MinValue) + MinValue);
     }
 
     /// <summary>
@@ -60,7 +74,7 @@ public class RandomUniform
         return source.Select(value =>
         {
             Generator = value;
-            return rand(Size, dtype: Type, device: Device, generator: Generator);
+            return rand(Size, dtype: Type, device: Device, generator: Generator) * (MaxValue - MinValue) + MinValue;
         });
     }
 
@@ -71,7 +85,7 @@ public class RandomUniform
     /// <returns></returns>
     public IObservable<Tensor> Process(IObservable<Tensor> source)
     {
-        return source.Select(value => rand_like(value, dtype: Type, device: Device));
+        return source.Select(value => rand_like(value, dtype: Type, device: Device) * (MaxValue - MinValue) + MinValue);
     }
 
     /// <summary>
@@ -81,7 +95,7 @@ public class RandomUniform
     /// <returns></returns>
     public IObservable<Tensor> Process<T>(IObservable<T> source)
     {
-        return source.Select(value => rand(Size, dtype: Type, device: Device, generator: Generator));
+        return source.Select(value => rand(Size, dtype: Type, device: Device, generator: Generator) * (MaxValue - MinValue) + MinValue);
     }
 
 }
