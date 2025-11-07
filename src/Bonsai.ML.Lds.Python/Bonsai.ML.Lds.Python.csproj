@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Bonsai.ML.Lds.Python</Title>
+    <Description>A Bonsai package for implementing the Kalman Filter using python.</Description>
+    <PackageTags>$(PackageTags) KalmanFilter LinearDynamicalSystems</PackageTags>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="*.py" />
+    <EmbeddedResource Include="**\*.bonsai" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML\Bonsai.ML.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Python\Bonsai.ML.Python.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Data\Bonsai.ML.Data.csproj" />
+  </ItemGroup>
+</Project>
