@@ -29,7 +29,7 @@ namespace Bonsai.ML.Torch
         /// If set to false, the tensor will be loaded using the TorchSharp method which is specific to .NET formats.
         /// </remarks>
         [Description("Indicates whether to use the native torch load method for the tensor.")]
-        public bool UseNativeMethod { get; set; } = true;
+        public bool UseNativeTorchMethod { get; set; } = false;
 
         /// <summary>
         /// Loads a tensor from the specified file.
@@ -37,7 +37,7 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Tensor> Process()
         {
-            switch (UseNativeMethod)
+            switch (UseNativeTorchMethod)
             {
                 case true:
                     return Observable.Return(load(Path));

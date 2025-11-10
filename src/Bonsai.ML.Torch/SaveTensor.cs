@@ -30,7 +30,7 @@ namespace Bonsai.ML.Torch
         /// If set to false, the tensor will be saved using the TorchSharp method which is specific to .NET formats.
         /// </remarks>
         [Description("Indicates whether to use the native torch save method for the tensor.")]
-        public bool UseNativeMethod { get; set; } = true;
+        public bool UseNativeTorchMethod { get; set; } = false;
 
         /// <summary>
         /// Saves the input tensor to the specified file.
@@ -41,7 +41,7 @@ namespace Bonsai.ML.Torch
         {
             return source.Do(tensor =>
             {
-                if (UseNativeMethod)
+                if (UseNativeTorchMethod)
                     tensor.save(Path);
                 else
                     tensor.Save(Path);
