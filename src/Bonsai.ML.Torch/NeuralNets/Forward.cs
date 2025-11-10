@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+using static TorchSharp.torch.jit;
 using System.Xml.Serialization;
 
 namespace Bonsai.ML.Torch.NeuralNets
@@ -28,8 +30,15 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// <returns></returns>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
-            Model.Module.eval();
-            return source.Select(Model.Forward);
+            return source.Select(input =>
+            {
+                return Model switch
+                {
+                    Module<Tensor, Tensor> module => module.forward(input),
+                    ScriptModule<Tensor, Tensor> scriptModule => scriptModule.forward(input),
+                    _ => throw new InvalidOperationException("Unsupported model type for forward inference.")
+                };
+            });
         }
     }
 }
