@@ -14,6 +14,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:LoadTensor">
                 <p1:Path>transformed_binned_spikes.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -34,6 +35,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:LoadTensor">
                 <p1:Path>python_V0_0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -46,6 +48,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:LoadTensor">
                 <p1:Path>python_m0_0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -58,6 +61,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:LoadTensor">
                 <p1:Path>python_Z0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -70,6 +74,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:LoadTensor">
                 <p1:Path>python_R0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -82,6 +87,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:LoadTensor">
                 <p1:Path>python_B0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -94,6 +100,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:LoadTensor">
                 <p1:Path>python_Q0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
@@ -161,6 +168,8 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p2:CreateKalmanFilterParameters">
                 <p2:Type>Float64</p2:Type>
+                <p2:NumStates xsi:nil="true" />
+                <p2:NumObservations xsi:nil="true" />
                 <p2:TransitionMatrix />
                 <p2:MeasurementFunction />
                 <p2:ProcessNoiseCovariance />
@@ -343,6 +352,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:SaveTensor">
                 <p1:Path>bonsai_means.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="SubscribeSubject">
@@ -354,6 +364,7 @@
             <Expression xsi:type="Combinator">
               <Combinator xsi:type="p1:SaveTensor">
                 <p1:Path>bonsai_covs.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
               </Combinator>
             </Expression>
             <Expression xsi:type="Combinator">
