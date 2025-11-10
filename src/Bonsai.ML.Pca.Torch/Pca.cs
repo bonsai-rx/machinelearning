@@ -10,22 +10,36 @@ using static TorchSharp.torch.linalg;
 
 namespace Bonsai.ML.Pca.Torch;
 
-public class Pca : PcaBaseModel
+/// <summary>
+/// Implements a standard Principal Component Analysis (PCA) model.
+/// </summary>
+public class Pca(int numComponents,
+    Device? device = null,
+    ScalarType? scalarType = ScalarType.Float32) : PcaBaseModel(numComponents,
+        device,
+        scalarType)
 {
+    /// <summary>
+    /// Gets the covariance matrix of the fitted data.
+    /// </summary>
     public Tensor Covariance { get; private set; } = empty(0);
+
+    /// <summary>
+    /// Gets the eigenvalues of the covariance matrix.
+    /// </summary>
     public Tensor EigenValues { get; private set; } = empty(0);
+
+    /// <summary>
+    /// Gets the eigenvectors of the covariance matrix.
+    /// </summary>
     public Tensor EigenVectors { get; private set; } = empty(0);
-    public Tensor Components { get; private set; } = empty(0);
+
+    /// <inheritdoc/>
+    public override Tensor Components { get; protected set; } = empty(0);
+
     private bool _isFitted = false;
 
-    public Pca(int numComponents,
-        Device? device = null,
-        ScalarType? scalarType = ScalarType.Float32)
-        : base(numComponents,
-            device,
-            scalarType)
-    { }
-
+    /// <inheritdoc/>
     public override void Fit(Tensor data)
     {
         if (data.NumberOfElements == 0 || data.dim() < 2)
@@ -33,7 +47,6 @@ public class Pca : PcaBaseModel
             throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
         }
 
-        var n = data.size(0);
         var d = data.size(1);
 
         if (NumComponents > d)
@@ -53,6 +66,7 @@ public class Pca : PcaBaseModel
         _isFitted = true;
     }
 
+    /// <inheritdoc/>
     public override Tensor Transform(Tensor data)
     {
         if (data.NumberOfElements == 0 || data.dim() < 2)
@@ -71,6 +85,7 @@ public class Pca : PcaBaseModel
         return Xc.matmul(Components); // n x q
     }
 
+    /// <inheritdoc/>
     public override Tensor Reconstruct(Tensor data)
     {
         if (data.NumberOfElements == 0 || data.dim() < 2)

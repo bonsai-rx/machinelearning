@@ -6,15 +6,19 @@ using System.Linq;
 
 namespace Bonsai.ML.Pca.Torch;
 
-public class PcaDescriptor : CustomTypeDescriptor
+/// <summary>
+/// Provides a custom type descriptor for PCA model creation.
+/// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="PcaDescriptor"/> class.
+/// </remarks>
+/// <param name="parent"></param>
+/// <param name="instance"></param>
+public class PcaDescriptor(ICustomTypeDescriptor parent, object instance) : CustomTypeDescriptor(parent)
 {
-    private readonly object _instance;
+    private readonly object _instance = instance;
 
-    public PcaDescriptor(ICustomTypeDescriptor parent, object instance) : base(parent)
-    {
-        _instance = instance;
-    }
-
+    /// <inheritdoc/>
     public override PropertyDescriptorCollection GetProperties(Attribute[] attributes)
     {
         var allProperties = base.GetProperties(attributes);
@@ -31,6 +35,7 @@ public class PcaDescriptor : CustomTypeDescriptor
         return allProperties;
     }
 
+    /// <inheritdoc/>
     public override PropertyDescriptorCollection GetProperties()
-        => GetProperties(null);
+        => GetProperties([]);
 }
