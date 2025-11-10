@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using PointProcessDecoder.Core;
 using PointProcessDecoder.Core.Decoder;
 using static TorchSharp.torch;
 
@@ -26,13 +27,24 @@ public class GetDecoderData : IPointProcessModelReference
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<DecoderData> Process(IObservable<Tensor> source)
+    public IObservable<DecoderDataFrame> Process(IObservable<Tensor> source)
     {
         var modelName = Name;
-        return source.Select(input => 
+        return source.Select(input =>
         {
             var model = PointProcessModelManager.GetModel(modelName);
-            return new DecoderData(model.StateSpace, input);
+            var decoderData = new DecoderData(model.StateSpace, input);
+            return new DecoderDataFrame(
+                decoderData,
+                modelName);
         });
     }
+}
+
+public readonly struct DecoderDataFrame(
+    DecoderData decoderData,
+    string name) : IPointProcessModelReference
+{
+    public DecoderData DecoderData => decoderData;
+    public string Name => name;
 }
