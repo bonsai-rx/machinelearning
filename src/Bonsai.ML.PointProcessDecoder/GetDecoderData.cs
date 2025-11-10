@@ -40,11 +40,3 @@ public class GetDecoderData : IPointProcessModelReference
         });
     }
 }
-
-public readonly struct DecoderDataFrame(
-    DecoderData decoderData,
-    string name) : IPointProcessModelReference
-{
-    public DecoderData DecoderData => decoderData;
-    public string Name => name;
-}

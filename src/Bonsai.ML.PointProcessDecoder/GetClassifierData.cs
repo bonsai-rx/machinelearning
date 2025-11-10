@@ -40,11 +40,3 @@ public class GetClassifierData : IPointProcessModelReference
         });
     }
 }
-
-public readonly struct ClassifierDataFrame(
-    ClassifierData classifierData,
-    string name) : IPointProcessModelReference
-{
-    public ClassifierData ClassifierData => classifierData;
-    public string Name => name;
-}
