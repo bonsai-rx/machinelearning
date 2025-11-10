@@ -10,16 +10,44 @@ using static TorchSharp.torch.linalg;
 
 namespace Bonsai.ML.Pca.Torch;
 
+/// <summary>
+/// Probabilistic Principal Component Analysis (PPCA) model.
+/// </summary>
 public class ProbabilisticPca : PcaBaseModel
 {
+    /// <summary>
+    /// Gets the variance of the isotropic Gaussian noise model.
+    /// </summary>
     public double Variance { get; private set; }
+
+    /// <summary>
+    /// Gets the log likelihood of the fitted model.
+    /// </summary>
     public Tensor LogLikelihood { get; private set; } = empty(0);
-    public Tensor Components { get; private set; } = empty(0);
+
+    /// <inheritdoc/>
+    public override Tensor Components { get; protected set; } = empty(0);
+
+    /// <summary>
+    /// Gets the random number generator used for initializing the model.
+    /// </summary>
     public Generator Generator { get; private set; }
-    private int _iterations;
-    private double _tolerance;
+
+    private readonly int _iterations;
+    private readonly double _tolerance;
     private bool _isFitted = false;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProbabilisticPca"/> class.
+    /// </summary>
+    /// <param name="numComponents"></param>
+    /// <param name="device"></param>
+    /// <param name="scalarType"></param>
+    /// <param name="initialVariance"></param>
+    /// <param name="generator"></param>
+    /// <param name="iterations"></param>
+    /// <param name="tolerance"></param>
+    /// <exception cref="ArgumentException"></exception>
     public ProbabilisticPca(int numComponents,
         Device? device = null,
         ScalarType? scalarType = ScalarType.Float32,
@@ -52,6 +80,11 @@ public class ProbabilisticPca : PcaBaseModel
         _tolerance = tolerance;
     }
 
+    /// <summary>
+    /// Fits the PPCA model to the input data.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <exception cref="ArgumentException"></exception>
     public override void Fit(Tensor data)
     {
         if (data.NumberOfElements == 0 || data.dim() != 2)
@@ -153,6 +186,13 @@ public class ProbabilisticPca : PcaBaseModel
         _isFitted = true;
     }
 
+    /// <summary>
+    /// Transforms the input data using the fitted PPCA model.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public override Tensor Transform(Tensor data)
     {
         if (data.NumberOfElements == 0 || data.dim() < 2)
@@ -173,7 +213,14 @@ public class ProbabilisticPca : PcaBaseModel
         var MInv = Utils.InvertSPD(M, eye(NumComponents)); // q x q
         return X.matmul(W).matmul(MInv); // n x q
     }
-    
+
+    /// <summary>
+    /// Reconstructs the input data using the fitted PPCA model.
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public override Tensor Reconstruct(Tensor data)
     {
         if (data.NumberOfElements == 0 || data.dim() < 2)

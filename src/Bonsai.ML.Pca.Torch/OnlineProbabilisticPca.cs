@@ -10,24 +10,62 @@ using static TorchSharp.torch.linalg;
 
 namespace Bonsai.ML.Pca.Torch;
 
+/// <summary>
+/// Implements an online Probabilistic Principal Component Analysis (PPCA) model using stochastic online EM.
+/// </summary>
 public class OnlineProbabilisticPca : PcaBaseModel
 {
+    /// <summary>
+    /// Rho is a constant learning rate parameter.
+    /// </summary>
+    /// <remarks>
+    /// Rho must be in the range (0, 1). Only one of Rho or Kappa should be specified.
+    /// </remarks>
     public double? Rho { get; private set; }
+
+    /// <summary>
+    /// Kappa is the exponent in the learning rate schedule.
+    /// </summary>
+    /// <remarks>
+    /// Kappa must be in the range (0.5, 1]. Only one
+    /// of Rho or Kappa should be specified.
+    /// </remarks>
     public double? Kappa { get; private set; }
+
+    /// <summary>
+    /// Gets the variance of the isotropic Gaussian noise model.
+    /// </summary>
     public double Variance => _sigma2.to_type(ScalarType.Float64).item<double>();
+
+    /// <summary>
+    /// Gets the period for reorthogonalizing the principal components.
+    /// </summary>
+    /// <remarks>
+    /// Represented as the number of update steps between reorthogonalization operations.
+    /// If not specified, reorthogonalization is not performed.
+    /// </remarks>
     public int ReorthogonalizePeriod { get; private set; }
+
+    /// <summary>
+    /// Gets the time offset used in the learning rate schedule when Kappa is specified.
+    /// </summary>
     public int? TimeOffset { get; private set; }
-    public Tensor Components => _W;
+
+    /// <inheritdoc/>
+    public override Tensor Components { get; protected set; } = empty(0);
+
+    /// <summary>
+    /// Gets the random number generator used for initializing the model.
+    /// </summary>
     public Generator Generator { get; private set; }
 
-    private Tensor _mu;
-    private Tensor _W;
-    private Tensor _Iq;
-    private Tensor _mx; // E[x]
-    private Tensor _Cxz; // E[xz^T]
-    private Tensor _mz; // E[z]
-    private Tensor _Czz; // E[zz^T]
-    private Tensor _sxx; // E[||x||^2]
+    private Tensor _mu = empty(0);
+    private Tensor _Iq = empty(0);
+    private Tensor _mx = empty(0); // E[x]
+    private Tensor _Cxz = empty(0); // E[xz^T]
+    private Tensor _mz = empty(0); // E[z]
+    private Tensor _Czz = empty(0); // E[zz^T]
+    private Tensor _sxx = empty(0); // E[||x||^2]
     private Tensor _sigma2; // Variance
 
     private bool _initializedParameters = false;
@@ -35,6 +73,19 @@ public class OnlineProbabilisticPca : PcaBaseModel
     private int _stepCount = 0;
     private readonly bool _reorthogonalize = false;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OnlineProbabilisticPca"/> class.
+    /// </summary>
+    /// <param name="numComponents"></param>
+    /// <param name="device"></param>
+    /// <param name="scalarType"></param>
+    /// <param name="initialVariance"></param>
+    /// <param name="generator"></param>
+    /// <param name="rho"></param>
+    /// <param name="kappa"></param>
+    /// <param name="timeOffset"></param>
+    /// <param name="reorthogonalizePeriod"></param>
+    /// <exception cref="ArgumentException"></exception>
     public OnlineProbabilisticPca(int numComponents,
         Device? device = null,
         ScalarType? scalarType = ScalarType.Float32,
@@ -71,12 +122,16 @@ public class OnlineProbabilisticPca : PcaBaseModel
                 throw new ArgumentException("Rho must be in the range (0, 1).", nameof(rho));
             }
         }
-
-        if (kappa.HasValue)
+        else
         {
             if (timeOffset is null or <= 0)
             {
                 throw new ArgumentException("Time offset must be a positive integer.", nameof(timeOffset));
+            }
+
+            if (!kappa.HasValue)
+            {
+                throw new ArgumentException("Kappa must be specified when using a learning rate schedule.", nameof(kappa));
             }
 
             UpdateSchedule = () => Math.Pow(_stepCount + timeOffset.Value, -kappa.Value);
@@ -99,6 +154,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
         _sigma2 = initialVariance;
     }
 
+    /// <inheritdoc/>
     public override void Fit(Tensor data)
     {
         // throw new NotImplementedException();
@@ -127,7 +183,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
                 _mu = zeros(d, device: Device, dtype: ScalarType).MoveToOuterDisposeScope();
                 var randW = randn(d, q, generator: Generator, device: Device, dtype: ScalarType);
                 var orthonormalBases = linalg.qr(randW).Q;
-                _W = (orthonormalBases * _sigma2).MoveToOuterDisposeScope(); // d x q
+                Components = (orthonormalBases * _sigma2).MoveToOuterDisposeScope(); // d x q
                 _Iq = eye(q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q x q
 
                 _mx = zeros(d, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // d
@@ -146,10 +202,10 @@ public class OnlineProbabilisticPca : PcaBaseModel
             var Xc = Xt - _mu;
 
             // E-step
-            var M = _W.T.matmul(_W) + cov;
+            var M = Components.T.matmul(Components) + cov;
             var MInv = Utils.InvertSPD(M, _Iq);
 
-            var XcW = Xc.matmul(_W);
+            var XcW = Xc.matmul(Components);
             var EzT = Utils.InvertSPD(M, XcW.T);
             var Ez = EzT.T;
 
@@ -193,7 +249,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
             // Reorder components based on the strength of the components
             var strength = sum(WNew * WNew, dim: 0);
             var indices = argsort(strength, descending: true);
-            _W = WNew.index_select(1, indices).MoveToOuterDisposeScope();
+            Components = WNew.index_select(1, indices).MoveToOuterDisposeScope();
             _Cxz = _Cxz.index_select(1, indices).MoveToOuterDisposeScope();
             _mz = _mz.index_select(0, indices).MoveToOuterDisposeScope();
             _Czz = _Czz.index_select(0, indices).index_select(1, indices).MoveToOuterDisposeScope();
@@ -202,12 +258,13 @@ public class OnlineProbabilisticPca : PcaBaseModel
             Szz = _Czz;
 
             // Update variance
-            _sigma2 = ((Sxx - 2 * trace(_W.T.matmul(Sxz)) + trace(_W.T.matmul(_W).matmul(Szz))) / (double)d)
+            _sigma2 = ((Sxx - 2 * trace(Components.T.matmul(Sxz)) + trace(Components.T.matmul(Components).matmul(Szz))) / (double)d)
                 .clamp_min(0.0)
                 .MoveToOuterDisposeScope();
         }
     }
 
+    /// <inheritdoc/>
     public override Tensor Transform(Tensor data)
     {
         if (data.NumberOfElements == 0 || data.dim() < 2)
@@ -217,11 +274,12 @@ public class OnlineProbabilisticPca : PcaBaseModel
 
         var Xt = data.T; // n x d
         var Xc = Xt - _mu; // n x d
-        var M = _W.T.matmul(_W) + _Iq * _sigma2; // q x q
-        var XcW = Xc.matmul(_W);
+        var M = Components.T.matmul(Components) + _Iq * _sigma2; // q x q
+        var XcW = Xc.matmul(Components);
         return Utils.InvertSPD(M, XcW.T).T; // n x q
     }
-    
+
+    /// <inheritdoc/>
     public override Tensor Reconstruct(Tensor data)
     {
         if (data.NumberOfElements == 0 || data.dim() < 2)
@@ -236,11 +294,11 @@ public class OnlineProbabilisticPca : PcaBaseModel
 
         var Xt = data.T; // n x d
         var Xc = Xt - _mu; // n x d
-        var M = _W.T.matmul(_W) + _Iq * _sigma2; // q x q
-        var XcW = Xc.matmul(_W);
+        var M = Components.T.matmul(Components) + _Iq * _sigma2; // q x q
+        var XcW = Xc.matmul(Components);
         var EzT = Utils.InvertSPD(M, XcW.T);
         var Ez = EzT.T;
 
-        return Ez.matmul(_W.T) + _mu.T; // n x d
+        return Ez.matmul(Components.T) + _mu.T; // n x d
     }
 }
