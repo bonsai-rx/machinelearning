@@ -32,8 +32,11 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Device> Process()
         {
-            InitializeDeviceType(DeviceType);
-            return Observable.Return(new Device(DeviceType, DeviceIndex));
+            return Observable.Defer(() =>
+            {
+                InitializeDeviceType(DeviceType);
+                return Observable.Return(new Device(DeviceType, DeviceIndex));
+            });
         }
 
         /// <summary>
@@ -42,8 +45,11 @@ namespace Bonsai.ML.Torch
         /// <returns></returns>
         public IObservable<Device> Process<T>(IObservable<T> source)
         {
-            InitializeDeviceType(DeviceType);
-            return source.Select((_) => new Device(DeviceType, DeviceIndex));
+            return source.Select((_) =>
+            {
+                InitializeDeviceType(DeviceType);
+                return new Device(DeviceType, DeviceIndex);
+            });
         }
     }
 }

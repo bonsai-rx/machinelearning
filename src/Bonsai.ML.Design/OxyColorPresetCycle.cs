@@ -1,7 +1,7 @@
 
 using OxyPlot;
 
-namespace Bonsai.ML.PointProcessDecoder.Design
+namespace Bonsai.ML.Design
 {
     /// <summary>
     /// Enumerates the colors and provides a preset collection of colors to cycle through.
