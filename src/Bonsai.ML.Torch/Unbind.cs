@@ -12,7 +12,7 @@ namespace Bonsai.ML.Torch;
 [Combinator]
 [Description("Deconstructs each tensor in the sequence into one or more tensors by splitting it along the specified dimension.")]
 [WorkflowElementCategory(ElementCategory.Combinator)]
-public class Deconstruct
+public class Unbind
 {
     private int _dimension = 0;
     /// <summary>
@@ -32,7 +32,8 @@ public class Deconstruct
     {
         return source.SelectMany((input) =>
         {
-            if (input is null) return null;
+            if (input is null) 
+                return null;
             return input.unbind(_dimension).ToObservable();
         });
     }
