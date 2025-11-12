@@ -6,15 +6,15 @@ using Bonsai;
 using System.ComponentModel;
 
 /// <summary>
-/// This operator ensures that all tensor operations within the observable sequence are executed in inference mode.
+/// Represents an operator that ensures all tensor operations within the observable sequence are executed in inference mode.
 /// </summary>
 [Combinator]
-[Description("Ensures that all tensor operations within the observable sequence are executed in inference mode.")]
+[Description("Ensures all tensor operations within the observable sequence are executed in inference mode.")]
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class ObserveWithInferenceMode
 {
     /// <summary>
-    /// Processes an observable sequence, executing all tensor operations in inference mode.
+    /// Returns an observable sequence which is identical to the source sequence, but where all tensor operations are executed in inference mode.
     /// </summary>
     public IObservable<T> Process<T>(IObservable<T> source)
     {

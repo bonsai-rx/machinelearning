@@ -17,33 +17,33 @@ namespace Bonsai.ML.Torch
     public class Diagonal
     {
         /// <summary>
-        /// The input matrix.
+        /// Gets or sets the values to include in the diagonal.
         /// </summary>
-        [Description("The input matrix.")]
+        [Description("The values to include in the diagonal.")]
         [TypeConverter(typeof(UnidimensionalArrayConverter))]
-        public double[] Input { get; set; }
+        public double[] Values { get; set; }
 
         /// <summary>
-        /// The data type of the tensor elements.
+        /// Gets or sets the data type of the tensor elements.
         /// </summary>
         [Description("The data type of the tensor elements.")]
         public ScalarType? Type { get; set; }
 
         /// <summary>
-        /// The device on which to create the tensor.
+        /// Gets or sets the device on which to create the tensor.
         /// </summary>
         [Description("The device on which to create the tensor.")]
         [XmlIgnore]
         public Device Device { get; set; } = null;
 
         /// <summary>
-        /// The diagonal offset. Default is 0, which means the main diagonal.
+        /// Gets or sets the diagonal offset. Default is 0, which means the main diagonal.
         /// </summary>
         [Description("The diagonal offset. Default is 0, which means the main diagonal.")]
         public int Offset { get; set; } = 0;
 
         /// <summary>
-        /// Creates a diagonal matrix.
+        /// Creates an observable sequence containing a single diagonal matrix constructed from the specified data type, size and values.
         /// </summary>
         public IObservable<Tensor> Process()
         {

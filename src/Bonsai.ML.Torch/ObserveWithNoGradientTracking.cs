@@ -6,15 +6,15 @@ using Bonsai;
 using System.ComponentModel;
 
 /// <summary>
-/// This operator ensures that all tensor operations within the observable sequence are executed without tracking gradients.
+/// Represents an operator that ensures all tensor operations within the observable sequence are executed without tracking gradients.
 /// </summary>
 [Combinator]
-[Description("Ensures that all tensor operations within the observable sequence are executed without tracking gradients.")]
+[Description("Ensures all tensor operations within the observable sequence are executed without tracking gradients.")]
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class ObserveWithNoGradientTracking
 {
     /// <summary>
-    /// Processes an observable sequence, executing all tensor operations without tracking gradients.
+    /// Returns an observable sequence which is identical to the source sequence, but where all tensor operations are executed without tracking gradients.
     /// </summary>
     public IObservable<T> Process<T>(IObservable<T> source)
     {

@@ -7,10 +7,10 @@ using TorchSharp;
 namespace Bonsai.ML.Torch;
 
 /// <summary>
-/// This operator deconstructs each incoming tensor into a sequence of tensors by splitting it along the specified dimension.
+/// Represents an operator that deconstructs each tensor in the sequence into one or more tensors by splitting it along the specified dimension.
 /// </summary>
 [Combinator]
-[Description("Deconstructs each incoming tensor into a sequence of tensors by splitting it along the specified dimension.")]
+[Description("Deconstructs each tensor in the sequence into one or more tensors by splitting it along the specified dimension.")]
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class Deconstruct
 {

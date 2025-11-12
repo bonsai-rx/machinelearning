@@ -34,8 +34,10 @@ namespace Bonsai.ML.Torch
         {
             return Observable.Defer(() =>
             {
-                InitializeDeviceType(DeviceType);
-                return Observable.Return(new Device(DeviceType, DeviceIndex));
+                var deviceType = DeviceType;
+                var deviceIndex = DeviceIndex;
+                InitializeDeviceType(deviceType);
+                return Observable.Return(new Device(deviceType, deviceIndex));
             });
         }
 

@@ -10,12 +10,12 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch;
 
 /// <summary>
-/// Prints the string representation of incoming tensors to the console.
+/// Represents an operator that applies a string formatting operation to all tensors in the sequence.
 /// </summary>
 [Combinator]
-[Description("Prints the string representation of incoming tensors to the console.")]
-[WorkflowElementCategory(ElementCategory.Sink)]
-public class PrintTensor
+[Description("Applies a string formatting operation to all tensors in the sequence.")]
+[WorkflowElementCategory(ElementCategory.Transform)]
+public class FormatTensor
 {
     /// <summary>
     /// Gets or sets the string style used to format the tensor output.
@@ -24,12 +24,12 @@ public class PrintTensor
     public TensorStringStyle StringStyle { get; set; }
 
     /// <summary>
-    /// Processes the input sequence of tensors and prints their string representations to the console.
+    /// Applies a string formatting operation to all tensors in an observable sequence.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Tensor> Process(IObservable<Tensor> source)
+    public IObservable<string> Process(IObservable<Tensor> source)
     {
-        return source.Do(value => Console.WriteLine(value.ToString(StringStyle)));
+        return source.Select(value => value.ToString(StringStyle));
     }
 }

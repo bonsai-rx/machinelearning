@@ -11,9 +11,9 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch;
 
 /// <summary>
-/// Base class for operators that contain tensor properties. Provides automatic scalar type conversion on registered tensors.
+/// Provides an abstract base class for operators that contain tensor properties. Automatic scalar type conversion is provided for all registered tensors.
 /// </summary>
-public abstract class TensorContainerBase : IScalarTypeProvider
+public abstract class TensorOperatorBase : IScalarTypeProvider
 {
     private ScalarType _scalarType = ScalarType.Float32;
     private readonly List<RegisteredTensor> _registeredTensors = new();

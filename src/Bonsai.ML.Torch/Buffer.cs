@@ -7,14 +7,14 @@ using TorchSharp;
 namespace Bonsai.ML.Torch;
 
 /// <summary>
-/// This operator collects incoming tensors into a buffer and concatenates them along the first dimension.
+/// Represents an operator that gathers incoming tensors into zero or more tensors by concatenating them along the first dimension.
 /// </summary>
 /// <remarks>
 /// The operator maintains an internal buffer that accumulates incoming tensors until it reaches the specified count.
 /// When the buffer reaches the specified count, it is emitted as a single tensor. After emitting the buffer, the operator skips a specified number of incoming tensors before starting to fill the buffer again.
 /// </remarks>
 [Combinator]
-[Description("Buffers the incoming tensors and concatenates them into a single tensor along the first dimension.")]
+[Description("Gathers incoming tensors into zero or more tensors by concatenating them along the first dimension.")]
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class Buffer
 {
@@ -60,7 +60,8 @@ public class Buffer
         _current = 0;
         return source.Select((input) =>
         {
-            if (input is null) return false;
+            if (input is null)
+                return false;
 
             if (_buffer is null)
             {

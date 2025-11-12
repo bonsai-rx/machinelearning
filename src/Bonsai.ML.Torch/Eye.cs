@@ -7,35 +7,35 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Creates an identity matrix with the given data type and size.
+    /// Represents an operator that creates a sequence of identity matrices with the specified data type and size.
     /// </summary>
     [Combinator]
     [ResetCombinator]
-    [Description("Creates an identity matrix with the given data type and size.")]
+    [Description("Creates a sequence of identity matrices with the specified data type and size.")]
     [WorkflowElementCategory(ElementCategory.Source)]
     public class Eye
     {
         /// <summary>
-        /// The size of the identity matrix.
+        /// Gets or sets the size of the identity matrix.
         /// </summary>
         [Description("The size of the identity matrix.")]
         public long Size { get; set; } = 0;
 
         /// <summary>
-        /// The data type of the tensor elements.
+        /// Gets or sets the data type of the tensor elements.
         /// </summary>
         [Description("The data type of the tensor elements.")]
         public ScalarType? Type { get; set; } = null;
 
         /// <summary>
-        /// The device on which to create the tensor.
+        /// Gets or sets the device on which to create the tensor.
         /// </summary>
         [Description("The device on which to create the tensor.")]
         [XmlIgnore]
         public Device Device { get; set; } = null;
 
         /// <summary>
-        /// Creates an identity matrix with the given data type and size.
+        /// Creates an observable sequence containing a single identity matrix with the specified data type and size.
         /// </summary>
         public IObservable<Tensor> Process()
         {
