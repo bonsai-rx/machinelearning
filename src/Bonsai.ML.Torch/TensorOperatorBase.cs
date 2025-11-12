@@ -25,7 +25,8 @@ public abstract class TensorOperatorBase : IScalarTypeProvider
         get => _scalarType;
         set
         {
-            if (_scalarType == value) return;
+            if (_scalarType == value) 
+                return;
             _scalarType = value;
             ConvertAllTensors();
         }
@@ -59,7 +60,8 @@ public abstract class TensorOperatorBase : IScalarTypeProvider
             foreach (var registeredTensor in _registeredTensors)
             {
                 var tensor = registeredTensor.Getter();
-                if (tensor is null || tensor.dtype == _scalarType) continue;
+                if (tensor is null || tensor.dtype == _scalarType) 
+                    continue;
                 registeredTensor.Setter(tensor.to_type(_scalarType));
             }
         }
