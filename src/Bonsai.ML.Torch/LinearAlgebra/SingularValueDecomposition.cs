@@ -23,9 +23,40 @@ namespace Bonsai.ML.Torch.LinearAlgebra
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public IObservable<Tuple<Tensor, Tensor, Tensor>> Process(IObservable<Tensor> source)
+        public IObservable<SvdResult> Process(IObservable<Tensor> source)
         {
-            return source.Select(tensor => linalg.svd(tensor, fullMatrices: FullMatrices).ToTuple());
+            return source.Select(tensor =>
+            {
+                var (U, S, Vh) = linalg.svd(tensor, fullMatrices: FullMatrices);
+                return new SvdResult(U, S, Vh);
+            });
+        }
+
+        /// <summary>
+        /// Represents the result of a singular value decomposition.
+        /// </summary>
+        /// <param name="u"></param>
+        /// <param name="s"></param>
+        /// <param name="vh"></param>
+        public readonly struct SvdResult(
+            Tensor u,
+            Tensor s,
+            Tensor vh)
+        {
+            /// <summary>
+            /// The U tensor.
+            /// </summary>
+            public Tensor U => u;
+
+            /// <summary>
+            /// The singular values.
+            /// </summary>
+            public Tensor S => s;
+
+            /// <summary>
+            /// The Vh tensor.
+            /// </summary>
+            public Tensor Vh => vh;
         }
     }
 }
