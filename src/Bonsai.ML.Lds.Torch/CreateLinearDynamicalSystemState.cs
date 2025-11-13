@@ -14,21 +14,13 @@ namespace Bonsai.ML.Lds.Torch;
 [ResetCombinator]
 [Description("Creates a new state for a linear gaussian dynamical system.")]
 [WorkflowElementCategory(ElementCategory.Source)]
+[TypeConverter(typeof(TensorOperatorConverter))]
 public class CreateLinearDynamicalSystemState : IScalarTypeProvider
 {
-    private ScalarType _scalarType = ScalarType.Float32;
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
     [TypeConverter(typeof(ScalarTypeConverter))]
-    public ScalarType Type
-    {
-        get => _scalarType;
-        set
-        {
-            _scalarType = value;
-            ConvertTensorsScalarType(value);
-        }
-    }
+    public ScalarType Type { get; set; } = ScalarType.Float32;
 
     /// <summary>
     /// The device on which to create the tensor.
@@ -37,13 +29,6 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     [XmlIgnore]
     public Device Device { get; set; }
 
-    private void ConvertTensorsScalarType(ScalarType scalarType)
-    {
-        _mean = _mean?.to_type(scalarType);
-        _covariance = _covariance?.to_type(scalarType);
-    }
-
-    private Tensor _mean = null;
     /// <summary>
     /// The mean of the state.
     /// </summary>
@@ -52,7 +37,7 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     public Tensor Mean
     {
         get => _mean;
-        set => _mean = value?.to_type(Type);
+        set => _mean = value;
     }
 
     /// <summary>
@@ -63,11 +48,10 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string MeanXml
     {
-        get => TensorConverter.ConvertToString(Mean, _scalarType);
-        set => Mean = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(_mean, Type);
+        set => _mean = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private Tensor _covariance = null;
     /// <summary>
     /// The covariance of the state.
     /// </summary>
@@ -76,7 +60,7 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     public Tensor Covariance
     {
         get => _covariance;
-        set => _covariance = value?.to_type(Type);
+        set => _covariance = value;
     }
 
     /// <summary>
@@ -87,9 +71,12 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string CovarianceXml
     {
-        get => TensorConverter.ConvertToString(Covariance, _scalarType);
-        set => Covariance = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(_covariance, Type);
+        set => _covariance = TensorConverter.ConvertFromString(value, Type);
     }
+
+    private Tensor _mean = null;
+    private Tensor _covariance = null;
 
     /// <summary>
     /// Creates an observable sequence and emits the state for a linear gaussian dynamical system.
@@ -100,8 +87,8 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
         return Observable.Defer(() =>
         {
             var device = Device ?? CPU;
-            var mean = Mean?.to(device) ?? throw new InvalidOperationException("The mean of the state must be specified.");
-            var covariance = Covariance?.to(device) ?? throw new InvalidOperationException("The covariance of the state must be specified.");
+            var mean = _mean?.to(device) ?? throw new InvalidOperationException("The mean of the state must be specified.");
+            var covariance = _covariance?.to(device) ?? throw new InvalidOperationException("The covariance of the state must be specified.");
             return Observable.Return(new LinearDynamicalSystemState(mean, covariance));
         });
     }
@@ -118,8 +105,8 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
         return source.Select(_ =>
         {
             var device = Device ?? CPU;
-            var mean = Mean?.to(device) ?? throw new InvalidOperationException("The mean of the state must be specified.");
-            var covariance = Covariance?.to(device) ?? throw new InvalidOperationException("The covariance of the state must be specified.");
+            var mean = _mean?.to(device) ?? throw new InvalidOperationException("The mean of the state must be specified.");
+            var covariance = _covariance?.to(device) ?? throw new InvalidOperationException("The covariance of the state must be specified.");
             return new LinearDynamicalSystemState(mean, covariance);
         });
     }

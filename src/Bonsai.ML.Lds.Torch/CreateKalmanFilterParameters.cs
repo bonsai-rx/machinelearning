@@ -15,21 +15,13 @@ namespace Bonsai.ML.Lds.Torch;
 [ResetCombinator]
 [Description("Initializes the parameters for a new Kalman filter model.")]
 [WorkflowElementCategory(ElementCategory.Source)]
+[TypeConverter(typeof(TensorOperatorConverter))]
 public class CreateKalmanFilterParameters : IScalarTypeProvider
 {
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
     [TypeConverter(typeof(ScalarTypeConverter))]
-    public ScalarType Type
-    {
-        get => _scalarType;
-        set
-        {
-            _scalarType = value;
-            ConvertTensorsScalarType(value);
-        }
-    }
-    private ScalarType _scalarType = ScalarType.Float32;
+    public ScalarType Type { get; set; } = ScalarType.Float32;
 
     /// <summary>
     /// The device on which to create the tensor.
@@ -48,7 +40,6 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     /// </summary>
     public int? NumObservations { get; set; } = null;
 
-    private Tensor _transitionMatrix = null;
     /// <summary>
     /// The state transition matrix.
     /// </summary>
@@ -57,7 +48,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     public Tensor TransitionMatrix
     {
         get => _transitionMatrix;
-        set => _transitionMatrix = value?.to_type(Type);
+        set => _transitionMatrix = value;
     }
 
     /// <summary>
@@ -68,11 +59,10 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string TransitionMatrixXml
     {
-        get => TensorConverter.ConvertToString(TransitionMatrix, _scalarType);
-        set => TransitionMatrix = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(_transitionMatrix, Type);
+        set => _transitionMatrix = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private Tensor _measurementFunction = null;
     /// <summary>
     /// The measurement function.
     /// </summary>
@@ -81,7 +71,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     public Tensor MeasurementFunction
     {
         get => _measurementFunction;
-        set => _measurementFunction = value?.to_type(Type);
+        set => _measurementFunction = value;
     }
 
     /// <summary>
@@ -92,11 +82,10 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string MeasurementFunctionXml
     {
-        get => TensorConverter.ConvertToString(MeasurementFunction, _scalarType);
-        set => MeasurementFunction = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(_measurementFunction, Type);
+        set => _measurementFunction = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private Tensor _processNoiseCovariance = null;
     /// <summary>
     /// The process noise variance.
     /// </summary>
@@ -105,7 +94,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     public Tensor ProcessNoiseCovariance
     {
         get => _processNoiseCovariance;
-        set => _processNoiseCovariance = value?.to_type(Type);
+        set => _processNoiseCovariance = value;
     }
 
     /// <summary>
@@ -116,11 +105,10 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string ProcessNoiseCovarianceXml
     {
-        get => TensorConverter.ConvertToString(ProcessNoiseCovariance, _scalarType);
-        set => ProcessNoiseCovariance = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(_processNoiseCovariance, Type);
+        set => _processNoiseCovariance = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private Tensor _measurementNoiseCovariance = null;
     /// <summary>
     /// The measurement noise covariance matrix.
     /// </summary>
@@ -129,7 +117,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     public Tensor MeasurementNoiseCovariance
     {
         get => _measurementNoiseCovariance;
-        set => _measurementNoiseCovariance = value?.to_type(Type);
+        set => _measurementNoiseCovariance = value;
     }
 
     /// <summary>
@@ -140,11 +128,10 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string MeasurementNoiseCovarianceXml
     {
-        get => TensorConverter.ConvertToString(MeasurementNoiseCovariance, _scalarType);
-        set => MeasurementNoiseCovariance = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(_measurementNoiseCovariance, Type);
+        set => _measurementNoiseCovariance = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private Tensor _initialMean = null;
     /// <summary>
     /// The initial mean.
     /// </summary>
@@ -153,7 +140,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     public Tensor InitialMean
     {
         get => _initialMean;
-        set => _initialMean = value?.to_type(Type);
+        set => _initialMean = value;
     }
 
     /// <summary>
@@ -164,11 +151,10 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string InitialMeanXml
     {
-        get => TensorConverter.ConvertToString(InitialMean, _scalarType);
-        set => InitialMean = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(_initialMean, Type);
+        set => _initialMean = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private Tensor _initialCovariance = null;
     /// <summary>
     /// The initial covariance.
     /// </summary>
@@ -177,7 +163,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     public Tensor InitialCovariance
     {
         get => _initialCovariance;
-        set => _initialCovariance = value?.to_type(Type);
+        set => _initialCovariance = value;
     }
 
     /// <summary>
@@ -188,19 +174,17 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string InitialCovarianceXml
     {
-        get => TensorConverter.ConvertToString(InitialCovariance, _scalarType);
-        set => InitialCovariance = TensorConverter.ConvertFromString(value, _scalarType);
+        get => TensorConverter.ConvertToString(_initialCovariance, Type);
+        set => _initialCovariance = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private void ConvertTensorsScalarType(ScalarType scalarType)
-    {
-        _transitionMatrix = _transitionMatrix?.to_type(scalarType);
-        _measurementFunction = _measurementFunction?.to_type(scalarType);
-        _processNoiseCovariance = _processNoiseCovariance?.to_type(scalarType);
-        _measurementNoiseCovariance = _measurementNoiseCovariance?.to_type(scalarType);
-        _initialMean = _initialMean?.to_type(scalarType);
-        _initialCovariance = _initialCovariance?.to_type(scalarType);
-    }
+    private Tensor _transitionMatrix = null;
+    private Tensor _measurementFunction = null;
+    private Tensor _processNoiseCovariance = null;
+    private Tensor _measurementNoiseCovariance = null;
+    private Tensor _initialMean = null;
+    private Tensor _initialCovariance = null;
+
 
     /// <summary>
     /// Creates parameters for a Kalman filter model using the properties of this class.
@@ -216,7 +200,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
             measurementNoiseCovariance: _measurementNoiseCovariance,
             initialMean: _initialMean,
             initialCovariance: _initialCovariance,
-            scalarType: _scalarType,
+            scalarType: Type,
             device: Device
         ));
     }
@@ -237,7 +221,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
                 measurementNoiseCovariance: _measurementNoiseCovariance,
                 initialMean: _initialMean,
                 initialCovariance: _initialCovariance,
-                scalarType: _scalarType,
+                scalarType: Type,
                 device: Device
             );
         });
