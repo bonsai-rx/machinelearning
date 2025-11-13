@@ -16,7 +16,6 @@ namespace Bonsai.ML.Lds.Torch;
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class StochasticSubspaceIdentification
 {
-    private int? _targetNumStates = 2;
     /// <summary>
     /// The target number of states in the Kalman filter model.
     /// </summary>
@@ -27,7 +26,6 @@ public class StochasticSubspaceIdentification
         set => _targetNumStates = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of states must be greater than zero.");
     }
 
-    private int _maxLag = 20;
     /// <summary>
     /// The maximum lag to consider for the subspace identification.
     /// </summary>
@@ -38,7 +36,6 @@ public class StochasticSubspaceIdentification
         set => _maxLag = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(MaxLag), "Must be greater than zero.");
     }
 
-    private double _threshold = 1e-4;
     /// <summary>
     /// The threshold for the singular values to determine the effective number of states.
     /// </summary>
@@ -84,6 +81,10 @@ public class StochasticSubspaceIdentification
     /// </summary>
     [Description("If true, the initial covariance will be estimated during the EM algorithm.")]
     public bool EstimateInitialCovariance { get; set; } = true;
+
+    private int? _targetNumStates = 2;
+    private int _maxLag = 20;
+    private double _threshold = 1e-4;
 
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Expectation-Maximization algorithm to learn the parameters of a Kalman filter model.

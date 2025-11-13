@@ -32,7 +32,6 @@ public class ExpectationMaximization
     [XmlIgnore]
     public KalmanFilterParameters? ModelParameters { get; set; } = null;
 
-    private int _maxIterations = 10;
     /// <summary>
     /// The maximum number of EM iterations to perform.
     /// </summary>
@@ -43,7 +42,6 @@ public class ExpectationMaximization
         set => _maxIterations = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(MaxIterations), "Must be greater than zero.");
     }
 
-    private double _tolerance = 1e-4;
     /// <summary>
     /// The convergence tolerance for the EM algorithm.
     /// </summary>
@@ -54,7 +52,6 @@ public class ExpectationMaximization
         set => _tolerance = value >= 0 ? value : throw new ArgumentOutOfRangeException(nameof(Tolerance), "Must be greater than or equal to zero.");
     }
 
-    private bool _verbose = true;
     /// <summary>
     /// If true, prints progress messages to the console.
     /// </summary>
@@ -100,6 +97,10 @@ public class ExpectationMaximization
     /// </summary>
     [Description("If true, the initial covariance will be estimated during the EM algorithm.")]
     public bool EstimateInitialCovariance { get; set; } = true;
+
+    private int _maxIterations = 10;
+    private double _tolerance = 1e-4;
+    private bool _verbose = true;
 
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Expectation-Maximization algorithm to learn the parameters of a Kalman filter model.
