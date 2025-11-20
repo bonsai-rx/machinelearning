@@ -107,7 +107,7 @@ public class Convolution
     /// <summary>
     /// Generates an observable sequence that creates a Conv1dModule module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor>> Process()
+    public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Dimensions switch
         {

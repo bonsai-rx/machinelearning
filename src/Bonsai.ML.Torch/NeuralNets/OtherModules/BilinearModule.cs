@@ -58,7 +58,7 @@ public class BilinearModule
     /// <summary>
     /// Generates an observable sequence that creates a BilinearModule module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(Bilinear(In1Features, In2Features, OutputSize, HasBias, Device, Type));
     }

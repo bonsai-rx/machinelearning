@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
@@ -15,36 +14,24 @@ namespace Bonsai.ML.Torch.NeuralNets;
 [ResetCombinator]
 [Description("Saves the model to a file.")]
 [WorkflowElementCategory(ElementCategory.Sink)]
-public class SaveModule
+public class SaveModel
 {
     /// <summary>
-    /// The module to save.
+    /// The model to save.
     /// </summary>
-    [Description("The module to save.")]
+    [Description("The model to save.")]
     [XmlIgnore]
-    public IModule<Tensor, Tensor> Module { get; set; }
+    public nn.Module Model { get; set; }
 
     /// <summary>
-    /// The path to save the module.
+    /// The path to save the model.
     /// </summary>
-    [Description("The path to save the module.")]
+    [Description("The path to save the model.")]
     [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-    public string ModulePath { get; set; }
+    public string ModelPath { get; set; }
 
     /// <summary>
-    /// Saves the input module to the specified file path.
-    /// </summary>
-    public IObservable<IModule<Tensor, Tensor>> Process(IObservable<IModule<Tensor, Tensor>> source)
-    {
-        return source.Do(input =>
-        {
-            var module = input as nn.Module;
-            module?.save(ModulePath);
-        });
-    }
-
-    /// <summary>
-    /// Saves the module to the specified file path.
+    /// Saves the model to the specified file path.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
@@ -53,8 +40,7 @@ public class SaveModule
     {
         return source.Do(input =>
         {
-            var module = Module as nn.Module;
-            module?.save(ModulePath);
+            Model.save(ModelPath);
         });
     }
 }

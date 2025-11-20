@@ -52,7 +52,7 @@ public class LSTMCellModule
     /// <summary>
     /// Generates an observable sequence that creates a LSTMCellModule module.
     /// </summary>
-    public IObservable<IModule<Tensor, (Tensor, Tensor)?, (Tensor, Tensor)>> Process()
+    public IObservable<Module<Tensor, (Tensor, Tensor)?, (Tensor, Tensor)>> Process()
     {
         return Observable.Return(LSTMCell(InputSize, HiddenSize, Bias, Device, Type));
     }
