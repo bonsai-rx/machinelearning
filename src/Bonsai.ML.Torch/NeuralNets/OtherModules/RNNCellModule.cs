@@ -45,6 +45,7 @@ public class RNNCellModule
     /// <summary>
     /// The desired device of returned tensor.
     /// </summary>
+    [XmlIgnore]
     [Description("The desired device of returned tensor")]
     public torch.Device Device { get; set; } = null;
 
@@ -58,7 +59,7 @@ public class RNNCellModule
     /// <summary>
     /// Generates an observable sequence that creates a RNNCellModule module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(RNNCell(InputSize, HiddenSize, NonLinearity, Bias, Device, Type));
     }

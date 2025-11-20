@@ -69,20 +69,20 @@ public class RNNModule
     /// <summary>
     /// The desired device of returned tensor.
     /// </summary>
+    [XmlIgnore]
     [Description("The desired device of returned tensor")]
-    public torch.Device Device { get; set; } = null;
+    public Device Device { get; set; } = null;
 
     /// <summary>
     /// The desired data type of returned tensor.
     /// </summary>
     [Description("The desired data type of returned tensor")]
-    [TypeConverter(typeof(ScalarTypeConverter))]
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
     /// Generates an observable sequence that creates a RNNModule module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, (Tensor, Tensor)>> Process()
+    public IObservable<Module<Tensor, Tensor, (Tensor, Tensor)>> Process()
     {
         return Observable.Return(RNN(InputSize, HiddenSize, NumLayers, NonLinearity, Bias, BatchFirst, Dropout, Bidirectional, Device, Type));
     }

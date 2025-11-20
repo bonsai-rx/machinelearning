@@ -2,9 +2,8 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
-using System.Xml.Serialization;
-using TorchSharp;
 using static TorchSharp.torch.nn;
+using System.Xml.Serialization;
 
 namespace Bonsai.ML.Torch.NeuralNets
 {
