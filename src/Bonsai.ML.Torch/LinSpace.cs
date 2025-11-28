@@ -19,13 +19,13 @@ namespace Bonsai.ML.Torch
         /// The start of the range.
         /// </summary>
         [Description("The start of the range.")]
-        public int Start { get; set; } = 0;
+        public double Start { get; set; } = 0;
 
         /// <summary>
         /// The end of the range.
         /// </summary>
         [Description("The end of the range.")]
-        public int End { get; set; } = 1;
+        public double End { get; set; } = 1;
 
         /// <summary>
         /// The number of points to generate.
