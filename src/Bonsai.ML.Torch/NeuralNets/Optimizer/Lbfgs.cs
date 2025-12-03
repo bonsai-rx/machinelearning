@@ -23,7 +23,8 @@ public class Lbfgs
     /// The parameters parameter for the LBFGS module.
     /// </summary>
     [Description("The parameters parameter for the LBFGS module")]
-    public IEnumerable<(string, Parameter)> Parameters { get; set; }
+    [XmlIgnore]
+    public IEnumerable<Parameter> Parameters { get; set; }
 
     /// <summary>
     /// The lr parameter for the LBFGS module.

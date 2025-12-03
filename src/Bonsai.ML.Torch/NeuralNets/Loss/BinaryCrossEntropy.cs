@@ -16,12 +16,14 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 [Combinator]
 [Description("Creates a binary cross entropy loss module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
+[TypeConverter(typeof(TensorOperatorConverter))]
 public class BinaryCrossEntropy : IScalarTypeProvider
 {
     /// <summary>
     /// The weight parameter for the BinaryCrossEntropy module.
     /// </summary>
     [Description("The weight parameter for the BinaryCrossEntropy module")]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor Weight { get; set; } = null;
 
     /// <summary>

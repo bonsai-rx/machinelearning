@@ -23,6 +23,7 @@ public class RmsPropogation
     /// The parameters parameter for the RMSProp module.
     /// </summary>
     [Description("The parameters parameter for the RMSProp module")]
+    [XmlIgnore]
     public IEnumerable<Parameter> Parameters { get; set; }
 
     /// <summary>

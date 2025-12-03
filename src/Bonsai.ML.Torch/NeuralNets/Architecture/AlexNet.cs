@@ -39,14 +39,14 @@ internal class AlexNet : Module<Tensor, Tensor>
         avgPool = AdaptiveAvgPool2d([ 2, 2 ]);
 
         classifier = Sequential(
-            ("d1", Dropout()),
-            ("l1", Linear(256 * 2 * 2, 4096)),
+            ("d1", nn.Dropout()),
+            ("l1", nn.Linear(256 * 2 * 2, 4096)),
             ("r1", ReLU(inplace: true)),
-            ("d2", Dropout()),
-            ("l2", Linear(4096, 4096)),
+            ("d2", nn.Dropout()),
+            ("l2", nn.Linear(4096, 4096)),
             ("r3", ReLU(inplace: true)),
-            ("d3", Dropout()),
-            ("l3", Linear(4096, numClasses))
+            ("d3", nn.Dropout()),
+            ("l3", nn.Linear(4096, numClasses))
         );
 
         RegisterComponents();

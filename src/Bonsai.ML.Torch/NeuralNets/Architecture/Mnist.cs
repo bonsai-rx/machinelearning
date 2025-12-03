@@ -35,8 +35,8 @@ internal class Mnist : Module<Tensor,Tensor>
     {
         conv1 = Conv2d(1, 32, 3);
         conv2 = Conv2d(32, 64, 3);
-        fc1 = Linear(9216, 128);
-        fc2 = Linear(128, numClasses);
+        fc1 = nn.Linear(9216, 128);
+        fc2 = nn.Linear(128, numClasses);
         
         pool1 = MaxPool2d(kernel_size: [2, 2]);
 
@@ -44,10 +44,10 @@ internal class Mnist : Module<Tensor,Tensor>
         relu2 = ReLU();
         relu3 = ReLU();
 
-        dropout1 = Dropout(0.25);
-        dropout2 = Dropout(0.5);
+        dropout1 = nn.Dropout(0.25);
+        dropout2 = nn.Dropout(0.5);
 
-        flatten = Flatten();
+        flatten = nn.Flatten();
         logsm = LogSoftmax(1);
 
         RegisterComponents();

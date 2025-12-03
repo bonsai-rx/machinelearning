@@ -27,7 +27,7 @@ public class MeanSquaredError
     /// <summary>
     /// Generates an observable sequence that creates a MSELoss.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(MSELoss(Reduction));
     }

@@ -6,12 +6,12 @@ namespace Bonsai.ML.Torch.NeuralNets;
 public enum TrainingMode
 {
     /// <summary>
-    /// Sets the model to training mode.
+    /// Sets the module to evaluation mode.
     /// </summary>
-    Train,
+    Evaluation = 0,
 
     /// <summary>
-    /// Sets the model to evaluation mode.
+    /// Sets the module to training mode.
     /// </summary>
-    Evaluation
+    Train = 1,
 }

@@ -16,12 +16,14 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 [Combinator]
 [Description("Measures the Binary Cross Entropy between the target and the output logits.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class BinaryCrossEntropyWithLogits
+[TypeConverter(typeof(TensorOperatorConverter))]
+public class BinaryCrossEntropyWithLogits : IScalarTypeProvider
 {
     /// <summary>
     /// The weight parameter for the BinaryCrossEntropyWithLogitsLoss module.
     /// </summary>
     [Description("The weight parameter for the BinaryCrossEntropyWithLogitsLoss module")]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor Weight { get; set; } = null;
 
     /// <summary>
@@ -34,7 +36,14 @@ public class BinaryCrossEntropyWithLogits
     /// The pos_weights parameter for the BinaryCrossEntropyWithLogitsLoss module.
     /// </summary>
     [Description("The pos_weights parameter for the BinaryCrossEntropyWithLogitsLoss module")]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor PosWeights { get; set; } = null;
+
+    /// <summary>
+    /// The data type of the tensor elements.
+    /// </summary>
+    [Description("The data type of the tensor elements.")]
+    public ScalarType Type { get; set; } = ScalarType.Float32;
 
     /// <summary>
     /// Generates an observable sequence that creates a BinaryCrossEntropyWithLogitsLoss.
