@@ -11,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Convolution;
 
 /// <summary>
-/// Creates a Unfold module.
+/// Represents an operator that creates an Unfold module.
 /// </summary>
 [Combinator]
-[Description("Creates a Unfold module.")]
+[Description("Creates an Unfold module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class Unfold
 {
@@ -43,10 +43,21 @@ public class Unfold
     public long Stride { get; set; } = 1;
 
     /// <summary>
-    /// Generates an observable sequence that creates a UnfoldModule module.
+    /// Creates an Unfold module.
     /// </summary>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Unfold(KernelSize, Dilation, Padding, Stride));
+    }
+
+    /// <summary>
+    /// Creates an Unfold module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Unfold(KernelSize, Dilation, Padding, Stride));
     }
 }
