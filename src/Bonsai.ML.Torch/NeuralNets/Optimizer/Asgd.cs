@@ -23,6 +23,7 @@ public class Asgd
     /// The parameters parameter for the ASGD module.
     /// </summary>
     [Description("The parameters parameter for the ASGD module")]
+    [XmlIgnore]
     public IEnumerable<Parameter> Parameters { get; set; }
 
     /// <summary>

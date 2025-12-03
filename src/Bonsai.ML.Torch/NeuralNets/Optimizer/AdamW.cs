@@ -23,6 +23,7 @@ public class AdamW
     /// The parameters parameter for the AdamW module.
     /// </summary>
     [Description("The parameters parameter for the AdamW module")]
+    [XmlIgnore]
     public IEnumerable<Parameter> Parameters { get; set; }
 
     /// <summary>

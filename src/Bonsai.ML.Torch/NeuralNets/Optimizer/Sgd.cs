@@ -23,6 +23,7 @@ public class Sgd
     /// The parameters parameter for the SGD module.
     /// </summary>
     [Description("The parameters parameter for the SGD module")]
+    [XmlIgnore]
     public IEnumerable<Parameter> Parameters { get; set; }
 
     /// <summary>

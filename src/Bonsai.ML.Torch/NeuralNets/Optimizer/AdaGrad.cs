@@ -23,6 +23,7 @@ public class AdaGrad
     /// The parameters parameter for the Adagrad module.
     /// </summary>
     [Description("The parameters parameter for the Adagrad module")]
+    [XmlIgnore]
     public IEnumerable<Parameter> Parameters { get; set; }
 
     /// <summary>

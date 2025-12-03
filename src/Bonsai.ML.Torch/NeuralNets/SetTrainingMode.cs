@@ -10,51 +10,31 @@ using static TorchSharp.torch.jit;
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
-/// Sets the training mode for the model.
+/// Represents an operator that sets the training mode for the module.
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Sets the training mode for the model.")]
+[Description("Sets the training mode for the module.")]
 [WorkflowElementCategory(ElementCategory.Sink)]
 public class SetTrainingMode
 {
     /// <summary>
-    /// The model for which to set the training mode. 
+    /// The training mode to set for the module.
     /// </summary>
-    [Description("The model for which to set the training mode.")]
-    [XmlIgnore]
-    public IModule<Tensor, Tensor> Model { get; set; }
-
-    /// <summary>
-    /// The training mode to set for the model.
-    /// </summary>
-    [Description("The training mode to set for the model.")]
+    [Description("The training mode to set for the module.")]
     public TrainingMode Mode { get; set; } = TrainingMode.Train;
 
     /// <summary>
-    /// Saves the model to the specified file path.
+    /// Sets the training mode for the module.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<T> Process<T>(IObservable<T> source)
+    public IObservable<nn.Module> Process(IObservable<nn.Module> source)
     {
         return source.Do(input =>
         {
-
-            var training = Mode == TrainingMode.Train;
-
-            switch (Model)
-            {
-                case Module<Tensor, Tensor> module:
-                    module.train(training);
-                    break;
-                case ScriptModule<Tensor, Tensor> scriptModule:
-                    scriptModule.train(training);
-                    break;
-                default:
-                    throw new InvalidOperationException("Unsupported model type for setting training mode.");
-            }
+            // var training = Mode == TrainingMode.Train;
+            input.train(Mode == TrainingMode.Train);
         });
     }
 }

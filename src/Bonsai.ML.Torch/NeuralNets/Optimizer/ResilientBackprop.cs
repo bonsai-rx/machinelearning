@@ -23,6 +23,7 @@ public class ResilientBackprop
     /// The parameters parameter for the Rprop module.
     /// </summary>
     [Description("The parameters parameter for the Rprop module")]
+    [XmlIgnore]
     public IEnumerable<Parameter> Parameters { get; set; }
 
     /// <summary>

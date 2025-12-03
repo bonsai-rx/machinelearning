@@ -23,6 +23,7 @@ public class AdaDelta
     /// The parameters parameter for the Adadelta module.
     /// </summary>
     [Description("The parameters parameter for the Adadelta module")]
+    [XmlIgnore]
     public IEnumerable<Parameter> Parameters { get; set; }
 
     /// <summary>

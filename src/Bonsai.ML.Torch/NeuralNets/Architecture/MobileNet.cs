@@ -35,8 +35,8 @@ internal class MobileNet : Module<Tensor, Tensor>
         };
         MakeLayers(modules, 32);
         modules.Add(("avgpool", AvgPool2d([2, 2])));
-        modules.Add(("flatten", Flatten()));
-        modules.Add(($"linear", Linear(planes[planes.Length-1], numClasses)));
+        modules.Add(("flatten", nn.Flatten()));
+        modules.Add(($"linear", nn.Linear(planes[planes.Length-1], numClasses)));
 
         layers = Sequential(modules);
 
