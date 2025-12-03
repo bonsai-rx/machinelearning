@@ -62,7 +62,7 @@ namespace Bonsai.ML.Torch.NeuralNets
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public IObservable<IModule<Tensor, Tensor>> Process()
+        public IObservable<Module<Tensor, Tensor>> Process()
         {
             var device = Device;
             Module<Tensor,Tensor> module = ModelArchitecture switch

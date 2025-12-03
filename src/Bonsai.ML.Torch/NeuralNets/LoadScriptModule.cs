@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Linq.Expressions;
@@ -15,17 +16,14 @@ namespace Bonsai.ML.Torch.NeuralNets;
 /// <summary>
 /// Loads a TorchScript module from the specified file path.
 /// </summary>
-[XmlInclude(typeof(TypeMapping<ScriptModule>))]
-[XmlInclude(typeof(TypeMapping<ScriptModule<Tensor>>))]
-[XmlInclude(typeof(TypeMapping<ScriptModule<Tensor, Tensor>>))]
 [Combinator]
 [ResetCombinator]
-[Description("Loads a TorchScript module from the specified file path.")]
+[Description("Loads a TorchScript module from the specified file path. In order to correctly infer the module type, pass into the operator objects representing the desired ScriptModule generic argument types.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class LoadScriptModule: ExpressionBuilder
 {
     /// <inheritdoc/>
-    public override Range<int> ArgumentRange => new(0, 1);
+    public override Range<int> ArgumentRange => new(0, 3);
 
     /// <summary>
     /// The device on which to load the model.
@@ -35,54 +33,108 @@ public class LoadScriptModule: ExpressionBuilder
     public Device Device { get; set; }
 
     /// <summary>
-    /// The path to the TorchScript model file.
+    /// The path to the TorchScript module file.
     /// </summary>
-    [Description("The path to the TorchScript model file.")]
+    [Description("The path to the TorchScript module file.")]
     [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-    public string ModelPath { get; set; }
-
-    /// <summary>
-    /// The type mapping for the loaded script module.
-    /// </summary>
-    public TypeMapping ScriptModuleType { get; set; } = new TypeMapping<ScriptModule<Tensor, Tensor>>();
+    public string ScriptModulePath { get; set; }
 
     /// <inheritdoc/>
     public override Expression Build(IEnumerable<Expression> arguments)
     {
-        var scriptModuleType = ScriptModuleType.GetType().GetGenericArguments()[0];
+        System.Type scriptModuleType;
+        if (!arguments.Any())
+            // if no arguments are provided, the script module type is assumed to be non-generic
+            scriptModuleType = typeof(ScriptModule);
+        else
+        {
+            // otherwise, the script module type is inferred from the collection of input argument types
+            // arguments are always IObservable<T>, so we need to extract the T type from each argument
+            var argumentTypes = arguments.Select(arg => arg.Type.GetGenericArguments()[0]).ToArray();
+            var genericScriptModuleType = argumentTypes.Length switch
+            {
+                1 => typeof(ScriptModule<>),
+                2 => typeof(ScriptModule<,>),
+                3 => typeof(ScriptModule<,,>),
+                _ => throw new NotSupportedException("Only ScriptModule types with up to three generic type arguments are supported."),
+            };
+            scriptModuleType = genericScriptModuleType.MakeGenericType(argumentTypes);
+        }
+            
         var outputType = typeof(IObservable<>).MakeGenericType(scriptModuleType);
-        var modelPathExpression = Expression.Constant(ModelPath, typeof(string));
+        var modulePathExpression = Expression.Constant(ScriptModulePath, typeof(string));
         var deviceExpression = Expression.Constant(Device, typeof(Device));
 
-        var callExpression = scriptModuleType switch
+        Expression callExpression;
+        if (scriptModuleType.IsGenericType)
         {
-            System.Type t when t == typeof(ScriptModule) =>
-                Expression.Call(typeof(LoadScriptModule).GetMethod(nameof(ProcessScriptModule), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static), modelPathExpression, deviceExpression),
-            System.Type t when t == typeof(ScriptModule<Tensor>) =>
-                Expression.Call(typeof(LoadScriptModule).GetMethod(nameof(ProcessScriptModuleTensor), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static), modelPathExpression, deviceExpression),
-            System.Type t when t == typeof(ScriptModule<Tensor, Tensor>) =>
-                Expression.Call(typeof(LoadScriptModule).GetMethod(nameof(ProcessScriptModuleTensorTensor), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static), modelPathExpression, deviceExpression),
-            _ => throw new NotSupportedException($"The specified script module type '{scriptModuleType}' is not supported."),
-        };
+            var genericArguments = scriptModuleType.GetGenericArguments();
+            var processMethod = typeof(LoadScriptModule).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+                .First(m => m.Name == nameof(ProcessScriptModule) && m.IsGenericMethodDefinition && m.GetGenericArguments().Length == genericArguments.Length)
+                .MakeGenericMethod(genericArguments);
+            callExpression = Expression.Call(processMethod, modulePathExpression, deviceExpression);
+        }
+        else
+        {
+            var processMethod = typeof(LoadScriptModule).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+                .First(m => m.Name == nameof(ProcessScriptModule) && !m.IsGenericMethod);
+            callExpression = Expression.Call(processMethod, modulePathExpression, deviceExpression);
+        }
 
-        return Expression.Call(callExpression.Method, callExpression.Arguments);
+        return callExpression;
     }
 
-    private static IObservable<ScriptModule> ProcessScriptModule(string modelPath, Device device)
+    /// <summary>
+    /// Loads the scripted module from the specified file path.
+    /// </summary>
+    /// <param name="modulePath"></param>
+    /// <param name="device"></param>
+    /// <returns></returns>
+    private static IObservable<ScriptModule> ProcessScriptModule(string modulePath, Device device)
     {
-        var scriptModule = device is null ? jit.load(modelPath) : load(modelPath, device);
+        var scriptModule = device is null ? jit.load(modulePath) : load(modulePath, device);
         return Observable.Return(scriptModule);
     }
 
-    private static IObservable<ScriptModule<Tensor>> ProcessScriptModuleTensor(string modelPath, Device device)
+    /// <summary>
+    /// Loads the scripted module from the specified file path.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="modulePath"></param>
+    /// <param name="device"></param>
+    /// <returns></returns>
+    private static IObservable<ScriptModule<T>> ProcessScriptModule<T>(string modulePath, Device device)
     {
-        var scriptModule = device is null ? load<Tensor>(modelPath) : load<Tensor>(modelPath, device);
+        var scriptModule = device is null ? load<T>(modulePath) : load<T>(modulePath, device);
         return Observable.Return(scriptModule);
     }
 
-        private static IObservable<ScriptModule<Tensor, Tensor>> ProcessScriptModuleTensorTensor(string modelPath, Device device)
+    /// <summary>
+    /// Loads the scripted module from the specified file path.
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="T2"></typeparam>
+    /// <param name="modulePath"></param>
+    /// <param name="device"></param>
+    /// <returns></returns>
+    private static IObservable<ScriptModule<T1, T2>> ProcessScriptModule<T1, T2>(string modulePath, Device device)
     {
-        var scriptModule = device is null ? load<Tensor, Tensor>(modelPath) : load<Tensor, Tensor>(modelPath, device);
+        var scriptModule = device is null ? load<T1, T2>(modulePath) : load<T1, T2>(modulePath, device);
+        return Observable.Return(scriptModule);
+    }
+
+    /// <summary>
+    /// Loads the scripted module from the specified file path.
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="T2"></typeparam>
+    /// <typeparam name="T3"></typeparam>
+    /// <param name="modulePath"></param>
+    /// <param name="device"></param>
+    /// <returns></returns>
+    private static IObservable<ScriptModule<T1, T2, T3>> ProcessScriptModule<T1, T2, T3>(string modulePath, Device device)
+    {
+        var scriptModule = device is null ? load<T1, T2, T3>(modulePath) : load<T1, T2, T3>(modulePath, device);
         return Observable.Return(scriptModule);
     }
 }
