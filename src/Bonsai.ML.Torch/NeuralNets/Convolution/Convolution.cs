@@ -11,10 +11,10 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Convolution;
 
 /// <summary>
-/// Creates a 1D convolution layer.
+/// Represents an operator that creates a specific convolution module.
 /// </summary>
 [Combinator]
-[Description("Creates a 1D convolution layer.")]
+[Description("Creates a specific convolution module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class Convolution
 {
@@ -101,12 +101,13 @@ public class Convolution
     /// The desired data type of returned tensor.
     /// </summary>
     [Description("The desired data type of returned tensor")]
-    [TypeConverter(typeof(ScalarTypeConverter))]
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Conv1dModule module.
+    /// Creates a specific convolution module.
     /// </summary>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Dimensions switch
@@ -122,5 +123,31 @@ public class Convolution
                 : Observable.Return(Conv3d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type)),
             _ => throw new InvalidOperationException("The specified number of dimensions is not supported."),
         };
+    }
+
+    /// <summary>
+    /// Creates a specific convolution module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select<T, Module<Tensor, Tensor>>(_ => {
+            return Dimensions switch
+            {
+                Dimensions.One => Transposed
+                    ? ConvTranspose1d(InChannels, OutChannels, KernelSize, Stride, Padding, 0, Dilation, PaddingMode, Groups, Bias, Device, Type)
+                    : Conv1d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type),
+                Dimensions.Two => Transposed
+                    ? ConvTranspose2d(InChannels, OutChannels, KernelSize, Stride, Padding, OutputPadding, Dilation, PaddingMode, Groups, Bias, Device, Type)
+                    : Conv2d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type),
+                Dimensions.Three => Transposed
+                    ? ConvTranspose3d(InChannels, OutChannels, KernelSize, Stride, Padding, OutputPadding, Dilation, PaddingMode, Groups, Bias, Device, Type)
+                    : Conv3d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type),
+                _ => throw new InvalidOperationException("The specified number of dimensions is not supported."),
+            };
+        });
     }
 }

@@ -11,12 +11,11 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Convolution;
 
 /// <summary>
-/// Creates a Fold module.
+/// Represents an operator that creates a Fold module.
 /// </summary>
-[Combinator]
 [Description("Creates a Fold module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class FoldModule
+public class Fold
 {
     /// <summary>
     /// The output_size parameter for the Fold module.
@@ -49,10 +48,21 @@ public class FoldModule
     public long Stride { get; set; } = 1;
 
     /// <summary>
-    /// Generates an observable sequence that creates a FoldModule module.
+    /// Creates a Fold module.
     /// </summary>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Fold(OutputSize, KernelSize, Dilation, Padding, Stride));
+    }
+
+    /// <summary>
+    /// Creates a Fold module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Fold(OutputSize, KernelSize, Dilation, Padding, Stride));
     }
 }
