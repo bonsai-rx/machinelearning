@@ -13,9 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Convolution;
 /// <summary>
 /// Represents an operator that creates an Unfold module.
 /// </summary>
-[Combinator]
 [Description("Creates an Unfold module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
 public class Unfold
 {
     /// <summary>

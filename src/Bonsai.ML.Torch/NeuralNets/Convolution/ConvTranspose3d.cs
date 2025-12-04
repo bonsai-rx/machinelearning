@@ -87,7 +87,6 @@ public class ConvTranspose3d
     /// The desired data type of returned tensor.
     /// </summary>
     [Description("The desired data type of returned tensor")]
-    [TypeConverter(typeof(ScalarTypeConverter))]
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
