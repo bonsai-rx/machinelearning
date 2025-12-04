@@ -15,14 +15,19 @@ using System.Reflection;
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
-/// Creates a convolution module.
+/// Represents an operator that creates a torch module for convolution operations.
 /// </summary>
-[XmlInclude(typeof(Convolution.Convolution))]
+[XmlInclude(typeof(Convolution.Conv1d))]
+[XmlInclude(typeof(Convolution.Conv2d))]
+[XmlInclude(typeof(Convolution.Conv3d))]
+[XmlInclude(typeof(Convolution.ConvTranspose1d))]
+[XmlInclude(typeof(Convolution.ConvTranspose2d))]
+[XmlInclude(typeof(Convolution.ConvTranspose3d))]
 [XmlInclude(typeof(Convolution.Fold))]
 [XmlInclude(typeof(Convolution.Unfold))]
 [DefaultProperty(nameof(ConvolutionModule))]
 [Combinator]
-[Description("Creates a convolution module.")]
+[Description("Creates a torch module for convolution operations.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class ConvolutionModuleBuilder : ModuleCombinatorBuilder, INamedElement
 {
@@ -34,58 +39,22 @@ public class ConvolutionModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// </summary>
     public ConvolutionModuleBuilder()
     {
-        Module = new Convolution.Fold();
+        Module = new Convolution.Conv1d();
     }
     
     /// <summary>
-    /// Gets or sets the event parser used to filter and select event messages
-    /// reported by the device.
+    /// Gets or sets the specific convolution module to create.
     /// </summary>
     [DesignOnly(true)]
-    [DisplayName("Type")]
+    [DisplayName("Module")]
     [Externalizable(false)]
     [RefreshProperties(RefreshProperties.All)]
     [Category(nameof(CategoryAttribute.Design))]
-    [Description("The type of the device event message to select.")]
+    [Description("The specific convolution module to create.")]
     [TypeConverter(typeof(ModuleTypeConverter))]
     public object ConvolutionModule
     {
         get => Module;
         set => Module = value;
-    }
-
-    string INamedElement.Name => $"Convolution.{GetElementDisplayName(ConvolutionModule)}";
-
-    /// <inheritdoc/>
-    public override Expression Build(IEnumerable<Expression> arguments)
-    {
-        // We want to return an expression that constructs the module
-        // For now, the only module supported is the Fold module
-        // We want to return the Process method of the Fold class
-        var convolutionModule = ConvolutionModule.GetType();
-
-        // arguments can either be empty or contain a single argument
-        if (!arguments.Any())
-        {
-            // if empty, we call the non genericProcess method
-            var methodInfo = convolutionModule.GetMethods(BindingFlags.Public | BindingFlags.Instance).First(m => m.Name == "Process" && !m.IsGenericMethod);
-            return Expression.Call(
-                Expression.Constant(ConvolutionModule, convolutionModule),
-                methodInfo
-            );
-        }
-        else
-        {
-            // if there is an argument, we call the generic Process method
-            var argument = arguments.First();
-            var argumentType = argument.Type.GetGenericArguments()[0];
-            var methodInfo = convolutionModule.GetMethods(BindingFlags.Public | BindingFlags.Instance).First(m => m.Name == "Process" && m.IsGenericMethodDefinition && m.GetGenericArguments().Length == 1);
-            var genericMethodInfo = methodInfo.MakeGenericMethod(argumentType);
-            return Expression.Call(
-                Expression.Constant(ConvolutionModule, convolutionModule),
-                genericMethodInfo,
-                argument
-            );
-        }
     }
 }

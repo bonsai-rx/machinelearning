@@ -14,7 +14,6 @@ namespace Bonsai.ML.Torch.NeuralNets.Convolution;
 /// Represents an operator that creates a Fold module.
 /// </summary>
 [Description("Creates a Fold module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
 public class Fold
 {
     /// <summary>
