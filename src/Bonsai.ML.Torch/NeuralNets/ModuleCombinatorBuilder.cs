@@ -1,21 +1,53 @@
 using Bonsai.Expressions;
 using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
 /// Represents a base class for module combinator builders.
 /// </summary>
-public abstract class ModuleCombinatorBuilder : ExpressionBuilder, ICustomTypeDescriptor
+public abstract class ModuleCombinatorBuilder : ExpressionBuilder, ICustomTypeDescriptor, INamedElement
 {
-    internal ModuleCombinatorBuilder()
-    {
-    }
+    /// <inheritdoc/>
+    string INamedElement.Name => $"Module.{GetElementDisplayName(Module)}";
 
     internal object Module { get; set; }
 
-    static readonly Attribute[] EmptyAttributes = new Attribute[0];
+    /// <inheritdoc/>
+    public override Expression Build(IEnumerable<Expression> arguments)
+    {
+        // We want to return an expression that constructs the module
+        var module = Module.GetType();
+
+        // arguments can either be empty or contain a single argument
+        if (!arguments.Any())
+        {
+            // if empty, we call the non generic Process method
+            var methodInfo = module.GetMethods(BindingFlags.Public | BindingFlags.Instance).First(m => m.Name == "Process" && !m.IsGenericMethod);
+            return Expression.Call(
+                Expression.Constant(Module, module),
+                methodInfo
+            );
+        }
+        else
+        {
+            // if there is an argument, we call the generic Process method
+            var argument = arguments.First();
+            var argumentType = argument.Type.GetGenericArguments()[0];
+            var methodInfo = module.GetMethods(BindingFlags.Public | BindingFlags.Instance).First(m => m.Name == "Process" && m.IsGenericMethodDefinition && m.GetGenericArguments().Length == 1);
+            var genericMethodInfo = methodInfo.MakeGenericMethod(argumentType);
+            return Expression.Call(
+                Expression.Constant(Module, module),
+                genericMethodInfo,
+                argument
+            );
+        }
+    }
 
     AttributeCollection ICustomTypeDescriptor.GetAttributes()
     {
@@ -57,7 +89,7 @@ public abstract class ModuleCombinatorBuilder : ExpressionBuilder, ICustomTypeDe
     PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty()
     {
         var defaultProperty = TypeDescriptor.GetDefaultProperty(GetType());
-        return defaultProperty != null ? new FactoryTypePropertyDescriptor(defaultProperty) : null;
+        return defaultProperty != null ? new ModuleCombinatorPropertyDescriptor(defaultProperty) : null;
     }
 
     object ICustomTypeDescriptor.GetEditor(Type editorBaseType)
@@ -77,7 +109,7 @@ public abstract class ModuleCombinatorBuilder : ExpressionBuilder, ICustomTypeDe
 
     PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties()
     {
-        return ((ICustomTypeDescriptor)this).GetProperties(EmptyAttributes);
+        return ((ICustomTypeDescriptor)this).GetProperties([]);
     }
 
     PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes)
@@ -94,7 +126,7 @@ public abstract class ModuleCombinatorBuilder : ExpressionBuilder, ICustomTypeDe
                 var baseProperty = baseProperties[i];
                 if (baseProperty == defaultProperty)
                 {
-                    baseProperty = new FactoryTypePropertyDescriptor(defaultProperty);
+                    baseProperty = new ModuleCombinatorPropertyDescriptor(defaultProperty);
                 }
 
                 properties[i] = baseProperty;
@@ -114,57 +146,5 @@ public abstract class ModuleCombinatorBuilder : ExpressionBuilder, ICustomTypeDe
     object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd)
     {
         return pd?.ComponentType.IsAssignableFrom(GetType()) == true ? this : Module;
-    }
-
-    class FactoryTypePropertyDescriptor(PropertyDescriptor descr) : PropertyDescriptor(descr)
-    {
-        readonly PropertyDescriptor descriptor = descr;
-
-        public override Type ComponentType => descriptor.ComponentType;
-
-        public override bool IsReadOnly => false;
-
-        public override Type PropertyType => typeof(Type);
-
-        public override bool CanResetValue(object component)
-        {
-            return true;
-        }
-
-        public override object GetValue(object component)
-        {
-            component = descriptor.GetValue(component);
-            return component?.GetType();
-        }
-
-        public override void ResetValue(object component)
-        {
-            descriptor.SetValue(component, null);
-        }
-
-        public override void SetValue(object component, object value)
-        {
-            var currentValue = descriptor.GetValue(component);
-            var newValue = Activator.CreateInstance((Type)value);
-
-            var newProperties = TypeDescriptor.GetProperties(newValue);
-            var currentProperties = TypeDescriptor.GetProperties(currentValue);
-            foreach (PropertyDescriptor property in newProperties)
-            {
-                var mergeProperty = currentProperties[property.Name];
-                if (mergeProperty?.PropertyType == property.PropertyType)
-                {
-                    var propertyValue = mergeProperty.GetValue(currentValue);
-                    property.SetValue(newValue, propertyValue);
-                }
-            }
-
-            descriptor.SetValue(component, newValue);
-        }
-
-        public override bool ShouldSerializeValue(object component)
-        {
-            return true;
-        }
     }
 }
