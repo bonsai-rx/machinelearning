@@ -11,15 +11,18 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Pooling;
 
 /// <summary>
-/// Represents an operator that creates a 1D adaptive average pooling layer.
+/// Represents an operator that creates a 1D adaptive average pooling module.
 /// </summary>
-[Description("Creates a 1D adaptive average pooling layer.")]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.AdaptiveAvgPool1d.html"/> for more information.
+/// </remarks>
+[Description("Creates a 1D adaptive average pooling module.")]
 public class AdaptiveAvgPool1d
 {
     /// <summary>
     /// The output size.
     /// </summary>
-    [Description("The output size")]
+    [Description("The output size.")]
     public long OutputSize { get; set; }
 
     /// <summary>

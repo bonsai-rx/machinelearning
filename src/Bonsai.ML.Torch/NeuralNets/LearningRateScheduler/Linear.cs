@@ -1,66 +1,58 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
 using static TorchSharp.torch.optim.lr_scheduler;
 
 namespace Bonsai.ML.Torch.NeuralNets.LearningRateScheduler;
 
 /// <summary>
-/// Creates a linear learning rate scheduler.
+/// Represents an operator that creates a linear learning rate scheduler.
 /// </summary>
-[Combinator]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.LinearLR.html"/> for more information.
+/// </remarks>
 [Description("Creates a linear learning rate scheduler.")]
-[WorkflowElementCategory(ElementCategory.Source)]
 public class Linear
 {
     /// <summary>
-    /// The optimizer parameter for the LinearLR module.
+    /// The number used to multiply the learning rate in the first epoch.
     /// </summary>
-    [Description("The optimizer parameter for the LinearLR module")]
-    public optim.Optimizer Optimizer { get; set; }
-
-    /// <summary>
-    /// The start_factor parameter for the LinearLR module.
-    /// </summary>
-    [Description("The start_factor parameter for the LinearLR module")]
+    [Description("The number used to multiply the learning rate in the first epoch.")]
     public double StartFactor { get; set; } = 0.3333333333333333D;
 
     /// <summary>
-    /// The end_factor parameter for the LinearLR module.
+    /// The number used to multiply the learning rate in the last epoch.
     /// </summary>
-    [Description("The end_factor parameter for the LinearLR module")]
+    [Description("The number used to multiply the learning rate in the last epoch.")]
     public double EndFactor { get; set; } = 5D;
 
     /// <summary>
-    /// The total_iters parameter for the LinearLR module.
+    /// The number of iterations over which the learning rate is adjusted.
     /// </summary>
-    [Description("The total_iters parameter for the LinearLR module")]
+    [Description("The number of iterations over which the learning rate is adjusted.")]
     public int TotalIters { get; set; } = 5;
 
     /// <summary>
-    /// The last_epoch parameter for the LinearLR module.
+    /// The index of the last epoch.
     /// </summary>
-    [Description("The last_epoch parameter for the LinearLR module")]
+    [Description("The index of the last epoch.")]
     public int LastEpoch { get; set; } = -1;
 
     /// <summary>
-    /// The verbose parameter for the LinearLR module.
+    /// Determines whether to write a message to stdout for each update.
     /// </summary>
-    [Description("The verbose parameter for the LinearLR module")]
+    [Description("Determines whether to write a message to stdout for each update.")]
     public bool Verbose { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a LinearLearningRateScheduler.
+    /// Creates a LinearLR scheduler.
     /// </summary>
-    public IObservable<LRScheduler> Process()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LRScheduler> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
-        return Observable.Return(LinearLR(Optimizer, StartFactor, EndFactor, TotalIters, LastEpoch, Verbose));
+        return source.Select(optimizer => LinearLR(optimizer, StartFactor, EndFactor, TotalIters, LastEpoch, Verbose));
     }
 }

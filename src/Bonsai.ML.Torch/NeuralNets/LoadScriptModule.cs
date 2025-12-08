@@ -17,7 +17,6 @@ namespace Bonsai.ML.Torch.NeuralNets;
 /// Loads a TorchScript module from the specified file path.
 /// </summary>
 [Combinator]
-[ResetCombinator]
 [Description("Loads a TorchScript module from the specified file path. In order to correctly infer the module type, pass into the operator objects representing the desired ScriptModule generic argument types.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class LoadScriptModule: ExpressionBuilder
@@ -99,13 +98,27 @@ public class LoadScriptModule: ExpressionBuilder
     /// <summary>
     /// Loads the scripted module from the specified file path.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
     /// <param name="modulePath"></param>
     /// <param name="device"></param>
     /// <returns></returns>
-    private static IObservable<ScriptModule<T>> ProcessScriptModule<T>(string modulePath, Device device)
+    private static IObservable<ScriptModule<TResult>> ProcessScriptModule<TResult>(string modulePath, Device device)
     {
-        var scriptModule = device is null ? load<T>(modulePath) : load<T>(modulePath, device);
+        var scriptModule = device is null ? load<TResult>(modulePath) : load<TResult>(modulePath, device);
+        return Observable.Return(scriptModule);
+    }
+
+    /// <summary>
+    /// Loads the scripted module from the specified file path.
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="modulePath"></param>
+    /// <param name="device"></param>
+    /// <returns></returns>
+    private static IObservable<ScriptModule<T1, TResult>> ProcessScriptModule<T1, TResult>(string modulePath, Device device)
+    {
+        var scriptModule = device is null ? load<T1, TResult>(modulePath) : load<T1, TResult>(modulePath, device);
         return Observable.Return(scriptModule);
     }
 
@@ -114,27 +127,13 @@ public class LoadScriptModule: ExpressionBuilder
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
     /// <param name="modulePath"></param>
     /// <param name="device"></param>
     /// <returns></returns>
-    private static IObservable<ScriptModule<T1, T2>> ProcessScriptModule<T1, T2>(string modulePath, Device device)
+    private static IObservable<ScriptModule<T1, T2, TResult>> ProcessScriptModule<T1, T2, TResult>(string modulePath, Device device)
     {
-        var scriptModule = device is null ? load<T1, T2>(modulePath) : load<T1, T2>(modulePath, device);
-        return Observable.Return(scriptModule);
-    }
-
-    /// <summary>
-    /// Loads the scripted module from the specified file path.
-    /// </summary>
-    /// <typeparam name="T1"></typeparam>
-    /// <typeparam name="T2"></typeparam>
-    /// <typeparam name="T3"></typeparam>
-    /// <param name="modulePath"></param>
-    /// <param name="device"></param>
-    /// <returns></returns>
-    private static IObservable<ScriptModule<T1, T2, T3>> ProcessScriptModule<T1, T2, T3>(string modulePath, Device device)
-    {
-        var scriptModule = device is null ? load<T1, T2, T3>(modulePath) : load<T1, T2, T3>(modulePath, device);
+        var scriptModule = device is null ? load<T1, T2, TResult>(modulePath) : load<T1, T2, TResult>(modulePath, device);
         return Observable.Return(scriptModule);
     }
 }

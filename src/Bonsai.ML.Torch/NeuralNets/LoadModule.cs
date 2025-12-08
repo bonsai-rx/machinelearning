@@ -10,24 +10,24 @@ using static TorchSharp.torch.jit;
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
-/// Saves the module to a file.
+/// Represents an operator that loads a module's state from a file.
 /// </summary>
 [Combinator]
-[ResetCombinator]
-[Description("Saves the module to a file.")]
+[Description("Loads a module's state from a file.")]
 [WorkflowElementCategory(ElementCategory.Sink)]
 public class LoadModule
 {
     /// <summary>
-    /// The path to the modules state.
+    /// The path to the module's saved state.
     /// </summary>
-    [Description("The path to the modules state.")]
+    [Description("The path to the module's saved state.")]
     [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
     public string ModulePath { get; set; }
 
     /// <summary>
     /// Loads the module's state from the specified file path.
     /// </summary>
+    /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Module> Process(IObservable<Module> source)
     {
@@ -139,6 +139,64 @@ public class LoadModule
         return source.Select(module =>
         {
             return (Module<T1, T2, T3, T4, T5, T6, TResult>)module.load(ModulePath);
+        });
+    }
+
+    /// <summary>
+    /// Loads the module's state from the specified file path.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<ScriptModule> Process(IObservable<ScriptModule> source)
+    {
+        return source.Select(module =>
+        {
+            return (ScriptModule)module.load(ModulePath);
+        });
+    }
+
+    /// <summary>
+    /// Loads the module's state from the specified file path.
+    /// </summary>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<ScriptModule<TResult>> Process<TResult>(IObservable<ScriptModule<TResult>> source)
+    {
+        return source.Select(module =>
+        {
+            return (ScriptModule<TResult>)module.load(ModulePath);
+        });
+    }
+
+    /// <summary>
+    /// Loads the module's state from the specified file path.
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<ScriptModule<T1, TResult>> Process<T1, TResult>(IObservable<ScriptModule<T1, TResult>> source)
+    {
+        return source.Select(module =>
+        {
+            return (ScriptModule<T1, TResult>)module.load(ModulePath);
+        });
+    }
+
+    /// <summary>
+    /// Loads the module's state from the specified file path.
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
+    /// <typeparam name="T2"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<ScriptModule<T1, T2, TResult>> Process<T1, T2, TResult>(IObservable<ScriptModule<T1, T2, TResult>> source)
+    {
+        return source.Select(module =>
+        {
+            return (ScriptModule<T1, T2, TResult>)module.load(ModulePath);
         });
     }
 }

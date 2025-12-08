@@ -1,35 +1,46 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a binary cross entropy loss module.
+/// Represents an operator that creates a binary cross entropy (BCE) loss module.
 /// </summary>
-[Combinator]
-[Description("Creates a binary cross entropy loss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.BCELoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a binary cross entropy (BCE) loss module.")]
 [TypeConverter(typeof(TensorOperatorConverter))]
 public class BinaryCrossEntropy : IScalarTypeProvider
 {
     /// <summary>
-    /// The weight parameter for the BinaryCrossEntropy module.
+    /// The manually specified rescaling weight given to the loss of each batch element.
     /// </summary>
-    [Description("The weight parameter for the BinaryCrossEntropy module")]
+    [XmlIgnore]
+    [Description("The manually specified rescaling weight given to the loss of each batch element.")]
     [TypeConverter(typeof(TensorConverter))]
     public Tensor Weight { get; set; } = null;
 
     /// <summary>
-    /// The reduction parameter for the BinaryCrossEntropy module.
+    /// The values of the weight tensor in XML string format.
     /// </summary>
-    [Description("The reduction parameter for the BinaryCrossEntropy module")]
+    [Browsable(false)]
+    [XmlElement(nameof(Weight))]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public string WeightXml
+    {
+        get => TensorConverter.ConvertToString(Weight, Type);
+        set => Weight = TensorConverter.ConvertFromString(value, Type);
+    }
+
+    /// <summary>
+    /// The reduction type to apply to the output.
+    /// </summary>
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
@@ -39,10 +50,22 @@ public class BinaryCrossEntropy : IScalarTypeProvider
     public ScalarType Type { get; set; } = ScalarType.Float32;
 
     /// <summary>
-    /// Generates an observable sequence that creates a BinaryCrossEntropy.
+    /// Creates a binary cross entropy (BCE) loss module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(BCELoss(Weight, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a binary cross entropy (BCE) loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => BCELoss(Weight, Reduction));
     }
 }

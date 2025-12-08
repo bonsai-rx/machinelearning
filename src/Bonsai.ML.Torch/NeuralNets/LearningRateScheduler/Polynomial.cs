@@ -1,60 +1,52 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
 using static TorchSharp.torch.optim.lr_scheduler;
 
 namespace Bonsai.ML.Torch.NeuralNets.LearningRateScheduler;
 
 /// <summary>
-/// Creates a polynomial learning rate scheduler.
+/// Represents an operator that creates a polynomial learning rate scheduler.
 /// </summary>
-[Combinator]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.PolynomialLR.html"/> for more information.
+/// </remarks>
 [Description("Creates a polynomial learning rate scheduler.")]
-[WorkflowElementCategory(ElementCategory.Source)]
 public class Polynomial
 {
     /// <summary>
-    /// The optimizer parameter for the PolynomialLR module.
+    /// The total number of steps that the learning rate will be adjusted over.
     /// </summary>
-    [Description("The optimizer parameter for the PolynomialLR module")]
-    public optim.Optimizer Optimizer { get; set; }
-
-    /// <summary>
-    /// The total_iters parameter for the PolynomialLR module.
-    /// </summary>
-    [Description("The total_iters parameter for the PolynomialLR module")]
+    [Description("The total number of steps that the learning rate will be adjusted over.")]
     public int TotalIters { get; set; } = 5;
 
     /// <summary>
-    /// The power parameter for the PolynomialLR module.
+    /// The power of the polynomial.
     /// </summary>
-    [Description("The power parameter for the PolynomialLR module")]
+    [Description("The power of the polynomial.")]
     public int Power { get; set; } = 1;
 
     /// <summary>
-    /// The last_epoch parameter for the PolynomialLR module.
+    /// The index of the last epoch.
     /// </summary>
-    [Description("The last_epoch parameter for the PolynomialLR module")]
+    [Description("The index of the last epoch.")]
     public int LastEpoch { get; set; } = -1;
 
     /// <summary>
-    /// The verbose parameter for the PolynomialLR module.
+    /// Determines whether to write a message to stdout for each update.
     /// </summary>
-    [Description("The verbose parameter for the PolynomialLR module")]
+    [Description("Determines whether to write a message to stdout for each update.")]
     public bool Verbose { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Polynomial.
+    /// Creates a PolynomialLR scheduler.
     /// </summary>
-    public IObservable<LRScheduler> Process()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LRScheduler> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
-        return Observable.Return(PolynomialLR(Optimizer, TotalIters, Power, LastEpoch, Verbose));
+        return source.Select(optimizer => PolynomialLR(optimizer, TotalIters, Power, LastEpoch, Verbose));
     }
 }

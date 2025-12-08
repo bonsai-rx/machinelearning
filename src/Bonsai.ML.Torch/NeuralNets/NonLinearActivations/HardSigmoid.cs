@@ -1,21 +1,18 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 
 /// <summary>
-/// Creates a Hardsigmoid module.
+/// Represents an operator that creates a Hardsigmoid module.
 /// </summary>
-[Combinator]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Hardsigmoid.html"/> for more information.
+/// </remarks>
 [Description("Creates a Hardsigmoid module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
 public class HardSigmoid
 {
     /// <summary>
@@ -25,10 +22,22 @@ public class HardSigmoid
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a HardsigmoidModule module.
+    /// Creates a Hardsigmoid module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Hardsigmoid(Inplace));
+    }
+
+    /// <summary>
+    /// Creates a Hardsigmoid module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Hardsigmoid(Inplace));
     }
 }

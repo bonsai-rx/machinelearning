@@ -1,31 +1,20 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
 using static TorchSharp.torch.optim.lr_scheduler;
 
 namespace Bonsai.ML.Torch.NeuralNets.LearningRateScheduler;
 
 /// <summary>
-/// Sets the learning rate using a cosine annealing schedule.
+/// Represents an operator that creates a cosine annealing learning rate scheduler.
 /// </summary>
-[Combinator]
-[Description("Sets the learning rate using a cosine annealing schedule.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html"/> for more information.
+/// </remarks>
+[Description("Creates a cosine annealing learning rate scheduler.")]
 public class CosineAnnealing
 {
-    /// <summary>
-    /// The wrapped optimizer.
-    /// </summary>
-    [Description("The wrapped optimizer.")]
-    public optim.Optimizer Optimizer { get; set; }
-
     /// <summary>
     /// The maximum number of iterations.
     /// </summary>
@@ -39,22 +28,25 @@ public class CosineAnnealing
     public double EtaMin { get; set; } = 0D;
 
     /// <summary>
-    /// The index
+    /// The index of the last epoch.
     /// </summary>
-    [Description("The last_epoch parameter for the CosineAnnealing module")]
+    [Description("The index of the last epoch.")]
     public int LastEpoch { get; set; } = -1;
 
     /// <summary>
-    /// The verbose parameter for the CosineAnnealing module.
+    /// Determines whether to write a message to stdout for each update.
     /// </summary>
-    [Description("The verbose parameter for the CosineAnnealing module")]
+    [Description("Determines whether to write a message to stdout for each update.")]
     public bool Verbose { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a CosineAnnealingLearningRateScheduler.
+    /// Creates a CosineAnnealingLR scheduler.
     /// </summary>
-    public IObservable<LRScheduler> Process()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LRScheduler> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
-        return Observable.Return(CosineAnnealingLR(Optimizer, TMax, EtaMin, LastEpoch, Verbose));
+        return source.Select(optimizer => CosineAnnealingLR(optimizer, TMax, EtaMin, LastEpoch, Verbose));
     }
 }

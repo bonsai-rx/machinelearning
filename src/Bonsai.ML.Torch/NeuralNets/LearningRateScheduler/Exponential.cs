@@ -1,54 +1,46 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
 using static TorchSharp.torch.optim.lr_scheduler;
 
 namespace Bonsai.ML.Torch.NeuralNets.LearningRateScheduler;
 
 /// <summary>
-/// Creates an exponential learning rate scheduler.
+/// Represents an operator that creates an exponential learning rate scheduler.
 /// </summary>
-[Combinator]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.ExponentialLR.html"/> for more information.
+/// </remarks>
 [Description("Creates an exponential learning rate scheduler.")]
-[WorkflowElementCategory(ElementCategory.Source)]
 public class Exponential
 {
     /// <summary>
-    /// The optimizer parameter for the ExponentialLR module.
+    /// The multiplicative factor of learning rate decay.
     /// </summary>
-    [Description("The optimizer parameter for the ExponentialLR module")]
-    public optim.Optimizer Optimizer { get; set; }
-
-    /// <summary>
-    /// The gamma parameter for the ExponentialLR module.
-    /// </summary>
-    [Description("The gamma parameter for the ExponentialLR module")]
+    [Description("The multiplicative factor of learning rate decay.")]
     public double Gamma { get; set; } = 0.1D;
 
     /// <summary>
-    /// The last_epoch parameter for the ExponentialLR module.
+    /// The index of the last epoch.
     /// </summary>
-    [Description("The last_epoch parameter for the ExponentialLR module")]
+    [Description("The index of the last epoch.")]
     public int LastEpoch { get; set; } = -1;
 
     /// <summary>
-    /// The verbose parameter for the ExponentialLR module.
+    /// Determines whether to write a message to stdout for each update.
     /// </summary>
-    [Description("The verbose parameter for the ExponentialLR module")]
+    [Description("Determines whether to write a message to stdout for each update.")]
     public bool Verbose { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a ExponentialLearningRateScheduler.
+    /// Creates an ExponentialLR scheduler.
     /// </summary>
-    public IObservable<LRScheduler> Process()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LRScheduler> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
-        return Observable.Return(ExponentialLR(Optimizer, Gamma, LastEpoch, Verbose));
+        return source.Select(optimizer => ExponentialLR(optimizer, Gamma, LastEpoch, Verbose));
     }
 }

@@ -11,50 +11,57 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Pooling;
 
 /// <summary>
-/// Represents an operator that creates a 3D average pooling layer.
+/// Represents an operator that creates a 3D average pooling module.
 /// </summary>
-[Description("Creates a 3D average pooling layer.")]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.AvgPool3d.html"/> for more information.
+/// </remarks>
+[Description("Creates a 3D average pooling module.")]
 public class AvgPool3d
 {
     /// <summary>
-    /// The kernel size.
+    /// The size of the window.
     /// </summary>
-    [Description("The kernel size.")]
-    public long[] KernelSize { get; set; }
+    [Description("The size of the window.")]
+    [TypeConverter(typeof(ValueTupleConverter<long, long, long>))]
+    public (long, long, long) KernelSize { get; set; }
 
     /// <summary>
-    /// The stride.
+    /// The stride of the window.
     /// </summary>
-    [Description("The stride.")]
-    public long[] Stride { get; set; } = null;
+    [Description("The stride of the window.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long, long>))]
+    public (long, long, long)? Stride { get; set; } = null;
 
     /// <summary>
-    /// The padding.
+    /// The implicit zero padding to be added on all three sides.
     /// </summary>
-    [Description("The padding.")]
-    public long[] Padding { get; set; } = null;
+    [Description("The implicit zero padding to be added on all three sides.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long, long>))]
+    public (long, long, long)? Padding { get; set; } = null;
 
     /// <summary>
-    /// The ceiling mode.
+    /// If set to true, will use ceil instead of floor to compute the output shape.
     /// </summary>
-    [Description("The ceiling mode.")]
+    [Description("If set to true, will use ceil instead of floor to compute the output shape.")]
     public bool CeilMode { get; set; } = false;
 
     /// <summary>
-    /// The count include pad parameter.
+    /// If set to true, will include the zero-padding in the averaging calculation.
     /// </summary>
-    [Description("The count include pad parameter.")]
+    [Description("If set to true, will include the zero-padding in the averaging calculation.")]
     public bool CountIncludePad { get; set; } = true;
 
     /// <summary>
-    /// The divisor override.
+    /// If specified, it will be used as divisor, otherwise size of the pooling region will be used.
     /// </summary>
-    [Description("The divisor override.")]
+    [Description("If specified, it will be used as divisor, otherwise size of the pooling region will be used.")]
     public long? DivisorOverride { get; set; } = null;
 
     /// <summary>
     /// Creates an AvgPool3d module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(AvgPool3d(KernelSize, Stride, Padding, CeilMode, CountIncludePad, DivisorOverride));

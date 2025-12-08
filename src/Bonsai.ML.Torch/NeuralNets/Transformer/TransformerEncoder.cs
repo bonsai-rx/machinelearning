@@ -1,0 +1,35 @@
+using System;
+using System.ComponentModel;
+using System.Reactive.Linq;
+using System.Xml.Serialization;
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+
+namespace Bonsai.ML.Torch.NeuralNets.Transformer;
+
+/// <summary>
+/// Represents an operator that creates a transformer encoder module.
+/// </summary>
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.TransformerEncoder.html"/> for more information.
+/// </remarks>
+[Description("Creates a transformer encoder module.")]
+public class TransformerEncoder
+{
+    /// <summary>
+    /// The number of sub-encoder layers in the encoder.
+    /// </summary>
+    [Description("The number of sub-encoder layers in the encoder.")]
+    public long NumLayers { get; set; }
+
+    /// <summary>
+    /// Creates a TransformerEncoder module from the input TransformerEncoderLayer.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process(IObservable<Module<Tensor, Tensor>> source)
+    {
+        return source.Select(transformerEncoderLayer =>
+            TransformerEncoder(transformerEncoderLayer as TorchSharp.Modules.TransformerEncoderLayer, NumLayers));
+    }
+}

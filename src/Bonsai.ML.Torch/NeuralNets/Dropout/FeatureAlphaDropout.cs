@@ -1,34 +1,43 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Dropout;
 
 /// <summary>
-/// Creates a FeatureAlphaDropout module.
+/// Represents an operator that creates a feature alpha dropout module.
 /// </summary>
-[Combinator]
-[Description("Creates a FeatureAlphaDropout module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
-public class FeatureAlphaDropoutModule
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.FeatureAlphaDropout.html"/> for more information.
+/// </remarks>
+[Description("Creates a feature alpha dropout module.")]
+public class FeatureAlphaDropout
 {
     /// <summary>
-    /// The p parameter for the FeatureAlphaDropout module.
+    /// The probability of an element to be zeroed.
     /// </summary>
-    [Description("The p parameter for the FeatureAlphaDropout module")]
-    public double P { get; set; } = 0.5D;
+    [Description("The probability of an element to be zeroed.")]
+    public double Probability { get; set; } = 0.5D;
 
     /// <summary>
-    /// Generates an observable sequence that creates a FeatureAlphaDropoutModule module.
+    /// Creates a FeatureAlphaDropout module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
-        return Observable.Return(FeatureAlphaDropout(P));
+        return Observable.Return(FeatureAlphaDropout(Probability));
+    }
+
+    /// <summary>
+    /// Creates a FeatureAlphaDropout module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => FeatureAlphaDropout(Probability));
     }
 }

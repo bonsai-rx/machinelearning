@@ -1,34 +1,42 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Vision;
 
 /// <summary>
-/// Creates a PixelShuffle module.
+/// Represents an operator that creates a pixel shuffle module.
 /// </summary>
-[Combinator]
-[Description("Creates a PixelShuffle module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.PixelShuffle.html"/> for more information.
+/// </remarks>
+[Description("Creates a pixel shuffle module.")]
 public class PixelShuffle
 {
     /// <summary>
-    /// The upscalefactor parameter for the PixelShuffle module.
+    /// The factor to increase spatial resolution by.
     /// </summary>
-    [Description("The upscalefactor parameter for the PixelShuffle module")]
+    [Description("The factor to increase spatial resolution by.")]
     public long UpscaleFactor { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a PixelShuffleModule module.
+    /// Creates a pixel shuffle module.
     /// </summary>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(PixelShuffle(UpscaleFactor));
+    }
+
+    /// <summary>
+    /// Creates a pixel shuffle module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => PixelShuffle(UpscaleFactor));
     }
 }

@@ -1,28 +1,37 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Linear;
 
 /// <summary>
-/// Creates a Identity module.
+/// Represents an operator that creates an Identity module.
 /// </summary>
-[Combinator]
-[Description("Creates a Identity module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Identity.html"/> for more information.
+/// </remarks>
+[Description("Creates an Identity module.")]
 public class Identity
 {
     /// <summary>
-    /// Generates an observable sequence that creates a IdentityModule module.
+    /// Creates an Identity module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(nn.Identity());
+    }
+
+    /// <summary>
+    /// Creates an Identity module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => nn.Identity());
     }
 }

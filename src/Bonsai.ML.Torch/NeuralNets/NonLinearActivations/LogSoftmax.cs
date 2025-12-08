@@ -1,34 +1,43 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 
 /// <summary>
-/// Creates a LogSoftmax activation function.
+/// Represents an operator that creates a log softmax activation function.
 /// </summary>
-[Combinator]
-[Description("Creates a LogSoftmax activation function.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.LogSoftmax.html"/> for more information.
+/// </remarks>
+[Description("Creates a log softmax activation function.")]
 public class LogSoftmax
 {
     /// <summary>
-    /// The dim parameter for the LogSoftmax module.
+    /// The dimension along which LogSoftmax will be computed.
     /// </summary>
-    [Description("The dim parameter for the LogSoftmax module")]
+    [Description("The dimension along which LogSoftmax will be computed")]
     public long Dim { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a LogSoftmaxModule module.
+    /// Creates a LogSoftmax module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(LogSoftmax(Dim));
+    }
+
+    /// <summary>
+    /// Creates a LogSoftmax module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => LogSoftmax(Dim));
     }
 }

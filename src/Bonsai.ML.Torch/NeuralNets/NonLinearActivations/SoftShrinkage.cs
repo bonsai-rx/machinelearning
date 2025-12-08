@@ -1,34 +1,43 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 
 /// <summary>
-/// Creates a Softshrink module.
+/// Represents an operator that creates a soft shrinkage activation function.
 /// </summary>
-[Combinator]
-[Description("Creates a Softshrink module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Softshrink.html"/> for more information.
+/// </remarks>
+[Description("Creates a soft shrinkage activation function.")]
 public class SoftShrinkage
 {
     /// <summary>
-    /// The lambda parameter for the Softshrink module.
+    /// The lambda value for the softshrink formula.
     /// </summary>
-    [Description("The lambda parameter for the Softshrink module")]
+    [Description("The lambda value for the softshrink formula.")]
     public double Lambda { get; set; } = 0.5D;
 
     /// <summary>
-    /// Generates an observable sequence that creates a SoftshrinkModule module.
+    /// Creates a Softshrink module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Softshrink(Lambda));
+    }
+
+    /// <summary>
+    /// Creates a Softshrink module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Softshrink(Lambda));
     }
 }

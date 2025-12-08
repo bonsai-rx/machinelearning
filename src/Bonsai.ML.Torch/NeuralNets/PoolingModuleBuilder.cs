@@ -1,21 +1,10 @@
-using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.ComponentModel;
-using System.Collections.Generic;
-using System.Reactive.Linq;
 using System.Xml.Serialization;
-using Bonsai.Expressions;
-using TorchSharp;
-using TorchSharp.Modules;
-using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using System.Reflection;
 
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
-/// Represents an operator that creates a torch module for pooling operations.
+/// Represents an operator that creates a module for pooling operations.
 /// </summary>
 [XmlInclude(typeof(Pooling.AdaptiveAvgPool1d))]
 [XmlInclude(typeof(Pooling.AdaptiveAvgPool2d))]
@@ -23,9 +12,22 @@ namespace Bonsai.ML.Torch.NeuralNets;
 [XmlInclude(typeof(Pooling.AdaptiveMaxPool1d))]
 [XmlInclude(typeof(Pooling.AdaptiveMaxPool2d))]
 [XmlInclude(typeof(Pooling.AdaptiveMaxPool3d))]
+[XmlInclude(typeof(Pooling.AvgPool1d))]
+[XmlInclude(typeof(Pooling.AvgPool2d))]
+[XmlInclude(typeof(Pooling.AvgPool3d))]
+[XmlInclude(typeof(Pooling.FractionalMaxPool2d))]
+[XmlInclude(typeof(Pooling.FractionalMaxPool3d))]
+[XmlInclude(typeof(Pooling.LPPool1d))]
+[XmlInclude(typeof(Pooling.LPPool2d))]
+[XmlInclude(typeof(Pooling.MaxPool1d))]
+[XmlInclude(typeof(Pooling.MaxPool2d))]
+[XmlInclude(typeof(Pooling.MaxPool3d))]
+[XmlInclude(typeof(Pooling.MaxUnpool1d))]
+[XmlInclude(typeof(Pooling.MaxUnpool2d))]
+[XmlInclude(typeof(Pooling.MaxUnpool3d))]
 [DefaultProperty(nameof(PoolingModule))]
 [Combinator]
-[Description("Creates a torch module for pooling operations.")]
+[Description("Creates a module for pooling operations.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class PoolingModuleBuilder : ModuleCombinatorBuilder, INamedElement
 {

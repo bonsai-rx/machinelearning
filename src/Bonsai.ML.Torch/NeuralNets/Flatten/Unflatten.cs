@@ -1,41 +1,50 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Flatten;
 
 /// <summary>
-/// Creates a Unflatten module.
+/// Creates an Unflatten module.
 /// </summary>
-[Combinator]
-[Description("Creates a Unflatten module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.modules.flatten.Unflatten.html"/> for more information.
+/// </remarks>
+[Description("Creates an Unflatten module.")]
 public class Unflatten
 {
     /// <summary>
-    /// The dim parameter for the Unflatten module.
+    /// The dimension to unflatten.
     /// </summary>
-    [Description("The dim parameter for the Unflatten module")]
+    [Description("The dimension to unflatten.")]
     public long Dim { get; set; }
 
     /// <summary>
-    /// The unflattenedsize parameter for the Unflatten module.
+    /// The new shape of the unflattened dimension.
     /// </summary>
-    [Description("The unflattenedsize parameter for the Unflatten module")]
+    [Description("The new shape of the unflattened dimension.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public long[] UnflattenedSize { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a UnflattenModule module.
+    /// Creates an Unflatten module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Unflatten(Dim, UnflattenedSize));
+    }
+
+    /// <summary>
+    /// Creates an Unflatten module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Unflatten(Dim, UnflattenedSize));
     }
 }

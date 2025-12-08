@@ -1,54 +1,77 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Vision;
 
 /// <summary>
-/// Creates a Upsample module.
+/// Creates an Upsample module.
 /// </summary>
-[Combinator]
-[Description("Creates a Upsample module.")]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Upsample.html"/> for more information.
+/// </remarks>
+[Description("Creates an Upsample module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class UpsampleModule
+public class Upsample
 {
     /// <summary>
-    /// The size parameter for the Upsample module.
+    /// The output spatial sizes.
     /// </summary>
-    [Description("The size parameter for the Upsample module")]
+    [Description("The output spatial sizes.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public long[] Size { get; set; } = null;
 
     /// <summary>
-    /// The scale_factor parameter for the Upsample module.
+    /// The multiplier for the spatial size.
     /// </summary>
-    [Description("The scale_factor parameter for the Upsample module")]
+    [Description("The multiplier for the spatial size.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public double[] ScaleFactor { get; set; } = null;
 
     /// <summary>
-    /// The mode parameter for the Upsample module.
+    /// The upsampling algorithm.
     /// </summary>
-    [Description("The mode parameter for the Upsample module")]
+    [Description("The upsampling algorithm.")]
     public UpsampleMode Mode { get; set; } = UpsampleMode.Nearest;
 
     /// <summary>
-    /// The align_corners parameter for the Upsample module.
+    /// If True, the corner pixels of the input and output tensors are aligned.
     /// </summary>
-    [Description("The align_corners parameter for the Upsample module")]
+    /// <remarks>
+    /// This only has effect when mode is 'linear', 'bilinear', 'bicubic' or 'trilinear'.
+    /// </remarks>
+    [Description("If True, the corner pixels of the input and output tensors are aligned.")]
     public bool? AlignCorners { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a UpsampleModule module.
+    /// Recomputes the scale factor for use in the interpolation calculation.
     /// </summary>
+    /// <remarks>
+    /// If true, then the scale factor must be passed in and is used to compute the output size.
+    /// If false, then size or scale factor will be used for interpolation.
+    /// </remarks>
+    [Description("Recomputes the scale factor for use in the interpolation calculation.")]
+    public bool? RecomputeScaleFactor { get; set; } = null;
+
+    /// <summary>
+    /// Creates an Upsample module.
+    /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
-        return Observable.Return(Upsample(Size, ScaleFactor, Mode, AlignCorners));
+        return Observable.Return(Upsample(Size, ScaleFactor, Mode, AlignCorners, RecomputeScaleFactor));
+    }
+
+    /// <summary>
+    /// Creates an Upsample module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Upsample(Size, ScaleFactor, Mode, AlignCorners, RecomputeScaleFactor));
     }
 }

@@ -1,33 +1,30 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 
 /// <summary>
-/// Creates a Hardtanh module.
+/// Represents an operator that creates a Hardtanh module.
 /// </summary>
-[Combinator]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Hardtanh.html"/> for more information.
+/// </remarks>
 [Description("Creates a Hardtanh module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
 public class HardTanh
 {
     /// <summary>
-    /// The min_val parameter for the Hardtanh module.
+    /// The minimum value of the linear region range.
     /// </summary>
-    [Description("The min_val parameter for the Hardtanh module")]
+    [Description("The minimum value of the linear region range.")]
     public double MinVal { get; set; } = -1D;
 
     /// <summary>
-    /// The max_val parameter for the Hardtanh module.
+    /// The maximum value of the linear region range.
     /// </summary>
-    [Description("The max_val parameter for the Hardtanh module")]
+    [Description("The maximum value of the linear region range.")]
     public double MaxVal { get; set; } = 1D;
 
     /// <summary>
@@ -37,10 +34,22 @@ public class HardTanh
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a HardtanhModule module.
+    /// Creates a Hardtanh module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Hardtanh(MinVal, MaxVal, Inplace));
+    }
+
+    /// <summary>
+    /// Creates a Hardtanh module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Hardtanh(MinVal, MaxVal, Inplace));
     }
 }

@@ -1,34 +1,43 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Shuffle;
 
 /// <summary>
-/// Creates a ChannelShuffle module.
+/// Represents an operator that creates a channel shuffle module.
 /// </summary>
-[Combinator]
-[Description("Creates a ChannelShuffle module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.ChannelShuffle.html"/> for more information.
+/// </remarks>
+[Description("Creates a channel shuffle module.")]
 public class ChannelShuffle
 {
     /// <summary>
-    /// The groups parameter for the ChannelShuffle module.
+    /// The number of groups to divide the channels into.
     /// </summary>
-    [Description("The groups parameter for the ChannelShuffle module")]
+    [Description("The number of groups to divide the channels into.")]
     public long Groups { get; set; }
 
     /// <summary>
-    /// Generates an observable sequence that creates a ChannelShuffleModule module.
+    /// Creates a channel shuffle module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(ChannelShuffle(Groups));
+    }
+
+    /// <summary>
+    /// Creates a channel shuffle module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => ChannelShuffle(Groups));
     }
 }

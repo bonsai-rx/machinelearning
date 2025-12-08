@@ -1,30 +1,22 @@
 using System;
+using System.Linq;
 using System.ComponentModel;
 using System.Reactive.Linq;
-using System.Reflection;
-using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using static TorchSharp.torch.jit;
-using System.Xml.Serialization;
-using Bonsai.Expressions;
-using System.Linq.Expressions;
-using System.Collections.Generic;
-using System.Linq;
-using TorchSharp;
 
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
-/// Represents an operator that runs forward inference on the input tensor using the specified model.
+/// Represents an operator that runs forward inference on the input using the specified module.
 /// </summary>
 [Combinator]
-[ResetCombinator]
-[Description("Runs forward inference on the input tensor using the specified model.")]
+[Description("Runs forward inference on the input using the specified module.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class Forward
 {
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -36,7 +28,7 @@ public class Forward
     }
 
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -49,7 +41,7 @@ public class Forward
     }
 
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -63,7 +55,7 @@ public class Forward
     }
 
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -78,7 +70,7 @@ public class Forward
     }
 
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -94,7 +86,7 @@ public class Forward
     }
 
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -111,19 +103,18 @@ public class Forward
     }
 
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
-    /// <typeparam name="T1"></typeparam>
     /// <typeparam name="TResult"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<TResult> Process<T1, TResult>(IObservable<Tuple<T1, ScriptModule<TResult>>> source)
+    public IObservable<TResult> Process<TResult>(IObservable<ScriptModule<TResult>> source)
     {
-        return source.Select(input => input.Item2.forward());
+        return source.Select(input => input.forward());
     }
 
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -135,7 +126,7 @@ public class Forward
     }
 
     /// <summary>
-    /// Runs forward inference on the input tensor using the specified model.
+    /// Runs forward inference on the input using the specified module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>

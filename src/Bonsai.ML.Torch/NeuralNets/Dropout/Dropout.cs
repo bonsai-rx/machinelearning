@@ -1,53 +1,49 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Dropout;
 
 /// <summary>
-/// Creates a dropout layer.
+/// Represents an operator that creates a dropout module.
 /// </summary>
-[Combinator]
-[Description("Creates a dropout layer.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Dropout.html"/> for more information.
+/// </remarks>
+[Description("Creates a dropout module.")]
 public class Dropout
 {
     /// <summary>
-    /// The number of dimensions for the AdaptiveAvgPool module.
+    /// The probability of an element to be zeroed.
     /// </summary>
-    [Description("The number of dimensions for the AdaptiveAvgPool module")]
-    public Dimensions Dimensions { get; set; } = Dimensions.None;
-
-    /// <summary>
-    /// The p parameter for the Dropout1d module.
-    /// </summary>
-    [Description("The p parameter for the Dropout1d module")]
-    public double P { get; set; } = 0.5D;
+    [Description("The probability of an element to be zeroed.")]
+    public double Probability { get; set; } = 0.5D;
 
     /// <summary>
     /// If set to true, will do this operation in-place.
     /// </summary>
-    [Description("If set to true, will do this operation in-place")]
+    [Description("If set to true, will do this operation in-place.")]
     public bool Inplace { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Dropout module.
+    /// Creates a Dropout module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
-        return Dimensions switch
-        {
-            Dimensions.None => Observable.Return(nn.Dropout(P, Inplace)),
-            Dimensions.One => Observable.Return(Dropout1d(P, Inplace)),
-            Dimensions.Two => Observable.Return(Dropout2d(P, Inplace)),
-            Dimensions.Three => Observable.Return(Dropout3d(P, Inplace)),
-            _ => throw new InvalidOperationException("The specified number of dimensions is not supported."),
-        };
+        return Observable.Return(nn.Dropout(Probability, Inplace));
+    }
+
+    /// <summary>
+    /// Creates a Dropout module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => nn.Dropout(Probability, Inplace));
     }
 }

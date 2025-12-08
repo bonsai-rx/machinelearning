@@ -1,40 +1,49 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a MarginRankingLoss module.
+/// Represents an operator that creates a margin ranking loss module.
 /// </summary>
-[Combinator]
-[Description("Creates a MarginRankingLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.MarginRankingLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a margin ranking loss module.")]
 public class MarginRanking
 {
     /// <summary>
-    /// The margin parameter for the MarginRankingLoss module.
+    /// The margin, a float value.
     /// </summary>
-    [Description("The margin parameter for the MarginRankingLoss module")]
+    [Description("The margin, a float value.")]
     public double Margin { get; set; } = 0D;
 
     /// <summary>
-    /// The reduction parameter for the MarginRankingLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the MarginRankingLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a MarginRankingLoss.
+    /// Creates a margin ranking loss module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(MarginRankingLoss(Margin, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a margin ranking loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => MarginRankingLoss(Margin, Reduction));
     }
 }

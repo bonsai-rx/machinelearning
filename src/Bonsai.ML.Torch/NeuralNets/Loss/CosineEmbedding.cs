@@ -1,40 +1,49 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Measures the loss given two input tensor and a label tensor with values 1 or -1
+/// Represents an operator that creates a cosine embedding loss module.
 /// </summary>
-[Combinator]
-[Description("Measures the loss given two input tensor and a label tensor with values 1 or -1")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.CosineEmbeddingLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a cosine embedding loss module.")]
 public class CosineEmbedding
 {
     /// <summary>
-    /// The margin parameter for the CosineEmbeddingLoss module.
+    /// The margin, which is a value in the range [-1, 1].
     /// </summary>
-    [Description("The margin parameter for the CosineEmbeddingLoss module")]
+    [Description("The margin, which is a value in the range [-1, 1].")]
     public double Margin { get; set; } = 0D;
 
     /// <summary>
-    /// The reduction parameter for the CosineEmbeddingLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the CosineEmbeddingLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a CosineEmbeddingLoss.
+    /// Creates a cosine embedding loss module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(CosineEmbeddingLoss(Margin, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a cosine embedding loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => CosineEmbeddingLoss(Margin, Reduction));
     }
 }

@@ -1,34 +1,43 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a MultiLabelMarginLoss module.
+/// Represents an operator that creates a multi-class multi-classification margin loss (MultiLabelMarginLoss) module.
 /// </summary>
-[Combinator]
-[Description("Creates a MultiLabelMarginLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.MultiLabelMarginLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a multi-class multi-classification margin loss (MultiLabelMarginLoss) module.")]
 public class MultiLabelMargin
 {
     /// <summary>
-    /// The reduction parameter for the MultiLabelMarginLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the MultiLabelMarginLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a MultiLabelMarginLoss.
+    /// Creates a multi-label margin loss (MultiLabelMarginLoss) module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(MultiLabelMarginLoss(Reduction));
+    }
+
+    /// <summary>
+    /// Creates a multi-label margin loss (MultiLabelMarginLoss) module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => MultiLabelMarginLoss(Reduction));
     }
 }

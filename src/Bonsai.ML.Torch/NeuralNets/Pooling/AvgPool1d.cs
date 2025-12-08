@@ -11,44 +11,48 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Pooling;
 
 /// <summary>
-/// Represents an operator that creates a 1D average pooling layer.
+/// Represents an operator that creates a 1D average pooling module.
 /// </summary>
-[Description("Creates a 1D average pooling layer.")]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.AvgPool1d.html"/> for more information.
+/// </remarks>
+[Description("Creates a 1D average pooling module.")]
 public class AvgPool1d
 {
     /// <summary>
-    /// The kernel size.
+    /// The size of the window.
     /// </summary>
-    [Description("The kernel size.")]
+    [Description("The size of the window.")]
     public long KernelSize { get; set; }
 
     /// <summary>
-    /// The stride.
+    /// The stride of the window.
     /// </summary>
-    [Description("The stride.")]
+    [Description("The stride of the window.")]
     public long? Stride { get; set; } = null;
 
     /// <summary>
-    /// The padding.
+    /// The implicit zero padding to be added on both sides.
     /// </summary>
-    [Description("The padding.")]
+    [Description("The implicit zero padding to be added on both sides.")]
     public long Padding { get; set; } = 0;
 
     /// <summary>
-    /// The ceiling mode.
+    /// If set to true, will use ceil instead of floor to compute the output shape.
     /// </summary>
-    [Description("The ceiling mode.")]
+    [Description("If set to true, will use ceil instead of floor to compute the output shape.")]
     public bool CeilMode { get; set; } = false;
 
     /// <summary>
-    /// The count include pad parameter.
+    /// If set to true, will include the zero-padding in the averaging calculation.
     /// </summary>
-    [Description("The count include pad parameter.")]
+    [Description("If set to true, will include the zero-padding in the averaging calculation.")]
     public bool CountIncludePad { get; set; } = true;
 
     /// <summary>
     /// Creates an AvgPool1d module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(AvgPool1d(KernelSize, Stride, Padding, CeilMode, CountIncludePad));

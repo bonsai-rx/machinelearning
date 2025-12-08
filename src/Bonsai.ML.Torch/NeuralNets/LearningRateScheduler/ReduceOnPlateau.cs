@@ -1,90 +1,102 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
 using static TorchSharp.torch.optim.lr_scheduler;
 
 namespace Bonsai.ML.Torch.NeuralNets.LearningRateScheduler;
 
 /// <summary>
-/// Creates a scheduler that reduces the learning rate when a metric has stopped improving.
+/// Represents an operator that creates a scheduler that reduces the learning rate on plateau.
 /// </summary>
-[Combinator]
-[Description("Creates a scheduler that reduces the learning rate when a metric has stopped improving.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.ReduceLROnPlateau.html"/> for more information.
+/// </remarks>
+[Description("Creates a scheduler that reduces the learning rate on plateau.")]
 public class ReduceOnPlateau
 {
     /// <summary>
-    /// The optimizer parameter for the ReduceLROnPlateau module.
+    /// The mode in which to determine when to reduce the learning rate.
     /// </summary>
-    [Description("The optimizer parameter for the ReduceLROnPlateau module")]
-    public optim.Optimizer Optimizer { get; set; }
+    [Description("The mode in which to determine when to reduce the learning rate.")]
+    public PlateauMode Mode { get; set; } = PlateauMode.Min;
 
     /// <summary>
-    /// The mode parameter for the ReduceLROnPlateau module.
+    /// The factor by which the learning rate will be reduced.
     /// </summary>
-    [Description("The mode parameter for the ReduceLROnPlateau module")]
-    public string Mode { get; set; } = "min";
-
-    /// <summary>
-    /// The factor parameter for the ReduceLROnPlateau module.
-    /// </summary>
-    [Description("The factor parameter for the ReduceLROnPlateau module")]
+    [Description("The factor by which the learning rate will be reduced.")]
     public double Factor { get; set; } = 0.1D;
 
     /// <summary>
-    /// The patience parameter for the ReduceLROnPlateau module.
+    /// The number of allowed epochs with no improvement after which the learning rate will be reduced.
     /// </summary>
-    [Description("The patience parameter for the ReduceLROnPlateau module")]
+    [Description("The number of allowed epochs with no improvement after which the learning rate will be reduced.")]
     public int Patience { get; set; } = 10;
 
     /// <summary>
-    /// The threshold parameter for the ReduceLROnPlateau module.
+    /// The threshold for measuring the new optimum, to only focus on significant changes.
     /// </summary>
-    [Description("The threshold parameter for the ReduceLROnPlateau module")]
+    [Description("The threshold for measuring the new optimum, to only focus on significant changes.")]
     public double Threshold { get; set; } = 0.0001D;
 
     /// <summary>
-    /// The threshold_mode parameter for the ReduceLROnPlateau module.
+    /// The mode for the threshold parameter.
     /// </summary>
-    [Description("The threshold_mode parameter for the ReduceLROnPlateau module")]
-    public string ThresholdMode { get; set; } = "rel";
+    [Description("The mode for the threshold parameter.")]
+    public PlateauThresholdMode ThresholdMode { get; set; } = PlateauThresholdMode.Relative;
 
     /// <summary>
-    /// The cooldown parameter for the ReduceLROnPlateau module.
+    /// The number of epochs to wait before resuming normal operation after the learning rate has been reduced.
     /// </summary>
-    [Description("The cooldown parameter for the ReduceLROnPlateau module")]
+    [Description("The number of epochs to wait before resuming normal operation after the learning rate has been reduced.")]
     public int Cooldown { get; set; } = 0;
 
     /// <summary>
-    /// The min_lr parameter for the ReduceLROnPlateau module.
+    /// The lower bound on the learning rate of all param groups or each group respectively.
     /// </summary>
-    [Description("The min_lr parameter for the ReduceLROnPlateau module")]
-    public IList<double> MinLr { get; set; } = null;
+    [Description("The lower bound on the learning rate of all param groups or each group respectively.")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
+    public double[] MinLearningRate { get; set; } = null;
 
     /// <summary>
-    /// A value added to the denominator for numerical stability.
+    /// The minimal decay applied to the learning rate.
     /// </summary>
-    [Description("A value added to the denominator for numerical stability")]
+    [Description("The minimal decay applied to the learning rate")]
     public double Eps { get; set; } = 1E-08D;
 
     /// <summary>
-    /// The verbose parameter for the ReduceLROnPlateau module.
+    /// Determines whether to write a message to stdout for each update.
     /// </summary>
-    [Description("The verbose parameter for the ReduceLROnPlateau module")]
+    [Description("Determines whether to write a message to stdout for each update.")]
     public bool Verbose { get; set; } = false;
 
-    /// <summary>
-    /// Generates an observable sequence that creates a ReduceOnPlateau.
-    /// </summary>
-    public IObservable<LRScheduler> Process()
+#pragma warning disable // Ignore missing xml doc strings
+    public enum PlateauMode
     {
-        return Observable.Return(ReduceLROnPlateau(Optimizer, Mode, Factor, Patience, Threshold, ThresholdMode, Cooldown, MinLr, Eps, Verbose));
+        Min,
+        Max
+    }
+
+    public enum PlateauThresholdMode
+    {
+        Relative,
+        Absolute
+    }
+
+    private string ModeString => Mode == PlateauMode.Min ? "min" : "max";
+
+    private string ThresholdModeString => ThresholdMode == PlateauThresholdMode.Relative ? "rel" : "abs";
+
+#pragma warning restore
+
+    /// <summary>
+    /// Creates a ReduceLROnPlateau scheduler.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LRScheduler> Process<T>(IObservable<T> source) where T : optim.Optimizer
+    {
+        return source.Select(optimizer => ReduceLROnPlateau(optimizer, ModeString, Factor, Patience, Threshold, ThresholdModeString, Cooldown, MinLearningRate, Eps, Verbose));
     }
 }

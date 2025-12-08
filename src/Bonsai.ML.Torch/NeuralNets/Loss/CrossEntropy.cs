@@ -1,46 +1,77 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Computes the cross entropy loss between input logits and target.
+/// Represents an operator that creates a cross entropy loss module.
 /// </summary>
-[Combinator]
-[Description("Computes the cross entropy loss between input logits and target.")]
-[WorkflowElementCategory(ElementCategory.Source)]
-public class CrossEntropy
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a cross entropy loss module.")]
+[TypeConverter(typeof(TensorOperatorConverter))]
+public class CrossEntropy : IScalarTypeProvider
 {
     /// <summary>
-    /// The weight parameter for the CrossEntropyLoss module.
+    /// The manually specified rescaling weight given to each class.
     /// </summary>
-    [Description("The weight parameter for the CrossEntropyLoss module")]
+    [XmlIgnore]
+    [Description("The manually specified rescaling weight given to each class.")]
+    [TypeConverter(typeof(TensorConverter))]
     public Tensor Weight { get; set; } = null;
 
     /// <summary>
-    /// The ignore_index parameter for the CrossEntropyLoss module.
+    /// The values of the weight tensor in XML string format.
     /// </summary>
-    [Description("The ignore_index parameter for the CrossEntropyLoss module")]
+    [Browsable(false)]
+    [XmlElement(nameof(Weight))]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public string WeightXml
+    {
+        get => TensorConverter.ConvertToString(Weight, Type);
+        set => Weight = TensorConverter.ConvertFromString(value, Type);
+    }
+
+    /// <summary>
+    /// The index to ignore in the target which does not contribute to the input gradient.
+    /// </summary>
+    [Description("The index to ignore in the target which does not contribute to the input gradient.")]
     public long? IgnoreIndex { get; set; } = null;
 
     /// <summary>
-    /// The reduction parameter for the CrossEntropyLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the CrossEntropyLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a CrossEntropyLoss.
+    /// The data type of the tensor elements.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    [Description("The data type of the tensor elements.")]
+    public ScalarType Type { get; set; } = ScalarType.Float32;
+
+    /// <summary>
+    /// Creates a cross entropy loss module.
+    /// </summary>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(CrossEntropyLoss(Weight, IgnoreIndex, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a cross entropy loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => CrossEntropyLoss(Weight, IgnoreIndex, Reduction));
     }
 }
