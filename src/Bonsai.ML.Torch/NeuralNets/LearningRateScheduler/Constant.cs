@@ -1,60 +1,52 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
 using static TorchSharp.torch.optim.lr_scheduler;
 
 namespace Bonsai.ML.Torch.NeuralNets.LearningRateScheduler;
 
 /// <summary>
-/// Creates a constant learning rate scheduler.
+/// Represents an operator that creates a constant learning rate scheduler.
 /// </summary>
-[Combinator]
-[Description("Creates a ConstantLearningRate scheduler.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.ConstantLR.html"/> for more information.
+/// </remarks>
+[Description("Creates a constant learning rate scheduler.")]
 public class Constant
 {
     /// <summary>
-    /// The optimizer parameter for the Constant module.
+    /// The number that the learning rate will be multiplied by until the milestone.
     /// </summary>
-    [Description("The optimizer parameter for the Constant module")]
-    public optim.Optimizer Optimizer { get; set; }
-
-    /// <summary>
-    /// The factor parameter for the Constant module.
-    /// </summary>
-    [Description("The factor parameter for the Constant module")]
+    [Description("The number that the learning rate will be multiplied by until the milestone.")]
     public double Factor { get; set; } = 0.3333333333333333D;
 
     /// <summary>
-    /// The total_iters parameter for the Constant module.
+    /// The number of steps that the scheduler multiplies the learning rate by the factor.
     /// </summary>
-    [Description("The total_iters parameter for the Constant module")]
+    [Description("The number of steps that the scheduler multiplies the learning rate by the factor.")]
     public int TotalIters { get; set; } = 5;
 
     /// <summary>
-    /// The last_epoch parameter for the Constant module.
+    /// The index of the last epoch.
     /// </summary>
-    [Description("The last_epoch parameter for the Constant module")]
+    [Description("The index of the last epoch.")]
     public int LastEpoch { get; set; } = -1;
 
     /// <summary>
-    /// The verbose parameter for the Constant module.
+    /// Determines whether to write a message to stdout for each update.
     /// </summary>
-    [Description("The verbose parameter for the Constant module")]
+    [Description("Determines whether to write a message to stdout for each update.")]
     public bool Verbose { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a ConstantLearningRateScheduler.
+    /// Creates a ConstantLR scheduler for the input optimizer.
     /// </summary>
-    public IObservable<LRScheduler> Process()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LRScheduler> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
-        return Observable.Return(ConstantLR(Optimizer, Factor, TotalIters, LastEpoch, Verbose));
+        return source.Select(optimizer => ConstantLR(optimizer, Factor, TotalIters, LastEpoch, Verbose));
     }
 }

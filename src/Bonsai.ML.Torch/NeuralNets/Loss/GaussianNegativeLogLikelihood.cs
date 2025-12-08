@@ -1,46 +1,55 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a GaussianNLLLoss module.
+/// Represents an operator that creates a gaussian negative log likelihood (GaussianNLL) loss module.
 /// </summary>
-[Combinator]
-[Description("Creates a GaussianNLLLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.GaussianNLLLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a gaussian negative log likelihood (GaussianNLL) loss module.")]
 public class GaussianNegativeLogLikelihood
 {
     /// <summary>
-    /// The full parameter for the GaussianNLLLoss module.
+    /// Determines whether to include the constant term in the loss.
     /// </summary>
-    [Description("The full parameter for the GaussianNLLLoss module")]
+    [Description("Determines whether to include the constant term in the loss.")]
     public bool Full { get; set; } = false;
 
     /// <summary>
-    /// A value added to the denominator for numerical stability.
+    /// The value used to clamp the variance for numerical stability.
     /// </summary>
-    [Description("A value added to the denominator for numerical stability")]
+    [Description("The value used to clamp the variance for numerical stability")]
     public float Eps { get; set; } = 1E-08F;
 
     /// <summary>
-    /// The reduction parameter for the GaussianNLLLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the GaussianNLLLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a GaussianNLLLoss.
+    /// Creates a gaussian negative log likelihood (GaussianNLL) loss module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(GaussianNLLLoss(Full, Eps, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a gaussian negative log likelihood (GaussianNLL) loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => GaussianNLLLoss(Full, Eps, Reduction));
     }
 }

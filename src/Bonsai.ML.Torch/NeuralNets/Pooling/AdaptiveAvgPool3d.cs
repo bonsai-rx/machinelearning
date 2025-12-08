@@ -1,27 +1,26 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Pooling;
 
 /// <summary>
-/// Represents an operator that creates a 3D adaptive average pooling layer.
+/// Represents an operator that creates a 3D adaptive average pooling module.
 /// </summary>
-[Description("Creates a 3D adaptive average pooling layer.")]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.AdaptiveAvgPool3d.html"/> for more information.
+/// </remarks>
+[Description("Creates a 3D adaptive average pooling module.")]
 public class AdaptiveAvgPool3d
 {
     /// <summary>
     /// The output size.
     /// </summary>
-    [Description("The output size")]
-    [TypeConverter(typeof(UnidimensionalArrayConverter))]
-    public long[] OutputSize { get; set; }
+    [Description("The output size.")]
+    [TypeConverter(typeof(ValueTupleConverter<long, long, long>))]
+    public (long, long, long) OutputSize { get; set; }
 
     /// <summary>
     /// Creates an AdaptiveAvgPool3d module.

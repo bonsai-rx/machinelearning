@@ -1,58 +1,67 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a TripletMarginLoss module.
+/// Represents an operator that creates a triplet margin loss (TripletMarginLoss) module.
 /// </summary>
-[Combinator]
-[Description("Creates a TripletMarginLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.TripletMarginLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a triplet margin loss (TripletMarginLoss) module.")]
 public class TripletMargin
 {
     /// <summary>
-    /// The margin parameter for the TripletMarginLoss module.
+    /// The margin parameter, a float value.
     /// </summary>
-    [Description("The margin parameter for the TripletMarginLoss module")]
+    [Description("The margin parameter, a float value.")]
     public double Margin { get; set; } = 1D;
 
     /// <summary>
-    /// The p parameter for the TripletMarginLoss module.
+    /// The p parameter, the norm degree for pairwise distance.
     /// </summary>
-    [Description("The p parameter for the TripletMarginLoss module")]
+    [Description("The p parameter, the norm degree for pairwise distance.")]
     public long P { get; set; } = 2;
 
     /// <summary>
-    /// A value added to the denominator for numerical stability.
+    /// The value added to the denominator for numerical stability.
     /// </summary>
-    [Description("A value added to the denominator for numerical stability")]
+    [Description("The value added to the denominator for numerical stability")]
     public double Eps { get; set; } = 1E-06D;
 
     /// <summary>
-    /// The swap parameter for the TripletMarginLoss module.
+    /// Determines whether to use the swapped distance.
     /// </summary>
-    [Description("The swap parameter for the TripletMarginLoss module")]
+    [Description("Determines whether to use the swapped distance.")]
     public bool Swap { get; set; } = false;
 
     /// <summary>
-    /// The reduction parameter for the TripletMarginLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the TripletMarginLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a TripletMarginLoss.
+    /// Creates a triplet margin loss (TripletMarginLoss) module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(TripletMarginLoss(Margin, P, Eps, Swap, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a triplet margin loss (TripletMarginLoss) module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => TripletMarginLoss(Margin, P, Eps, Swap, Reduction));
     }
 }

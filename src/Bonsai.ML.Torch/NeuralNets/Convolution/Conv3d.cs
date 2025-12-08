@@ -1,10 +1,8 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
 using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
@@ -13,61 +11,62 @@ namespace Bonsai.ML.Torch.NeuralNets.Convolution;
 /// <summary>
 /// Represents an operator that creates a 3D convolution module.
 /// </summary>
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Conv3d.html"/> for more information.
+/// </remarks>
 [Description("Creates a 3D convolution module.")]
 public class Conv3d
 {
     /// <summary>
-    /// The in_channels parameter for the Conv3d module.
+    /// The number of input channels in the input tensor.
     /// </summary>
-    [Description("The in_channels parameter for the Conv3d module")]
+    [Description("The number of input channels in the input tensor.")]
     public long InChannels { get; set; }
 
     /// <summary>
-    /// The out_channels parameter for the Conv1d module.
+    /// The number of output channels produced by the convolution.
     /// </summary>
-    [Description("The out_channels parameter for the Conv1d module")]
+    [Description("The number of output channels produced by the convolution.")]
     public long OutChannels { get; set; }
 
     /// <summary>
-    /// The kernelsize parameter for the Conv1d module.
+    /// The size of the convolution kernel.
     /// </summary>
-    [Description("The kernelsize parameter for the Conv1d module")]
-    public long KernelSize { get; set; }
+    [Description("The size of the convolution kernel.")]
+    [TypeConverter(typeof(ValueTupleConverter<long, long, long>))]
+    public (long, long, long) KernelSize { get; set; }
 
     /// <summary>
-    /// The stride parameter for the Conv1d module.
+    /// The stride of the convolution.
     /// </summary>
-    [Description("The stride parameter for the Conv1d module")]
-    public long Stride { get; set; } = 1;
+    [Description("The stride of the convolution.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long, long>))]
+    public (long, long, long)? Stride { get; set; } = null;
 
     /// <summary>
-    /// The padding parameter for the Conv1d module.
+    /// The padding to add to all six sides of the input.
     /// </summary>
-    [Description("The padding parameter for the Conv1d module")]
-    public long Padding { get; set; } = 0;
+    [Description("The padding to add to all six sides of the input.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long, long>))]
+    public (long, long, long)? Padding { get; set; } = null;
 
     /// <summary>
-    /// The output_padding parameter for the Conv1d module.
+    /// The spacing between kernel elements.
     /// </summary>
-    [Description("The output_padding parameter for the ConvTransposed1d module")]
-    public long OutputPadding { get; set; } = 0;
+    [Description("The spacing between kernel elements.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long, long>))]
+    public (long, long, long)? Dilation { get; set; } = null;
 
     /// <summary>
-    /// The dilation parameter for the Conv1d module.
+    /// The mode of padding.
     /// </summary>
-    [Description("The dilation parameter for the Conv1d module")]
-    public long Dilation { get; set; } = 1;
-
-    /// <summary>
-    /// The padding_mode parameter for the Conv1d module.
-    /// </summary>
-    [Description("The padding_mode parameter for the Conv1d module")]
+    [Description("The mode of padding.")]
     public PaddingModes PaddingMode { get; set; } = PaddingModes.Zeros;
 
     /// <summary>
-    /// The groups parameter for the Conv1d module.
+    /// The number of blocked connections from input channels to output channels.
     /// </summary>
-    [Description("The groups parameter for the Conv1d module")]
+    [Description("The number of blocked connections from input channels to output channels.")]
     public long Groups { get; set; } = 1;
 
     /// <summary>
@@ -77,21 +76,22 @@ public class Conv3d
     public bool Bias { get; set; } = true;
 
     /// <summary>
-    /// The desired device of returned tensor.
+    /// The desired device of the returned tensor.
     /// </summary>
     [XmlIgnore]
-    [Description("The desired device of returned tensor")]
+    [Description("The desired device of the returned tensor")]
     public Device Device { get; set; } = null;
 
     /// <summary>
-    /// The desired data type of returned tensor.
+    /// The desired data type of the returned tensor.
     /// </summary>
-    [Description("The desired data type of returned tensor")]
+    [Description("The desired data type of the returned tensor")]
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
     /// Creates a Conv3d module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Conv3d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type));
@@ -103,9 +103,8 @@ public class Conv3d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
     public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ => Conv2d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type));
+        return source.Select(_ => Conv3d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type));
     }
 }

@@ -10,24 +10,26 @@ using static TorchSharp.torch.jit;
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
-/// Saves the model to a file.
+/// Represents an operator that saves a module's state to a file.
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Saves the model to a file.")]
+[Description("Saves a module's state to a file.")]
 [WorkflowElementCategory(ElementCategory.Sink)]
 public class SaveModule
 {
     /// <summary>
-    /// The path to save the module.
+    /// The path to save the module's state.
     /// </summary>
-    [Description("The path to save the module.")]
+    [Description("The path to save the module's state.")]
     [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
     public string ModulePath { get; set; }
 
     /// <summary>
-    /// Saves the input module to the specified file path.
+    /// Saves the input module's state to the specified file path.
     /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
     public IObservable<Module> Process(IObservable<Module> source)
     {
         return source.Do(input =>
@@ -37,7 +39,7 @@ public class SaveModule
     }
 
     /// <summary>
-    /// Saves the input module to the specified file path.
+    /// Saves the input module's state to the specified file path.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -52,7 +54,7 @@ public class SaveModule
     }
 
     /// <summary>
-    /// Saves the input module to the specified file path.
+    /// Saves the input module's state to the specified file path.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -68,7 +70,7 @@ public class SaveModule
     }
 
     /// <summary>
-    /// Saves the input module to the specified file path.
+    /// Saves the input module's state to the specified file path.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -85,7 +87,7 @@ public class SaveModule
     }
 
     /// <summary>
-    /// Saves the input module to the specified file path.
+    /// Saves the input module's state to the specified file path.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -103,7 +105,7 @@ public class SaveModule
     }
 
     /// <summary>
-    /// Saves the input module to the specified file path.
+    /// Saves the input module's state to the specified file path.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -122,7 +124,7 @@ public class SaveModule
     }
 
     /// <summary>
-    /// Saves the input module to the specified file path.
+    /// Saves the input module's state to the specified file path.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -142,7 +144,7 @@ public class SaveModule
     }
 
     /// <summary>
-    /// Saves the input scripted module to the specified file path.
+    /// Saves the input scripted module's state to the specified file path.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>

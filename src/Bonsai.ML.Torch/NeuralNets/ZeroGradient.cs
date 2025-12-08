@@ -14,16 +14,15 @@ using System.Threading.Tasks;
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
-/// Represents an operator that sets the gradient of the specified optimizer to zero.
+/// Represents an operator that sets the gradient of the input optimizer to zero.
 /// </summary>
 [Combinator]
-[ResetCombinator]
-[Description("Sets the gradient to zero.")]
+[Description("Sets the gradient of the input optimizer to zero.")]
 [WorkflowElementCategory(ElementCategory.Sink)]
 public class ZeroGradient
 {
     /// <summary>
-    /// Sets the gradient of the specified optimizer to zero.
+    /// Sets the gradient of the input optimizer to zero.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>

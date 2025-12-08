@@ -1,40 +1,71 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a MultiLabelSoftMarginLoss module.
+/// Represents an operator that creates a multi-label soft margin loss (MultiLabelSoftMarginLoss) module.
 /// </summary>
-[Combinator]
-[Description("Creates a MultiLabelSoftMarginLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
-public class MultiLabelSoftMargin
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.MultiLabelSoftMarginLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a multi-label soft margin loss (MultiLabelSoftMarginLoss) module.")]
+[TypeConverter(typeof(TensorOperatorConverter))]
+public class MultiLabelSoftMargin : IScalarTypeProvider
 {
     /// <summary>
-    /// The weight parameter for the MultiLabelSoftMarginLoss module.
+    /// The manual rescaling weight given to each class.
     /// </summary>
-    [Description("The weight parameter for the MultiLabelSoftMarginLoss module")]
-    public torch.Tensor Weight { get; set; } = null;
+    [XmlIgnore]
+    [Description("The manual rescaling weight given to each class.")]
+    [TypeConverter(typeof(TensorConverter))]
+    public Tensor Weight { get; set; } = null;
 
     /// <summary>
-    /// The reduction parameter for the MultiLabelSoftMarginLoss module.
+    /// The values of the weight tensor in XML string format.
     /// </summary>
-    [Description("The reduction parameter for the MultiLabelSoftMarginLoss module")]
+    [Browsable(false)]
+    [XmlElement(nameof(Weight))]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public string WeightXml
+    {
+        get => TensorConverter.ConvertToString(Weight, Type);
+        set => Weight = TensorConverter.ConvertFromString(value, Type);
+    }
+
+    /// <summary>
+    /// The reduction type to apply to the output.
+    /// </summary>
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a MultiLabelSoftMarginLoss.
+    /// The data type of the tensor elements.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    [Description("The data type of the tensor elements.")]
+    public ScalarType Type { get; set; } = ScalarType.Float32;
+
+    /// <summary>
+    /// Creates a multi-label soft margin loss (MultiLabelSoftMarginLoss) module.
+    /// </summary>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(MultiLabelSoftMarginLoss(Weight, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a multi-label soft margin loss (MultiLabelSoftMarginLoss) module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => MultiLabelSoftMarginLoss(Weight, Reduction));
     }
 }

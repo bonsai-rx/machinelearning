@@ -10,11 +10,11 @@ using static TorchSharp.torch.jit;
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
-/// Represents an operator that sets the training mode for the module.
+/// Represents an operator that sets the training mode of the input module.
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Sets the training mode for the module.")]
+[Description("Sets the training mode of the input module.")]
 [WorkflowElementCategory(ElementCategory.Sink)]
 public class SetTrainingMode
 {
@@ -25,7 +25,7 @@ public class SetTrainingMode
     public TrainingMode Mode { get; set; } = TrainingMode.Train;
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -38,7 +38,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -53,7 +53,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -69,7 +69,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -86,7 +86,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -104,7 +104,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -123,7 +123,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -143,7 +143,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -156,7 +156,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
     /// <param name="source"></param>
@@ -170,7 +170,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -185,7 +185,7 @@ public class SetTrainingMode
     }
 
     /// <summary>
-    /// Sets the training mode for the module.
+    /// Sets the training mode of the module.
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     /// <typeparam name="T2"></typeparam>

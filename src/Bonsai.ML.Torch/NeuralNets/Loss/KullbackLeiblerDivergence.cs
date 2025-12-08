@@ -1,40 +1,49 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a KLDivLoss module.
+/// Represents an operator that creates a Kullback-Leibler divergence loss module.
 /// </summary>
-[Combinator]
-[Description("Creates a KLDivLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.KLDivLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a Kullback-Leibler divergence loss module.")]
 public class KullbackLeiblerDivergence
 {
     /// <summary>
-    /// The log_target parameter for the KLDivLoss module.
+    /// Determines whether the target is given as log-probabilities.
     /// </summary>
-    [Description("The log_target parameter for the KLDivLoss module")]
+    [Description("Determines whether the target is given as log-probabilities.")]
     public bool LogTarget { get; set; } = true;
 
     /// <summary>
-    /// The reduction parameter for the KLDivLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the KLDivLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a KLDivLoss.
+    /// Creates a Kullback-Leibler divergence loss module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(KLDivLoss(LogTarget, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a Kullback-Leibler divergence loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => KLDivLoss(LogTarget, Reduction));
     }
 }

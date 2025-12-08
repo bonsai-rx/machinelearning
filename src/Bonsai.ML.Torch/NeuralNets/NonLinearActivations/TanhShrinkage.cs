@@ -1,28 +1,37 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 
 /// <summary>
-/// Creates a Tanhshrink module.
+/// Represents an operator that creates a tanh shrinkage activation function.
 /// </summary>
-[Combinator]
-[Description("Creates a Tanhshrink module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Tanhshrink.html"/> for more information.
+/// </remarks>
+[Description("Creates a tanh shrinkage activation function.")]
 public class TanhShrinkage
 {
     /// <summary>
-    /// Generates an observable sequence that creates a TanhshrinkModule module.
+    /// Creates a Tanhshrink module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Tanhshrink());
+    }
+
+    /// <summary>
+    /// Creates a Tanhshrink module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Tanhshrink());
     }
 }

@@ -1,40 +1,49 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Flatten;
 
 /// <summary>
-/// Creates a Flatten module.
+/// Represents an operator that creates a Flatten module.
 /// </summary>
-[Combinator]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.modules.flatten.Flatten.html"/> for more information.
+/// </remarks>
 [Description("Creates a Flatten module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
 public class Flatten
 {
     /// <summary>
-    /// The startdim parameter for the Flatten module.
+    /// The first dimension to flatten.
     /// </summary>
-    [Description("The startdim parameter for the Flatten module")]
+    [Description("The first dimension to flatten.")]
     public long StartDim { get; set; } = 1;
 
     /// <summary>
-    /// The enddim parameter for the Flatten module.
+    /// The last dimension to flatten.
     /// </summary>
-    [Description("The enddim parameter for the Flatten module")]
+    [Description("The last dimension to flatten.")]
     public long EndDim { get; set; } = -1;
 
     /// <summary>
-    /// Generates an observable sequence that creates a FlattenModule module.
+    /// Creates a Flatten module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(nn.Flatten(StartDim, EndDim));
+    }
+
+    /// <summary>
+    /// Creates a Flatten module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => nn.Flatten(StartDim, EndDim));
     }
 }

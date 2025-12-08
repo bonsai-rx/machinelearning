@@ -11,15 +11,18 @@ using static TorchSharp.torch.nn;
 namespace Bonsai.ML.Torch.NeuralNets.Pooling;
 
 /// <summary>
-/// Represents an operator that creates a 3D adaptive max pooling layer.
+/// Represents an operator that creates a 3D adaptive max pooling module.
 /// </summary>
-[Description("Creates a 3D adaptive max pooling layer.")]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.AdaptiveMaxPool3d.html"/> for more information.
+/// </remarks>
+[Description("Creates a 3D adaptive max pooling module.")]
 public class AdaptiveMaxPool3d
 {
     /// <summary>
     /// The output size.
     /// </summary>
-    [Description("The output size")]
+    [Description("The output size.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
     public long[] OutputSize { get; set; }
 

@@ -1,39 +1,37 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Linear;
 
 /// <summary>
-/// Creates a Linear transformation layer.
+/// Represents an operator that creates a Linear module.
 /// </summary>
-[Combinator]
-[Description("Creates a Linear transformation layer.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Linear.html"/> for more information.
+/// </remarks>
+[Description("Creates a Linear module.")]
 public class Linear
 {
     /// <summary>
-    /// The inputsize parameter for the Linear module.
+    /// The size of each input sample.
     /// </summary>
-    [Description("The inputsize parameter for the Linear module")]
+    [Description("The size of each input sample.")]
     public long InputSize { get; set; }
 
     /// <summary>
-    /// The outputsize parameter for the Linear module.
+    /// The size of each output sample.
     /// </summary>
-    [Description("The outputsize parameter for the Linear module")]
+    [Description("The size of each output sample.")]
     public long OutputSize { get; set; }
 
     /// <summary>
-    /// The hasbias parameter for the Linear module.
+    /// Determines whether the layer will learn an additive bias.
     /// </summary>
-    [Description("The hasbias parameter for the Linear module")]
+    [Description("Determines whether the layer will learn an additive bias.")]
     public bool HasBias { get; set; } = true;
 
     /// <summary>
@@ -47,14 +45,25 @@ public class Linear
     /// The desired data type of returned tensor.
     /// </summary>
     [Description("The desired data type of returned tensor")]
-    [TypeConverter(typeof(ScalarTypeConverter))]
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a LinearModule module.
+    /// Creates a Linear module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(nn.Linear(InputSize, OutputSize, HasBias, Device, Type));
+    }
+
+    /// <summary>
+    /// Creates a Linear module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => nn.Linear(InputSize, OutputSize, HasBias, Device, Type));
     }
 }

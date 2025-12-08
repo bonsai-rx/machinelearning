@@ -1,28 +1,37 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 
 /// <summary>
-/// Creates a Tanh activation function.
+/// Represents an operator that creates a hyperbolic tangent (tanh) activation function.
 /// </summary>
-[Combinator]
-[Description("Creates a Tanh activation function.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Tanh.html"/> for more information.
+/// </remarks>
+[Description("Creates a hyperbolic tangent (tanh) activation function.")]
 public class Tanh
 {
     /// <summary>
-    /// Generates an observable sequence that creates a TanhModule module.
+    /// Creates a Tanh module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Tanh());
+    }
+
+    /// <summary>
+    /// Creates a Tanh module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Tanh());
     }
 }

@@ -1,84 +1,93 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Sparse;
 
 /// <summary>
-/// Creates a Embedding layer.
+/// Represents an operator that creates an embedding module.
 /// </summary>
-[Combinator]
-[Description("Creates a Embedding layer.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Embedding.html"/> for more information.
+/// </remarks>
+[Description("Creates an embedding module.")]
 public class Embedding
 {
     /// <summary>
-    /// The num_embeddings parameter for the Embedding module.
+    /// The size of the dictionary of embeddings.
     /// </summary>
-    [Description("The num_embeddings parameter for the Embedding module")]
+    [Description("The size of the dictionary of embeddings.")]
     public long NumEmbeddings { get; set; }
 
     /// <summary>
-    /// The embedding_dims parameter for the Embedding module.
+    /// The size of each embedding vector.
     /// </summary>
-    [Description("The embedding_dims parameter for the Embedding module")]
+    [Description("The size of each embedding vector.")]
     public long EmbeddingDims { get; set; }
 
     /// <summary>
-    /// The padding_idx parameter for the Embedding module.
+    /// If specified, the padding indices do not contribute to the gradient and are not updated during training.
     /// </summary>
-    [Description("The padding_idx parameter for the Embedding module")]
+    [Description("If specified, the padding indices do not contribute to the gradient and are not updated during training.")]
     public long? PaddingIdx { get; set; } = null;
 
     /// <summary>
-    /// The max_norm parameter for the Embedding module.
+    /// If specified, each embedding vector is clipped to have this as its maximum norm.
     /// </summary>
-    [Description("The max_norm parameter for the Embedding module")]
+    [Description("If specified, each embedding vector is clipped to have this as its maximum norm.")]
     public double? MaxNorm { get; set; } = null;
 
     /// <summary>
-    /// The norm_type parameter for the Embedding module.
+    /// The degree of the norm to compute for the max norm.
     /// </summary>
-    [Description("The norm_type parameter for the Embedding module")]
+    [Description("The degree of the norm to compute for the max norm.")]
     public double NormType { get; set; } = 2D;
 
     /// <summary>
-    /// The scale_grad_by_freq parameter for the Embedding module.
+    /// If true, the embedding vectors are scaled by the inverse of their frequency in the input.
     /// </summary>
-    [Description("The scale_grad_by_freq parameter for the Embedding module")]
+    [Description("If true, the embedding vectors are scaled by the inverse of their frequency in the input.")]
     public bool ScaleGradByFreq { get; set; } = false;
 
     /// <summary>
-    /// The sparse parameter for the Embedding module.
+    /// If true, the gradient will be sparse.
     /// </summary>
-    [Description("The sparse parameter for the Embedding module")]
+    [Description("If true, the gradient will be sparse.")]
     public bool Sparse { get; set; } = false;
 
     /// <summary>
-    /// The desired device of returned tensor.
+    /// The desired device of the returned tensor.
     /// </summary>
     [XmlIgnore]
-    [Description("The desired device of returned tensor")]
+    [Description("The desired device of the returned tensor.")]
     public Device Device { get; set; } = null;
 
     /// <summary>
-    /// The desired data type of returned tensor.
+    /// The desired data type of the returned tensor.
     /// </summary>
-    [Description("The desired data type of returned tensor")]
-    [TypeConverter(typeof(ScalarTypeConverter))]
+    [Description("The desired data type of the returned tensor.")]
     public ScalarType? Type { get; set; } = null;
 
     /// <summary>
-    /// Generates an observable sequence that creates a EmbeddingModule module.
+    /// Creates an embedding module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Embedding(NumEmbeddings, EmbeddingDims, PaddingIdx, MaxNorm, NormType, ScaleGradByFreq, Sparse, Device, Type));
+    }
+
+    /// <summary>
+    /// Creates an embedding module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Embedding(NumEmbeddings, EmbeddingDims, PaddingIdx, MaxNorm, NormType, ScaleGradByFreq, Sparse, Device, Type));
     }
 }

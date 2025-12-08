@@ -1,120 +1,115 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
 using static TorchSharp.torch.optim.lr_scheduler;
 
 namespace Bonsai.ML.Torch.NeuralNets.LearningRateScheduler;
 
 /// <summary>
-/// Creates a one cycle learning rate policy scheduler.
+/// Represents an operator that creates a one cycle learning rate scheduler.
 /// </summary>
-[Combinator]
-[Description("Creates a one cycle learning rate policy scheduler.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.OneCycleLR.html"/> for more information.
+/// </remarks>
+[Description("Creates a one cycle learning rate scheduler.")]
 public class OneCycle
 {
     /// <summary>
-    /// The optimizer parameter for the OneCycleLR module.
+    /// The upper learning rate boundaries in the cycle for each parameter group.
     /// </summary>
-    [Description("The optimizer parameter for the OneCycleLR module")]
-    public optim.Optimizer Optimizer { get; set; }
+    [Description("The upper learning rate boundaries in the cycle for each parameter group.")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
+    public double[] MaxLearningRate { get; set; }
 
     /// <summary>
-    /// The max_lr parameter for the OneCycleLR module.
+    /// The total number of steps in the cycle.
     /// </summary>
-    [Description("The max_lr parameter for the OneCycleLR module")]
-    public double MaxLr { get; set; }
-
-    /// <summary>
-    /// The total_steps parameter for the OneCycleLR module.
-    /// </summary>
-    [Description("The total_steps parameter for the OneCycleLR module")]
+    [Description("The total number of steps in the cycle.")]
     public int TotalSteps { get; set; } = -1;
 
     /// <summary>
-    /// The epochs parameter for the OneCycleLR module.
+    /// The number of epochs to train for.
     /// </summary>
-    [Description("The epochs parameter for the OneCycleLR module")]
+    [Description("The number of epochs to train for.")]
     public int Epochs { get; set; } = -1;
 
     /// <summary>
-    /// The steps_per_epoch parameter for the OneCycleLR module.
+    /// The number of steps per epoch.
     /// </summary>
-    [Description("The steps_per_epoch parameter for the OneCycleLR module")]
+    [Description("The number of steps per epoch.")]
     public int StepsPerEpoch { get; set; } = -1;
 
     /// <summary>
-    /// The pct_start parameter for the OneCycleLR module.
+    /// The percentage of the cycle spent increasing the learning rate.
     /// </summary>
-    [Description("The pct_start parameter for the OneCycleLR module")]
-    public double PctStart { get; set; } = 0.3D;
+    [Description("The percentage of the cycle spent increasing the learning rate.")]
+    public double PercentageStart { get; set; } = 0.3D;
 
     /// <summary>
-    /// The anneal_strategy parameter for the OneCycleLR module.
+    /// The annealing strategy to use.
     /// </summary>
-    [Description("The anneal_strategy parameter for the OneCycleLR module")]
+    [Description("The annealing strategy to use.")]
     public impl.OneCycleLR.AnnealStrategy AnnealStrategy { get; set; } = impl.OneCycleLR.AnnealStrategy.Cos;
 
     /// <summary>
-    /// The cycle_momentum parameter for the OneCycleLR module.
+    /// If true, momentum is cycled inversely to learning rate.
     /// </summary>
-    [Description("The cycle_momentum parameter for the OneCycleLR module")]
+    [Description("If true, momentum is cycled inversely to learning rate.")]
     public bool CycleMomentum { get; set; } = true;
 
     /// <summary>
-    /// The base_momentum parameter for the OneCycleLR module.
+    /// The lower momentum boundaries in the cycle for each parameter group
     /// </summary>
-    [Description("The base_momentum parameter for the OneCycleLR module")]
-    public double BaseMomentum { get; set; } = 0.85D;
+    [Description("The lower momentum boundaries in the cycle for each parameter group")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
+    public double[] BaseMomentum { get; set; } = null;
 
     /// <summary>
-    /// The max_momentum parameter for the OneCycleLR module.
+    /// The upper momentum boundaries in the cycle for each parameter group
     /// </summary>
-    [Description("The max_momentum parameter for the OneCycleLR module")]
-    public double MaxMomentum { get; set; } = 0.95D;
+    [Description("The upper momentum boundaries in the cycle for each parameter group")]
+    [TypeConverter(typeof(UnidimensionalArrayConverter))]
+    public double[] MaxMomentum { get; set; } = null;
 
     /// <summary>
-    /// The div_factor parameter for the OneCycleLR module.
+    /// Determines the initial learning rate.
     /// </summary>
-    [Description("The div_factor parameter for the OneCycleLR module")]
+    [Description("Determines the initial learning rate.")]
     public double DivFactor { get; set; } = 25D;
 
     /// <summary>
-    /// The final_div_factor parameter for the OneCycleLR module.
+    /// Determines the final learning rate.
     /// </summary>
-    [Description("The final_div_factor parameter for the OneCycleLR module")]
+    [Description("Determines the final learning rate.")]
     public double FinalDivFactor { get; set; } = 10000D;
 
     /// <summary>
-    /// The three_phase parameter for the OneCycleLR module.
+    /// If true, uses a third phase of the schedule to annihilate the learning rate.
     /// </summary>
-    [Description("The three_phase parameter for the OneCycleLR module")]
+    [Description("If true, uses a third phase of the schedule to annihilate the learning rate.")]
     public bool ThreePhase { get; set; } = false;
 
     /// <summary>
-    /// The last_epoch parameter for the OneCycleLR module.
+    /// The index of the last epoch.
     /// </summary>
-    [Description("The last_epoch parameter for the OneCycleLR module")]
+    [Description("The index of the last epoch.")]
     public int LastEpoch { get; set; } = -1;
 
     /// <summary>
-    /// The verbose parameter for the OneCycleLR module.
+    /// Determines whether to write a message to stdout for each update.
     /// </summary>
-    [Description("The verbose parameter for the OneCycleLR module")]
+    [Description("Determines whether to write a message to stdout for each update.")]
     public bool Verbose { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a OneCycle.
+    /// Creates a OneCycleLR scheduler.
     /// </summary>
-    public IObservable<LRScheduler> Process()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LRScheduler> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
-        return Observable.Return(OneCycleLR(Optimizer, MaxLr, TotalSteps, Epochs, StepsPerEpoch, PctStart, AnnealStrategy, CycleMomentum, BaseMomentum, MaxMomentum, DivFactor, FinalDivFactor, ThreePhase, LastEpoch, Verbose));
+        return source.Select(optimizer => OneCycleLR(optimizer, MaxLearningRate, TotalSteps, Epochs, StepsPerEpoch, PercentageStart, AnnealStrategy, CycleMomentum, BaseMomentum, MaxMomentum, DivFactor, FinalDivFactor, ThreePhase, LastEpoch, Verbose));
     }
 }

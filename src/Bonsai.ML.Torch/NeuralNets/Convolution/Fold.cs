@@ -1,54 +1,59 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Convolution;
 
 /// <summary>
-/// Represents an operator that creates a Fold module.
+/// Represents an operator that creates a fold module.
 /// </summary>
-[Description("Creates a Fold module.")]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Fold.html"/> for more information.
+/// </remarks>
+[Description("Creates a fold module.")]
 public class Fold
 {
     /// <summary>
-    /// The output_size parameter for the Fold module.
+    /// The shape of the spatial dimensions of the output tensor.
     /// </summary>
-    [Description("The output_size parameter for the Fold module")]
-    public long OutputSize { get; set; }
+    [Description("The shape of the spatial dimensions of the output tensor.")]
+    [TypeConverter(typeof(ValueTupleConverter<long, long>))]
+    public (long, long) OutputSize { get; set; }
 
     /// <summary>
-    /// The kernel_size parameter for the Fold module.
+    /// The size of the sliding blocks.
     /// </summary>
-    [Description("The kernel_size parameter for the Fold module")]
-    public long KernelSize { get; set; }
+    [Description("The size of the sliding blocks.")]
+    [TypeConverter(typeof(ValueTupleConverter<long, long>))]
+    public (long, long) KernelSize { get; set; }
 
     /// <summary>
-    /// The dilation parameter for the Fold module.
+    /// The stride of elements within the neighborhood.
     /// </summary>
-    [Description("The dilation parameter for the Fold module")]
-    public long Dilation { get; set; } = 1;
+    [Description("The stride of elements within the neighborhood.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long>))]
+    public (long, long)? Dilation { get; set; } = null;
 
     /// <summary>
-    /// The padding parameter for the Fold module.
+    /// The implicit zero-padding to be added on both sides of input.
     /// </summary>
-    [Description("The padding parameter for the Fold module")]
-    public long Padding { get; set; } = 0;
+    [Description("The implicit zero-padding to be added on both sides of input.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long>))]
+    public (long, long)? Padding { get; set; } = null;
 
     /// <summary>
-    /// The stride parameter for the Fold module.
+    /// The stride of the sliding blocks in the input tensor.
     /// </summary>
-    [Description("The stride parameter for the Fold module")]
-    public long Stride { get; set; } = 1;
+    [Description("The stride of the sliding blocks in the input tensor.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long>))]
+    public (long, long)? Stride { get; set; } = null;
 
     /// <summary>
     /// Creates a Fold module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Fold(OutputSize, KernelSize, Dilation, Padding, Stride));

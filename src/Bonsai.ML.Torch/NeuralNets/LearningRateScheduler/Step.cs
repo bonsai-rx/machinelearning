@@ -1,60 +1,52 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
 using static TorchSharp.torch.optim.lr_scheduler;
 
-namespace Bonsai.ML.Torch.NeuralNets.LinearRateScheduler;
+namespace Bonsai.ML.Torch.NeuralNets.LearningRateScheduler;
 
 /// <summary>
-/// Creates a scheduler that decays the learning rate of each parameter group by gamma every step_size epochs.
+/// Represents an operator that creates a step learning rate scheduler.
 /// </summary>
-[Combinator]
-[Description("Creates a scheduler that decays the learning rate of each parameter group by gamma every step_size epochs.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.StepLR.html"/> for more information.
+/// </remarks>
+[Description("Creates a step learning rate scheduler.")]
 public class Step
 {
     /// <summary>
-    /// The optimizer parameter for the StepLR module.
+    /// The period of learning rate decay.
     /// </summary>
-    [Description("The optimizer parameter for the StepLR module")]
-    public optim.Optimizer Optimizer { get; set; }
-
-    /// <summary>
-    /// The step_size parameter for the StepLR module.
-    /// </summary>
-    [Description("The step_size parameter for the StepLR module")]
+    [Description("The period of learning rate decay.")]
     public int StepSize { get; set; }
 
     /// <summary>
-    /// The gamma parameter for the StepLR module.
+    /// The multiplicative factor of learning rate decay.
     /// </summary>
-    [Description("The gamma parameter for the StepLR module")]
+    [Description("The multiplicative factor of learning rate decay.")]
     public double Gamma { get; set; } = 0.1D;
 
     /// <summary>
-    /// The last_epoch parameter for the StepLR module.
+    /// The index of the last epoch.
     /// </summary>
-    [Description("The last_epoch parameter for the StepLR module")]
+    [Description("The index of the last epoch.")]
     public int LastEpoch { get; set; } = -1;
 
     /// <summary>
-    /// The verbose parameter for the StepLR module.
+    /// Determines whether to write a message to stdout for each update.
     /// </summary>
-    [Description("The verbose parameter for the StepLR module")]
+    [Description("Determines whether to write a message to stdout for each update.")]
     public bool Verbose { get; set; } = false;
 
     /// <summary>
-    /// Generates an observable sequence that creates a Step.
+    /// Creates a StepLR scheduler.
     /// </summary>
-    public IObservable<LRScheduler> Process()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<LRScheduler> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
-        return Observable.Return(StepLR(Optimizer, StepSize, Gamma, LastEpoch, Verbose));
+        return source.Select(optimizer => StepLR(optimizer, StepSize, Gamma, LastEpoch, Verbose));
     }
 }

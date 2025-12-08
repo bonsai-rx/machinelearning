@@ -1,40 +1,49 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a HingeEmbeddingLoss module.
+/// Represents an operator that creates a hinge embedding loss module.
 /// </summary>
-[Combinator]
-[Description("Creates a HingeEmbeddingLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
-public class HingeEmbeddingLoss
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.HingeEmbeddingLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a hinge embedding loss module.")]
+public class HingeEmbedding
 {
     /// <summary>
-    /// The margin parameter for the HingeEmbeddingLoss module.
+    /// The margin, a non-negative float value.
     /// </summary>
-    [Description("The margin parameter for the HingeEmbeddingLoss module")]
+    [Description("The margin, a non-negative float value.")]
     public double Margin { get; set; } = 1D;
 
     /// <summary>
-    /// The reduction parameter for the HingeEmbeddingLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the HingeEmbeddingLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a HingeEmbeddingLoss.
+    /// Creates a hinge embedding loss module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(HingeEmbeddingLoss(Margin, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a hinge embedding loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => HingeEmbeddingLoss(Margin, Reduction));
     }
 }

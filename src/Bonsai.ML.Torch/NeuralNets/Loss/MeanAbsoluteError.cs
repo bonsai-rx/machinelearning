@@ -1,34 +1,43 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a L1Loss module.
+/// Represents an operator that creates an L1 loss (L1Loss) module, known as mean absolute error (MAE).
 /// </summary>
-[Combinator]
-[Description("Creates a L1Loss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.L1Loss.html"/> for more information.
+/// </remarks>
+[Description("Creates an L1 loss (L1Loss) module, known as mean absolute error (MAE).")]
 public class MeanAbsoluteError
 {
     /// <summary>
-    /// The reduction parameter for the L1Loss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the L1Loss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a L1Loss.
+    /// Creates an L1 loss (L1Loss) module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(L1Loss(Reduction));
+    }
+
+    /// <summary>
+    /// Creates an L1 loss (L1Loss) module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => L1Loss(Reduction));
     }
 }

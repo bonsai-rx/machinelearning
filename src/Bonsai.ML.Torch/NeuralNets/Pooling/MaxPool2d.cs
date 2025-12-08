@@ -1,10 +1,6 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
@@ -13,49 +9,57 @@ namespace Bonsai.ML.Torch.NeuralNets.Pooling;
 /// <summary>
 /// Represents an operator that creates a 2D max pooling layer.
 /// </summary>
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.MaxPool2d.html"/> for more information.
+/// </remarks>
 [Description("Creates a 2D max pooling layer.")]
 public class MaxPool2d
 {
     /// <summary>
-    /// The kernel size.
+    /// The size of the window to take a max over.
     /// </summary>
-    [Description("The kernel size.")]
-    public long[] KernelSize { get; set; }
+    [Description("The size of the window to take a max over.")]
+    [TypeConverter(typeof(ValueTupleConverter<long, long>))]
+    public (long, long) KernelSize { get; set; }
 
     /// <summary>
-    /// The stride.
+    /// The stride of the window.
     /// </summary>
-    [Description("The stride.")]
-    public long[] Stride { get; set; } = null;
+    [Description("The stride of the window.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long>))]
+    public (long, long)? Stride { get; set; } = null;
 
     /// <summary>
-    /// The padding.
+    /// The implicit negative infinity padding to be added on both sides.
     /// </summary>
-    [Description("The padding.")]
-    public long[] Padding { get; set; } = null;
+    [Description("The implicit negative infinity padding to be added on both sides.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long>))]
+    public (long, long)? Padding { get; set; } = null;
 
     /// <summary>
-    /// The dilation.
+    /// The spacing between kernel elements.
     /// </summary>
-    [Description("The dilation.")]
-    public long[] Dilation { get; set; } = null;
+    [Description("The spacing between kernel elements.")]
+    [TypeConverter(typeof(NullableValueTupleConverter<long, long>))]
+    public (long, long)? Dilation { get; set; } = null;
 
     /// <summary>
-    /// The ceiling mode.
+    /// If set to true, will use ceil instead of floor to compute the output shape.
     /// </summary>
-    [Description("The ceiling mode.")]
+    [Description("If set to true, will use ceil instead of floor to compute the output shape.")]
     public bool CeilMode { get; set; } = false;
 
     /// <summary>
-    /// Creates an MaxPool2d module.
+    /// Creates a MaxPool2d module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(MaxPool2d(KernelSize, Stride, Padding, Dilation, CeilMode));
     }
 
     /// <summary>
-    /// Creates an MaxPool2d module.
+    /// Creates a MaxPool2d module.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>

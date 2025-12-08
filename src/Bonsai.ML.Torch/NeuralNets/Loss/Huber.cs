@@ -1,40 +1,49 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a HuberLoss module.
+/// Represents an operator that creates a Huber loss module.
 /// </summary>
-[Combinator]
-[Description("Creates a HuberLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.HuberLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a Huber loss module.")]
 public class Huber
 {
     /// <summary>
-    /// The delta parameter for the HuberLoss module.
+    /// The threshold at which to change between delta-scaled L1 and L2 loss.
     /// </summary>
-    [Description("The delta parameter for the HuberLoss module")]
+    [Description("The threshold at which to change between delta-scaled L1 and L2 loss.")]
     public double Delta { get; set; } = 1D;
 
     /// <summary>
-    /// The reduction parameter for the HuberLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the HuberLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a HuberLoss.
+    /// Creates a Huber loss module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(HuberLoss(Delta, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a Huber loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => HuberLoss(Delta, Reduction));
     }
 }

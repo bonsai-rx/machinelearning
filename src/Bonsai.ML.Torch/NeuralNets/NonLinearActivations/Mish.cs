@@ -1,28 +1,37 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 
 /// <summary>
-/// Creates a Mish module.
+/// Represents an operator that creates a mish activation function.
 /// </summary>
-[Combinator]
-[Description("Creates a Mish module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Mish.html"/> for more information.
+/// </remarks>
+[Description("Creates a mish activation function.")]
 public class Mish
 {
     /// <summary>
-    /// Generates an observable sequence that creates a MishModule module.
+    /// Creates a Mish module.
     /// </summary>
+    /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
         return Observable.Return(Mish());
+    }
+
+    /// <summary>
+    /// Creates a Mish module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => Mish());
     }
 }

@@ -2,71 +2,65 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
 using TorchSharp.Modules;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
 using static TorchSharp.torch.optim;
 
 namespace Bonsai.ML.Torch.NeuralNets.Optimizer;
 
 /// <summary>
-/// Creates a LBFGS optimizer.
+/// Represents an operator that creates a limited-memory Broyden-Fletcher-Goldfarb-Shanno (LBFGS) optimizer.
 /// </summary>
-[Combinator]
-[Description("Creates a LBFGS optimizer.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.LBFGS.html"/> for more information.
+/// </remarks>
+[Description("Creates a limited-memory Broyden-Fletcher-Goldfarb-Shanno (LBFGS) optimizer.")]
 public class Lbfgs
 {
     /// <summary>
-    /// The parameters parameter for the LBFGS module.
+    /// The learning rate.
     /// </summary>
-    [Description("The parameters parameter for the LBFGS module")]
-    [XmlIgnore]
-    public IEnumerable<Parameter> Parameters { get; set; }
+    [Description("The learning rate.")]
+    public double LearningRate { get; set; } = 0.01D;
 
     /// <summary>
-    /// The lr parameter for the LBFGS module.
+    /// The maximum number of iterations per optimization step.
     /// </summary>
-    [Description("The lr parameter for the LBFGS module")]
-    public double Lr { get; set; } = 0.01D;
-
-    /// <summary>
-    /// The max_iter parameter for the LBFGS module.
-    /// </summary>
-    [Description("The max_iter parameter for the LBFGS module")]
+    [Description("The maximum number of iterations per optimization step.")]
     public long MaxIter { get; set; } = 20;
 
     /// <summary>
-    /// The max_eval parameter for the LBFGS module.
+    /// The maximum number of function evaluations per optimization step.
     /// </summary>
-    [Description("The max_eval parameter for the LBFGS module")]
+    [Description("The maximum number of function evaluations per optimization step.")]
     public long? MaxEval { get; set; } = null;
 
     /// <summary>
-    /// The tolerange_grad parameter for the LBFGS module.
+    /// The termination criterion that determines when to stop optimizing based on first-order optimality.
     /// </summary>
-    [Description("The tolerange_grad parameter for the LBFGS module")]
-    public double TolerangeGrad { get; set; } = 1E-05D;
+    [Description("The termination criterion that determines when to stop optimizing based on first-order optimality.")]
+    public double ToleranceGrad { get; set; } = 1E-05D;
 
     /// <summary>
-    /// The tolerance_change parameter for the LBFGS module.
+    /// The termination criterion that determines when to stop optimizing based on function value or parameter changes.
     /// </summary>
-    [Description("The tolerance_change parameter for the LBFGS module")]
+    [Description("The termination criterion that determines when to stop optimizing based on function value or parameter changes.")]
     public double ToleranceChange { get; set; } = 1E-09D;
 
     /// <summary>
-    /// The history_size parameter for the LBFGS module.
+    /// The update history size.
     /// </summary>
-    [Description("The history_size parameter for the LBFGS module")]
+    [Description("The update history size.")]
     public long HistorySize { get; set; } = 100;
 
     /// <summary>
-    /// Generates an observable sequence that creates a LBFGSOptimizer.
+    /// Creates an LBFGS optimizer from the input parameter collection.
     /// </summary>
-    public IObservable<optim.Optimizer> Process()
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<optim.Optimizer> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
     {
-        return Observable.Return(LBFGS(Parameters, Lr, MaxIter, MaxEval, TolerangeGrad, ToleranceChange, HistorySize));
+        return source.Select(parameters => LBFGS(parameters, LearningRate, MaxIter, MaxEval, ToleranceGrad, ToleranceChange, HistorySize));
     }
 }

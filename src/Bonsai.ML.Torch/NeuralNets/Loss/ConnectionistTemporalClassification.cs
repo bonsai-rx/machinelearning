@@ -1,46 +1,55 @@
 using System;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using TorchSharp;
-using TorchSharp.Modules;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
 namespace Bonsai.ML.Torch.NeuralNets.Loss;
 
 /// <summary>
-/// Creates a CTCLoss module.
+/// Represents an operator that creates a connectionist temporal classification (CTC) loss module.
 /// </summary>
-[Combinator]
-[Description("Creates a CTCLoss module.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.CTCLoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a connectionist temporal classification (CTC) loss module.")]
 public class ConnectionistTemporalClassification
 {
     /// <summary>
-    /// The blank parameter for the CTCLoss module.
+    /// The blank label.
     /// </summary>
-    [Description("The blank parameter for the CTCLoss module")]
+    [Description("The blank label.")]
     public long Blank { get; set; } = 0;
 
     /// <summary>
-    /// The zero_infinity parameter for the CTCLoss module.
+    /// Determines whether to zero infinite losses and the associated gradients.
     /// </summary>
-    [Description("The zero_infinity parameter for the CTCLoss module")]
+    [Description("Determines whether to zero infinite losses and the associated gradients.")]
     public bool ZeroInfinity { get; set; } = false;
 
     /// <summary>
-    /// The reduction parameter for the CTCLoss module.
+    /// The reduction type to apply to the output.
     /// </summary>
-    [Description("The reduction parameter for the CTCLoss module")]
+    [Description("The reduction type to apply to the output.")]
     public Reduction Reduction { get; set; } = Reduction.Mean;
 
     /// <summary>
-    /// Generates an observable sequence that creates a CTCLoss.
+    /// Creates a connectionist temporal classification (CTC) loss module.
     /// </summary>
-    public IObservable<IModule<Tensor, Tensor, Tensor, Tensor, Tensor>> Process()
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor, Tensor>> Process()
     {
         return Observable.Return(CTCLoss(Blank, ZeroInfinity, Reduction));
+    }
+
+    /// <summary>
+    /// Creates a connectionist temporal classification (CTC) loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => CTCLoss(Blank, ZeroInfinity, Reduction));
     }
 }
