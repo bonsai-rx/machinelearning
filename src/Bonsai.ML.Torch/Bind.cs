@@ -73,8 +73,8 @@ public class Bind
 
                     if (skip < count)
                     {
-                        idxSrc = arange(skip, count, dtype: ScalarType.Int32, device: input.device);
-                        idxDst = arange(0, count - skip, dtype: ScalarType.Int32, device: input.device);
+                        idxSrc = arange(skip, count, dtype: ScalarType.Int64, device: input.device);
+                        idxDst = arange(0, count - skip, dtype: ScalarType.Int64, device: input.device);
                     }
                 }
 
