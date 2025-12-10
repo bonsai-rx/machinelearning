@@ -2,17 +2,16 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.Random;
 
 /// <summary>
-/// Creates a 1D tensor of a given size with a random permutation of integers from 0 to size - 1.
+/// Represents an operator that creates a 1D tensor of a given size with a random permutation of integers in [0, size).
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Creates a 1D tensor of a given size with a random permutation of integers from 0 to size - 1.")]
+[Description("Creates a 1D tensor of a given size with a random permutation of integers in [0, size).")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class Permutation
 {
@@ -39,6 +38,7 @@ public class Permutation
     /// The random number generator to use.
     /// </summary>
     [XmlIgnore]
+    [Description("The random number generator to use.")]
     public Generator Generator { get; set; } = null;
 
     /// <summary>
@@ -50,7 +50,7 @@ public class Permutation
     }
 
     /// <summary>
-    /// Generates an observable sequence of tensors with a random permutation of integers from [0, size) and uses the input generator.
+    /// Creates a tensor with a random permutation of integers in [0, size) and uses the input generator.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -81,12 +81,12 @@ public class Permutation
 
 
     /// <summary>
-    /// Generates an observable sequence of tensors filled with random values for each element of the input sequence.
+    /// Generates random permutations for each element of the input sequence.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Tensor> Process<T>(IObservable<T> source)
     {
-        return source.Select(value => randperm(Size, dtype: Type, device: Device, generator: Generator));
+        return source.Select(_ => randperm(Size, dtype: Type, device: Device, generator: Generator));
     }
 }

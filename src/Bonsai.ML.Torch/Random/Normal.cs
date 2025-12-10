@@ -2,13 +2,12 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.Random;
 
 /// <summary>
-/// Creates a tensor filled with random floats sampled from a normal distribution with mean 0 and variance 1.
+/// Represents an operator that creates a tensor filled with random floats sampled from a normal distribution with the specified mean and variance.
 /// </summary>
 [Combinator]
 [ResetCombinator]
@@ -94,6 +93,6 @@ public class Normal
     /// <returns></returns>
     public IObservable<Tensor> Process<T>(IObservable<T> source)
     {
-        return source.Select(value => randn(Size, dtype: Type, device: Device, generator: Generator) * Variance + Mean);
+        return source.Select(_ => randn(Size, dtype: Type, device: Device, generator: Generator) * Variance + Mean);
     }
 }

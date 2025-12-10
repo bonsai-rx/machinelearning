@@ -8,11 +8,11 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch.Random;
 
 /// <summary>
-/// Creates a tensor filled with random numbers sampled from a uniform distribution over the interval [MinSize, MaxSize).
+/// Represents an operator that creates a tensor filled with random numbers sampled from a uniform distribution over the interval [MinSize, MaxSize).
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Creates a tensor filled with random numbers from a uniform distribution over the interval [MinSize, MaxSize).")]
+[Description("Creates a tensor filled with random numbers sampled from a uniform distribution over the interval [MinValue, MaxValue).")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class Uniform
 {
@@ -65,11 +65,11 @@ public class Uniform
     }
 
     /// <summary>
-    /// Generates an observable sequence of tensors filled with random values and uses the input generator.
+    /// Creates tensors filled with random values and uses the input generator.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Tensor> Process(IObservable<torch.Generator> source)
+    public IObservable<Tensor> Process(IObservable<Generator> source)
     {
         return source.Select(value =>
         {
@@ -89,13 +89,13 @@ public class Uniform
     }
 
     /// <summary>
-    /// Generates an observable sequence of tensors filled with random values for each element of the input sequence.
+    /// Creates tensors filled with random values for each element of the input sequence.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Tensor> Process<T>(IObservable<T> source)
     {
-        return source.Select(value => rand(Size, dtype: Type, device: Device, generator: Generator) * (MaxValue - MinValue) + MinValue);
+        return source.Select(_ => rand(Size, dtype: Type, device: Device, generator: Generator) * (MaxValue - MinValue) + MinValue);
     }
 
 }

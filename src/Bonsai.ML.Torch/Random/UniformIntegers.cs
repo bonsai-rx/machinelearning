@@ -2,18 +2,16 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using TorchSharp;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.Random;
 
 /// <summary>
-/// Creates a tensor filled with random integers sampled from a uniform distribution over the
-/// interval [MinValue, MaxValue).
+/// Creates a tensor filled with random integers sampled from a uniform distribution over the interval [MinValue, MaxValue).
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Creates a tensor filled with random integers.")]
+[Description("Creates a tensor filled with random integers sampled from a uniform distribution over the interval [MinValue, MaxValue).")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class UniformIntegers
 {
@@ -53,11 +51,11 @@ public class UniformIntegers
     /// The random number generator to use.
     /// </summary>
     [XmlIgnore]
+    [Description("The random number generator to use.")]
     public Generator Generator { get; set; } = null;
 
     /// <summary>
-    /// Creates a tensor filled with random integers sampled from a uniform distribution over the
-    /// interval [MinValue, MaxValue).
+    /// Creates a tensor filled with random integers sampled from a uniform distribution over the interval [MinValue, MaxValue).
     /// </summary>
     public IObservable<Tensor> Process()
     {
@@ -65,7 +63,7 @@ public class UniformIntegers
     }
 
     /// <summary>
-    /// Generates an observable sequence of tensors filled with random integers and uses the input generator.
+    /// Creates tensors filled with random integers and uses the input generator.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -79,7 +77,7 @@ public class UniformIntegers
     }
 
     /// <summary>
-    /// Generates an observable sequence of tensors filled with random integers for each element of the input sequence.
+    /// Creates tensors filled with random integers for each element of the input sequence.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -89,12 +87,12 @@ public class UniformIntegers
     }
 
     /// <summary>
-    /// Generates an observable sequence of tensors filled with random integers for each element of the input sequence.
+    /// Creates tensors filled with random integers for each element of the input sequence.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Tensor> Process<T>(IObservable<T> source)
     {
-        return source.Select(value => randint(MinValue, MaxValue, Size, dtype: Type, device: Device, generator: Generator));
+        return source.Select(_ => randint(MinValue, MaxValue, Size, dtype: Type, device: Device, generator: Generator));
     }
 }

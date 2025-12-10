@@ -1,18 +1,16 @@
-using Bonsai;
-using static TorchSharp.torch;
-using TorchSharp;
 using System;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
 using System.ComponentModel;
+using TorchSharp;
+using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch.Random;
 
 /// <summary>
-/// Sets the global random seed for TorchSharp and creates a random number generator with the specified seed.
+/// Represents an operator that sets the global random seed for TorchSharp and creates a random number generator (RNG) with the specified seed.
 /// </summary>
 [Combinator]
-[Description("Sets the global random seed for TorchSharp and creates a random number generator with the specified seed.")]
+[Description("Sets the global random seed for TorchSharp and creates a random number generator (RNG) with the specified seed.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 public class ManualSeed
 {
@@ -22,11 +20,22 @@ public class ManualSeed
     public long Seed { get; set; } = 0;
 
     /// <summary>
-    /// Creates a random number generator with the specified seed and device.
+    /// Sets the global random seed and creates a random number generator (RNG).
     /// </summary>
     /// <returns></returns>
-    public IObservable<torch.Generator> Process()
+    public IObservable<Generator> Process()
     {
         return Observable.Return(manual_seed(Seed));
+    }
+
+    /// <summary>
+    /// Generates an observable sequence where each element sets the global random seed and creates a random number generator (RNG).
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the input sequence.</typeparam>
+    /// <param name="source">The input observable sequence.</param>
+    /// <returns>An observable sequence of random number generators.</returns>
+    public IObservable<Generator> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => manual_seed(Seed));
     }
 }
