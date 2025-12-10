@@ -1,4 +1,3 @@
-using Bonsai;
 using System;
 using System.Reactive.Linq;
 using System.ComponentModel;
@@ -8,8 +7,7 @@ using static TorchSharp.torch.distributions;
 namespace Bonsai.ML.Torch.Distributions;
 
 /// <summary>
-/// Generates reparameterized samples from the input distribution.
-/// Reparameterized samples allow gradients to flow through the sampling process.
+/// Represents an operator that generates reparameterized samples from the input distribution. Reparameterized samples allow gradients to flow through the sampling process.
 /// </summary>
 [Combinator]
 [Description("Generates reparameterized samples from the input distribution.")]
