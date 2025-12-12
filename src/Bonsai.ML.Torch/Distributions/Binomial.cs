@@ -16,11 +16,11 @@ namespace Bonsai.ML.Torch.Distributions;
 public class Binomial : IScalarTypeProvider
 {
     /// <summary>
-    /// Number of trials (non-negative). Can be a scalar or tensor. If tensor, values should be non-negative integers.
+    /// The number of trials (non-negative). Can be a scalar or tensor. If it is a tensor, values should be non-negative integers.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
-    [Description("Number of trials (non-negative). Can be a scalar or tensor.")]
+    [Description("The number of trials (non-negative). Can be a scalar or tensor. If it is a tensor, values should be non-negative integers.")]
     public Tensor Count { get; set; } = null;
 
     /// <summary>
@@ -40,7 +40,7 @@ public class Binomial : IScalarTypeProvider
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
-    [Description("Probability of success in [0, 1]. Can be a scalar or tensor; shape should broadcastable with Count.")]
+    [Description("Probability of success in [0, 1]. Can be a scalar or tensor; the shape should be broadcastable to Count.")]
     public Tensor Probabilities { get; set; } = null;
 
     /// <summary>

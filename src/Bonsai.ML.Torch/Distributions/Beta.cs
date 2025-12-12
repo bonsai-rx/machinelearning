@@ -8,7 +8,7 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch.Distributions;
 
 /// <summary>
-/// Creates a Beta probability distribution parameterized by two concentration parameters (alpha, beta).
+/// Represents an operator that creates a beta probability distribution parameterized by two concentration parameters (alpha, beta).
 /// </summary>
 [Combinator]
 [Description("Creates a Beta distribution with concentration parameters (alpha, beta).")]
@@ -17,7 +17,7 @@ namespace Bonsai.ML.Torch.Distributions;
 public class Beta : IScalarTypeProvider
 {
     /// <summary>
-    /// Concentration parameter alpha (> 0). Can be a scalar or tensor; the shape determines the batch/event shape.
+    /// The first concentration parameter alpha (> 0). Can be a scalar or tensor; the shape determines the batch/event shape.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]

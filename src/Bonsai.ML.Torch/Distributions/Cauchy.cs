@@ -17,11 +17,11 @@ namespace Bonsai.ML.Torch.Distributions;
 public class Cauchy : IScalarTypeProvider
 {
     /// <summary>
-    /// Location parameter. Can be a scalar or tensor; shape determines the batch/event shape.
+    /// The location parameter. Can be a scalar or tensor; shape determines the batch/event shape.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
-    [Description("Location parameter. Can be a scalar or tensor; supports batching.")]
+    [Description("The location parameter. Can be a scalar or tensor; supports batching.")]
     public Tensor Locations { get; set; } = null;
 
     /// <summary>

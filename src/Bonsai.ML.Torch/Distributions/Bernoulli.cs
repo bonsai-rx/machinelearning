@@ -16,11 +16,11 @@ namespace Bonsai.ML.Torch.Distributions;
 public class Bernoulli : IScalarTypeProvider
 {
     /// <summary>
-    /// Event probabilities p in [0, 1]. Can be a scalar or a tensor; the shape determines the batch/event shape.
+    /// The event probabilities in [0, 1]. Can be a scalar or a tensor; the shape determines the batch/event shape.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
-    [Description("Event probabilities p in [0, 1]. Can be a scalar or a tensor; shape sets the batch/event shape of the distribution.")]
+    [Description("The event probabilities in [0, 1]. Can be a scalar or a tensor; shape sets the batch/event shape of the distribution.")]
     public Tensor Probabilities { get; set; } = null;
 
     /// <summary>

@@ -8,20 +8,20 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch.Distributions;
 
 /// <summary>
-/// Creates a Categorical (discrete) distribution over classes given event probabilities.
+/// Creates a categorical (discrete) distribution over classes given event probabilities.
 /// </summary>
 [Combinator]
-[Description("Creates a Categorical distribution with class probabilities and emits a TorchSharp distribution module.")]
+[Description("Creates a categorical (discrete) distribution over classes given event probabilities.")]
 [WorkflowElementCategory(ElementCategory.Source)]
 [TypeConverter(typeof(TensorOperatorConverter))]
 public class Categorical : IScalarTypeProvider
 {
     /// <summary>
-    /// Class probabilities along the last dimension. Values must be non-negative and typically sum to 1 per row. Can be a 1D vector or higher-rank tensor for batched distributions.
+    /// The class probabilities. Values must be non-negative and typically sum to 1 per row. Can be a 1D vector or higher-rank tensor for batched distributions.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
-    [Description("Class probabilities along the last dimension (non-negative, typically sum to 1 per row). Supports batching.")]
+    [Description("The class probabilities. Values must be non-negative and typically sum to 1 per row. Can be a 1D vector or higher-rank tensor for batched distributions.")]
     public Tensor Probabilities { get; set; } = null;
 
     /// <summary>
