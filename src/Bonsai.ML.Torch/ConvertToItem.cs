@@ -33,7 +33,7 @@ public class ConvertToItem : SingleArgumentExpressionBuilder
         var type = ScalarTypeLookup.GetTypeFromScalarType(Type);
         methodInfo = methodInfo.MakeGenericMethod(type);
         Expression sourceExpression = arguments.First();
-        
+
         return Expression.Call(
             Expression.Constant(this),
             methodInfo,
@@ -44,10 +44,12 @@ public class ConvertToItem : SingleArgumentExpressionBuilder
     /// <summary>
     /// Converts the input tensor into a single item.
     /// </summary>
-    /// <returns></returns>
+    /// <typeparam name="T">The element type of the output item.</typeparam>
+    /// <param name="source">The sequence of input tensors.</param>
+    /// <returns>The sequence of output items of the specified element type.</returns>
     public IObservable<T> Process<T>(IObservable<Tensor> source) where T : unmanaged
     {
-        return source.Select(tensor => 
+        return source.Select(tensor =>
         {
             if (tensor.dtype != Type)
             {

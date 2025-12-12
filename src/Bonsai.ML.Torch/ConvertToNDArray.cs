@@ -41,7 +41,7 @@ namespace Bonsai.ML.Torch
             Type arrayType = Array.CreateInstance(type, lengths).GetType();
             methodInfo = methodInfo.MakeGenericMethod(type, arrayType);
             Expression sourceExpression = arguments.First();
-            
+
             return Expression.Call(
                 Expression.Constant(this),
                 methodInfo,
@@ -52,13 +52,13 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// Converts the input tensor into an array of the specified element type.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The element type of the output item.</typeparam>
+        /// <typeparam name="TResult">The type of the output array.</typeparam>
+        /// <param name="source">The sequence of input tensors.</param>
+        /// <returns>The sequence of output arrays of the specified element type and rank.</returns>
         public IObservable<TResult> Process<T, TResult>(IObservable<Tensor> source) where T : unmanaged
         {
-            return source.Select(tensor => 
+            return source.Select(tensor =>
             {
                 if (tensor.dtype != Type)
                 {
