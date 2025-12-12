@@ -7,7 +7,7 @@ using static TorchSharp.torch.linalg;
 namespace Bonsai.ML.Torch.LinearAlgebra;
 
 /// <summary>
-/// Computes the cross product of 2 tensors.
+/// Represents an operator that computes the cross product of 2 tensors.
 /// </summary>
 [Combinator]
 [Description("Computes the cross product of 2 tensors.")]

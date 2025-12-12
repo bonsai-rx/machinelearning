@@ -15,13 +15,14 @@ namespace Bonsai.ML.Torch.LinearAlgebra;
 public class TensorSolve
 {
     /// <summary>
-    /// The dimension to perform the operation.
+    /// The dimensions to perform the operation.
     /// </summary>
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
+    [Description("The dimensions to perform the operation.")]
     public long[] Dimensions { get; set; } = [];
 
     /// <summary>
-    /// Computes the cross product of 2 tensors.
+    /// Computes the solution to the system tensordot(A, X) = B.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>

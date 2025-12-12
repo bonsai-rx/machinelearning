@@ -3,60 +3,55 @@ using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 
-namespace Bonsai.ML.Torch.LinearAlgebra
+namespace Bonsai.ML.Torch.LinearAlgebra;
+
+/// <summary>
+/// Represents an operator that computes the singular value decomposition (SVD) of a matrix.
+/// </summary>
+[Combinator]
+[Description("Computes the singular value decomposition (SVD) of a matrix.")]
+[WorkflowElementCategory(ElementCategory.Transform)]
+public class SingularValueDecomposition
 {
+    /// <summary>
+    /// Whether to compute the full or reduced SVD.
+    /// </summary>
+    [Description("Whether to compute the full or reduced SVD.")]
+    public bool FullMatrices { get; set; } = false;
+
     /// <summary>
     /// Computes the singular value decomposition (SVD) of a matrix.
     /// </summary>
-    [Combinator]
-    [Description("Computes the singular value decomposition (SVD) of a matrix.")]
-    [WorkflowElementCategory(ElementCategory.Transform)]
-    public class SingularValueDecomposition
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<SingularValueDecompositionResult> Process(IObservable<Tensor> source)
+    {
+        return source.Select(tensor => new SingularValueDecompositionResult(linalg.svd(tensor, fullMatrices: FullMatrices)));
+    }
+
+    /// <summary>
+    /// Represents the result of a singular value decomposition.
+    /// </summary>
+    /// <param name="result"></param>
+    public readonly struct SingularValueDecompositionResult((
+        Tensor u,
+        Tensor s,
+        Tensor vh
+    ) result)
     {
         /// <summary>
-        /// Whether to compute the full or reduced SVD.
+        /// The U tensor.
         /// </summary>
-        public bool FullMatrices { get; set; } = false;
+        public Tensor U => result.u;
 
         /// <summary>
-        /// Computes the singular value decomposition (SVD) of a matrix.
+        /// The singular values.
         /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public IObservable<SvdResult> Process(IObservable<Tensor> source)
-        {
-            return source.Select(tensor =>
-            {
-                var (U, S, Vh) = linalg.svd(tensor, fullMatrices: FullMatrices);
-                return new SvdResult(U, S, Vh);
-            });
-        }
+        public Tensor S => result.s;
 
         /// <summary>
-        /// Represents the result of a singular value decomposition.
+        /// The Vh tensor.
         /// </summary>
-        /// <param name="u"></param>
-        /// <param name="s"></param>
-        /// <param name="vh"></param>
-        public readonly struct SvdResult(
-            Tensor u,
-            Tensor s,
-            Tensor vh)
-        {
-            /// <summary>
-            /// The U tensor.
-            /// </summary>
-            public Tensor U => u;
-
-            /// <summary>
-            /// The singular values.
-            /// </summary>
-            public Tensor S => s;
-
-            /// <summary>
-            /// The Vh tensor.
-            /// </summary>
-            public Tensor Vh => vh;
-        }
+        public Tensor Vh => result.vh;
     }
 }

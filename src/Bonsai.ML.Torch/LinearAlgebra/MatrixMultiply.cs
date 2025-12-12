@@ -9,15 +9,15 @@ using static TorchSharp.torch.linalg;
 namespace Bonsai.ML.Torch.LinearAlgebra;
 
 /// <summary>
-/// Represents an operator that performs matrix multiplication with 2 or more tensors.
+/// Represents an operator that performs matrix multiplication of 2 or more tensors.
 /// </summary>
 [Combinator]
-[Description("Performs matrix multiplication with 2 or more tensors.")]
+[Description("Performs matrix multiplication of 2 or more tensors.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class MatrixMultiply
 {
     /// <summary>
-    /// Performs matrix multiplication with 2 tensors.
+    /// Performs matrix multiplication of 2 tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -30,7 +30,7 @@ public class MatrixMultiply
     }
 
     /// <summary>
-    /// Performs matrix multiplication with 3 tensors.
+    /// Performs matrix multiplication of 3 tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -43,7 +43,7 @@ public class MatrixMultiply
     }
 
     /// <summary>
-    /// Performs matrix multiplication with 4 tensors.
+    /// Performs matrix multiplication of 4 tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -56,7 +56,7 @@ public class MatrixMultiply
     }
 
     /// <summary>
-    /// Performs matrix multiplication with 5 tensors.
+    /// Performs matrix multiplication of 5 tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -69,7 +69,7 @@ public class MatrixMultiply
     }
 
     /// <summary>
-    /// Performs matrix multiplication with 6 tensors.
+    /// Performs matrix multiplication of 6 tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -82,7 +82,7 @@ public class MatrixMultiply
     }
 
     /// <summary>
-    /// Performs matrix multiplication with 7 tensors.
+    /// Performs matrix multiplication of 7 tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -95,7 +95,7 @@ public class MatrixMultiply
     }
 
     /// <summary>
-    /// Performs matrix multiplication with an array of tensors.
+    /// Performs matrix multiplication of an array of tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -105,7 +105,7 @@ public class MatrixMultiply
     }
 
     /// <summary>
-    /// Performs matrix multiplication with a list of tensors.
+    /// Performs matrix multiplication of a list of tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -115,7 +115,7 @@ public class MatrixMultiply
     }
 
     /// <summary>
-    /// Performs matrix multiplication with an enumerable of tensors.
+    /// Performs matrix multiplication of an enumerable of tensors.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
