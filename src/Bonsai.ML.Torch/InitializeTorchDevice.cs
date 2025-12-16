@@ -7,7 +7,7 @@ using TorchSharp;
 namespace Bonsai.ML.Torch
 {
     /// <summary>
-    /// Initializes the Torch device with the specified device type.
+    /// Represents an operator that initializes the Torch device with the specified device type.
     /// </summary>
     [Combinator]
     [Description("Initializes the Torch device with the specified device type.")]
@@ -44,13 +44,17 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// Initializes the Torch device when the input sequence produces an element.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
         /// <returns></returns>
         public IObservable<Device> Process<T>(IObservable<T> source)
         {
             return source.Select((_) =>
             {
-                InitializeDeviceType(DeviceType);
-                return new Device(DeviceType, DeviceIndex);
+                var deviceType = DeviceType;
+                var deviceIndex = DeviceIndex;
+                InitializeDeviceType(deviceType);
+                return new Device(deviceType, deviceIndex);
             });
         }
     }
