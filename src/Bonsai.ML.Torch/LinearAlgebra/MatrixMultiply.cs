@@ -23,10 +23,7 @@ public class MatrixMultiply
     /// <returns></returns>
     public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor>> source)
     {
-        return source.Select(input =>
-        {
-            return matmul(input.Item1, input.Item2);
-        });
+        return source.Select(input =>input.Item1.matmul(input.Item2));
     }
 
     /// <summary>
