@@ -32,7 +32,7 @@ namespace Bonsai.ML.Torch
             MethodInfo methodInfo = GetType().GetMethod("Process", BindingFlags.Public | BindingFlags.Instance);
             methodInfo = methodInfo.MakeGenericMethod(ScalarTypeLookup.GetTypeFromScalarType(Type));
             Expression sourceExpression = arguments.First();
-            
+
             return Expression.Call(
                 Expression.Constant(this),
                 methodInfo,
@@ -43,12 +43,12 @@ namespace Bonsai.ML.Torch
         /// <summary>
         /// Converts the input tensor into a flattened array of the specified element type.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The element type of the output item.</typeparam>
+        /// <param name="source">The sequence of input tensors.</param>
+        /// <returns>The sequence of output arrays of the specified element type.</returns>
         public IObservable<T[]> Process<T>(IObservable<Tensor> source) where T : unmanaged
         {
-            return source.Select(tensor => 
+            return source.Select(tensor =>
             {
                 if (tensor.dtype != Type)
                 {

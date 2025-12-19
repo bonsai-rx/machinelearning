@@ -20,7 +20,7 @@ namespace Bonsai.ML.Torch
         public ScalarType Type { get; set; } = ScalarType.Float32;
 
         /// <summary>
-        /// Returns an observable sequence that converts the input tensor to the specified scalar type.
+        /// Converts the data type of the input tensor to the newly specified scalar type.
         /// </summary>
         public IObservable<Tensor> Process(IObservable<Tensor> source)
         {
