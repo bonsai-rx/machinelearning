@@ -51,7 +51,7 @@ public class Transform
     }
 
     /// <summary>
-    /// Transforms the input data using the specified PCA model.
+    /// Transforms the input data using a standard PCA model.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -64,7 +64,7 @@ public class Transform
     }
 
     /// <summary>
-    /// Transforms the input data using the specified PCA model.
+    /// Transforms the input data using a standard PCA model.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -77,7 +77,7 @@ public class Transform
     }
 
     /// <summary>
-    /// Transforms the input data using the specified PCA model.
+    /// Transforms the input data using a standard PCA model.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -90,7 +90,7 @@ public class Transform
     }
 
     /// <summary>
-    /// Transforms the input data using the specified PCA model.
+    /// Transforms the input data using a probabilistic PCA model.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -103,7 +103,7 @@ public class Transform
     }
 
     /// <summary>
-    /// Transforms the input data using the specified PCA model.
+    /// Transforms the input data using an online probabilistic PCA model.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -116,11 +116,37 @@ public class Transform
     }
 
     /// <summary>
-    /// Transforms the input data using the specified PCA model.
+    /// Transforms the input data using an online probabilistic PCA model.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Tensor> Process(IObservable<Tuple<Tensor, OnlineProbabilisticPca>> source)
+    {
+        return source.Select(value =>
+        {
+            return TransformData(value.Item2, value.Item1);
+        });
+    }
+
+    /// <summary>
+    /// Transforms the input data using an online PCA model based on the Generalized Hebbian Algorithm.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tensor> Process(IObservable<Tuple<OnlinePcaGha, Tensor>> source)
+    {
+        return source.Select(value =>
+        {
+            return TransformData(value.Item1, value.Item2);
+        });
+    }
+
+    /// <summary>
+    /// Transforms the input data using an online PCA model based on the Generalized Hebbian Algorithm.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tensor> Process(IObservable<Tuple<Tensor, OnlinePcaGha>> source)
     {
         return source.Select(value =>
         {
