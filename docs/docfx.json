@@ -12,7 +12,10 @@
       "output": "../artifacts/docs/api/",
       "enumSortOrder": "declaringOrder",
       "memberLayout": "separatePages",
-      "filter": "filter.yml"
+      "filter": "filter.yml",
+      "properties": {
+        "ProduceReferenceAssembly": "true"
+      }
     }
   ],
   "build": {
