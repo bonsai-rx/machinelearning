@@ -16,6 +16,10 @@ namespace Bonsai.ML.Lds.Torch;
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class StochasticSubspaceIdentification
 {
+    private int? _targetNumStates = 2;
+    private int _maxLag = 20;
+    private double _threshold = 1e-4;
+
     /// <summary>
     /// The target number of states in the Kalman filter model.
     /// </summary>
@@ -47,47 +51,55 @@ public class StochasticSubspaceIdentification
     }
 
     /// <summary>
-    /// If true, the transition matrix will be estimated during the EM algorithm.
+    /// If true, the transition matrix will be estimated during the SSI algorithm.
     /// </summary>
-    [Description("If true, the transition matrix will be estimated during the EM algorithm.")]
+    [Description("If true, the transition matrix will be estimated during the SSI algorithm.")]
     public bool EstimateTransitionMatrix { get; set; } = true;
 
     /// <summary>
-    /// If true, the measurement function will be estimated during the EM algorithm.
+    /// If true, the measurement function will be estimated during the SSI algorithm.
     /// </summary>
-    [Description("If true, the measurement function will be estimated during the EM algorithm.")]
+    [Description("If true, the measurement function will be estimated during the SSI algorithm.")]
     public bool EstimateMeasurementFunction { get; set; } = true;
 
     /// <summary>
-    /// If true, the process noise covariance will be estimated during the EM algorithm.
+    /// If true, the process noise covariance will be estimated during the SSI algorithm.
     /// </summary>
-    [Description("If true, the process noise covariance will be estimated during the EM algorithm.")]
+    [Description("If true, the process noise covariance will be estimated during the SSI algorithm.")]
     public bool EstimateProcessNoiseCovariance { get; set; } = true;
 
     /// <summary>
-    /// If true, the measurement noise covariance will be estimated during the EM algorithm.
+    /// If true, the measurement noise covariance will be estimated during the SSI algorithm.
     /// </summary>
-    [Description("If true, the measurement noise covariance will be estimated during the EM algorithm.")]
+    [Description("If true, the measurement noise covariance will be estimated during the SSI algorithm.")]
     public bool EstimateMeasurementNoiseCovariance { get; set; } = true;
 
     /// <summary>
-    /// If true, the initial mean will be estimated during the EM algorithm.
+    /// If true, the initial mean will be estimated during the SSI algorithm.
     /// </summary>
-    [Description("If true, the initial mean will be estimated during the EM algorithm.")]
+    [Description("If true, the initial mean will be estimated during the SSI algorithm.")]
     public bool EstimateInitialMean { get; set; } = true;
 
     /// <summary>
-    /// If true, the initial covariance will be estimated during the EM algorithm.
+    /// If true, the initial covariance will be estimated during the SSI algorithm.
     /// </summary>
-    [Description("If true, the initial covariance will be estimated during the EM algorithm.")]
+    [Description("If true, the initial covariance will be estimated during the SSI algorithm.")]
     public bool EstimateInitialCovariance { get; set; } = true;
 
-    private int? _targetNumStates = 2;
-    private int _maxLag = 20;
-    private double _threshold = 1e-4;
+    /// <summary>
+    /// If true, the state offset will be estimated during the SSI algorithm.
+    /// </summary>
+    [Description("If true, the state offset will be estimated during the SSI algorithm.")]
+    public bool EstimateStateOffset { get; set; } = false;
 
     /// <summary>
-    /// Processes an observable sequence of input tensors, applying the Expectation-Maximization algorithm to learn the parameters of a Kalman filter model.
+    /// If true, the observation offset will be estimated during the SSI algorithm.
+    /// </summary>
+    [Description("If true, the observation offset will be estimated during the SSI algorithm.")]
+    public bool EstimateObservationOffset { get; set; } = false;
+
+    /// <summary>
+    /// Processes an observable sequence of input tensors, applying the Stochastic Subspace Identification algorithm to learn the parameters of a Kalman filter model.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -103,7 +115,9 @@ public class StochasticSubspaceIdentification
                     processNoiseCovariance: EstimateProcessNoiseCovariance,
                     measurementNoiseCovariance: EstimateMeasurementNoiseCovariance,
                     initialMean: EstimateInitialMean,
-                    initialCovariance: EstimateInitialCovariance);
+                    initialCovariance: EstimateInitialCovariance,
+                    stateOffset: EstimateStateOffset,
+                    observationOffset: EstimateObservationOffset);
 
                 observer.OnNext(KalmanFilter.StochasticSubspaceIdentification(
                     observations: input,

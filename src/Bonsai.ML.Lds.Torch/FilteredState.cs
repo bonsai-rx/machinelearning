@@ -5,39 +5,53 @@ namespace Bonsai.ML.Lds.Torch;
 /// <summary>
 /// Represents the state of a Kalman filter.
 /// </summary>
-/// <param name="predictedMean"></param>
-/// <param name="predictedCovariance"></param>
-/// <param name="updatedMean"></param>
-/// <param name="updatedCovariance"></param>
-public struct FilteredState(
-    Tensor predictedMean,
-    Tensor predictedCovariance,
-    Tensor updatedMean,
-    Tensor updatedCovariance) : ILinearDynamicalSystemState
+/// <param name="predictedState"></param>
+/// <param name="updatedState"></param>
+/// <param name="innovation"></param>
+/// <param name="innovationCovariance"></param>
+/// <param name="kalmanGain"></param>
+/// <param name="logLikelihood"></param>
+public readonly struct FilteredState(
+    LinearDynamicalSystemState predictedState,
+    LinearDynamicalSystemState updatedState,
+    Tensor innovation = null,
+    Tensor innovationCovariance = null,
+    Tensor kalmanGain = null,
+    Tensor logLikelihood = null) : ILinearDynamicalSystemState
 {
     /// <summary>
-    /// The predicted mean after the prediction step.
+    /// The predicted state following the prediction step.
     /// </summary>
-    public Tensor PredictedMean = predictedMean;
+    public readonly LinearDynamicalSystemState PredictedState => predictedState;
 
     /// <summary>
-    /// The predicted covariance after the prediction step.
+    /// The updated state following the update step.
     /// </summary>
-    public Tensor PredictedCovariance = predictedCovariance;
+    public readonly LinearDynamicalSystemState UpdatedState => updatedState;
 
     /// <summary>
-    /// The updated mean after the update step.
+    /// The innovation (residual) between the observation and the prediction.
     /// </summary>
-    public Tensor UpdatedMean = updatedMean;
+    public readonly Tensor Innovation => innovation;
 
     /// <summary>
-    /// The updated covariance after the update step.
+    /// The innovation (residual) covariance.
     /// </summary>
-    public Tensor UpdatedCovariance = updatedCovariance;
+    public readonly Tensor InnovationCovariance => innovationCovariance;
+
+    /// <summary>
+    /// The Kalman gain.
+    /// </summary>
+    public readonly Tensor KalmanGain => kalmanGain;
+
+    /// <summary>
+    /// The log likelihood of the observation given the updated state.
+    /// </summary>
+    public readonly Tensor LogLikelihood => logLikelihood;
 
     /// <inheritdoc/>
-    public readonly Tensor Mean => UpdatedMean.isnan().any().item<bool>() ? PredictedMean : UpdatedMean;
+    public readonly Tensor Mean => updatedState.Mean;
 
     /// <inheritdoc/>
-    public readonly Tensor Covariance => UpdatedCovariance.isnan().any().item<bool>() ? PredictedCovariance : UpdatedCovariance;
+    public readonly Tensor Covariance => updatedState.Covariance;
 }

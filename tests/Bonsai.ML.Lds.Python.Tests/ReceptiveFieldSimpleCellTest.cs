@@ -93,9 +93,9 @@ public class ReceptiveFieldSimpleCellTest
             {
                 for (int j = 0; j < bonsaiOutput.X.GetLength(1); j++)
                 {
-                    if (Math.Abs(bonsaiOutput.X[i,j] - pythonOutput.X[i,j]) > tolerance || Math.Abs(originalOutput.X[i,j] - pythonOutput.X[i,j]) > tolerance)
+                    if (Math.Abs(bonsaiOutput.X[i, j] - pythonOutput.X[i, j]) > tolerance || Math.Abs(originalOutput.X[i, j] - pythonOutput.X[i, j]) > tolerance)
                     {
-                        Console.WriteLine($"Discrepency found comparing X at index ({i},{j}) with tolerance {tolerance}: bonsaiOutput = {bonsaiOutput.X[i,j]}, pythonOutput = {pythonOutput.X[i,j]}, originalOutput = {originalOutput.X[i,j]}.");
+                        Console.WriteLine($"Discrepency found comparing X at index ({i},{j}) with tolerance {tolerance}: bonsaiOutput = {bonsaiOutput.X[i, j]}, pythonOutput = {pythonOutput.X[i, j]}, originalOutput = {originalOutput.X[i, j]}.");
                         return false;
                     }
                 }
@@ -104,9 +104,9 @@ public class ReceptiveFieldSimpleCellTest
             {
                 for (int j = 0; j < bonsaiOutput.P.GetLength(1); j++)
                 {
-                    if (Math.Abs(bonsaiOutput.P[i,j] - pythonOutput.P[i,j]) > tolerance || Math.Abs(originalOutput.P[i,j] - pythonOutput.P[i,j]) > tolerance)
+                    if (Math.Abs(bonsaiOutput.P[i, j] - pythonOutput.P[i, j]) > tolerance || Math.Abs(originalOutput.P[i, j] - pythonOutput.P[i, j]) > tolerance)
                     {
-                        Console.WriteLine($"Discrepency found comparing P at index ({i},{j}) with tolerance {tolerance}: bonsaiOutput = {bonsaiOutput.P[i,j]}, pythonOutput = {pythonOutput.P[i,j]}, originalOutput = {originalOutput.P[i,j]}.");
+                        Console.WriteLine($"Discrepency found comparing P at index ({i},{j}) with tolerance {tolerance}: bonsaiOutput = {bonsaiOutput.P[i, j]}, pythonOutput = {pythonOutput.P[i, j]}, originalOutput = {originalOutput.P[i, j]}.");
                         return false;
                     }
                 }

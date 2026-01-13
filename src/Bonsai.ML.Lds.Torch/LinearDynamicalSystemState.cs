@@ -7,11 +7,11 @@ namespace Bonsai.ML.Lds.Torch;
 /// </summary>
 /// <param name="mean"></param>
 /// <param name="covariance"></param>
-public class LinearDynamicalSystemState(Tensor mean, Tensor covariance) : ILinearDynamicalSystemState
+public readonly struct LinearDynamicalSystemState(Tensor mean, Tensor covariance) : ILinearDynamicalSystemState
 {
     /// <inheritdoc/>
-    public Tensor Mean => mean;
-    
+    public readonly Tensor Mean => mean;
+
     /// <inheritdoc/>
-    public Tensor Covariance => covariance;
+    public readonly Tensor Covariance => covariance;
 }
