@@ -1,10 +1,4 @@
-﻿using Bonsai;
-using System;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using TorchSharp;
+﻿using System;
 using static TorchSharp.torch;
 using static TorchSharp.torch.linalg;
 
@@ -92,8 +86,6 @@ public class ProbabilisticPca : PcaBaseModel
             throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
         }
 
-        var Xt = data.T; // n x d
-
         // Initialize variance
         var variance = Variance;
 
@@ -102,8 +94,8 @@ public class ProbabilisticPca : PcaBaseModel
 
         // Initialize dimensions for components
         var q = NumComponents;
-        var n = Xt.size(0);
-        var d = Xt.size(1);
+        var n = data.size(0);
+        var d = data.size(1);
 
         if (q > d)
         {
@@ -116,13 +108,13 @@ public class ProbabilisticPca : PcaBaseModel
         var Id = eye(d, device: Device, dtype: ScalarType); // d x d
 
         // Calculate the sample mean
-        var mean = Xt.mean([0], keepdim: true); // 1 x d
+        var mean = data.mean([0], keepdim: true); // 1 x d
 
         // Center the data and transpose
-        var X = Xt - mean; // n x d
+        var dataCentered = data - mean; // n x d
 
         // Calculate the sample covariance
-        var XTX = X.T.matmul(X); // d x d
+        var XTX = dataCentered.T.matmul(dataCentered); // d x d
         var sampleCov = XTX / n; // d x d
 
         // Calculate term 1 for variance update
@@ -142,12 +134,12 @@ public class ProbabilisticPca : PcaBaseModel
                 // E-step: Compute the posterior distribution of the latent variables
                 var M = W.T.matmul(W) + Iq * variance; // q x q
                 var MInv = inv(M); // q x q
-                var mu = MInv.matmul(W.T).matmul(X.T).T; // n x q
+                var mu = MInv.matmul(W.T).matmul(dataCentered.T).T; // n x q
                 var SSum = n * MInv * variance; // q x q
                 var cov = mu.T.matmul(mu) + SSum; // q x q
 
                 // M-step: Compute new W and new variance
-                var XMu = X.T.matmul(mu); // d x q
+                var XMu = dataCentered.T.matmul(mu); // d x q
                 var WNew = XMu.matmul(inv(cov)); // d x q
 
                 var term2 = 2 * XMu.mul(WNew).sum();

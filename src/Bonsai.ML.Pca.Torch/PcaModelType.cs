@@ -18,5 +18,10 @@ public enum PcaModelType
     /// <summary>
     /// Online Probabilistic PCA model.
     /// </summary>
-    OnlineProbabilisticPca
+    OnlineProbabilisticPca,
+
+    /// <summary>
+    /// Online PCA model using the Generalized Hebbian Algorithm.
+    /// </summary>
+    OnlinePcaGha
 }

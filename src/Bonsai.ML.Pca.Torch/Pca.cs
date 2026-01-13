@@ -1,10 +1,4 @@
-﻿using Bonsai;
-using System;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using TorchSharp;
+﻿using System;
 using static TorchSharp.torch;
 using static TorchSharp.torch.linalg;
 
@@ -15,10 +9,13 @@ namespace Bonsai.ML.Pca.Torch;
 /// </summary>
 public class Pca(int numComponents,
     Device? device = null,
-    ScalarType? scalarType = ScalarType.Float32) : PcaBaseModel(numComponents,
+    ScalarType? scalarType = ScalarType.Float32
+) : PcaBaseModel(numComponents,
         device,
         scalarType)
 {
+    private bool _isFitted = false;
+
     /// <summary>
     /// Gets the covariance matrix of the fitted data.
     /// </summary>
@@ -36,8 +33,6 @@ public class Pca(int numComponents,
 
     /// <inheritdoc/>
     public override Tensor Components { get; protected set; } = empty(0);
-
-    private bool _isFitted = false;
 
     /// <inheritdoc/>
     public override void Fit(Tensor data)

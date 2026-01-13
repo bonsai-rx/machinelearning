@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using Bonsai;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Pca.Torch;
@@ -46,7 +45,7 @@ public class FitAndTransform
     }
 
     /// <summary>
-    /// Fits the PCA model to the input data and transforms it.
+    /// Fits a standard PCA model to the input data and transforms it.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -59,7 +58,7 @@ public class FitAndTransform
     }
 
     /// <summary>
-    /// Fits the PCA model to the input data and transforms it.
+    /// Fits a standard PCA model to the input data and transforms it.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -72,7 +71,7 @@ public class FitAndTransform
     }
 
     /// <summary>
-    /// Fits the PCA model to the input data and transforms it.
+    /// Fits a probabilistic PCA model to the input data and transforms it.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -85,7 +84,7 @@ public class FitAndTransform
     }
 
     /// <summary>
-    /// Fits the PCA model to the input data and transforms it.
+    /// Fits a probabilistic PCA model to the input data and transforms it.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -98,7 +97,7 @@ public class FitAndTransform
     }
 
     /// <summary>
-    /// Fits the PCA model to the input data and transforms it.
+    /// Fits an online probabilistic PCA model to the input data and transforms it.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
@@ -111,11 +110,37 @@ public class FitAndTransform
     }
 
     /// <summary>
-    /// Fits the PCA model to the input data and transforms it.
+    /// Fits an online probabilistic PCA model to the input data and transforms it.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Tuple<Tensor, OnlineProbabilisticPca>> Process(IObservable<Tuple<Tensor, OnlineProbabilisticPca>> source)
+    {
+        return source.Do((value) =>
+        {
+            FitModelAndTransformData(value.Item2, value.Item1);
+        });
+    }
+
+    /// <summary>
+    /// Fits an online PCA model using the Generalized Hebbian Algorithm to the input data and transforms it.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tuple<OnlinePcaGha, Tensor>> Process(IObservable<Tuple<OnlinePcaGha, Tensor>> source)
+    {
+        return source.Do((value) =>
+        {
+            FitModelAndTransformData(value.Item1, value.Item2);
+        });
+    }
+
+    /// <summary>
+    /// Fits an online PCA model using the Generalized Hebbian Algorithm to the input data and transforms it.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tuple<Tensor, OnlinePcaGha>> Process(IObservable<Tuple<Tensor, OnlinePcaGha>> source)
     {
         return source.Do((value) =>
         {

@@ -1,10 +1,4 @@
-﻿using Bonsai;
-using System;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using TorchSharp;
+﻿using System;
 using static TorchSharp.torch;
 using static TorchSharp.torch.linalg;
 
@@ -170,12 +164,10 @@ public class OnlineProbabilisticPca : PcaBaseModel
             _stepCount++;
             var rho = UpdateSchedule();
 
-            var Xt = data.T; // n x d
-
             // Initialize dimensions
             var q = NumComponents;
-            var n = Xt.size(0);
-            var d = Xt.size(1);
+            var n = data.size(0);
+            var d = data.size(1);
 
             // Initialize parameters
             if (!_initializedParameters)
@@ -199,7 +191,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
             var cov = _Iq * _sigma2;
 
             // Center data using current mean
-            var Xc = Xt - _mu;
+            var Xc = data - _mu;
 
             // E-step
             var M = Components.T.matmul(Components) + cov;
@@ -210,9 +202,9 @@ public class OnlineProbabilisticPca : PcaBaseModel
             var Ez = EzT.T;
 
             // Update statistics
-            var mx = Xt.mean([0]);
-            var sxx = Xt.pow(2).sum(dim: 1).mean();
-            var Cxz = Xt.T.matmul(Ez) / n;
+            var mx = data.mean([0]);
+            var sxx = data.pow(2).sum(dim: 1).mean();
+            var Cxz = data.T.matmul(Ez) / n;
             var mz = Ez.mean([0]);
             var Czz = EzT.matmul(Ez) / n + _sigma2 * MInv;
 

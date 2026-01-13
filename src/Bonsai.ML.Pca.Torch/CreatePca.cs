@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Linq.Expressions;
 using Bonsai.Expressions;
-using System.Linq;
 using System.Reflection;
 using static TorchSharp.torch;
 using System.Xml.Serialization;
@@ -97,6 +96,11 @@ public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement
     [XmlIgnore]
     public Generator? Generator { get; set; } = null;
 
+    /// <summary>
+    /// The learning rate for the Online PCA GHA model.
+    /// </summary>
+    public double LearningRate { get; set; } = 0.1;
+
     internal IEnumerable<string> GetModelProperties()
     {
         yield return nameof(NumComponents);
@@ -119,6 +123,12 @@ public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement
             yield return nameof(Kappa);
             yield return nameof(TimeOffset);
             yield return nameof(ReorthogonalizePeriod);
+            yield return nameof(Generator);
+        }
+
+        if (ModelType == PcaModelType.OnlinePcaGha)
+        {
+            yield return nameof(LearningRate);
             yield return nameof(Generator);
         }
     }
@@ -149,6 +159,12 @@ public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement
                 kappa: pcaBuilder.Kappa,
                 timeOffset: pcaBuilder.TimeOffset,
                 reorthogonalizePeriod: pcaBuilder.ReorthogonalizePeriod),
+            PcaModelType.OnlinePcaGha => new OnlinePcaGha(
+                numComponents: pcaBuilder.NumComponents,
+                learningRate: pcaBuilder.LearningRate,
+                device: pcaBuilder.Device,
+                scalarType: pcaBuilder.ScalarType,
+                generator: pcaBuilder.Generator),
             _ => throw new NotSupportedException($"Model type {pcaBuilder.ModelType} is not supported."),
         };
     }
@@ -160,6 +176,7 @@ public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement
             PcaModelType.Pca => typeof(Pca),
             PcaModelType.ProbabilisticPca => typeof(ProbabilisticPca),
             PcaModelType.OnlineProbabilisticPca => typeof(OnlineProbabilisticPca),
+            PcaModelType.OnlinePcaGha => typeof(OnlinePcaGha),
             _ => throw new NotSupportedException($"Model type {modelType} is not supported."),
         };
     }
