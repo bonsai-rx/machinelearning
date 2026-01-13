@@ -17,6 +17,9 @@ namespace Bonsai.ML.Lds.Torch;
 [TypeConverter(typeof(TensorOperatorConverter))]
 public class CreateLinearDynamicalSystemState : IScalarTypeProvider
 {
+    private Tensor _mean = null;
+    private Tensor _covariance = null;
+
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
     [TypeConverter(typeof(ScalarTypeConverter))]
@@ -74,9 +77,6 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
         get => TensorConverter.ConvertToString(_covariance, Type);
         set => _covariance = TensorConverter.ConvertFromString(value, Type);
     }
-
-    private Tensor _mean = null;
-    private Tensor _covariance = null;
 
     /// <summary>
     /// Creates an observable sequence and emits the state for a linear gaussian dynamical system.

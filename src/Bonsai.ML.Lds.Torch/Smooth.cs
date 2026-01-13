@@ -41,7 +41,10 @@ public class Smooth
     {
         return source.Select((input) =>
         {
-            var filteredState = new FilteredState(input.Item1, input.Item2, input.Item3, input.Item4);
+            var filteredState = new FilteredState(
+                predictedState: new LinearDynamicalSystemState(input.Item1, input.Item2),
+                updatedState: new LinearDynamicalSystemState(input.Item3, input.Item4)
+            );
             return Model.Smooth(filteredState);
         });
     }

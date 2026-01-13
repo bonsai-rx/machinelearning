@@ -27,12 +27,9 @@ public class Orthogonalize
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<LinearDynamicalSystemState> Process(IObservable<ILinearDynamicalSystemState> source)
+    public IObservable<LinearDynamicalSystemState> Process(IObservable<LinearDynamicalSystemState> source)
     {
-        return source.Select(input =>
-        {
-            return Model.OrthogonalizeMeanAndCovariance(input.Mean, input.Covariance);
-        });
+        return source.Select(Model.OrthogonalizeMeanAndCovariance);
     }
 
     /// <summary>
@@ -44,20 +41,7 @@ public class Orthogonalize
     {
         return source.Select(input =>
         {
-            return Model.OrthogonalizeMeanAndCovariance(input.Mean, input.Covariance);
-        });
-    }
-
-    /// <summary>
-    /// Processes an observable sequence of filtered results, orthogonalizing the mean and covariance estimates.
-    /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
-    public IObservable<LinearDynamicalSystemState> Process(IObservable<LinearDynamicalSystemState> source)
-    {
-        return source.Select(input =>
-        {
-            return Model.OrthogonalizeMeanAndCovariance(input.Mean, input.Covariance);
+            return Model.OrthogonalizeMeanAndCovariance(input.UpdatedState);
         });
     }
 
@@ -70,9 +54,8 @@ public class Orthogonalize
     {
         return source.Select(input =>
         {
-            var mean = input.Item1;
-            var covariance = input.Item2;
-            return Model.OrthogonalizeMeanAndCovariance(mean, covariance);
+            var state = new LinearDynamicalSystemState(input.Item1, input.Item2);
+            return Model.OrthogonalizeMeanAndCovariance(state);
         });
     }
 }

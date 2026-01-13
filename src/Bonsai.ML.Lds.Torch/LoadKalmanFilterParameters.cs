@@ -1,11 +1,8 @@
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using Bonsai.ML.Torch;
 using System.IO;
-using TorchSharp;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Lds.Torch;
@@ -44,11 +41,12 @@ public class LoadKalmanFilterParameters
 
         filePath = System.IO.Path.Combine(basePath, filePath);
 
-        if (!File.Exists(filePath))
+        if (File.Exists(filePath))
         {
-            throw new FileNotFoundException($"The specified file was not found: {filePath}");
+            return Tensor.Load(filePath);
         }
-        return Tensor.Load(filePath);
+
+        return null;
     }
 
     /// <summary>
@@ -72,14 +70,18 @@ public class LoadKalmanFilterParameters
         var measurementNoiseCovariance = LoadTensorFromFile(Path, "MeasurementNoiseCovariance.bin");
         var initialMean = LoadTensorFromFile(Path, "InitialMean.bin");
         var initialCovariance = LoadTensorFromFile(Path, "InitialCovariance.bin");
+        var stateOffset = LoadTensorFromFile(Path, "StateOffset.bin");
+        var observationOffset = LoadTensorFromFile(Path, "ObservationOffset.bin");
 
-        var parameters = KalmanFilterParameters.Initialize(
+        var parameters = new KalmanFilterParameters(
             transitionMatrix: transitionMatrix,
             measurementFunction: measurementFunction,
             processNoiseCovariance: processNoiseCovariance,
             measurementNoiseCovariance: measurementNoiseCovariance,
             initialMean: initialMean,
             initialCovariance: initialCovariance,
+            stateOffset: stateOffset,
+            observationOffset: observationOffset,
             device: Device,
             scalarType: Type);
 

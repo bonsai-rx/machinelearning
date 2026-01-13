@@ -1,12 +1,8 @@
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
 using System.IO;
-using Bonsai.ML.Torch;
 using TorchSharp;
-using static TorchSharp.torch;
 
 namespace Bonsai.ML.Lds.Torch;
 
@@ -60,6 +56,8 @@ public class SaveKalmanFilterParameters
         var measurementNoiseCovariancePath = System.IO.Path.Combine(path, "MeasurementNoiseCovariance.bin");
         var initialMeanPath = System.IO.Path.Combine(path, "InitialMean.bin");
         var initialCovariancePath = System.IO.Path.Combine(path, "InitialCovariance.bin");
+        var stateOffsetPath = System.IO.Path.Combine(path, "StateOffset.bin");
+        var observationOffsetPath = System.IO.Path.Combine(path, "ObservationOffset.bin");
 
         if (Directory.Exists(path))
         {
@@ -69,7 +67,9 @@ public class SaveKalmanFilterParameters
                 File.Exists(processNoiseCovariancePath) ||
                 File.Exists(measurementNoiseCovariancePath) ||
                 File.Exists(initialMeanPath) ||
-                File.Exists(initialCovariancePath))
+                File.Exists(initialCovariancePath) ||
+                File.Exists(stateOffsetPath) ||
+                File.Exists(observationOffsetPath))
             )
             {
                 throw new InvalidOperationException("The save path already exists.");
@@ -88,17 +88,23 @@ public class SaveKalmanFilterParameters
                     File.Delete(initialMeanPath);
                 if (File.Exists(initialCovariancePath))
                     File.Delete(initialCovariancePath);
+                if (File.Exists(stateOffsetPath))
+                    File.Delete(stateOffsetPath);
+                if (File.Exists(observationOffsetPath))
+                    File.Delete(observationOffsetPath);
             }
         }
 
         Directory.CreateDirectory(path);
 
-        parameters.TransitionMatrix.Save(transitionMatrixPath);
-        parameters.MeasurementFunction.Save(measurementFunctionPath);
-        parameters.ProcessNoiseCovariance.Save(processNoiseCovariancePath);
-        parameters.MeasurementNoiseCovariance.Save(measurementNoiseCovariancePath);
-        parameters.InitialMean.Save(initialMeanPath);
-        parameters.InitialCovariance.Save(initialCovariancePath);
+        parameters.TransitionMatrix?.Save(transitionMatrixPath);
+        parameters.MeasurementFunction?.Save(measurementFunctionPath);
+        parameters.ProcessNoiseCovariance?.Save(processNoiseCovariancePath);
+        parameters.MeasurementNoiseCovariance?.Save(measurementNoiseCovariancePath);
+        parameters.InitialMean?.Save(initialMeanPath);
+        parameters.InitialCovariance?.Save(initialCovariancePath);
+        parameters.StateOffset?.Save(stateOffsetPath);
+        parameters.ObservationOffset?.Save(observationOffsetPath);
     }
 
     /// <summary>

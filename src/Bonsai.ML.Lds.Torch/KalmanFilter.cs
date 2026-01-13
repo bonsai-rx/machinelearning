@@ -1,4 +1,5 @@
 using System;
+using TorchSharp.Modules;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Lds.Torch;
@@ -6,30 +7,19 @@ namespace Bonsai.ML.Lds.Torch;
 // disable missing XML comment warnings
 # pragma warning disable CS1591
 
-public class KalmanFilter : nn.Module
+public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 {
-    private readonly Tensor _mean;
-    private readonly Tensor _covariance;
-    private readonly Device _device;
-    private readonly ScalarType _scalarType;
+    private LinearDynamicalSystemState _state;
     public readonly KalmanFilterParameters Parameters;
 
     public KalmanFilter(
-        KalmanFilterParameters parameters,
-        Device device = null,
-        ScalarType? scalarType = null) : base("KalmanFilter")
+        KalmanFilterParameters parameters) : base("KalmanFilter")
     {
-        Parameters = parameters.Copy();
+        Parameters = parameters;
 
-        Parameters.Validate();
-        Parameters.ToScalarType(scalarType);
-        Parameters.ToDevice(device);
-
-        _device = Parameters.Device;
-        _scalarType = Parameters.ScalarType;
-
-        _mean = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
-        _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
+        _state = new LinearDynamicalSystemState(
+            Parameters.InitialMean,
+            Parameters.InitialCovariance);
 
         RegisterComponents();
     }
@@ -43,10 +33,13 @@ public class KalmanFilter : nn.Module
         Tensor initialCovariance = null,
         Tensor processNoiseVariance = null,
         Tensor measurementNoiseVariance = null,
+        Tensor stateOffset = null,
+        Tensor observationOffset = null,
         Device device = null,
-        ScalarType? scalarType = null) : base("KalmanFilter")
+        ScalarType? scalarType = null,
+        bool requiresGrad = false) : base("KalmanFilter")
     {
-        Parameters = KalmanFilterParameters.Initialize(
+        Parameters = new KalmanFilterParameters(
             numStates,
             numObservations,
             transitionMatrix,
@@ -55,99 +48,59 @@ public class KalmanFilter : nn.Module
             measurementNoiseVariance,
             initialMean,
             initialCovariance,
+            stateOffset,
+            observationOffset,
             device,
-            scalarType
+            scalarType,
+            requiresGrad
         );
 
-        _device = Parameters.Device;
-        _scalarType = Parameters.ScalarType;
-
-        _mean = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
-        _covariance = empty(0, dtype: _scalarType, device: _device).requires_grad_(false);
+        _state = new LinearDynamicalSystemState(
+            Parameters.InitialMean,
+            Parameters.InitialCovariance);
 
         RegisterComponents();
     }
 
-    private LinearDynamicalSystemState FilterPredict(
-        Tensor mean,
-        Tensor covariance) =>
-            new(Parameters.TransitionMatrix.matmul(mean),
-                Parameters.TransitionMatrix.matmul(covariance)
-                    .matmul(Parameters.TransitionMatrix.mT) + Parameters.ProcessNoiseCovariance);
-
     private static LinearDynamicalSystemState FilterPredict(
-        Tensor mean,
-        Tensor covariance,
-        Tensor transitionMatrix,
-        Tensor processNoiseCovariance) =>
-            new(transitionMatrix.matmul(mean),
-                transitionMatrix.matmul(covariance)
-                    .matmul(transitionMatrix.mT) + processNoiseCovariance);
+        LinearDynamicalSystemState state,
+        KalmanFilterParameters parameters) =>
+            new(parameters.TransitionMatrix.matmul(state.Mean) + (parameters.OffsetsProvided ? parameters.StateOffset : 0),
+                parameters.TransitionMatrix.matmul(state.Covariance)
+                    .matmul(parameters.TransitionMatrix.mT) + parameters.ProcessNoiseCovariance);
 
-    private readonly struct UpdatedState(
-        Tensor updatedMean,
-        Tensor updatedCovariance,
-        Tensor innovation,
-        Tensor innovationCovariance,
-        Tensor kalmanGain)
-    {
-        public readonly Tensor UpdatedMean = updatedMean;
-        public readonly Tensor UpdatedCovariance = updatedCovariance;
-        public readonly Tensor Innovation = innovation;
-        public readonly Tensor InnovationCovariance = innovationCovariance;
-        public readonly Tensor KalmanGain = kalmanGain;
-    }
-
-    private UpdatedState FilterUpdate(
-        Tensor predictedMean,
-        Tensor predictedCovariance,
-        Tensor observation)
-    {
-        // Innovation step
-        var innovation = observation - Parameters.MeasurementFunction.matmul(predictedMean);
-        var innovationCovariance = WrappedTensorDisposeScope(() => EnsureSymmetric(
-            Parameters.MeasurementFunction.matmul(predictedCovariance)
-                .matmul(Parameters.MeasurementFunction.mT) + Parameters.MeasurementNoiseCovariance));
-
-        // Kalman gain
-        var kalmanGain = WrappedTensorDisposeScope(() => InverseCholesky(
-            predictedCovariance.matmul(Parameters.MeasurementFunction.mT),
-            innovationCovariance));
-
-        // Update step
-        var updatedMean = predictedMean + kalmanGain.matmul(innovation);
-        var updatedCovariance = WrappedTensorDisposeScope(() => predictedCovariance
-            - kalmanGain.matmul(Parameters.MeasurementFunction).matmul(predictedCovariance));
-
-        return new UpdatedState(updatedMean, updatedCovariance, innovation, innovationCovariance, kalmanGain);
-    }
-
-    private static UpdatedState FilterUpdate(
-        Tensor predictedMean,
-        Tensor predictedCovariance,
+    private static FilteredState FilterUpdate(
         Tensor observation,
-        Tensor measurementFunction,
-        Tensor measurementNoiseCovariance)
+        LinearDynamicalSystemState state,
+        KalmanFilterParameters parameters)
     {
+        if (observation is null)
+            return new FilteredState(
+                predictedState: state,
+                updatedState: state
+            );
+
         // Innovation step
-        var innovation = observation - measurementFunction.matmul(predictedMean);
+        var innovation = observation - (parameters.MeasurementFunction.matmul(state.Mean) + (parameters.OffsetsProvided ? parameters.ObservationOffset : 0));
         var innovationCovariance = WrappedTensorDisposeScope(() => EnsureSymmetric(
-            measurementFunction.matmul(predictedCovariance)
-                .matmul(measurementFunction.mT) + measurementNoiseCovariance));
+            parameters.MeasurementFunction.matmul(state.Covariance)
+                .matmul(parameters.MeasurementFunction.mT) + parameters.MeasurementNoiseCovariance));
 
         // Kalman gain
         var kalmanGain = WrappedTensorDisposeScope(() => InverseCholesky(
-            predictedCovariance.matmul(measurementFunction.mT),
+            state.Covariance.matmul(parameters.MeasurementFunction.mT),
             innovationCovariance));
 
         // Update step
-        var updatedMean = predictedMean + kalmanGain.matmul(innovation);
-        var updatedCovariance = WrappedTensorDisposeScope(() => predictedCovariance
-                - kalmanGain.matmul(measurementFunction).matmul(predictedCovariance));
+        var updatedMean = state.Mean + kalmanGain.matmul(innovation);
+        var updatedCovariance = WrappedTensorDisposeScope(() => state.Covariance
+            - kalmanGain.matmul(parameters.MeasurementFunction).matmul(state.Covariance));
 
-        return new UpdatedState(
-            updatedMean: updatedMean,
-            updatedCovariance: updatedCovariance,
+        var updatedState = new LinearDynamicalSystemState(updatedMean, updatedCovariance);
+
+        return new FilteredState(
+            predictedState: state,
+            updatedState: updatedState,
             innovation: innovation,
             innovationCovariance: innovationCovariance,
             kalmanGain: kalmanGain
@@ -161,110 +114,85 @@ public class KalmanFilter : nn.Module
         var obs = observation.atleast_2d();
         var timeBins = obs.size(0);
 
-        var predictedMean = empty([timeBins, Parameters.NumStates], dtype: _scalarType, device: _device);
-        var predictedCovariance = empty([timeBins, Parameters.NumStates, Parameters.NumStates], dtype: _scalarType, device: _device);
-        var updatedMean = empty([timeBins, Parameters.NumStates], dtype: _scalarType, device: _device);
-        var updatedCovariance = empty([timeBins, Parameters.NumStates, Parameters.NumStates], dtype: _scalarType, device: _device);
+        // We get the scalar type and device from the parameters in the event that the observations are null (e.g. during forecasting)
+        var scalarType = Parameters.ScalarType;
+        var device = Parameters.Device;
 
-        if (_mean.NumberOfElements == 0)
-            _mean.set_(Parameters.InitialMean.clone());
-        if (_covariance.NumberOfElements == 0)
-            _covariance.set_(Parameters.InitialCovariance.clone());
+        var predictedState = new LinearDynamicalSystemState(
+            empty([timeBins, Parameters.NumStates], dtype: scalarType, device: device),
+            empty([timeBins, Parameters.NumStates, Parameters.NumStates], dtype: scalarType, device: device));
+
+        var updatedState = new LinearDynamicalSystemState(
+            empty([timeBins, Parameters.NumStates], dtype: scalarType, device: device),
+            empty([timeBins, Parameters.NumStates, Parameters.NumStates], dtype: scalarType, device: device));
 
         for (long time = 0; time < timeBins; time++)
         {
             // Predict
-            var prediction = FilterPredict(_mean, _covariance);
+            var prediction = FilterPredict(_state, Parameters);
 
             // Update
-            var update = FilterUpdate(prediction.Mean, prediction.Covariance, obs[time]);
+            var update = FilterUpdate(obs[time], prediction, Parameters);
 
-            predictedMean[time] = prediction.Mean;
-            predictedCovariance[time] = prediction.Covariance;
-            updatedMean[time] = update.UpdatedMean;
-            updatedCovariance[time] = update.UpdatedCovariance;
+            predictedState.Mean[time] = prediction.Mean;
+            predictedState.Covariance[time] = prediction.Covariance;
+            updatedState.Mean[time] = update.UpdatedState.Mean;
+            updatedState.Covariance[time] = update.UpdatedState.Covariance;
 
-            if (!update.UpdatedMean.isnan().any().item<bool>())
-            {
-                _mean.set_(update.UpdatedMean);
-                _covariance.set_(update.UpdatedCovariance);
-            }
-            else
-            {
-                _mean.set_(prediction.Mean);
-                _covariance.set_(prediction.Covariance);
-            }
+            _state = update.UpdatedState;
         }
 
         return new FilteredState(
-            predictedMean: predictedMean,
-            predictedCovariance: predictedCovariance,
-            updatedMean: updatedMean,
-            updatedCovariance: updatedCovariance);
+            predictedState: predictedState,
+            updatedState: updatedState
+        );
     }
 
-    private readonly struct FilteredStateWithAuxiliaryVariables(
-        Tensor predictedMean,
-        Tensor predictedCovariance,
-        Tensor updatedMean,
-        Tensor updatedCovariance,
-        Tensor innovation,
-        Tensor innovationCovariance,
-        Tensor logLikelihood,
-        Tensor kalmanGain)
+    public override LinearDynamicalSystemState forward(Tensor input)
     {
-        public readonly Tensor PredictedMean = predictedMean;
-        public readonly Tensor PredictedCovariance = predictedCovariance;
-        public readonly Tensor UpdatedMean = updatedMean;
-        public readonly Tensor UpdatedCovariance = updatedCovariance;
-        public readonly Tensor Innovation = innovation;
-        public readonly Tensor InnovationCovariance = innovationCovariance;
-        public readonly Tensor LogLikelihood = logLikelihood;
-        public readonly Tensor KalmanGain = kalmanGain;
+        var filteredState = Filter(input);
+        return filteredState.UpdatedState;
     }
 
-    private static FilteredStateWithAuxiliaryVariables Filter(
-        Tensor observation,
+    private static FilteredState Filter(
         long timeBins,
-        int numStates,
-        int numObservations,
-        Tensor transitionMatrix,
-        Tensor measurementFunction,
-        Tensor processNoiseCovariance,
-        Tensor measurementNoiseCovariance,
-        Tensor initialMean,
-        Tensor initialCovariance,
-        ScalarType scalarType,
-        Device device)
+        Tensor observation,
+        KalmanFilterParameters parameters)
     {
-        var logLikelihood = empty(timeBins, dtype: scalarType, device: device);
-        var predictedMean = empty([timeBins, numStates], dtype: scalarType, device: device);
-        var predictedCovariance = empty([timeBins, numStates, numStates], dtype: scalarType, device: device);
-        var updatedMean = empty([timeBins, numStates], dtype: scalarType, device: device);
-        var updatedCovariance = empty([timeBins, numStates, numStates], dtype: scalarType, device: device);
-        var innovation = empty([timeBins, numObservations], dtype: scalarType, device: device);
-        var innovationCovariance = empty([timeBins, numObservations, numObservations], dtype: scalarType, device: device);
-        var kalmanGain = empty([timeBins, numStates, numObservations], dtype: scalarType, device: device);
+        using var g = no_grad();
 
-        var mean = initialMean;
-        var covariance = initialCovariance;
+        var timeBinsObservations = observation.size(0);
+        timeBins = Math.Min(timeBins, timeBinsObservations);
+
+        var filteredState = new FilteredState(
+            predictedState: new LinearDynamicalSystemState(
+                empty([timeBins, parameters.NumStates], dtype: parameters.ScalarType, device: parameters.Device),
+                empty([timeBins, parameters.NumStates, parameters.NumStates], dtype: parameters.ScalarType, device: parameters.Device)),
+            updatedState: new LinearDynamicalSystemState(
+                empty([timeBins, parameters.NumStates], dtype: parameters.ScalarType, device: parameters.Device),
+                empty([timeBins, parameters.NumStates, parameters.NumStates], dtype: parameters.ScalarType, device: parameters.Device)),
+            innovation: empty([timeBins, parameters.NumObservations], dtype: parameters.ScalarType, device: parameters.Device),
+            innovationCovariance: empty([timeBins, parameters.NumObservations, parameters.NumObservations], dtype: parameters.ScalarType, device: parameters.Device),
+            kalmanGain: empty([timeBins, parameters.NumStates, parameters.NumObservations], dtype: parameters.ScalarType, device: parameters.Device),
+            logLikelihood: empty([timeBins], dtype: parameters.ScalarType, device: parameters.Device)
+        );
+
+        var state = new LinearDynamicalSystemState(
+            mean: parameters.InitialMean,
+            covariance: parameters.InitialCovariance);
 
         for (long time = 0; time < timeBins; time++)
         {
             // Predict
             var prediction = FilterPredict(
-                mean: mean,
-                covariance: covariance,
-                transitionMatrix: transitionMatrix,
-                processNoiseCovariance: processNoiseCovariance);
+                state: state,
+                parameters: parameters);
 
             // Update
             var update = FilterUpdate(
-                predictedMean: prediction.Mean,
-                predictedCovariance: prediction.Covariance,
                 observation: observation[time],
-                measurementFunction: measurementFunction,
-                measurementNoiseCovariance: measurementNoiseCovariance);
+                state: prediction,
+                parameters: parameters);
 
             // Log Likelihood
             var logLikelihoodData = -(slogdet(update.InnovationCovariance).logabsdet
@@ -272,47 +200,29 @@ public class KalmanFilter : nn.Module
                         .matmul(update.Innovation)).squeeze();
 
             // Detach and assign
-            logLikelihood[time] = logLikelihoodData;
-            predictedMean[time] = prediction.Mean;
-            predictedCovariance[time] = prediction.Covariance;
-            updatedMean[time] = update.UpdatedMean;
-            updatedCovariance[time] = update.UpdatedCovariance;
-            innovation[time] = update.Innovation;
-            innovationCovariance[time] = update.InnovationCovariance;
-            kalmanGain[time] = update.KalmanGain;
+            filteredState.LogLikelihood[time] = logLikelihoodData;
+            filteredState.PredictedState.Mean[time] = prediction.Mean;
+            filteredState.PredictedState.Covariance[time] = prediction.Covariance;
+            filteredState.UpdatedState.Mean[time] = update.UpdatedState.Mean;
+            filteredState.UpdatedState.Covariance[time] = update.UpdatedState.Covariance;
+            filteredState.Innovation[time] = update.Innovation;
+            filteredState.InnovationCovariance[time] = update.InnovationCovariance;
+            filteredState.KalmanGain[time] = update.KalmanGain;
 
-            if (!update.UpdatedMean.isnan().any().item<bool>())
-            {
-                mean = update.UpdatedMean;
-                covariance = update.UpdatedCovariance;
-            }
-            else
-            {
-                mean = prediction.Mean;
-                covariance = prediction.Covariance;
-            }
+            state = update.UpdatedState;
         }
 
-        return new FilteredStateWithAuxiliaryVariables(
-            predictedMean: predictedMean,
-            predictedCovariance: predictedCovariance,
-            updatedMean: updatedMean,
-            updatedCovariance: updatedCovariance,
-            innovation: innovation,
-            innovationCovariance: innovationCovariance,
-            logLikelihood: logLikelihood,
-            kalmanGain: kalmanGain
-        );
+        return filteredState;
     }
 
     public LinearDynamicalSystemState Smooth(FilteredState filteredState)
     {
         using var g = no_grad();
 
-        var predictedMean = filteredState.PredictedMean;
-        var predictedCovariance = filteredState.PredictedCovariance;
-        var updatedMean = filteredState.UpdatedMean;
-        var updatedCovariance = filteredState.UpdatedCovariance;
+        var predictedMean = filteredState.PredictedState.Mean;
+        var predictedCovariance = filteredState.PredictedState.Covariance;
+        var updatedMean = filteredState.UpdatedState.Mean;
+        var updatedCovariance = filteredState.UpdatedState.Covariance;
 
         var timeBins = predictedMean.size(0);
         var smoothedMean = empty_like(updatedMean);
@@ -322,7 +232,7 @@ public class KalmanFilter : nn.Module
         smoothedMean[-1] = updatedMean[-1];
         smoothedCovariance[-1] = updatedCovariance[-1];
 
-        var smoothingGain = empty([Parameters.NumStates, Parameters.NumStates], dtype: _scalarType, device: _device);
+        var smoothingGain = empty([Parameters.NumStates, Parameters.NumStates], dtype: Parameters.ScalarType, device: Parameters.Device);
 
         // Backward pass
         for (long time = timeBins - 2; time >= 0; time--)
@@ -351,65 +261,91 @@ public class KalmanFilter : nn.Module
         );
     }
 
-    private readonly struct SmoothedStateWithAuxiliaryVariables(
-        Tensor smoothedMean,
-        Tensor smoothedCovariance,
-        Tensor smoothedInitialMean,
-        Tensor smoothedInitialCovariance,
-        Tensor S00,
-        Tensor S10,
-        Tensor S11)
-    {
-        public readonly Tensor SmoothedMean = smoothedMean;
-        public readonly Tensor SmoothedCovariance = smoothedCovariance;
-        public readonly Tensor SmoothedInitialMean = smoothedInitialMean;
-        public readonly Tensor SmoothedInitialCovariance = smoothedInitialCovariance;
-        public readonly Tensor S00 = S00;
-        public readonly Tensor S10 = S10;
-        public readonly Tensor S11 = S11;
-    }
-
-    private static SmoothedStateWithAuxiliaryVariables Smooth(
-        FilteredStateWithAuxiliaryVariables filteredState,
-        long timeBins,
-        int numStates,
-        Tensor transitionMatrix,
-        Tensor measurementFunction,
-        Tensor initialMean,
-        Tensor initialCovariance,
-        Tensor identityStates,
-        ScalarType scalarType,
-        Device device
+    private readonly struct SummaryStatisticsEM(
+        Tensor sxx11,
+        Tensor sxx10,
+        Tensor sxx00,
+        Tensor tx1 = null,
+        Tensor tx0 = null,
+        Tensor ty1 = null,
+        Tensor tyx11 = null,
+        Tensor tyy11 = null
     )
     {
+        public readonly Tensor Sxx11 => sxx11;
+        public readonly Tensor Sxx10 => sxx10;
+        public readonly Tensor Sxx00 => sxx00;
+        public readonly Tensor Tx1 => tx1;
+        public readonly Tensor Tx0 => tx0;
+        public readonly Tensor Ty1 => ty1;
+        public readonly Tensor Tyx11 => tyx11;
+        public readonly Tensor Tyy11 => tyy11;
+    }
+
+    private readonly struct SmoothedStateWithAuxiliaryVariables(
+        LinearDynamicalSystemState smoothedState,
+        Tensor smoothedInitialMean,
+        Tensor smoothedInitialCovariance)
+    {
+        public readonly LinearDynamicalSystemState SmoothedState => smoothedState;
+        public readonly Tensor SmoothedInitialMean => smoothedInitialMean;
+        public readonly Tensor SmoothedInitialCovariance => smoothedInitialCovariance;
+    }
+
+    private static (SmoothedStateWithAuxiliaryVariables state, SummaryStatisticsEM statistics) Smooth(
+        FilteredState filteredState,
+        Tensor observations,
+        KalmanFilterParameters parameters
+    )
+    {
+        var timeBins = filteredState.PredictedState.Mean.size(0);
+
         if (timeBins < 2)
             throw new ArgumentException("Smoothing requires at least two time bins.");
 
-        var predictedMean = filteredState.PredictedMean;
-        var predictedCovariance = filteredState.PredictedCovariance;
-        var updatedMean = filteredState.UpdatedMean;
-        var updatedCovariance = filteredState.UpdatedCovariance;
+        var predictedMean = filteredState.PredictedState.Mean;
+        var predictedCovariance = filteredState.PredictedState.Covariance;
+        var updatedMean = filteredState.UpdatedState.Mean;
+        var updatedCovariance = filteredState.UpdatedState.Covariance;
         var kalmanGain = filteredState.KalmanGain;
 
-        var smoothedMean = empty_like(updatedMean);
-        var smoothedCovariance = empty_like(updatedCovariance);
+        var smoothedState = new LinearDynamicalSystemState(
+            mean: empty_like(updatedMean),
+            covariance: empty_like(updatedCovariance)
+        );
 
-        var S00 = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
-        var S10 = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
-        var S11 = zeros_like(smoothedCovariance, dtype: scalarType, device: device);
+        var sxx00 = zeros_like(smoothedState.Covariance, dtype: parameters.ScalarType, device: parameters.Device);
+        var sxx10 = zeros_like(smoothedState.Covariance, dtype: parameters.ScalarType, device: parameters.Device);
+        var sxx11 = zeros_like(smoothedState.Covariance, dtype: parameters.ScalarType, device: parameters.Device);
+
+        var tx1 = zeros([parameters.NumStates], dtype: parameters.ScalarType, device: parameters.Device);
+        var tx0 = zeros([parameters.NumStates], dtype: parameters.ScalarType, device: parameters.Device);
+        var ty1 = zeros([parameters.NumObservations], dtype: parameters.ScalarType, device: parameters.Device);
+        var tyx11 = zeros([parameters.NumObservations, parameters.NumStates], dtype: parameters.ScalarType, device: parameters.Device);
+        var tyy11 = zeros([parameters.NumObservations, parameters.NumObservations], dtype: parameters.ScalarType, device: parameters.Device);
+
+        var identityStates = eye(parameters.NumStates, dtype: parameters.ScalarType, device: parameters.Device);
 
         // Fix the last time point
-        smoothedMean[-1] = updatedMean[-1];
-        smoothedCovariance[-1] = updatedCovariance[-1];
+        smoothedState.Mean[-1] = updatedMean[-1];
+        smoothedState.Covariance[-1] = updatedCovariance[-1];
         var smoothedLagOneCovariance = WrappedTensorDisposeScope(() =>
             (identityStates - kalmanGain[-1]
-                .matmul(measurementFunction))
-                    .matmul(transitionMatrix)
+                .matmul(parameters.MeasurementFunction))
+                    .matmul(parameters.TransitionMatrix)
                     .matmul(updatedCovariance[-2]));
 
-        S11[-1] = outer(updatedMean[-1], updatedMean[-1]) + updatedCovariance[-1];
+        sxx11[-1] = outer(smoothedState.Mean[-1], smoothedState.Mean[-1]) + smoothedState.Covariance[-1];
 
-        var smoothingGain = empty([numStates, numStates], dtype: scalarType, device: device);
+        if (parameters.OffsetsProvided)
+        {
+            tx1 += smoothedState.Mean[-1];
+            ty1 += observations[-1];
+            tyx11 += outer(observations[-1], smoothedState.Mean[-1]);
+            tyy11 += outer(observations[-1], observations[-1]);
+        }
+
+        var smoothingGain = empty([parameters.NumStates, parameters.NumStates], dtype: parameters.ScalarType, device: parameters.Device);
         var smoothingGainNext = null as Tensor;
 
         // Backward pass
@@ -417,74 +353,99 @@ public class KalmanFilter : nn.Module
         {
             // Smoothing gain
             smoothingGain = smoothingGainNext ?? WrappedTensorDisposeScope(() => updatedCovariance[time].matmul(
-                InverseCholesky(transitionMatrix.mT, predictedCovariance[time + 1])
+                InverseCholesky(parameters.TransitionMatrix.mT, predictedCovariance[time + 1])
             ));
 
             // Smoothed mean
-            smoothedMean[time] = WrappedTensorDisposeScope(() => updatedMean[time]
+            smoothedState.Mean[time] = WrappedTensorDisposeScope(() => updatedMean[time]
                 + smoothingGain.matmul(
-                    (smoothedMean[time + 1] - predictedMean[time + 1]).unsqueeze(-1)
+                    (smoothedState.Mean[time + 1] - predictedMean[time + 1]).unsqueeze(-1)
                 ).squeeze(-1));
 
             // Smoothed covariance
-            smoothedCovariance[time] = WrappedTensorDisposeScope(() => updatedCovariance[time] + smoothingGain
-                    .matmul(smoothedCovariance[time + 1] - predictedCovariance[time + 1])
+            smoothedState.Covariance[time] = WrappedTensorDisposeScope(() => updatedCovariance[time] + smoothingGain
+                    .matmul(smoothedState.Covariance[time + 1] - predictedCovariance[time + 1])
                     .matmul(smoothingGain.mT)
             );
 
-            var expectationUpdate = outer(smoothedMean[time], smoothedMean[time]) + smoothedCovariance[time];
-            S11[time] = expectationUpdate;
-            S00[time + 1] = expectationUpdate;
-            S10[time + 1] = outer(smoothedMean[time + 1], smoothedMean[time]) + smoothedLagOneCovariance;
+            var expectationUpdate = outer(smoothedState.Mean[time], smoothedState.Mean[time]) + smoothedState.Covariance[time];
+            sxx11[time] = expectationUpdate;
+            sxx00[time + 1] = expectationUpdate;
+            sxx10[time + 1] = outer(smoothedState.Mean[time + 1], smoothedState.Mean[time]) + smoothedLagOneCovariance;
+
+            if (parameters.OffsetsProvided)
+            {
+                tx1 += smoothedState.Mean[time];
+                tx0 += smoothedState.Mean[time + 1];
+                ty1 += observations[time];
+                tyx11 += outer(observations[time], smoothedState.Mean[time]);
+                tyy11 += outer(observations[time], observations[time]);
+            }
 
             // Compute next smoothing gain for lag one covariance
             if (time > 0)
             {
                 smoothingGainNext = WrappedTensorDisposeScope(() => updatedCovariance[time - 1]
-                    .matmul(InverseCholesky(transitionMatrix.mT, predictedCovariance[time])));
+                    .matmul(InverseCholesky(parameters.TransitionMatrix.mT, predictedCovariance[time])));
 
                 // Smoothed lag one covariance
                 smoothedLagOneCovariance = WrappedTensorDisposeScope(() => updatedCovariance[time]
                     .matmul(smoothingGainNext.mT)
                     + smoothingGain.matmul(smoothedLagOneCovariance
-                        - transitionMatrix.matmul(updatedCovariance[time]))
+                        - parameters.TransitionMatrix.matmul(updatedCovariance[time]))
                         .matmul(smoothingGainNext.mT));
             }
         }
 
-        var smoothingGain0 = WrappedTensorDisposeScope(() => initialCovariance.matmul(
-            InverseCholesky(transitionMatrix.mT, predictedCovariance[0])
+        var smoothingGain0 = WrappedTensorDisposeScope(() => parameters.InitialCovariance.matmul(
+            InverseCholesky(parameters.TransitionMatrix.mT, predictedCovariance[0])
         ));
 
         // Smoothed initial mean
-        var smoothedInitialMean = WrappedTensorDisposeScope(() => initialMean + smoothingGain0.matmul(
-            (smoothedMean[0] - predictedMean[0]).unsqueeze(-1)
+        var smoothedInitialMean = WrappedTensorDisposeScope(() => parameters.InitialMean + smoothingGain0.matmul(
+            (smoothedState.Mean[0] - predictedMean[0]).unsqueeze(-1)
         ).squeeze(-1));
 
         // Smoothed initial covariance
-        var smoothedInitialCovariance = WrappedTensorDisposeScope(() => initialCovariance + smoothingGain0
-                .matmul(smoothedCovariance[0] - predictedCovariance[0])
+        var smoothedInitialCovariance = WrappedTensorDisposeScope(() => parameters.InitialCovariance + smoothingGain0
+                .matmul(smoothedState.Covariance[0] - predictedCovariance[0])
                 .matmul(smoothingGain0.mT));
 
         // Smoothed lag one covariance at time 0
         smoothedLagOneCovariance = WrappedTensorDisposeScope(() => updatedCovariance[0]
             .matmul(smoothingGain0.mT)
             + smoothingGain.matmul(smoothedLagOneCovariance
-                - transitionMatrix.matmul(updatedCovariance[0]))
+                - parameters.TransitionMatrix.matmul(updatedCovariance[0]))
                 .matmul(smoothingGain0.mT));
 
-        S10[0] = outer(smoothedMean[0], smoothedInitialMean) + smoothedLagOneCovariance;
-        S00[0] = outer(smoothedInitialMean, smoothedInitialMean) + smoothedInitialCovariance;
+        sxx10[0] = outer(smoothedState.Mean[0], smoothedInitialMean) + smoothedLagOneCovariance;
+        sxx00[0] = outer(smoothedInitialMean, smoothedInitialMean) + smoothedInitialCovariance;
 
-        return new SmoothedStateWithAuxiliaryVariables(
-            smoothedMean: smoothedMean,
-            smoothedCovariance: smoothedCovariance,
+        if (parameters.OffsetsProvided)
+            tx0 += smoothedInitialMean;
+
+        var state = new SmoothedStateWithAuxiliaryVariables(
+            smoothedState: smoothedState,
             smoothedInitialMean: smoothedInitialMean,
-            smoothedInitialCovariance: smoothedInitialCovariance,
-            S00: S00,
-            S10: S10,
-            S11: S11
+            smoothedInitialCovariance: smoothedInitialCovariance
         );
+
+        var stats = parameters.OffsetsProvided ? new SummaryStatisticsEM(
+            sxx11: sxx11,
+            sxx10: sxx10,
+            sxx00: sxx00,
+            tx1: tx1,
+            tx0: tx0,
+            ty1: ty1,
+            tyx11: tyx11,
+            tyy11: tyy11
+        ) : new SummaryStatisticsEM(
+            sxx11: sxx11,
+            sxx10: sxx10,
+            sxx00: sxx00
+        );
+
+        return (state, stats);
     }
 
     public static ExpectationMaximizationResult ExpectationMaximization(
@@ -494,9 +455,6 @@ public class KalmanFilter : nn.Module
         double tolerance = 1e-4,
         ParametersToEstimate parametersToEstimate = new())
     {
-        parameters = parameters.Copy();
-        parameters.Validate();
-
         var timeBins = observation.size(0);
         var numObservations = (int)observation.size(1);
         var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: parameters.Device);
@@ -513,23 +471,14 @@ public class KalmanFilter : nn.Module
         var autoCorrelationObservations = observationT.matmul(observation);
 
         using var g = no_grad();
-        
+
         for (int iteration = 0; iteration < maxIterations; iteration++)
         {
             // Filter observations
             var filteredState = Filter(
-                observation: observation,
                 timeBins: timeBins,
-                numStates: parameters.NumStates,
-                numObservations: numObservations,
-                transitionMatrix: parameters.TransitionMatrix,
-                measurementFunction: parameters.MeasurementFunction,
-                processNoiseCovariance: parameters.ProcessNoiseCovariance,
-                measurementNoiseCovariance: parameters.MeasurementNoiseCovariance,
-                initialMean: parameters.InitialMean,
-                initialCovariance: parameters.InitialCovariance,
-                scalarType: parameters.ScalarType,
-                device: parameters.Device);
+                observation: observation,
+                parameters: parameters);
 
             // Compute log likelihood (avoid creating intermediate tensors)
             var llSumDouble = filteredState.LogLikelihood.sum()
@@ -551,49 +500,127 @@ public class KalmanFilter : nn.Module
             previousLogLikelihood = filteredLogLikelihoodSum;
 
             // Smooth the filtered results
-            var smoothedState = Smooth(
+            var (state, statistics) = Smooth(
                 filteredState: filteredState,
-                timeBins: timeBins,
-                numStates: parameters.NumStates,
-                transitionMatrix: parameters.TransitionMatrix,
-                measurementFunction: parameters.MeasurementFunction,
-                initialMean: parameters.InitialMean,
-                initialCovariance: parameters.InitialCovariance,
-                identityStates: identityStates,
-                scalarType: parameters.ScalarType,
-                device: parameters.Device);
+                observations: observation,
+                parameters: parameters);
 
             // Sufficient statistics
-            var S00 = smoothedState.S00.sum([0]);
-            var S11 = smoothedState.S11.sum([0]);
-            var S10 = smoothedState.S10.sum([0]);
+            var sxx00 = statistics.Sxx00.sum([0]);
+            var sxx11 = statistics.Sxx11.sum([0]);
+            var sxx10 = statistics.Sxx10.sum([0]);
 
             // Replace einsum with faster matmul
-            var crossCorrelationObservations = observationT.matmul(smoothedState.SmoothedMean);
+            var crossCorrelationObservations = observationT.matmul(state.SmoothedState.Mean);
 
             // Update parameters
             if (parametersToEstimate.TransitionMatrix)
-                parameters.TransitionMatrix = InverseCholesky(S10, S00);
+            {
+                if (parameters.OffsetsProvided)
+                {
+                    parameters.TransitionMatrix.set_(
+                        InverseCholesky(
+                            sxx10 - outer(statistics.Tx1, statistics.Tx0) / timeBins,
+                            sxx00 - outer(statistics.Tx0, statistics.Tx0) / timeBins
+                        )
+                    );
+                }
+                else
+                {
+                    parameters.TransitionMatrix.set_(
+                        InverseCholesky(
+                            sxx10,
+                            sxx00
+                        )
+                    );
+                }
+            }
+
+            if (parametersToEstimate.StateOffset)
+            {
+                if (parameters.OffsetsProvided)
+                {
+                    parameters.StateOffset.set_(
+                        (statistics.Tx1 - parameters.TransitionMatrix.matmul(statistics.Tx0)) / timeBins
+                    );
+                }
+            }
 
             if (parametersToEstimate.MeasurementFunction)
-                parameters.MeasurementFunction = InverseCholesky(crossCorrelationObservations, S11);
+            {
+                if (parameters.OffsetsProvided)
+                {
+                    parameters.MeasurementFunction.set_(
+                        InverseCholesky(
+                            statistics.Tyx11 - outer(statistics.Ty1, statistics.Tx1) / timeBins,
+                            sxx11 - outer(statistics.Tx0, statistics.Tx0) / timeBins
+                        )
+                    );
+                }
+                else
+                {
+                    parameters.MeasurementFunction.set_(
+                        InverseCholesky(
+                            crossCorrelationObservations,
+                            sxx11
+                        )
+                    );
+                }
+            }
+
+            if (parametersToEstimate.ObservationOffset)
+            {
+                if (parameters.OffsetsProvided)
+                {
+                    parameters.ObservationOffset.set_(
+                        (statistics.Ty1 - parameters.MeasurementFunction.matmul(statistics.Tx1)) / timeBins
+                    );
+                }
+            }
 
             if (parametersToEstimate.ProcessNoiseCovariance)
-                parameters.ProcessNoiseCovariance = WrappedTensorDisposeScope(() =>
-                    EnsureSymmetric((S11 - parameters.TransitionMatrix.matmul(S10.mT)) / timeBins));
-
-            var explainedObservationCovariance = parameters.MeasurementFunction.matmul(crossCorrelationObservations.mT);
+            {
+                if (parameters.OffsetsProvided)
+                {
+                    parameters.ProcessNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
+                        EnsureSymmetric(
+                            (sxx11 - outer(statistics.Tx1, parameters.StateOffset) - outer(parameters.StateOffset, statistics.Tx1) + timeBins * outer(parameters.StateOffset, parameters.StateOffset) - parameters.TransitionMatrix.matmul(sxx10.mT) - sxx10.matmul(parameters.TransitionMatrix.mT) + linalg.multi_dot([parameters.TransitionMatrix, sxx00, parameters.TransitionMatrix.mT]) + parameters.TransitionMatrix.matmul(outer(statistics.Tx0, parameters.StateOffset)) + outer(parameters.StateOffset, statistics.Tx0).matmul(parameters.TransitionMatrix.mT)) / timeBins
+                        )
+                    ));
+                }
+                else
+                {
+                    parameters.ProcessNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
+                        EnsureSymmetric((sxx11 - parameters.TransitionMatrix.matmul(sxx10.mT)) / timeBins)));
+                }
+            }
 
             if (parametersToEstimate.MeasurementNoiseCovariance)
-                parameters.MeasurementNoiseCovariance = WrappedTensorDisposeScope(() =>
-                    EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
-                        + parameters.MeasurementFunction.matmul(S11).matmul(parameters.MeasurementFunction.mT)) / timeBins));
+            {
+                if (parameters.OffsetsProvided)
+                {
+                    parameters.MeasurementNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
+                        EnsureSymmetric(
+                            (statistics.Tyy11 - outer(statistics.Ty1, parameters.ObservationOffset) - outer(parameters.ObservationOffset, statistics.Ty1) + timeBins * outer(parameters.ObservationOffset, parameters.ObservationOffset) - parameters.MeasurementFunction.matmul(statistics.Tyx11.mT) - statistics.Tyx11.matmul(parameters.MeasurementFunction.mT) + parameters.MeasurementFunction.matmul(outer(statistics.Tx1, parameters.ObservationOffset)) + linalg.multi_dot([parameters.MeasurementFunction, sxx11, parameters.MeasurementFunction.mT]) + outer(parameters.ObservationOffset, statistics.Tx1).matmul(parameters.MeasurementFunction.mT)) / timeBins
+                        )
+                    ));
+                }
+                else
+                {
+                    var explainedObservationCovariance = parameters.MeasurementFunction.matmul(crossCorrelationObservations.mT);
+
+                    if (parametersToEstimate.MeasurementNoiseCovariance)
+                        parameters.MeasurementNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
+                            EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
+                                + parameters.MeasurementFunction.matmul(sxx11).matmul(parameters.MeasurementFunction.mT)) / timeBins)));
+                }
+            }
 
             if (parametersToEstimate.InitialMean)
-                parameters.InitialMean = smoothedState.SmoothedInitialMean;
+                parameters.InitialMean.set_(state.SmoothedInitialMean);
 
             if (parametersToEstimate.InitialCovariance)
-                parameters.InitialCovariance = smoothedState.SmoothedInitialCovariance;
+                parameters.InitialCovariance.set_(state.SmoothedInitialCovariance);
         }
 
         return new ExpectationMaximizationResult(logLikelihood, parameters);
@@ -691,19 +718,19 @@ public class KalmanFilter : nn.Module
         );
     }
 
-    public LinearDynamicalSystemState OrthogonalizeMeanAndCovariance(Tensor mean, Tensor covariance)
+    public LinearDynamicalSystemState OrthogonalizeMeanAndCovariance(LinearDynamicalSystemState state)
     {
         var (_, S, Vt) = linalg.svd(Parameters.MeasurementFunction);
         var SVt = diag(S).matmul(Vt);
 
         Tensor orthogonalizedMean = null;
-        if (mean is not null)
-            orthogonalizedMean = matmul(mean, SVt.mT);
+        if (state.Mean is not null)
+            orthogonalizedMean = matmul(state.Mean, SVt.mT);
 
         Tensor orthogonalizedCovariance = null;
-        if (covariance is not null)
+        if (state.Covariance is not null)
         {
-            var auxilary = matmul(SVt, covariance);
+            var auxilary = matmul(SVt, state.Covariance);
             orthogonalizedCovariance = matmul(auxilary, SVt.mT);
         }
 
@@ -727,6 +754,10 @@ public class KalmanFilter : nn.Module
             Parameters.InitialMean.set_(updatedParameters.InitialMean);
         if (updatedParameters.InitialCovariance is not null)
             Parameters.InitialCovariance.set_(updatedParameters.InitialCovariance);
+        if (updatedParameters.StateOffset is not null)
+            Parameters.StateOffset.set_(updatedParameters.StateOffset);
+        if (updatedParameters.ObservationOffset is not null)
+            Parameters.ObservationOffset.set_(updatedParameters.ObservationOffset);
     }
 
     private static Tensor EnsureSymmetric(Tensor M) => 0.5 * (M + M.mT);

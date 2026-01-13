@@ -19,6 +19,10 @@ namespace Bonsai.ML.Lds.Torch;
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class ExpectationMaximization
 {
+    private int _maxIterations = 10;
+    private double _tolerance = 1e-4;
+    private bool _verbose = true;
+
     /// <summary>
     /// The number of states in the Kalman filter model.
     /// </summary>
@@ -98,9 +102,17 @@ public class ExpectationMaximization
     [Description("If true, the initial covariance will be estimated during the EM algorithm.")]
     public bool EstimateInitialCovariance { get; set; } = true;
 
-    private int _maxIterations = 10;
-    private double _tolerance = 1e-4;
-    private bool _verbose = true;
+    /// <summary>
+    /// If true, the state offset will be estimated during the EM algorithm.
+    /// </summary>
+    [Description("If true, the state offset will be estimated during the EM algorithm.")]
+    public bool EstimateStateOffset { get; set; } = false;
+
+    /// <summary>
+    /// If true, the observation offset will be estimated during the EM algorithm.
+    /// </summary>
+    [Description("If true, the observation offset will be estimated during the EM algorithm.")]
+    public bool EstimateObservationOffset { get; set; } = false;
 
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Expectation-Maximization algorithm to learn the parameters of a Kalman filter model.
@@ -124,15 +136,15 @@ public class ExpectationMaximization
                     processNoiseCovariance: EstimateProcessNoiseCovariance,
                     measurementNoiseCovariance: EstimateMeasurementNoiseCovariance,
                     initialMean: EstimateInitialMean,
-                    initialCovariance: EstimateInitialCovariance);
+                    initialCovariance: EstimateInitialCovariance,
+                    stateOffset: EstimateStateOffset,
+                    observationOffset: EstimateObservationOffset);
 
-                var parameters = ModelParameters?.Copy() ?? KalmanFilterParameters.Initialize(
+                var parameters = ModelParameters?.Copy() ?? new KalmanFilterParameters(
                         numStates: NumStates,
                         numObservations: numObservations,
                         scalarType: input.dtype,
                         device: input.device);
-
-                parameters.Validate();
 
                 for (int i = 0; i < MaxIterations; i++)
                 {

@@ -12,13 +12,17 @@ namespace Bonsai.ML.Lds.Torch;
 /// <param name="measurementNoiseCovariance"></param>
 /// <param name="initialMean"></param>
 /// <param name="initialCovariance"></param>
+/// <param name="stateOffset"></param>
+/// <param name="observationOffset"></param>
 public struct ParametersToEstimate(
     bool transitionMatrix = true,
     bool measurementFunction = true,
     bool processNoiseCovariance = true,
     bool measurementNoiseCovariance = true,
     bool initialMean = true,
-    bool initialCovariance = true)
+    bool initialCovariance = true,
+    bool stateOffset = false,
+    bool observationOffset = false)
 {
     /// <summary>
     /// The state transition matrix.
@@ -49,4 +53,14 @@ public struct ParametersToEstimate(
     /// The initial covariance.
     /// </summary>
     public bool InitialCovariance = initialCovariance;
+
+    /// <summary>
+    /// The state offset.
+    /// </summary>
+    public bool StateOffset = stateOffset;
+
+    /// <summary>
+    /// The observation offset.
+    /// </summary>
+    public bool ObservationOffset = observationOffset;
 }

@@ -18,6 +18,15 @@ namespace Bonsai.ML.Lds.Torch;
 [TypeConverter(typeof(TensorOperatorConverter))]
 public class CreateKalmanFilterParameters : IScalarTypeProvider
 {
+    private Tensor _transitionMatrix = null;
+    private Tensor _measurementFunction = null;
+    private Tensor _processNoiseCovariance = null;
+    private Tensor _measurementNoiseCovariance = null;
+    private Tensor _initialMean = null;
+    private Tensor _initialCovariance = null;
+    private Tensor _stateOffset = null;
+    private Tensor _observationOffset = null;
+
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
     [TypeConverter(typeof(ScalarTypeConverter))]
@@ -178,20 +187,58 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
         set => _initialCovariance = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private Tensor _transitionMatrix = null;
-    private Tensor _measurementFunction = null;
-    private Tensor _processNoiseCovariance = null;
-    private Tensor _measurementNoiseCovariance = null;
-    private Tensor _initialMean = null;
-    private Tensor _initialCovariance = null;
+    /// <summary>
+    /// The state offset.
+    /// </summary>
+    [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
+    public Tensor StateOffset
+    {
+        get => _stateOffset;
+        set => _stateOffset = value;
+    }
 
+    /// <summary>
+    /// The XML string representation of the state offset for serialization.
+    /// </summary>
+    [Browsable(false)]
+    [XmlElement(nameof(StateOffset))]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public string StateOffsetXml
+    {
+        get => TensorConverter.ConvertToString(_stateOffset, Type);
+        set => _stateOffset = TensorConverter.ConvertFromString(value, Type);
+    }
+
+    /// <summary>
+    /// The observation offset.
+    /// </summary>
+    [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
+    public Tensor ObservationOffset
+    {
+        get => _observationOffset;
+        set => _observationOffset = value;
+    }
+
+    /// <summary>
+    /// The XML string representation of the observation offset for serialization.
+    /// </summary>
+    [Browsable(false)]
+    [XmlElement(nameof(ObservationOffset))]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public string ObservationOffsetXml
+    {
+        get => TensorConverter.ConvertToString(_observationOffset, Type);
+        set => _observationOffset = TensorConverter.ConvertFromString(value, Type);
+    }
 
     /// <summary>
     /// Creates parameters for a Kalman filter model using the properties of this class.
     /// </summary>
     public IObservable<KalmanFilterParameters> Process()
     {
-        return Observable.Return(KalmanFilterParameters.Initialize(
+        return Observable.Return(new KalmanFilterParameters(
             numStates: NumStates,
             numObservations: NumObservations,
             transitionMatrix: _transitionMatrix,
@@ -200,6 +247,8 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
             measurementNoiseCovariance: _measurementNoiseCovariance,
             initialMean: _initialMean,
             initialCovariance: _initialCovariance,
+            stateOffset: _stateOffset,
+            observationOffset: _observationOffset,
             scalarType: Type,
             device: Device
         ));
@@ -212,7 +261,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     {
         return source.Select(_ =>
         {
-            return KalmanFilterParameters.Initialize(
+            return new KalmanFilterParameters(
                 numStates: NumStates,
                 numObservations: NumObservations,
                 transitionMatrix: _transitionMatrix,
@@ -221,6 +270,8 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
                 measurementNoiseCovariance: _measurementNoiseCovariance,
                 initialMean: _initialMean,
                 initialCovariance: _initialCovariance,
+                stateOffset: _stateOffset,
+                observationOffset: _observationOffset,
                 scalarType: Type,
                 device: Device
             );

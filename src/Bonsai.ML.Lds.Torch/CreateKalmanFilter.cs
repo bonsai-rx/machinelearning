@@ -17,6 +17,15 @@ namespace Bonsai.ML.Lds.Torch;
 [TypeConverter(typeof(TensorOperatorConverter))]
 public class CreateKalmanFilter : IScalarTypeProvider
 {
+    private Tensor _transitionMatrix;
+    private Tensor _measurementFunction;
+    private Tensor _processNoiseVariance;
+    private Tensor _measurementNoiseVariance;
+    private Tensor _initialMean;
+    private Tensor _initialCovariance;
+    private Tensor _stateOffset;
+    private Tensor _observationOffset;
+
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
     [TypeConverter(typeof(ScalarTypeConverter))]
@@ -38,7 +47,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// The number of observations in the Kalman filter model.
     /// </summary>
     public int? NumObservations { get; set; } = null;
-    
+
     /// <summary>
     /// The state transition matrix.
     /// </summary>
@@ -177,12 +186,52 @@ public class CreateKalmanFilter : IScalarTypeProvider
         set => _initialCovariance = TensorConverter.ConvertFromString(value, Type);
     }
 
-    private Tensor _transitionMatrix;
-    private Tensor _measurementFunction;
-    private Tensor _processNoiseVariance;
-    private Tensor _measurementNoiseVariance;
-    private Tensor _initialMean;
-    private Tensor _initialCovariance;
+    /// <summary>
+    /// The state offset.
+    /// </summary>
+    [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
+    public Tensor StateOffset
+    {
+        get => _stateOffset;
+        set => _stateOffset = value;
+    }
+
+    /// <summary>
+    /// The XML string representation of the state offset for serialization.
+    /// </summary>
+    [Browsable(false)]
+    [XmlElement(nameof(StateOffset))]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public string StateOffsetXml
+    {
+        get => TensorConverter.ConvertToString(_stateOffset, Type);
+        set => _stateOffset = TensorConverter.ConvertFromString(value, Type);
+    }
+
+    /// <summary>
+    /// The observation offset.
+    /// </summary>
+    [XmlIgnore]
+    [TypeConverter(typeof(TensorConverter))]
+    public Tensor ObservationOffset
+    {
+        get => _observationOffset;
+        set => _observationOffset = value;
+    }
+
+    /// <summary>
+    /// The XML string representation of the observation offset for serialization.
+    /// </summary>
+    [Browsable(false)]
+    [XmlElement(nameof(ObservationOffset))]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public string ObservationOffsetXml
+    {
+        get => TensorConverter.ConvertToString(_observationOffset, Type);
+        set => _observationOffset = TensorConverter.ConvertFromString(value, Type);
+    }
+
 
     /// <summary>
     /// Creates a Kalman filter model using the properties of this class.
@@ -198,6 +247,8 @@ public class CreateKalmanFilter : IScalarTypeProvider
             measurementNoiseVariance: MeasurementNoiseVariance,
             initialMean: InitialMean,
             initialCovariance: InitialCovariance,
+            stateOffset: StateOffset,
+            observationOffset: ObservationOffset,
             device: Device,
             scalarType: Type
         ));
@@ -211,9 +262,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
         return source.Select(parameters =>
         {
             return new KalmanFilter(
-                parameters: parameters,
-                device: Device,
-                scalarType: Type
+                parameters: parameters
             );
         });
     }
