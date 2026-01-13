@@ -28,6 +28,7 @@ public class ReceptiveFieldSimpleCellTest
             byte[] responseBytes;
             using (var httpClient = new HttpClient())
             {
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Bonsai.ML.Tests");
                 responseBytes = httpClient.GetByteArrayAsync(zipFileUrl).Result;
                 Console.WriteLine("File downloaded successfully.");
             }
