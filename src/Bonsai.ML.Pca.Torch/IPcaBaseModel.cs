@@ -8,9 +8,19 @@ namespace Bonsai.ML.Pca.Torch;
 public interface IPcaBaseModel
 {
     /// <summary>
+    /// Gets a value indicating whether the model has been fitted to data.
+    /// </summary>
+    public bool IsFitted { get; }
+
+    /// <summary>
+    /// Gets the number of features in the fitted data.
+    /// </summary>
+    public int NumFeatures { get; }
+
+    /// <summary>
     /// Gets the principal components of the model.
     /// </summary>
-    public abstract Tensor Components { get; }
+    public Tensor Components { get; }
 
     /// <summary>
     /// Gets the number of principal components kept by the model.
@@ -25,7 +35,7 @@ public interface IPcaBaseModel
     /// <summary>
     /// Gets the data type used by the model.
     /// </summary>
-    public ScalarType ScalarType { get; }
+    public ScalarType? ScalarType { get; }
 
     /// <summary>
     /// Fits the PCA model to the given data.
@@ -34,7 +44,7 @@ public interface IPcaBaseModel
     /// The input data should be a 2D tensor with shape (samples x features).
     /// </remarks>
     /// <param name="data"></param>
-    public abstract void Fit(Tensor data);
+    public void Fit(Tensor data);
 
     /// <summary>
     /// Transforms the input data using the PCA model.
@@ -44,7 +54,7 @@ public interface IPcaBaseModel
     /// </remarks>
     /// <param name="data"></param>
     /// <returns></returns>
-    public abstract Tensor Transform(Tensor data);
+    public Tensor Transform(Tensor data);
 
     /// <summary>
     /// Fits the PCA model to the given data and transforms it.
@@ -54,7 +64,7 @@ public interface IPcaBaseModel
     /// </remarks>
     /// <param name="data"></param>
     /// <returns></returns>
-    public abstract Tensor FitAndTransform(Tensor data);
+    public Tensor FitAndTransform(Tensor data);
 
     /// <summary>
     /// Reconstructs the input data using the PCA model.
@@ -64,5 +74,5 @@ public interface IPcaBaseModel
     /// </remarks>
     /// <param name="data"></param>
     /// <returns></returns>
-    public abstract Tensor Reconstruct(Tensor data);
+    public Tensor Reconstruct(Tensor data);
 }

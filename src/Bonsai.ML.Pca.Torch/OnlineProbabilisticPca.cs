@@ -5,10 +5,22 @@ using static TorchSharp.torch.linalg;
 namespace Bonsai.ML.Pca.Torch;
 
 /// <summary>
-/// Implements an online Probabilistic Principal Component Analysis (PPCA) model using stochastic online EM.
+/// Implements an online probabilistic PCA model using the stochastic online EM algorithm.
 /// </summary>
 public class OnlineProbabilisticPca : PcaBaseModel
 {
+    private Tensor _mu = empty(0);
+    private Tensor _Iq = empty(0);
+    private Tensor _mx = empty(0); // E[x]
+    private Tensor _Cxz = empty(0); // E[xz^T]
+    private Tensor _mz = empty(0); // E[z]
+    private Tensor _Czz = empty(0); // E[zz^T]
+    private Tensor _sxx = empty(0); // E[||x||^2]
+    private bool _initializedParameters = false;
+    private readonly Func<double> UpdateSchedule;
+    private int _stepCount = 0;
+    private readonly bool _reorthogonalize = false;
+
     /// <summary>
     /// Rho is a constant learning rate parameter.
     /// </summary>
@@ -29,7 +41,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
     /// <summary>
     /// Gets the variance of the isotropic Gaussian noise model.
     /// </summary>
-    public double Variance => _sigma2.to_type(ScalarType.Float64).item<double>();
+    public double Variance { get; private set; }
 
     /// <summary>
     /// Gets the period for reorthogonalizing the principal components.
@@ -53,20 +65,6 @@ public class OnlineProbabilisticPca : PcaBaseModel
     /// </summary>
     public Generator Generator { get; private set; }
 
-    private Tensor _mu = empty(0);
-    private Tensor _Iq = empty(0);
-    private Tensor _mx = empty(0); // E[x]
-    private Tensor _Cxz = empty(0); // E[xz^T]
-    private Tensor _mz = empty(0); // E[z]
-    private Tensor _Czz = empty(0); // E[zz^T]
-    private Tensor _sxx = empty(0); // E[||x||^2]
-    private Tensor _sigma2; // Variance
-
-    private bool _initializedParameters = false;
-    private readonly Func<double> UpdateSchedule;
-    private int _stepCount = 0;
-    private readonly bool _reorthogonalize = false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineProbabilisticPca"/> class.
     /// </summary>
@@ -82,7 +80,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
     /// <exception cref="ArgumentException"></exception>
     public OnlineProbabilisticPca(int numComponents,
         Device? device = null,
-        ScalarType? scalarType = ScalarType.Float32,
+        ScalarType? scalarType = null,
         double initialVariance = 1.0,
         Generator? generator = null,
         double? rho = 0.1,
@@ -145,7 +143,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
         Rho = rho;
         Kappa = kappa;
         TimeOffset = timeOffset;
-        _sigma2 = initialVariance;
+        Variance = initialVariance;
     }
 
     /// <inheritdoc/>
@@ -175,7 +173,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
                 _mu = zeros(d, device: Device, dtype: ScalarType).MoveToOuterDisposeScope();
                 var randW = randn(d, q, generator: Generator, device: Device, dtype: ScalarType);
                 var orthonormalBases = linalg.qr(randW).Q;
-                Components = (orthonormalBases * _sigma2).MoveToOuterDisposeScope(); // d x q
+                Components = (orthonormalBases * Variance).MoveToOuterDisposeScope(); // d x q
                 _Iq = eye(q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q x q
 
                 _mx = zeros(d, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // d
@@ -188,7 +186,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
             }
 
             // Covariance matrix
-            var cov = _Iq * _sigma2;
+            var cov = _Iq * Variance;
 
             // Center data using current mean
             var Xc = data - _mu;
@@ -206,7 +204,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
             var sxx = data.pow(2).sum(dim: 1).mean();
             var Cxz = data.T.matmul(Ez) / n;
             var mz = Ez.mean([0]);
-            var Czz = EzT.matmul(Ez) / n + _sigma2 * MInv;
+            var Czz = EzT.matmul(Ez) / n + Variance * MInv;
 
             // Update parameters
             var rhoFactor = 1 - rho;
@@ -250,9 +248,10 @@ public class OnlineProbabilisticPca : PcaBaseModel
             Szz = _Czz;
 
             // Update variance
-            _sigma2 = ((Sxx - 2 * trace(Components.T.matmul(Sxz)) + trace(Components.T.matmul(Components).matmul(Szz))) / (double)d)
+            Variance = ((Sxx - 2 * trace(Components.T.matmul(Sxz)) + trace(Components.T.matmul(Components).matmul(Szz))) / (double)d)
                 .clamp_min(0.0)
-                .MoveToOuterDisposeScope();
+                .to_type(TorchSharp.torch.ScalarType.Float64)
+                .item<double>();
         }
     }
 
@@ -266,7 +265,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
 
         var Xt = data.T; // n x d
         var Xc = Xt - _mu; // n x d
-        var M = Components.T.matmul(Components) + _Iq * _sigma2; // q x q
+        var M = Components.T.matmul(Components) + _Iq * Variance; // q x q
         var XcW = Xc.matmul(Components);
         return Utils.InvertSPD(M, XcW.T).T; // n x q
     }
@@ -286,7 +285,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
 
         var Xt = data.T; // n x d
         var Xc = Xt - _mu; // n x d
-        var M = Components.T.matmul(Components) + _Iq * _sigma2; // q x q
+        var M = Components.T.matmul(Components) + _Iq * Variance; // q x q
         var XcW = Xc.matmul(Components);
         var EzT = Utils.InvertSPD(M, XcW.T);
         var Ez = EzT.T;
