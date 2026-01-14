@@ -9,6 +9,12 @@ namespace Bonsai.ML.Pca.Torch;
 public abstract class PcaBaseModel : IPcaBaseModel
 {
     /// <inheritdoc/>
+    public bool IsFitted { get; protected set; }
+
+    /// <inheritdoc/>
+    public int NumFeatures { get; protected set; } = -1;
+
+    /// <inheritdoc/>
     public abstract Tensor Components { get; protected set; }
 
     /// <inheritdoc/>
@@ -18,7 +24,7 @@ public abstract class PcaBaseModel : IPcaBaseModel
     public Device Device { get; private set; }
 
     /// <inheritdoc/>
-    public ScalarType ScalarType { get; private set; }
+    public ScalarType? ScalarType { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PcaBaseModel"/> class.
@@ -38,14 +44,34 @@ public abstract class PcaBaseModel : IPcaBaseModel
 
         NumComponents = numComponents;
         Device = device ?? CPU;
-        ScalarType = scalarType ?? ScalarType.Float32;
+        ScalarType = scalarType;
     }
 
     /// <inheritdoc/>
-    public abstract void Fit(Tensor data);
+    public virtual void Fit(Tensor data)
+    {
+        CheckDataCompatibility(data);
+
+        var n = data.size(0);
+        var d = data.size(1);
+
+        if (NumComponents > d)
+            throw new ArgumentException($"Number of components cannot be greater than the number of features. Number of components: {NumComponents}, number of features: {d}.", nameof(data));
+
+        if (n < 2)
+            throw new ArgumentException($"Need at least 2 samples to fit PCA. Number of samples: {n}.", nameof(data));
+
+        NumFeatures = (int)d;
+    }
 
     /// <inheritdoc/>
-    public abstract Tensor Transform(Tensor data);
+    public virtual Tensor Transform(Tensor data)
+    {
+        CheckFitted();
+        CheckDataCompatibility(data);
+        CheckDataFeatures(data);
+        return data;
+    }
 
     /// <inheritdoc/>
     public virtual Tensor FitAndTransform(Tensor data)
@@ -55,5 +81,34 @@ public abstract class PcaBaseModel : IPcaBaseModel
     }
 
     /// <inheritdoc/>
-    public abstract Tensor Reconstruct(Tensor data);
+    public virtual Tensor Reconstruct(Tensor data)
+    {
+        CheckFitted();
+        CheckDataCompatibility(data);
+        CheckDataFeatures(data);
+        return data;
+    }
+
+    private void CheckFitted()
+    {
+        if (!IsFitted)
+            throw new InvalidOperationException("Model has not yet been fitted. You should call one of the Fit() or the FitAndTransform() methods first.");
+    }
+
+    private void CheckDataCompatibility(Tensor data)
+    {
+        if (data.NumberOfElements == 0)
+            throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
+
+        if (data.dim() != 2)
+            throw new ArgumentException($"Data must be a 2D tensor with shape (samples x features). Data shape: {data.shape}.", nameof(data));
+    }
+
+    private void CheckDataFeatures(Tensor data)
+    {
+        var d = data.size(1);
+
+        if (d != NumFeatures)
+            throw new ArgumentException("The number of features in the data does not match the number of features in the fitted model.", nameof(data));
+    }
 }

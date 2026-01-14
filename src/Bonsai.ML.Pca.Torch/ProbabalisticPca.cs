@@ -1,14 +1,23 @@
 ﻿using System;
+using Bonsai.ML.Torch;
 using static TorchSharp.torch;
 using static TorchSharp.torch.linalg;
 
 namespace Bonsai.ML.Pca.Torch;
 
 /// <summary>
-/// Probabilistic Principal Component Analysis (PPCA) model.
+/// Represents a probabilistic PCA model.
 /// </summary>
 public class ProbabilisticPca : PcaBaseModel
 {
+    private readonly int _iterations;
+    private readonly double _tolerance;
+
+    /// <summary>
+    /// Gets the mean of the fitted data.
+    /// </summary>
+    public Tensor Mean { get; private set; } = empty(0);
+
     /// <summary>
     /// Gets the variance of the isotropic Gaussian noise model.
     /// </summary>
@@ -25,11 +34,7 @@ public class ProbabilisticPca : PcaBaseModel
     /// <summary>
     /// Gets the random number generator used for initializing the model.
     /// </summary>
-    public Generator Generator { get; private set; }
-
-    private readonly int _iterations;
-    private readonly double _tolerance;
-    private bool _isFitted = false;
+    public Generator? Generator { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProbabilisticPca"/> class.
@@ -44,7 +49,7 @@ public class ProbabilisticPca : PcaBaseModel
     /// <exception cref="ArgumentException"></exception>
     public ProbabilisticPca(int numComponents,
         Device? device = null,
-        ScalarType? scalarType = ScalarType.Float32,
+        ScalarType? scalarType = null,
         double initialVariance = 1.0,
         Generator? generator = null,
         int iterations = 100,
@@ -69,166 +74,109 @@ public class ProbabilisticPca : PcaBaseModel
         }
 
         Variance = initialVariance;
-        Generator = generator ?? manual_seed(0);
+        Generator = generator;
         _iterations = iterations;
         _tolerance = tolerance;
     }
 
-    /// <summary>
-    /// Fits the PPCA model to the input data.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <exception cref="ArgumentException"></exception>
+    /// <inheritdoc/>
     public override void Fit(Tensor data)
     {
-        if (data.NumberOfElements == 0 || data.dim() != 2)
+        base.Fit(data);
+
+        using (no_grad())
+        using (NewDisposeScope())
         {
-            throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
-        }
+            var numSamples = data.size(0);
 
-        // Initialize variance
-        var variance = Variance;
+            // Initialize log likelihood
+            LogLikelihood = ones(_iterations, device: Device, dtype: ScalarType) * double.NegativeInfinity;
 
-        // Initialize log likelihood
-        LogLikelihood = ones(_iterations, device: Device, dtype: ScalarType) * double.NegativeInfinity;
+            var weights = randn(NumFeatures, NumComponents, generator: Generator, device: Device, dtype: ScalarType);
+            var identityComponents = eye(NumComponents, device: Device, dtype: ScalarType);
+            var identityFeatures = eye(NumFeatures, device: Device, dtype: ScalarType);
 
-        // Initialize dimensions for components
-        var q = NumComponents;
-        var n = data.size(0);
-        var d = data.size(1);
+            var mean = data.mean([0], keepdim: true);
+            var dataCentered = data - mean;
 
-        if (q > d)
-        {
-            throw new ArgumentException("Number of components cannot be greater than the number of features.", nameof(data));
-        }
+            // Calculate the sample covariance
+            var covarianceTerm = dataCentered.T.matmul(dataCentered);
+            var sampleCov = covarianceTerm / numSamples;
 
-        // Initialize W and I
-        var W = randn(d, q, generator: Generator, device: Device, dtype: ScalarType); // d x q
-        var Iq = eye(q, device: Device, dtype: ScalarType); // q x q
-        var Id = eye(d, device: Device, dtype: ScalarType); // d x d
+            // Calculate term 1 for variance update
+            var term1 = trace(covarianceTerm);
 
-        // Calculate the sample mean
-        var mean = data.mean([0], keepdim: true); // 1 x d
+            // Compute log likelihood constant
+            var logLikelihoodConst = NumFeatures * log(2 * Math.PI).to(Device);
 
-        // Center the data and transpose
-        var dataCentered = data - mean; // n x d
+            double diffWeights;
+            double diffVariance;
 
-        // Calculate the sample covariance
-        var XTX = dataCentered.T.matmul(dataCentered); // d x d
-        var sampleCov = XTX / n; // d x d
-
-        // Calculate term 1 for variance update
-        var term1 = trace(XTX);
-
-        // Compute log likelihood constant
-        var logLikelihoodConst = d * log(2 * Math.PI).to(Device).to_type(ScalarType);
-
-        double diffW;
-        double diffVariance;
-
-        // Repeat until convergence
-        for (int i = 0; i < _iterations; i++)
-        {
-            using (NewDisposeScope())
+            // Repeat until convergence
+            for (int i = 0; i < _iterations; i++)
             {
                 // E-step: Compute the posterior distribution of the latent variables
-                var M = W.T.matmul(W) + Iq * variance; // q x q
-                var MInv = inv(M); // q x q
-                var mu = MInv.matmul(W.T).matmul(dataCentered.T).T; // n x q
-                var SSum = n * MInv * variance; // q x q
-                var cov = mu.T.matmul(mu) + SSum; // q x q
+                var M = weights.T.matmul(weights) + identityComponents * Variance;
+                var MInv = inv(M);
+                var mu = MInv.matmul(weights.T).matmul(dataCentered.T).T;
+                var SSum = numSamples * MInv * Variance;
+                var cov = mu.T.matmul(mu) + SSum;
 
-                // M-step: Compute new W and new variance
-                var XMu = dataCentered.T.matmul(mu); // d x q
-                var WNew = XMu.matmul(inv(cov)); // d x q
+                // M-step: Compute new weights and new variance
+                var dataMu = dataCentered.T.matmul(mu);
+                var weightsNew = dataMu.matmul(inv(cov));
 
-                var term2 = 2 * XMu.mul(WNew).sum();
-                var mumu = mu.T.matmul(mu);
-                var WNewWNew = WNew.T.matmul(WNew);
-                var term3 = trace(WNewWNew.matmul(mumu + SSum));
-                var varianceNew = (term1 - term2 + term3) / (n * d); // scalar
+                var term2 = 2 * dataMu.mul(weightsNew).sum();
+                var mu2 = mu.T.matmul(mu);
+                var weightsNew2 = weightsNew.T.matmul(weightsNew);
+                var term3 = trace(weightsNew2.matmul(mu2 + SSum));
+                var varianceNew = (term1 - term2 + term3) / (numSamples * NumFeatures);
 
                 // Compute the log likelihood
-                var C = W.matmul(W.T) + Id * variance; // d x d
-                var CInv = inv(C); // d x d
-                var logLikelihood = -0.5 * n * (logLikelihoodConst + logdet(C) + trace(CInv.matmul(sampleCov))); // scalar
+                var logLikelihoodTerm = weightsNew.matmul(weightsNew.T) + eye(NumFeatures) * varianceNew;
+                var logLikelihoodTermInv = inv(logLikelihoodTerm);
+                var logLikelihood = -0.5 * numSamples * (logLikelihoodConst + logdet(logLikelihoodTerm) + trace(logLikelihoodTermInv.matmul(sampleCov)));
+
+                // Compare previous and new parameters for convergence
+                diffWeights = linalg.norm(weightsNew - weights).to_type(TorchSharp.torch.ScalarType.Float64).item<double>();
+                diffVariance = abs(varianceNew - Variance).to_type(TorchSharp.torch.ScalarType.Float64).item<double>();
+
+                // Update loglikelihood, weights and variance
+                LogLikelihood[i] = logLikelihood;
+                weights = weightsNew;
+                Variance = varianceNew.to_type(TorchSharp.torch.ScalarType.Float64).item<double>();
 
                 // Check for convergence
-                diffW = linalg.norm(WNew - W).to_type(ScalarType.Float64).cpu().ReadCpuDouble(0);
-                diffVariance = abs(varianceNew - variance).to_type(ScalarType.Float64).cpu().ReadCpuDouble(0);
-
-                // Update loglikelihood, W and variance
-                LogLikelihood[i] = logLikelihood.MoveToOuterDisposeScope();
-                W = WNew.MoveToOuterDisposeScope();
-                variance = varianceNew.to_type(ScalarType.Float64).cpu().ReadCpuDouble(0);
+                if (diffWeights < _tolerance && diffVariance < _tolerance)
+                {
+                    LogLikelihood = LogLikelihood.slice(0, 0, i + 1, 1);
+                    break;
+                }
             }
 
-
-            if (diffW < _tolerance && diffVariance < _tolerance)
-            {
-                LogLikelihood = LogLikelihood.slice(0, 0, i + 1, 1);
-                break;
-            }
+            // Finalize model parameters
+            LogLikelihood = LogLikelihood.MoveToOuterDisposeScope();
+            Components = weights.MoveToOuterDisposeScope();
+            Mean = mean.MoveToOuterDisposeScope();
         }
 
-        // Finalize model parameters
-        LogLikelihood = LogLikelihood.DetachFromDisposeScope();
-        Components = W.DetachFromDisposeScope();
-        Variance = variance;
-        _isFitted = true;
+        IsFitted = true;
     }
 
-    /// <summary>
-    /// Transforms the input data using the fitted PPCA model.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <inheritdoc/>
     public override Tensor Transform(Tensor data)
     {
-        if (data.NumberOfElements == 0 || data.dim() < 2)
-        {
-            throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
-        }
-
-        if (!_isFitted)
-        {
-            throw new InvalidOperationException("Model has not yet been fitted. You should call the Fit() or the FitAndTransform() methods first.");
-        }
-
-        var Xt = data.T;
-        var mean = Xt.mean([0], keepdim: true); // 1 x d
-        var X = Xt - mean; // n x d
-        var W = Components; // d x q
-        var M = W.T.matmul(W) + eye(NumComponents) * Variance; // q x q
-        var MInv = Utils.InvertSPD(M, eye(NumComponents)); // q x q
-        return X.matmul(W).matmul(MInv); // n x q
+        base.Transform(data);
+        var dataCentered = data - Mean;
+        var M = Components.T.matmul(Components) + eye(NumComponents) * Variance;
+        var MInv = Utils.InvertSPD(M, eye(NumComponents));
+        return dataCentered.matmul(Components).matmul(MInv);
     }
 
-    /// <summary>
-    /// Reconstructs the input data using the fitted PPCA model.
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <inheritdoc/>
     public override Tensor Reconstruct(Tensor data)
     {
-        if (data.NumberOfElements == 0 || data.dim() < 2)
-        {
-            throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
-        }
-
-        if (!_isFitted)
-        {
-            throw new InvalidOperationException("Model has not yet been fitted. You should call the Fit() or the FitAndTransform() methods first.");
-        }
-
-        var Xt = data.T;
-        var mean = Xt.mean([0], keepdim: true); // 1 x d
-        var Xc = Xt - mean; // n x d
-        var W = Components; // d x q
-        return Xc.matmul(W).matmul(W.T) + mean.T; // n x d
+        base.Reconstruct(data);
+        return data.matmul(Components.T) + Mean;
     }
 }
