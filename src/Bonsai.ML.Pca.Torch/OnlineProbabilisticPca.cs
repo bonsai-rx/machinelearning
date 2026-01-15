@@ -9,14 +9,12 @@ namespace Bonsai.ML.Pca.Torch;
 /// </summary>
 public class OnlineProbabilisticPca : PcaBaseModel
 {
-    private Tensor _mu = empty(0);
-    private Tensor _Iq = empty(0);
+    private Tensor _identityComponents = empty(0);
     private Tensor _mx = empty(0); // E[x]
     private Tensor _Cxz = empty(0); // E[xz^T]
     private Tensor _mz = empty(0); // E[z]
     private Tensor _Czz = empty(0); // E[zz^T]
     private Tensor _sxx = empty(0); // E[||x||^2]
-    private bool _initializedParameters = false;
     private readonly Func<double> UpdateSchedule;
     private int _stepCount = 0;
     private readonly bool _reorthogonalize = false;
@@ -37,6 +35,11 @@ public class OnlineProbabilisticPca : PcaBaseModel
     /// of Rho or Kappa should be specified.
     /// </remarks>
     public double? Kappa { get; private set; }
+
+    /// <summary>
+    /// Gets the mean of the fitted data.
+    /// </summary>
+    public Tensor Means { get; private set; } = empty(0);
 
     /// <summary>
     /// Gets the variance of the isotropic Gaussian noise model.
@@ -63,7 +66,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
     /// <summary>
     /// Gets the random number generator used for initializing the model.
     /// </summary>
-    public Generator Generator { get; private set; }
+    public Generator? Generator { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineProbabilisticPca"/> class.
@@ -108,11 +111,12 @@ public class OnlineProbabilisticPca : PcaBaseModel
 
         if (rho.HasValue)
         {
-            UpdateSchedule = () => rho.Value;
-            if (rho <= 0 || rho >= 1)
+            if (rho.Value <= 0 || rho.Value >= 1)
             {
                 throw new ArgumentException("Rho must be in the range (0, 1).", nameof(rho));
             }
+
+            UpdateSchedule = () => rho.Value;
         }
         else
         {
@@ -126,11 +130,12 @@ public class OnlineProbabilisticPca : PcaBaseModel
                 throw new ArgumentException("Kappa must be specified when using a learning rate schedule.", nameof(kappa));
             }
 
-            UpdateSchedule = () => Math.Pow(_stepCount + timeOffset.Value, -kappa.Value);
             if (kappa <= 0.5 || kappa > 1)
             {
                 throw new ArgumentException("Kappa must be in the range (0.5, 1].", nameof(kappa));
             }
+
+            UpdateSchedule = () => Math.Pow(_stepCount + timeOffset.Value, -kappa.Value);
         }
 
         if (reorthogonalizePeriod.HasValue)
@@ -139,7 +144,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
             ReorthogonalizePeriod = reorthogonalizePeriod.Value;
         }
 
-        Generator = generator ?? manual_seed(0);
+        Generator = generator;
         Rho = rho;
         Kappa = kappa;
         TimeOffset = timeOffset;
@@ -149,11 +154,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
     /// <inheritdoc/>
     public override void Fit(Tensor data)
     {
-        // throw new NotImplementedException();
-        if (data.NumberOfElements == 0 || data.dim() != 2)
-        {
-            throw new ArgumentException("Input data must be a 2D tensor.");
-        }
+        base.Fit(data);
 
         using (no_grad())
         using (NewDisposeScope())
@@ -163,48 +164,41 @@ public class OnlineProbabilisticPca : PcaBaseModel
             var rho = UpdateSchedule();
 
             // Initialize dimensions
-            var q = NumComponents;
-            var n = data.size(0);
-            var d = data.size(1);
+            var numSamples = data.size(0);
 
             // Initialize parameters
-            if (!_initializedParameters)
+            if (Means.numel() == 0)
             {
-                _mu = zeros(d, device: Device, dtype: ScalarType).MoveToOuterDisposeScope();
-                var randW = randn(d, q, generator: Generator, device: Device, dtype: ScalarType);
-                var orthonormalBases = linalg.qr(randW).Q;
-                Components = (orthonormalBases * Variance).MoveToOuterDisposeScope(); // d x q
-                _Iq = eye(q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q x q
-
-                _mx = zeros(d, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // d
-                _Cxz = zeros(d, q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // d x q
-                _mz = zeros(q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q
-                _Czz = zeros(q, q, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q x q
+                Means = zeros(NumFeatures, device: Device, dtype: ScalarType).MoveToOuterDisposeScope();
+                var weights = qr(randn(NumFeatures, NumComponents, generator: Generator, device: Device, dtype: ScalarType), mode: QRMode.Reduced).Q;
+                Components = (weights * Variance).MoveToOuterDisposeScope();
+                _identityComponents = eye(NumComponents, device: Device, dtype: ScalarType).MoveToOuterDisposeScope();
+                _mx = zeros(NumFeatures, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // d
+                _Cxz = zeros(NumFeatures, NumComponents, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // d x q
+                _mz = zeros(NumComponents, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q
+                _Czz = zeros(NumComponents, NumComponents, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // q x q
                 _sxx = zeros(1, device: Device, dtype: ScalarType).MoveToOuterDisposeScope(); // scalar
-
-                _initializedParameters = true;
             }
 
             // Covariance matrix
-            var cov = _Iq * Variance;
+            var cov = _identityComponents * Variance;
 
             // Center data using current mean
-            var Xc = data - _mu;
+            var dataCentered = data - Means;
 
             // E-step
             var M = Components.T.matmul(Components) + cov;
-            var MInv = Utils.InvertSPD(M, _Iq);
-
-            var XcW = Xc.matmul(Components);
-            var EzT = Utils.InvertSPD(M, XcW.T);
+            var MInv = Utils.InvertSPD(M, _identityComponents);
+            var projection = dataCentered.matmul(Components);
+            var EzT = Utils.InvertSPD(M, projection.T);
             var Ez = EzT.T;
 
             // Update statistics
             var mx = data.mean([0]);
             var sxx = data.pow(2).sum(dim: 1).mean();
-            var Cxz = data.T.matmul(Ez) / n;
+            var Cxz = data.T.matmul(Ez) / numSamples;
             var mz = Ez.mean([0]);
-            var Czz = EzT.matmul(Ez) / n + Variance * MInv;
+            var Czz = EzT.matmul(Ez) / numSamples + Variance * MInv;
 
             // Update parameters
             var rhoFactor = 1 - rho;
@@ -215,81 +209,62 @@ public class OnlineProbabilisticPca : PcaBaseModel
             _Czz = (rhoFactor * _Czz + rho * Czz).MoveToOuterDisposeScope();
 
             // Update mean
-            _mu = _mx.MoveToOuterDisposeScope();
+            Means = _mx.MoveToOuterDisposeScope();
 
             // Centered statistics
-            var Sxz = _Cxz - outer(_mu, _mz);
+            var Sxz = _Cxz - outer(Means, _mz);
             var Szz = _Czz;
-            var Sxx = _sxx - _mu.dot(_mu);
+            var Sxx = _sxx - Means.dot(Means);
 
             // M-step
-            var WNew = Utils.InvertSPD(Szz, Sxz.T).T;
+            var weightsUpdated = Utils.InvertSPD(Szz, Sxz.T).T;
 
             if (_reorthogonalize &&
                 _stepCount % ReorthogonalizePeriod == 0)
             {
-                var (U, S, Vh) = svd(WNew, fullMatrices: false);
+                var (U, S, Vh) = svd(weightsUpdated, fullMatrices: false);
                 var R = Vh.T;
-                WNew = U.matmul(diag(S));
+                weightsUpdated = U.matmul(diag(S));
                 _Cxz = _Cxz.matmul(R.T);
                 _Czz = R.matmul(_Czz).matmul(R.T);
                 _mz = R.matmul(_mz);
             }
 
             // Reorder components based on the strength of the components
-            var strength = sum(WNew * WNew, dim: 0);
+            var strength = sum(weightsUpdated * weightsUpdated, dim: 0);
             var indices = argsort(strength, descending: true);
-            Components = WNew.index_select(1, indices).MoveToOuterDisposeScope();
+            Components = weightsUpdated.index_select(1, indices).MoveToOuterDisposeScope();
             _Cxz = _Cxz.index_select(1, indices).MoveToOuterDisposeScope();
             _mz = _mz.index_select(0, indices).MoveToOuterDisposeScope();
             _Czz = _Czz.index_select(0, indices).index_select(1, indices).MoveToOuterDisposeScope();
 
-            Sxz = _Cxz - outer(_mu, _mz);
+            Sxz = _Cxz - outer(Means, _mz);
             Szz = _Czz;
 
             // Update variance
-            Variance = ((Sxx - 2 * trace(Components.T.matmul(Sxz)) + trace(Components.T.matmul(Components).matmul(Szz))) / (double)d)
+            Variance = ((Sxx - 2 * trace(Components.T.matmul(Sxz)) + trace(Components.T.matmul(Components).matmul(Szz))) / (double)NumFeatures)
                 .clamp_min(0.0)
                 .to_type(TorchSharp.torch.ScalarType.Float64)
                 .item<double>();
         }
+
+        IsFitted = true;
     }
 
     /// <inheritdoc/>
     public override Tensor Transform(Tensor data)
     {
-        if (data.NumberOfElements == 0 || data.dim() < 2)
-        {
-            throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
-        }
-
-        var Xt = data.T; // n x d
-        var Xc = Xt - _mu; // n x d
-        var M = Components.T.matmul(Components) + _Iq * Variance; // q x q
-        var XcW = Xc.matmul(Components);
-        return Utils.InvertSPD(M, XcW.T).T; // n x q
+        base.Transform(data);
+        var dataCentered = data - Means;
+        var M = Components.T.matmul(Components) + _identityComponents * Variance;
+        var projection = dataCentered.matmul(Components);
+        return Utils.InvertSPD(M, projection.T).T;
     }
 
     /// <inheritdoc/>
     public override Tensor Reconstruct(Tensor data)
     {
-        if (data.NumberOfElements == 0 || data.dim() < 2)
-        {
-            throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
-        }
-
-        if (!_initializedParameters)
-        {
-            throw new InvalidOperationException("Model has not yet been fitted. You should call the Fit() or the FitAndTransform() methods first.");
-        }
-
-        var Xt = data.T; // n x d
-        var Xc = Xt - _mu; // n x d
-        var M = Components.T.matmul(Components) + _Iq * Variance; // q x q
-        var XcW = Xc.matmul(Components);
-        var EzT = Utils.InvertSPD(M, XcW.T);
-        var Ez = EzT.T;
-
-        return Ez.matmul(Components.T) + _mu.T; // n x d
+        base.Reconstruct(data);
+        return data.matmul(Components.T) + Means;
     }
 }

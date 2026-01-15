@@ -1,10 +1,11 @@
 using System;
+using System.ComponentModel;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Pca.Torch;
 
 /// <summary>
-/// Implements Online PCA using the Generalized Hebbian Algorithm (GHA).
+/// Implements online PCA using the Generalized Hebbian Algorithm (GHA).
 /// </summary>
 /// <param name="numComponents"></param>
 /// <param name="learningRate"></param>
@@ -19,12 +20,18 @@ public class OnlinePcaGha(
     Generator? generator = null
 ) : PcaBaseModel(numComponents, device, scalarType)
 {
-
-    private Tensor _mean = empty(0);
-    private int _sampleCount = 0;
+    /// <summary>
+    /// Gets the number of samples that have been used to fit the model.
+    /// </summary>
+    public int SampleCount { get; private set; } = 0;
 
     /// <summary>
-    /// Gets or sets the learning rate for the GHA algorithm.
+    /// Gets the mean of the fitted data.
+    /// </summary>
+    public Tensor Mean { get; private set; } = empty(0);
+
+    /// <summary>
+    /// Gets or sets the learning rate.
     /// </summary>
     public double LearningRate { get; set; } = learningRate;
 
@@ -34,65 +41,61 @@ public class OnlinePcaGha(
     /// <summary>
     /// Gets the random number generator used for initializing the model.
     /// </summary>
-    public Generator Generator { get; private set; } = generator ?? manual_seed(0);
+    public Generator? Generator { get; private set; } = generator;
 
     /// <inheritdoc/>
     public override void Fit(Tensor data)
     {
-        // throw new NotImplementedException();
-        if (data.NumberOfElements == 0 || data.dim() != 2)
+        base.Fit(data);
+
+        var numSamples = data.size(0);
+
+        using (no_grad())
+        using (NewDisposeScope())
         {
-            throw new ArgumentException("Input data must be a 2D tensor.");
+            // Initialize components randomly
+            if (Components.numel() == 0)
+                Components = randn([NumFeatures, NumComponents], dtype: ScalarType, device: Device, generator: Generator);
+
+            if (Mean.numel() == 0)
+                Mean = data.mean([0], keepdim: true);
+            else
+            {
+                Mean *= SampleCount / (SampleCount + numSamples);
+                Mean += data.mean([0], keepdim: true) * numSamples / (SampleCount + numSamples);
+            }
+
+            SampleCount += (int)numSamples;
+            var dataCentered = data - Mean;
+
+            var projection = dataCentered.matmul(Components);
+            var hebbianTerm = dataCentered.T.matmul(projection);
+            var crossTerm = projection.T.matmul(projection);
+            var lowerTriangular = crossTerm.tril(0);
+            var correlation = Components.matmul(lowerTriangular);
+            var componentsUpdate = (hebbianTerm - correlation) * (LearningRate / numSamples);
+            var weights = Components + componentsUpdate;
+            var norms = weights.norm(dim: 0, keepdim: true, p: 2).clamp_min(1e-12);
+
+            Components = linalg.qr(weights / norms, mode: linalg.QRMode.Reduced).Q.MoveToOuterDisposeScope();
+            Mean = Mean.MoveToOuterDisposeScope();
         }
 
-        var q = NumComponents;
-
-        // Data is shaped (number of samples x number of features)
-        var n = data.shape[0];
-        var d = data.shape[1];
-
-        if (q > d)
-        {
-            throw new ArgumentException("Number of components cannot be greater than the number of features.", nameof(data));
-        }
-
-        // Initialize components randomly
-        if (Components.numel() == 0)
-            Components = linalg.qr(randn([d, q], ScalarType, Device), mode: linalg.QRMode.Reduced).Q;
-
-        if (_mean.numel() == 0)
-            _mean = data.mean([0], keepdim: true);
-        else
-            _mean.mul_(_sampleCount / (double)(_sampleCount + n)).add_(data.mean([0], keepdim: true), alpha: n / (double)(_sampleCount + n));
-
-        _sampleCount += (int)n;
-        var dataCentered = data - _mean;
-
-        var Y = dataCentered.matmul(Components); // n x q
-        var hebbianTerm = dataCentered.T.matmul(Y); // d x q
-        var crossTerm = Y.T.matmul(Y); // q x q
-        var lowerTriangular = crossTerm.tril(0); // q x q
-        var correlation = lowerTriangular.matmul(Components.T); // q x d
-
-        // Update components
-        Components.add_(hebbianTerm - correlation.T, alpha: LearningRate);
+        IsFitted = true;
     }
 
     /// <inheritdoc/>
     public override Tensor Transform(Tensor data)
     {
-        if (data.NumberOfElements == 0 || data.dim() != 2)
-        {
-            throw new ArgumentException("Input data must be a 2D tensor.");
-        }
-        var dataCentered = data - _mean;
-        return dataCentered.matmul(Components.T);
+        base.Transform(data);
+        var dataCentered = data - Mean;
+        return dataCentered.matmul(Components);
     }
 
     /// <inheritdoc/>
     public override Tensor Reconstruct(Tensor data)
     {
-        var transformed = Transform(data);
-        return transformed.matmul(Components.T) + _mean;
+        base.Reconstruct(data);
+        return data.matmul(Components.T) + Mean;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Pca.Torch;
@@ -52,14 +53,10 @@ public abstract class PcaBaseModel : IPcaBaseModel
     {
         CheckDataCompatibility(data);
 
-        var n = data.size(0);
         var d = data.size(1);
 
         if (NumComponents > d)
             throw new ArgumentException($"Number of components cannot be greater than the number of features. Number of components: {NumComponents}, number of features: {d}.", nameof(data));
-
-        if (n < 2)
-            throw new ArgumentException($"Need at least 2 samples to fit PCA. Number of samples: {n}.", nameof(data));
 
         NumFeatures = (int)d;
     }
@@ -101,7 +98,10 @@ public abstract class PcaBaseModel : IPcaBaseModel
             throw new ArgumentException("Data must be a non-empty 2D tensor with shape (samples x features).", nameof(data));
 
         if (data.dim() != 2)
-            throw new ArgumentException($"Data must be a 2D tensor with shape (samples x features). Data shape: {data.shape}.", nameof(data));
+        {
+            var shapeStr = string.Join(",", data.shape.Select(x => x.ToString()).ToArray());
+            throw new ArgumentException($"Data must be a 2D tensor with shape (samples x features). Data shape: {shapeStr}.", nameof(data));
+        }
     }
 
     private void CheckDataFeatures(Tensor data)
