@@ -23,13 +23,18 @@ public class TransformerEncoder
     public long NumLayers { get; set; }
 
     /// <summary>
+    /// The transformer encoder layer to be stacked.
+    /// </summary>
+    [XmlIgnore]
+    [Description("The transformer encoder layer to be stacked.")]
+    public TorchSharp.Modules.TransformerEncoderLayer TransformerEncoderLayer { get; private set; }
+
+    /// <summary>
     /// Creates a TransformerEncoder module from the input TransformerEncoderLayer.
     /// </summary>
-    /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process(IObservable<Module<Tensor, Tensor>> source)
+    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
     {
-        return source.Select(transformerEncoderLayer =>
-            TransformerEncoder(transformerEncoderLayer as TorchSharp.Modules.TransformerEncoderLayer, NumLayers));
+        return Observable.Return(TransformerEncoder(TransformerEncoderLayer, NumLayers));
     }
 }
