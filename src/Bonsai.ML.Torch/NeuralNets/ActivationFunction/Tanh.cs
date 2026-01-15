@@ -4,34 +4,34 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
-/// Represents an operator that creates a sigmoid activation function.
+/// Represents an operator that creates a hyperbolic tangent (tanh) activation function.
 /// </summary>
 /// <remarks>
-/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html"/> for more information.
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Tanh.html"/> for more information.
 /// </remarks>
-[Description("Creates a sigmoid activation function.")]
-public class Sigmoid
+[Description("Creates a hyperbolic tangent (tanh) activation function.")]
+public class Tanh
 {
     /// <summary>
-    /// Creates a sigmoid module.
+    /// Creates a Tanh module.
     /// </summary>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
-        return Observable.Return(Sigmoid());
+        return Observable.Return(Tanh());
     }
 
     /// <summary>
-    /// Creates a sigmoid module.
+    /// Creates a Tanh module.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ => Sigmoid());
+        return source.Select(_ => Tanh());
     }
 }

@@ -4,34 +4,34 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
-/// Represents an operator that creates a softsign activation function.
+/// Represents an operator that creates a log sigmoid module.
 /// </summary>
 /// <remarks>
-/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Softsign.html"/> for more information.
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.LogSigmoid.html"/> for more information.
 /// </remarks>
-[Description("Creates a softsign activation function.")]
-public class Softsign
+[Description("Creates a log sigmoid module.")]
+public class LogSigmoid
 {
     /// <summary>
-    /// Creates a Softsign module.
+    /// Creates a LogSigmoid module.
     /// </summary>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
-        return Observable.Return(Softsign());
+        return Observable.Return(LogSigmoid());
     }
 
     /// <summary>
-    /// Creates a Softsign module.
+    /// Creates a LogSigmoid module.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ => Softsign());
+        return source.Select(_ => LogSigmoid());
     }
 }

@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
 /// Represents an operator that creates a parametric rectified linear unit (PReLU) activation function.
@@ -14,7 +14,7 @@ namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.PReLU.html"/> for more information.
 /// </remarks>
 [Description("Creates a parametric rectified linear unit (PReLU) activation function.")]
-public class ParametricRectified
+public class Prelu
 {
     /// <summary>
     /// The number of parameters to learn.

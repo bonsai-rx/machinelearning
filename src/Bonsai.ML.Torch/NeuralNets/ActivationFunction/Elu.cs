@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
 /// Represents an operator that creates an exponential linear unit (ELU) activation function.
@@ -13,7 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.ELU.html"/> for more information.
 /// </remarks>
 [Description("Creates an exponential linear unit (ELU) activation function.")]
-public class Exponential
+public class Elu
 {
     /// <summary>
     /// The alpha value for the ELU activation function.

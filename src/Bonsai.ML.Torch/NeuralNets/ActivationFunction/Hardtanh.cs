@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
 /// Represents an operator that creates a Hardtanh module.
@@ -13,7 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Hardtanh.html"/> for more information.
 /// </remarks>
 [Description("Creates a Hardtanh module.")]
-public class HardTanh
+public class Hardtanh
 {
     /// <summary>
     /// The minimum value of the linear region range.

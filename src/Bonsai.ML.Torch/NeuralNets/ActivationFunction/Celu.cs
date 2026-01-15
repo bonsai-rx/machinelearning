@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
 /// Represents an operator that creates a continuously differentiable exponential linear unit (CELU) activation function.
@@ -13,7 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.CELU.html"/> for more information.
 /// </remarks>
 [Description("Creates a continuously differentiable exponential linear unit (CELU) activation function.")]
-public class ContinuouslyDifferentiableExponential
+public class Celu
 {
     /// <summary>
     /// The alpha value for the CELU activation function.

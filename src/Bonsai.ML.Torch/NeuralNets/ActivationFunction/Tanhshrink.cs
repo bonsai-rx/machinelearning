@@ -4,34 +4,34 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
-/// Represents an operator that creates a mish activation function.
+/// Represents an operator that creates a tanhshrink activation function.
 /// </summary>
 /// <remarks>
-/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Mish.html"/> for more information.
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Tanhshrink.html"/> for more information.
 /// </remarks>
-[Description("Creates a mish activation function.")]
-public class Mish
+[Description("Creates a tanhshrink activation function.")]
+public class Tanhshrink
 {
     /// <summary>
-    /// Creates a Mish module.
+    /// Creates a Tanhshrink module.
     /// </summary>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
-        return Observable.Return(Mish());
+        return Observable.Return(Tanhshrink());
     }
 
     /// <summary>
-    /// Creates a Mish module.
+    /// Creates a Tanhshrink module.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ => Mish());
+        return source.Select(_ => Tanhshrink());
     }
 }

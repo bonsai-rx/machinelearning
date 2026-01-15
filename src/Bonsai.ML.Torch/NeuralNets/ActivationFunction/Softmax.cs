@@ -4,40 +4,40 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
-/// Represents an operator that creates a softmin activation function.
+/// Represents an operator that creates a softmax activation function.
 /// </summary>
 /// <remarks>
-/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Softmin.html"/> for more information.
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html"/> for more information.
 /// </remarks>
-[Description("Creates a softmin activation function.")]
-public class Softmin
+[Description("Creates a softmax activation function.")]
+public class Softmax
 {
     /// <summary>
-    /// The dimension along which softmin will be computed.
+    /// The dimension along which Softmax will be computed.
     /// </summary>
-    [Description("The dimension along which softmin will be computed.")]
+    [Description("The dimension along which Softmax will be computed.")]
     public long Dim { get; set; }
 
     /// <summary>
-    /// Creates a Softmin module.
+    /// Creates a Softmax module.
     /// </summary>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
-        return Observable.Return(Softmin(Dim));
+        return Observable.Return(Softmax(Dim));
     }
 
     /// <summary>
-    /// Creates a Softmin module.
+    /// Creates a Softmax module.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ => Softmin(Dim));
+        return source.Select(_ => Softmax(Dim));
     }
 }

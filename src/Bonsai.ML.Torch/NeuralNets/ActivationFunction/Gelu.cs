@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
 /// Represents an operator that creates a gaussian error linear unit (GELU) activation function.
@@ -13,7 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.GELU.html"/> for more information.
 /// </remarks>
 [Description("Creates a gaussian error linear unit (GELU) activation function.")]
-public class GaussianError
+public class Gelu
 {
     /// <summary>
     /// If set to true, will do this operation in-place.

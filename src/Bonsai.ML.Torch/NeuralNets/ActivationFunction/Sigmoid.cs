@@ -4,34 +4,34 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 
-namespace Bonsai.ML.Torch.NeuralNets.NonLinearActivations;
+namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 
 /// <summary>
-/// Represents an operator that creates a tanh shrinkage activation function.
+/// Represents an operator that creates a sigmoid activation function.
 /// </summary>
 /// <remarks>
-/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Tanhshrink.html"/> for more information.
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html"/> for more information.
 /// </remarks>
-[Description("Creates a tanh shrinkage activation function.")]
-public class TanhShrinkage
+[Description("Creates a sigmoid activation function.")]
+public class Sigmoid
 {
     /// <summary>
-    /// Creates a Tanhshrink module.
+    /// Creates a sigmoid module.
     /// </summary>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process()
     {
-        return Observable.Return(Tanhshrink());
+        return Observable.Return(Sigmoid());
     }
 
     /// <summary>
-    /// Creates a Tanhshrink module.
+    /// Creates a sigmoid module.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
     {
-        return source.Select(_ => Tanhshrink());
+        return source.Select(_ => Sigmoid());
     }
 }
