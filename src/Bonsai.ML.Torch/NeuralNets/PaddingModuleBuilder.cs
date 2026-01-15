@@ -25,6 +25,8 @@ public class PaddingModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "PaddingModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PaddingModuleBuilder"/> class.
     /// </summary>
@@ -32,7 +34,7 @@ public class PaddingModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Padding.ConstantPad1d();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific padding module to create.
     /// </summary>

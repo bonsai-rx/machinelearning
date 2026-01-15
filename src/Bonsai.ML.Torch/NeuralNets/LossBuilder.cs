@@ -30,21 +30,21 @@ namespace Bonsai.ML.Torch.NeuralNets;
 [Combinator]
 [Description("Creates a loss module.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class LossModuleBuilder : ModuleCombinatorBuilder, INamedElement
+public class LossBuilder : ModuleCombinatorBuilder, INamedElement
 {
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
-    string INamedElement.Name => $"Loss.{GetElementDisplayName(LossModule)}";
+    internal override string BuilderName => "Loss";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LossModuleBuilder"/> class.
+    /// Initializes a new instance of the <see cref="LossBuilder"/> class.
     /// </summary>
-    public LossModuleBuilder()
+    public LossBuilder()
     {
         Module = new Loss.GaussianNegativeLogLikelihood();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific loss module.
     /// </summary>

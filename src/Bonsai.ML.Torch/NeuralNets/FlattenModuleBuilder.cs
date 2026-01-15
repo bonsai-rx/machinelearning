@@ -17,6 +17,8 @@ public class FlattenModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "FlattenModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="FlattenModuleBuilder"/> class.
     /// </summary>
@@ -24,7 +26,7 @@ public class FlattenModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Flatten.Flatten();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific flatten module to create.
     /// </summary>

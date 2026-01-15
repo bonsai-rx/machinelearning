@@ -25,7 +25,7 @@ public class OptimizerBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
-    string INamedElement.Name => $"Optimizer.{GetElementDisplayName(OptimizerModule)}";
+    internal override string BuilderName => "Optimizer";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OptimizerBuilder"/> class.
@@ -34,7 +34,7 @@ public class OptimizerBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Optimizer.Adam();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific optimizer to create.
     /// </summary>

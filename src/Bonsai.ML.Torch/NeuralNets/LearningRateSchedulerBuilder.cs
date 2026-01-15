@@ -24,7 +24,7 @@ public class LearningRateSchedulerBuilder : ModuleCombinatorBuilder, INamedEleme
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
-    string INamedElement.Name => $"LearningRateScheduler.{GetElementDisplayName(LearningRateScheduler)}";
+    internal override string BuilderName => "LearningRateScheduler";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LearningRateSchedulerBuilder"/> class.
@@ -33,7 +33,7 @@ public class LearningRateSchedulerBuilder : ModuleCombinatorBuilder, INamedEleme
     {
         Module = new LearningRateScheduler.Constant();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific learning rate scheduler to create.
     /// </summary>

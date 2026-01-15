@@ -18,6 +18,8 @@ public class VisionModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "VisionModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VisionModuleBuilder"/> class.
     /// </summary>
@@ -25,7 +27,7 @@ public class VisionModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Vision.PixelShuffle();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific vision module to create.
     /// </summary>

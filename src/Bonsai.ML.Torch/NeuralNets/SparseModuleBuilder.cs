@@ -19,6 +19,8 @@ public class SparseModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "SparseModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SparseModuleBuilder"/> class.
     /// </summary>
@@ -26,7 +28,7 @@ public class SparseModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Sparse.Embedding();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific sparse module to create.
     /// </summary>

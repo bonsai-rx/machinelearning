@@ -20,6 +20,8 @@ public class TransformerModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "TransformerModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TransformerModuleBuilder"/> class.
     /// </summary>
@@ -27,7 +29,7 @@ public class TransformerModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Transformer.Transformer();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific transformer module to create.
     /// </summary>

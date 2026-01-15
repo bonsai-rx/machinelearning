@@ -34,6 +34,8 @@ public class PoolingModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "PoolingModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PoolingModuleBuilder"/> class.
     /// </summary>
@@ -41,7 +43,7 @@ public class PoolingModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Pooling.AdaptiveAvgPool1d();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific pooling module to create.
     /// </summary>

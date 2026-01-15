@@ -21,6 +21,8 @@ public class RecurrentModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "RecurrentModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RecurrentModuleBuilder"/> class.
     /// </summary>
@@ -28,7 +30,7 @@ public class RecurrentModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Recurrent.RecurrentNeuralNetwork();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific recurrent neural network module to create.
     /// </summary>

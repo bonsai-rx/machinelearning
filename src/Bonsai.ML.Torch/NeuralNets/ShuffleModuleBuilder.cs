@@ -16,6 +16,8 @@ public class ShuffleModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "ShuffleModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ShuffleModuleBuilder"/> class.
     /// </summary>
@@ -23,7 +25,7 @@ public class ShuffleModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Shuffle.ChannelShuffle();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific shuffle module to create.
     /// </summary>

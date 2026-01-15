@@ -21,6 +21,8 @@ public class DropoutModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "DropoutModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DropoutModuleBuilder"/> class.
     /// </summary>
@@ -28,7 +30,7 @@ public class DropoutModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Dropout.AlphaDropout();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific dropout module to create.
     /// </summary>

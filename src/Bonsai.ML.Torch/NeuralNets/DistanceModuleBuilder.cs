@@ -17,6 +17,8 @@ public class DistanceModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "DistanceModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DistanceModuleBuilder"/> class.
     /// </summary>
@@ -24,7 +26,7 @@ public class DistanceModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Distance.CosineSimilarity();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific distance module to create.
     /// </summary>

@@ -23,6 +23,8 @@ public class ConvolutionModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "ConvolutionModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ConvolutionModuleBuilder"/> class.
     /// </summary>
@@ -30,7 +32,7 @@ public class ConvolutionModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Convolution.Conv1d();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific convolution module to create.
     /// </summary>

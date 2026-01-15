@@ -18,6 +18,8 @@ public class LinearModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "LinearModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="LinearModuleBuilder"/> class.
     /// </summary>
@@ -25,7 +27,7 @@ public class LinearModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Linear.Linear();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific linear module.
     /// </summary>

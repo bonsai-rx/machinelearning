@@ -14,7 +14,9 @@ namespace Bonsai.ML.Torch.NeuralNets;
 public abstract class ModuleCombinatorBuilder : ExpressionBuilder, ICustomTypeDescriptor, INamedElement
 {
     /// <inheritdoc/>
-    string INamedElement.Name => $"Module.{GetElementDisplayName(Module)}";
+    string INamedElement.Name => $"{BuilderName}.{GetElementDisplayName(Module)}";
+
+    internal abstract string BuilderName { get; }
 
     internal object Module { get; set; }
 

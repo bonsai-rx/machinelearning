@@ -11,22 +11,22 @@ namespace Bonsai.ML.Torch.NeuralNets;
 [Combinator]
 [Description("Creates a sequential container for torch modules.")]
 [WorkflowElementCategory(ElementCategory.Source)]
-public class SequentialBuilder : ModuleCombinatorBuilder, INamedElement
+public class ContainerBuilder : ModuleCombinatorBuilder, INamedElement
 {
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
     /// <inheritdoc/>
-    string INamedElement.Name => "Sequential";
+    internal override string BuilderName => "Container";
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SequentialBuilder"/> class.
+    /// Initializes a new instance of the <see cref="ContainerBuilder"/> class.
     /// </summary>
-    public SequentialBuilder()
+    public ContainerBuilder()
     {
         Module = new Container.Sequential();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific container module to create.
     /// </summary>

@@ -24,6 +24,8 @@ public class NormalizationModuleBuilder : ModuleCombinatorBuilder, INamedElement
     /// <inheritdoc/>
     public override Range<int> ArgumentRange => Range.Create(0, 1);
 
+    internal override string BuilderName => "NormalizationModule";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="NormalizationModuleBuilder"/> class.
     /// </summary>
@@ -31,7 +33,7 @@ public class NormalizationModuleBuilder : ModuleCombinatorBuilder, INamedElement
     {
         Module = new Normalization.BatchNorm1d();
     }
-    
+
     /// <summary>
     /// Gets or sets the specific normalization module to create.
     /// </summary>
