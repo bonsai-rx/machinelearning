@@ -1,0 +1,44 @@
+using System;
+using System.ComponentModel;
+using System.Reactive.Linq;
+using static TorchSharp.torch;
+using static TorchSharp.torch.nn;
+
+namespace Bonsai.ML.Torch.NeuralNets.Loss;
+
+/// <summary>
+/// Represents an operator that creates a mean squared error (MSE) loss module.
+/// </summary>
+/// <remarks>
+/// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html"/> for more information.
+/// </remarks>
+[Description("Creates a mean squared error (MSE) loss module.")]
+[DisplayName("MSE")]
+public class MeanSquaredError
+{
+    /// <summary>
+    /// The reduction type to apply to the output.
+    /// </summary>
+    [Description("The reduction type to apply to the output.")]
+    public Reduction Reduction { get; set; } = Reduction.Mean;
+
+    /// <summary>
+    /// Creates a mean squared error (MSE) loss module.
+    /// </summary>
+    /// <returns></returns>
+    public IObservable<TorchSharp.Modules.MSELoss> Process()
+    {
+        return Observable.Return(MSELoss(Reduction));
+    }
+
+    /// <summary>
+    /// Creates a mean squared error (MSE) loss module.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<TorchSharp.Modules.MSELoss> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => MSELoss(Reduction));
+    }
+}
