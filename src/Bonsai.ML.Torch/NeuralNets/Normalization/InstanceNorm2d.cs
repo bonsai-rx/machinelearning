@@ -63,7 +63,7 @@ public class InstanceNorm2d
     /// Creates an InstanceNorm2d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.InstanceNorm2d> Process()
     {
         return Observable.Return(InstanceNorm2d(Features, Eps, Momentum, Affine, TrackRunningStats, Device, Type));
     }
@@ -74,7 +74,7 @@ public class InstanceNorm2d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.InstanceNorm2d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => InstanceNorm2d(Features, Eps, Momentum, Affine, TrackRunningStats, Device, Type));
     }

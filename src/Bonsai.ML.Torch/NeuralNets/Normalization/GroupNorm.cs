@@ -57,7 +57,7 @@ public class GroupNorm
     /// Creates a GroupNorm module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.GroupNorm> Process()
     {
         return Observable.Return(GroupNorm(NumGroups, NumChannels, Eps, Affine, Device, Type));
     }
@@ -68,7 +68,7 @@ public class GroupNorm
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.GroupNorm> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => GroupNorm(NumGroups, NumChannels, Eps, Affine, Device, Type));
     }

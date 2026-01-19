@@ -25,7 +25,7 @@ public class FeatureAlphaDropout
     /// Creates a FeatureAlphaDropout module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.FeatureAlphaDropout> Process()
     {
         return Observable.Return(FeatureAlphaDropout(Probability));
     }
@@ -36,7 +36,7 @@ public class FeatureAlphaDropout
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.FeatureAlphaDropout> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => FeatureAlphaDropout(Probability));
     }

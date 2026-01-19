@@ -37,7 +37,7 @@ public class Hardtanh
     /// Creates a Hardtanh module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Hardtanh> Process()
     {
         return Observable.Return(Hardtanh(MinVal, MaxVal, Inplace));
     }
@@ -48,7 +48,7 @@ public class Hardtanh
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Hardtanh> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Hardtanh(MinVal, MaxVal, Inplace));
     }

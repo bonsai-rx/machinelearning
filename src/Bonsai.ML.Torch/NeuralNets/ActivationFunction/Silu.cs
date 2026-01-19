@@ -13,13 +13,14 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.SiLU.html"/> for more information.
 /// </remarks>
 [Description("Creates a sigmoid weighted linear unit (SiLU) activation function.")]
+[DisplayName("SiLU")]
 public class Silu
 {
     /// <summary>
     /// Creates a sigmoid weighted linear unit (SiLU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.SiLU> Process()
     {
         return Observable.Return(SiLU());
     }
@@ -30,7 +31,7 @@ public class Silu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.SiLU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => SiLU());
     }

@@ -54,7 +54,7 @@ public class Fold
     /// Creates a Fold module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Fold> Process()
     {
         return Observable.Return(Fold(OutputSize, KernelSize, Dilation, Padding, Stride));
     }
@@ -65,7 +65,7 @@ public class Fold
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Fold> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Fold(OutputSize, KernelSize, Dilation, Padding, Stride));
     }

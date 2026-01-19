@@ -25,7 +25,7 @@ public class Softmin
     /// Creates a Softmin module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Softmin> Process()
     {
         return Observable.Return(Softmin(Dim));
     }
@@ -36,7 +36,7 @@ public class Softmin
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Softmin> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Softmin(Dim));
     }

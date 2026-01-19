@@ -92,7 +92,7 @@ public class Conv2d
     /// Creates a Conv2d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Conv2d> Process()
     {
         return Observable.Return(Conv2d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type));
     }
@@ -103,7 +103,7 @@ public class Conv2d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Conv2d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Conv2d(InChannels, OutChannels, KernelSize, Stride, Padding, Dilation, PaddingMode, Groups, Bias, Device, Type));
     }

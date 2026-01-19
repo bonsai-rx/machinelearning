@@ -25,7 +25,7 @@ public class Softmax
     /// Creates a Softmax module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Softmax> Process()
     {
         return Observable.Return(Softmax(Dim));
     }
@@ -36,7 +36,7 @@ public class Softmax
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Softmax> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Softmax(Dim));
     }

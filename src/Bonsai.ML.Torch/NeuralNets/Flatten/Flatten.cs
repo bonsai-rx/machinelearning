@@ -31,7 +31,7 @@ public class Flatten
     /// Creates a Flatten module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Flatten> Process()
     {
         return Observable.Return(nn.Flatten(StartDim, EndDim));
     }
@@ -42,7 +42,7 @@ public class Flatten
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Flatten> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => nn.Flatten(StartDim, EndDim));
     }

@@ -99,7 +99,7 @@ public class ConvTranspose2d
     /// Creates a ConvTranspose2d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ConvTranspose2d> Process()
     {
         return Observable.Return(ConvTranspose2d(InChannels, OutChannels, KernelSize, Stride, Padding, OutputPadding, Dilation, PaddingMode, Groups, Bias, Device, Type));
     }
@@ -110,7 +110,7 @@ public class ConvTranspose2d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ConvTranspose2d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ConvTranspose2d(InChannels, OutChannels, KernelSize, Stride, Padding, OutputPadding, Dilation, PaddingMode, Groups, Bias, Device, Type));
     }

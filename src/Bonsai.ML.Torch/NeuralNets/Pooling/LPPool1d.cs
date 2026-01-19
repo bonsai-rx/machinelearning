@@ -47,7 +47,7 @@ public class LPPool1d
     /// Creates a LPPool1d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.LPPool1d> Process()
     {
         return Observable.Return(LPPool1d(Norm, KernelSize, Stride, CeilMode));
     }
@@ -58,7 +58,7 @@ public class LPPool1d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.LPPool1d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => LPPool1d(Norm, KernelSize, Stride, CeilMode));
     }

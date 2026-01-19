@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.ReLU6.html"/> for more information.
 /// </remarks>
 [Description("Creates a bounded rectified linear unit (ReLU6) activation function.")]
+[DisplayName("ReLU6")]
 public class ReluBounded
 {
     /// <summary>
@@ -25,7 +26,7 @@ public class ReluBounded
     /// Creates a bounded rectified linear unit (ReLU6) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ReLU6> Process()
     {
         return Observable.Return(ReLU6(Inplace));
     }
@@ -36,7 +37,7 @@ public class ReluBounded
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ReLU6> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ReLU6(Inplace));
     }

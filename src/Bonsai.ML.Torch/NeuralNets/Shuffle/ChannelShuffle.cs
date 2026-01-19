@@ -25,7 +25,7 @@ public class ChannelShuffle
     /// Creates a channel shuffle module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ChannelShuffle> Process()
     {
         return Observable.Return(ChannelShuffle(Groups));
     }
@@ -36,7 +36,7 @@ public class ChannelShuffle
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ChannelShuffle> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ChannelShuffle(Groups));
     }

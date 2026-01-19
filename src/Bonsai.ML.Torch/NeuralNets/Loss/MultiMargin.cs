@@ -15,7 +15,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// </remarks>
 [Description("Creates a multi-class margin loss (MultiMarginLoss) module.")]
 [TypeConverter(typeof(TensorOperatorConverter))]
-public class MultiClassMargin : IScalarTypeProvider
+public class MultiMargin : IScalarTypeProvider
 {
     /// <summary>
     /// The p parameter, can be either 1 or 2.
@@ -65,7 +65,7 @@ public class MultiClassMargin : IScalarTypeProvider
     /// Creates a multi-class margin loss (MultiMarginLoss) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.MultiMarginLoss> Process()
     {
         return Observable.Return(MultiMarginLoss(P, Margin, Weight, Reduction));
     }
@@ -76,7 +76,7 @@ public class MultiClassMargin : IScalarTypeProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.MultiMarginLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => MultiMarginLoss(P, Margin, Weight, Reduction));
     }

@@ -31,7 +31,7 @@ public class Dropout1d
     /// Creates a Dropout1d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Dropout1d> Process()
     {
         return Observable.Return(nn.Dropout1d(Probability, Inplace));
     }
@@ -42,7 +42,7 @@ public class Dropout1d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Dropout1d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => nn.Dropout1d(Probability, Inplace));
     }

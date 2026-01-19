@@ -44,7 +44,7 @@ public class MaxUnpool2d
     /// Creates a MaxUnpool2d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, long[], Tensor>> Process()
+    public IObservable<TorchSharp.Modules.MaxUnpool2d> Process()
     {
         return Observable.Return(MaxUnpool2d(KernelSize, Stride, Padding));
     }
@@ -55,7 +55,7 @@ public class MaxUnpool2d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, long[], Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.MaxUnpool2d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => MaxUnpool2d(KernelSize, Stride, Padding));
     }

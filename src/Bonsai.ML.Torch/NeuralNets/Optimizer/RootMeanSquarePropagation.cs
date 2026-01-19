@@ -15,6 +15,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Optimizer;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.RMSprop.html"/> for more information.
 /// </remarks>
 [Description("Creates a root mean square propagation (RMSProp) optimizer.")]
+[DisplayName("RMSProp")]
 public class RootMeanSquarePropagation
 {
     /// <summary>
@@ -65,7 +66,7 @@ public class RootMeanSquarePropagation
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<optim.Optimizer> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
+    public IObservable<TorchSharp.Modules.RMSProp> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
     {
         return source.Select(parameters => RMSProp(parameters, LearningRate, Alpha, Eps, WeightDecay, Momentum, Centered, Maximize));
     }

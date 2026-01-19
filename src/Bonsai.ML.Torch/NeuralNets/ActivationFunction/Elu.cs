@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.ELU.html"/> for more information.
 /// </remarks>
 [Description("Creates an exponential linear unit (ELU) activation function.")]
+[DisplayName("ELU")]
 public class Elu
 {
     /// <summary>
@@ -31,7 +32,7 @@ public class Elu
     /// Creates an exponential linear unit (ELU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ELU> Process()
     {
         return Observable.Return(ELU(Alpha, Inplace));
     }
@@ -42,7 +43,7 @@ public class Elu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ELU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ELU(Alpha, Inplace));
     }

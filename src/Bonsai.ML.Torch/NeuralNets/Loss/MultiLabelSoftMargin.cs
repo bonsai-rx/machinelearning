@@ -53,7 +53,7 @@ public class MultiLabelSoftMargin : IScalarTypeProvider
     /// Creates a multi-label soft margin loss (MultiLabelSoftMarginLoss) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.MultiLabelSoftMarginLoss> Process()
     {
         return Observable.Return(MultiLabelSoftMarginLoss(Weight, Reduction));
     }
@@ -64,7 +64,7 @@ public class MultiLabelSoftMargin : IScalarTypeProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.MultiLabelSoftMarginLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => MultiLabelSoftMarginLoss(Weight, Reduction));
     }

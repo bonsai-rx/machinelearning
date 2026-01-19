@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.SELU.html"/> for more information.
 /// </remarks>
 [Description("Creates a scaled exponential linear unit (SELU) activation function.")]
+[DisplayName("SeLU")]
 public class Selu
 {
     /// <summary>
@@ -25,7 +26,7 @@ public class Selu
     /// Creates a scaled exponential linear unit (SELU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.SELU> Process()
     {
         return Observable.Return(SELU(Inplace));
     }
@@ -36,7 +37,7 @@ public class Selu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.SELU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => SELU(Inplace));
     }

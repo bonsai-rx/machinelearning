@@ -31,7 +31,7 @@ public class CosineEmbedding
     /// Creates a cosine embedding loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.CosineEmbeddingLoss> Process()
     {
         return Observable.Return(CosineEmbeddingLoss(Margin, Reduction));
     }
@@ -42,7 +42,7 @@ public class CosineEmbedding
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.CosineEmbeddingLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => CosineEmbeddingLoss(Margin, Reduction));
     }

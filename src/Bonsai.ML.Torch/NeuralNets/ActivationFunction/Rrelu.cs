@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.RReLU.html"/> for more information.
 /// </remarks>
 [Description("Creates a randomized leaky rectified linear unit (RReLU) module.")]
+[DisplayName("RReLU")]
 public class Rrelu
 {
     /// <summary>
@@ -37,7 +38,7 @@ public class Rrelu
     /// Creates a randomized leaky rectified linear unit (RReLU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.RReLU> Process()
     {
         return Observable.Return(RReLU(Lower, Upper, Inplace));
     }
@@ -48,7 +49,7 @@ public class Rrelu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.RReLU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => RReLU(Lower, Upper, Inplace));
     }

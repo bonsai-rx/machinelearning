@@ -20,7 +20,7 @@ public class Sequential
     /// Creates a sequential container from the input modules.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process(IObservable<Module<Tensor, Tensor>[]> source)
+    public IObservable<TorchSharp.Modules.Sequential> Process<T>(IObservable<T[]> source) where T : Module<Tensor, Tensor>
     {
         return source.Select(modules => Sequential(modules));
     }

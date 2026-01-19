@@ -26,7 +26,7 @@ public class ZeroPad2d
     /// Creates a 2D zero padding module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ZeroPad2d> Process()
     {
         return Observable.Return(ZeroPad2d(PaddingSize));
     }
@@ -37,7 +37,7 @@ public class ZeroPad2d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ZeroPad2d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ZeroPad2d(PaddingSize));
     }

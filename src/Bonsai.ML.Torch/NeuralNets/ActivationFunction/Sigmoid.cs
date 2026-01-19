@@ -19,7 +19,7 @@ public class Sigmoid
     /// Creates a sigmoid module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Sigmoid> Process()
     {
         return Observable.Return(Sigmoid());
     }
@@ -30,7 +30,7 @@ public class Sigmoid
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Sigmoid> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Sigmoid());
     }

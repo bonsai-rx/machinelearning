@@ -75,7 +75,7 @@ public class GatedRecurrentUnit
     /// Creates a GRU module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, (Tensor, Tensor)>> Process()
+    public IObservable<TorchSharp.Modules.GRU> Process()
     {
         return Observable.Return(GRU(InputSize, HiddenSize, NumLayers, Bias, BatchFirst, Dropout, Bidirectional, Device, Type));
     }
@@ -86,7 +86,7 @@ public class GatedRecurrentUnit
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, (Tensor, Tensor)>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.GRU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => GRU(InputSize, HiddenSize, NumLayers, Bias, BatchFirst, Dropout, Bidirectional, Device, Type));
     }

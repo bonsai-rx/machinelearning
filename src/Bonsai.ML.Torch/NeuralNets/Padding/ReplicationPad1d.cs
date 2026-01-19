@@ -26,7 +26,7 @@ public class ReplicationPad1d
     /// Creates a 1D replication padding module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ReplicationPad1d> Process()
     {
         return Observable.Return(ReplicationPad1d(PaddingSize));
     }
@@ -37,7 +37,7 @@ public class ReplicationPad1d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ReplicationPad1d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ReplicationPad1d(PaddingSize));
     }

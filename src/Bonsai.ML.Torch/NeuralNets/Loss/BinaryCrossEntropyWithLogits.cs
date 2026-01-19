@@ -15,6 +15,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// </remarks>
 [Description("Creates a binary cross entropy with logits (BCEWithLogits) loss module.")]
 [TypeConverter(typeof(TensorOperatorConverter))]
+[DisplayName("BCEWithLogits")]
 public class BinaryCrossEntropyWithLogits : IScalarTypeProvider
 {
     /// <summary>
@@ -73,7 +74,7 @@ public class BinaryCrossEntropyWithLogits : IScalarTypeProvider
     /// Creates a binary cross entropy with logits (BCEWithLogits) loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.BCEWithLogitsLoss> Process()
     {
         return Observable.Return(BCEWithLogitsLoss(Weight, Reduction, PosWeights));
     }
@@ -84,8 +85,8 @@ public class BinaryCrossEntropyWithLogits : IScalarTypeProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.BCEWithLogitsLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => BCEWithLogitsLoss(Weight, Reduction, PosWeights));
-    }   
+    }
 }

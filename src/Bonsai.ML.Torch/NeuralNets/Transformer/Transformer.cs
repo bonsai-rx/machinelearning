@@ -61,7 +61,7 @@ public class Transformer
     /// Creates a Transformer module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Transformer> Process()
     {
         return Observable.Return(nn.Transformer(DimModel, NumHeads, NumEncoderLayers, NumDecoderLayers, DimFeedforward, Dropout, Activation));
     }
@@ -72,7 +72,7 @@ public class Transformer
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Transformer> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => nn.Transformer(DimModel, NumHeads, NumEncoderLayers, NumDecoderLayers, DimFeedforward, Dropout, Activation));
     }

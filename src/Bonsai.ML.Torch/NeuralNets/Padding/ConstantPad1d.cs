@@ -32,7 +32,7 @@ public class ConstantPad1d
     /// Creates a 1D constant padding module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ConstantPad1d> Process()
     {
         return Observable.Return(ConstantPad1d(PaddingSize, Value));
     }
@@ -43,7 +43,7 @@ public class ConstantPad1d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ConstantPad1d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ConstantPad1d(PaddingSize, Value));
     }

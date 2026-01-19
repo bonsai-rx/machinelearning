@@ -31,7 +31,7 @@ public class HingeEmbedding
     /// Creates a hinge embedding loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.HingeEmbeddingLoss> Process()
     {
         return Observable.Return(HingeEmbeddingLoss(Margin, Reduction));
     }
@@ -42,7 +42,7 @@ public class HingeEmbedding
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.HingeEmbeddingLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => HingeEmbeddingLoss(Margin, Reduction));
     }

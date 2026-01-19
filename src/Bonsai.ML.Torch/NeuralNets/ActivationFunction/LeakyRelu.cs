@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.LeakyReLU.html"/> for more information.
 /// </remarks>
 [Description("Creates a leaky rectified linear unit (LeakyReLU) activation function.")]
+[DisplayName("LeakyReLU")]
 public class LeakyRelu
 {
     /// <summary>
@@ -31,7 +32,7 @@ public class LeakyRelu
     /// Creates a leaky rectified linear unit (LeakyReLU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.LeakyReLU> Process()
     {
         return Observable.Return(LeakyReLU(NegativeSlope, Inplace));
     }
@@ -42,7 +43,7 @@ public class LeakyRelu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.LeakyReLU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => LeakyReLU(NegativeSlope, Inplace));
     }

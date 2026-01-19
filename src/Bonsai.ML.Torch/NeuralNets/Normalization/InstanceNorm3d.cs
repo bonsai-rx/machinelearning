@@ -63,7 +63,7 @@ public class InstanceNorm3d
     /// Creates an InstanceNorm3d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.InstanceNorm3d> Process()
     {
         return Observable.Return(InstanceNorm3d(Features, Eps, Momentum, Affine, TrackRunningStats, Device, Type));
     }
@@ -74,7 +74,7 @@ public class InstanceNorm3d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.InstanceNorm3d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => InstanceNorm3d(Features, Eps, Momentum, Affine, TrackRunningStats, Device, Type));
     }

@@ -25,7 +25,7 @@ public class Softshrink
     /// Creates a Softshrink module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Softshrink> Process()
     {
         return Observable.Return(Softshrink(Lambda));
     }
@@ -36,7 +36,7 @@ public class Softshrink
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Softshrink> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Softshrink(Lambda));
     }

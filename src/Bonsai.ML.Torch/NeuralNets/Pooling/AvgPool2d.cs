@@ -62,7 +62,7 @@ public class AvgPool2d
     /// Creates an AvgPool2d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.AvgPool2d> Process()
     {
         return Observable.Return(AvgPool2d(KernelSize, Stride, Padding, CeilMode, CountIncludePad, DivisorOverride));
     }
@@ -73,7 +73,7 @@ public class AvgPool2d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.AvgPool2d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => AvgPool2d(KernelSize, Stride, Padding, CeilMode, CountIncludePad, DivisorOverride));
     }

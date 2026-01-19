@@ -6,26 +6,26 @@ namespace Bonsai.ML.Torch.NeuralNets;
 /// <summary>
 /// Represents an operator that creates an activation function.
 /// </summary>
-[XmlInclude(typeof(ActivationFunction.CELU))]
-[XmlInclude(typeof(ActivationFunction.ELU))]
-[XmlInclude(typeof(ActivationFunction.GLU))]
-[XmlInclude(typeof(ActivationFunction.GELU))]
+[XmlInclude(typeof(ActivationFunction.Celu))]
+[XmlInclude(typeof(ActivationFunction.Elu))]
+[XmlInclude(typeof(ActivationFunction.Glu))]
+[XmlInclude(typeof(ActivationFunction.Gelu))]
 [XmlInclude(typeof(ActivationFunction.Hardshrink))]
 [XmlInclude(typeof(ActivationFunction.Hardsigmoid))]
 [XmlInclude(typeof(ActivationFunction.Hardswish))]
 [XmlInclude(typeof(ActivationFunction.Hardtanh))]
-[XmlInclude(typeof(ActivationFunction.LeakyReLU))]
+[XmlInclude(typeof(ActivationFunction.LeakyRelu))]
 [XmlInclude(typeof(ActivationFunction.LogSigmoid))]
 [XmlInclude(typeof(ActivationFunction.LogSoftmax))]
 [XmlInclude(typeof(ActivationFunction.Mish))]
 [XmlInclude(typeof(ActivationFunction.MultiheadAttention))]
-[XmlInclude(typeof(ActivationFunction.PReLU))]
-[XmlInclude(typeof(ActivationFunction.RReLU))]
-[XmlInclude(typeof(ActivationFunction.Rectified))]
-[XmlInclude(typeof(ActivationFunction.RectifiedBounded))]
-[XmlInclude(typeof(ActivationFunction.SELU))]
+[XmlInclude(typeof(ActivationFunction.Prelu))]
+[XmlInclude(typeof(ActivationFunction.Rrelu))]
+[XmlInclude(typeof(ActivationFunction.Relu))]
+[XmlInclude(typeof(ActivationFunction.ReluBounded))]
+[XmlInclude(typeof(ActivationFunction.Selu))]
 [XmlInclude(typeof(ActivationFunction.Sigmoid))]
-[XmlInclude(typeof(ActivationFunction.SiLU))]
+[XmlInclude(typeof(ActivationFunction.Silu))]
 [XmlInclude(typeof(ActivationFunction.Softmax))]
 [XmlInclude(typeof(ActivationFunction.Softmax2d))]
 [XmlInclude(typeof(ActivationFunction.Softmin))]
@@ -51,7 +51,7 @@ public class ActivationFunctionBuilder : ModuleCombinatorBuilder, INamedElement
     /// </summary>
     public ActivationFunctionBuilder()
     {
-        Module = new ActivationFunction.Rectified();
+        Module = new ActivationFunction.Relu();
     }
 
     /// <summary>

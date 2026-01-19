@@ -18,7 +18,7 @@ namespace Bonsai.ML.Torch.NeuralNets;
 [XmlInclude(typeof(Loss.MarginRanking))]
 [XmlInclude(typeof(Loss.MeanAbsoluteError))]
 [XmlInclude(typeof(Loss.MeanSquaredError))]
-[XmlInclude(typeof(Loss.MultiClassMargin))]
+[XmlInclude(typeof(Loss.MultiMargin))]
 [XmlInclude(typeof(Loss.MultiLabelMargin))]
 [XmlInclude(typeof(Loss.MultiLabelSoftMargin))]
 [XmlInclude(typeof(Loss.NegativeLogLikelihood))]

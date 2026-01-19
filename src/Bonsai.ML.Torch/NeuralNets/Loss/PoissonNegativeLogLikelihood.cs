@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.PoissonNLLLoss.html"/> for more information.
 /// </remarks>
 [Description("Creates a poisson negative log likelihood (PoissonNLL) loss module.")]
+[DisplayName("PoissonNLL")]
 public class PoissonNegativeLogLikelihood
 {
     /// <summary>
@@ -43,7 +44,7 @@ public class PoissonNegativeLogLikelihood
     /// Creates a poisson negative log likelihood (PoissonNLL) loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.PoissonNLLLoss> Process()
     {
         return Observable.Return(PoissonNLLLoss(LogInput, Full, Eps, Reduction));
     }
@@ -54,7 +55,7 @@ public class PoissonNegativeLogLikelihood
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.PoissonNLLLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => PoissonNLLLoss(LogInput, Full, Eps, Reduction));
     }

@@ -51,7 +51,7 @@ public class Linear
     /// Creates a Linear module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Linear> Process()
     {
         return Observable.Return(nn.Linear(InputSize, OutputSize, HasBias, Device, Type));
     }
@@ -62,7 +62,7 @@ public class Linear
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Linear> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => nn.Linear(InputSize, OutputSize, HasBias, Device, Type));
     }

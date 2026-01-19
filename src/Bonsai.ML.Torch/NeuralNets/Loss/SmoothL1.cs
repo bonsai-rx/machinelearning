@@ -31,7 +31,7 @@ public class SmoothL1
     /// Creates a smooth L1 loss (SmoothL1Loss) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.SmoothL1Loss> Process()
     {
         return Observable.Return(SmoothL1Loss(Reduction, Beta));
     }
@@ -42,7 +42,7 @@ public class SmoothL1
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.SmoothL1Loss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => SmoothL1Loss(Reduction, Beta));
     }

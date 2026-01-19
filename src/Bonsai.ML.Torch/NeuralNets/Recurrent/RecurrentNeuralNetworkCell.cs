@@ -57,7 +57,7 @@ public class RecurrentNeuralNetworkCell
     /// Creates an RNNCell module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.RNNCell> Process()
     {
         return Observable.Return(RNNCell(InputSize, HiddenSize, NonLinearity, Bias, Device, Type));
     }
@@ -68,7 +68,7 @@ public class RecurrentNeuralNetworkCell
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.RNNCell> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => RNNCell(InputSize, HiddenSize, NonLinearity, Bias, Device, Type));
     }

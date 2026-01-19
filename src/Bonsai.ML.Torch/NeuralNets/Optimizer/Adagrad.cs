@@ -53,7 +53,7 @@ public class Adagrad
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<optim.Optimizer> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
+    public IObservable<TorchSharp.Modules.Adagrad> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
     {
         return source.Select(parameters => Adagrad(parameters, LearningRate, LearningRateDecay, WeightDecay, InitialAccumulatorValue, Eps));
     }

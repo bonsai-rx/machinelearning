@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.GLU.html"/> for more information.
 /// </remarks>
 [Description("Creates a gated linear unit (GLU) module.")]
+[DisplayName("GLU")]
 public class Glu
 {
     /// <summary>
@@ -25,7 +26,7 @@ public class Glu
     /// Creates a gated linear unit (GLU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.GLU> Process()
     {
         return Observable.Return(GLU(Dim));
     }
@@ -36,7 +37,7 @@ public class Glu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.GLU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => GLU(Dim));
     }

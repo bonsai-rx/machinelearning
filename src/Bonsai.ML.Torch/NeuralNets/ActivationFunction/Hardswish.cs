@@ -25,7 +25,7 @@ public class Hardswish
     /// Creates a Hardswish module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Hardswish> Process()
     {
         return Observable.Return(Hardswish(Inplace));
     }
@@ -36,7 +36,7 @@ public class Hardswish
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Hardswish> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Hardswish(Inplace));
     }

@@ -37,7 +37,7 @@ public class Threshold
     /// Creates a Threshold module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Threshold> Process()
     {
         return Observable.Return(Threshold(ThresholdValue, FillValue, Inplace));
     }
@@ -48,7 +48,7 @@ public class Threshold
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Threshold> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Threshold(ThresholdValue, FillValue, Inplace));
     }

@@ -103,7 +103,7 @@ public class EmbeddingBagFromPretrained : IScalarTypeProvider
     /// Creates an embedding bag module from pretrained weights.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.EmbeddingBag> Process()
     {
         return Observable.Return(EmbeddingBag_from_pretrained(Embeddings, Freeze, MaxNorm, NormType, ScaleGradByFreq, Mode, Sparse, IncludeLastOffset, PaddingIndex, Device, Type));
     }
@@ -114,7 +114,7 @@ public class EmbeddingBagFromPretrained : IScalarTypeProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.EmbeddingBag> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => EmbeddingBag_from_pretrained(Embeddings, Freeze, MaxNorm, NormType, ScaleGradByFreq, Mode, Sparse, IncludeLastOffset, PaddingIndex, Device, Type));
     }

@@ -15,6 +15,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Optimizer;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.SGD.html"/> for more information.
 /// </remarks>
 [Description("Creates a stochastic gradient descent (SGD) optimizer.")]
+[DisplayName("SGD")]
 public class StochasticGradientDescent
 {
     /// <summary>
@@ -59,7 +60,7 @@ public class StochasticGradientDescent
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<optim.Optimizer> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
+    public IObservable<TorchSharp.Modules.SGD> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
     {
         return source.Select(parameters => SGD(parameters, LearningRate, Momentum, Dampening, WeightDecay, Nesterov, Maximize));
     }

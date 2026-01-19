@@ -40,7 +40,7 @@ public class FractionalMaxPool3d
     /// Creates a FractionalMaxPool3d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.FractionalMaxPool3d> Process()
     {
         return Observable.Return(FractionalMaxPool3d(KernelSize, OutputSize, OutputRatio));
     }
@@ -51,7 +51,7 @@ public class FractionalMaxPool3d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.FractionalMaxPool3d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => FractionalMaxPool3d(KernelSize, OutputSize, OutputRatio));
     }

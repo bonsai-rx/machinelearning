@@ -43,7 +43,7 @@ public class LocalResponseNorm
     /// Creates a LocalResponseNorm module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.LocalResponseNorm> Process()
     {
         return Observable.Return(LocalResponseNorm(Size, Alpha, Beta, K));
     }
@@ -54,7 +54,7 @@ public class LocalResponseNorm
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.LocalResponseNorm> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => LocalResponseNorm(Size, Alpha, Beta, K));
     }

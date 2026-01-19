@@ -94,7 +94,7 @@ public class ConvTranspose1d
     /// Creates a ConvTranspose1d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ConvTranspose1d> Process()
     {
         return Observable.Return(ConvTranspose1d(InChannels, OutChannels, KernelSize, Stride, Padding, OutputPadding, Dilation, PaddingMode, Groups, Bias, Device, Type));
     }
@@ -105,7 +105,7 @@ public class ConvTranspose1d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ConvTranspose1d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ConvTranspose1d(InChannels, OutChannels, KernelSize, Stride, Padding, OutputPadding, Dilation, PaddingMode, Groups, Bias, Device, Type));
     }

@@ -49,7 +49,7 @@ public class TripletMargin
     /// Creates a triplet margin loss (TripletMarginLoss) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.TripletMarginLoss> Process()
     {
         return Observable.Return(TripletMarginLoss(Margin, P, Eps, Swap, Reduction));
     }
@@ -60,7 +60,7 @@ public class TripletMargin
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.TripletMarginLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => TripletMarginLoss(Margin, P, Eps, Swap, Reduction));
     }

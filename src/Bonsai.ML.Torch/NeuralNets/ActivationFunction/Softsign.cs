@@ -19,7 +19,7 @@ public class Softsign
     /// Creates a Softsign module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Softsign> Process()
     {
         return Observable.Return(Softsign());
     }
@@ -30,7 +30,7 @@ public class Softsign
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Softsign> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Softsign());
     }

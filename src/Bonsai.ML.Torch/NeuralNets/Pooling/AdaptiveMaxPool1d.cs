@@ -24,7 +24,7 @@ public class AdaptiveMaxPool1d
     /// <summary>
     /// Creates an AdaptiveMaxPool1d module.
     /// </summary>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.AdaptiveMaxPool1d> Process()
     {
         return Observable.Return(AdaptiveMaxPool1d(OutputSize));
     }
@@ -35,7 +35,7 @@ public class AdaptiveMaxPool1d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.AdaptiveMaxPool1d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => AdaptiveMaxPool1d(OutputSize));
     }

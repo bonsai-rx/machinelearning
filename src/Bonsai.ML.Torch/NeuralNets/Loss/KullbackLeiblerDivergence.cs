@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.KLDivLoss.html"/> for more information.
 /// </remarks>
 [Description("Creates a Kullback-Leibler divergence loss module.")]
+[DisplayName("KLDiv")]
 public class KullbackLeiblerDivergence
 {
     /// <summary>
@@ -31,7 +32,7 @@ public class KullbackLeiblerDivergence
     /// Creates a Kullback-Leibler divergence loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.KLDivLoss> Process()
     {
         return Observable.Return(KLDivLoss(LogTarget, Reduction));
     }
@@ -42,7 +43,7 @@ public class KullbackLeiblerDivergence
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.KLDivLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => KLDivLoss(LogTarget, Reduction));
     }

@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html"/> for more information.
 /// </remarks>
 [Description("Creates a mean squared error (MSE) loss module.")]
+[DisplayName("MSE")]
 public class MeanSquaredError
 {
     /// <summary>
@@ -25,7 +26,7 @@ public class MeanSquaredError
     /// Creates a mean squared error (MSE) loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.MSELoss> Process()
     {
         return Observable.Return(MSELoss(Reduction));
     }
@@ -36,7 +37,7 @@ public class MeanSquaredError
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.MSELoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => MSELoss(Reduction));
     }

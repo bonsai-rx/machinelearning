@@ -12,7 +12,8 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// <remarks>
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.L1Loss.html"/> for more information.
 /// </remarks>
-[Description("Creates an L1 loss (L1Loss) module, known as mean absolute error (MAE).")]
+[Description("Creates an L1 loss (L1Loss) module, also known as mean absolute error (MAE).")]
+[DisplayName("L1")]
 public class MeanAbsoluteError
 {
     /// <summary>
@@ -25,7 +26,7 @@ public class MeanAbsoluteError
     /// Creates an L1 loss (L1Loss) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.L1Loss> Process()
     {
         return Observable.Return(L1Loss(Reduction));
     }
@@ -36,7 +37,7 @@ public class MeanAbsoluteError
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.L1Loss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => L1Loss(Reduction));
     }

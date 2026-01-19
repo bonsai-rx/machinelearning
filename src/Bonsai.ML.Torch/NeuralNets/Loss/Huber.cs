@@ -31,7 +31,7 @@ public class Huber
     /// Creates a Huber loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.HuberLoss> Process()
     {
         return Observable.Return(HuberLoss(Delta, Reduction));
     }
@@ -42,7 +42,7 @@ public class Huber
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.HuberLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => HuberLoss(Delta, Reduction));
     }

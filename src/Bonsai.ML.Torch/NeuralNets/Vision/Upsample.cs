@@ -59,7 +59,7 @@ public class Upsample
     /// Creates an Upsample module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Upsample> Process()
     {
         return Observable.Return(Upsample(Size, ScaleFactor, Mode, AlignCorners, RecomputeScaleFactor));
     }
@@ -70,7 +70,7 @@ public class Upsample
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Upsample> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Upsample(Size, ScaleFactor, Mode, AlignCorners, RecomputeScaleFactor));
     }

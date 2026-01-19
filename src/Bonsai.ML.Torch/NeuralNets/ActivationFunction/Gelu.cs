@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.GELU.html"/> for more information.
 /// </remarks>
 [Description("Creates a gaussian error linear unit (GELU) activation function.")]
+[DisplayName("GELU")]
 public class Gelu
 {
     /// <summary>
@@ -25,7 +26,7 @@ public class Gelu
     /// Creates a gaussian error linear unit (GELU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.GELU> Process()
     {
         return Observable.Return(GELU(InPlace));
     }
@@ -36,7 +37,7 @@ public class Gelu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.GELU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => GELU(InPlace));
     }

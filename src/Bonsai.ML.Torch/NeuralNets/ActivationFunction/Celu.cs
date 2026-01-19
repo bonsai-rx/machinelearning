@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.CELU.html"/> for more information.
 /// </remarks>
 [Description("Creates a continuously differentiable exponential linear unit (CELU) activation function.")]
+[DisplayName("CELU")]
 public class Celu
 {
     /// <summary>
@@ -31,7 +32,7 @@ public class Celu
     /// Creates a continuously differentiable exponential linear unit (CELU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.CELU> Process()
     {
         return Observable.Return(CELU(Alpha, Inplace));
     }
@@ -42,7 +43,7 @@ public class Celu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.CELU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => CELU(Alpha, Inplace));
     }

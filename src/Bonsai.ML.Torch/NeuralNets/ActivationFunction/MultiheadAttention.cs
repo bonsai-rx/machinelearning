@@ -67,7 +67,7 @@ public class MultiheadAttention
     /// Creates a Multi-head attention module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor, bool, Tensor, Tuple<Tensor, Tensor>>> Process()
+    public IObservable<TorchSharp.Modules.MultiheadAttention> Process()
     {
         return Observable.Return(MultiheadAttention(EmbeddedDim, NumHeads, Dropout, Bias, AddBiasKeyValue, AddZeroAttention, KeyDim, ValueDim));
     }
@@ -78,7 +78,7 @@ public class MultiheadAttention
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor, bool, Tensor, Tuple<Tensor, Tensor>>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.MultiheadAttention> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => MultiheadAttention(EmbeddedDim, NumHeads, Dropout, Bias, AddBiasKeyValue, AddZeroAttention, KeyDim, ValueDim));
     }

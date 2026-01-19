@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html"/> for more information.
 /// </remarks>
 [Description("Creates a rectified linear unit (ReLU) activation function.")]
+[DisplayName("ReLU")]
 public class Relu
 {
     /// <summary>
@@ -25,7 +26,7 @@ public class Relu
     /// Creates a rectified linear unit (ReLU) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ReLU> Process()
     {
         return Observable.Return(ReLU(Inplace));
     }
@@ -36,7 +37,7 @@ public class Relu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ReLU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ReLU(Inplace));
     }

@@ -25,7 +25,7 @@ public class MultiLabelMargin
     /// Creates a multi-label margin loss (MultiLabelMarginLoss) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.MultiLabelMarginLoss> Process()
     {
         return Observable.Return(MultiLabelMarginLoss(Reduction));
     }
@@ -36,7 +36,7 @@ public class MultiLabelMargin
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.MultiLabelMarginLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => MultiLabelMarginLoss(Reduction));
     }

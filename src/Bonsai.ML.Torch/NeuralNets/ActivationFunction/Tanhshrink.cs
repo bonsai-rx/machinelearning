@@ -19,7 +19,7 @@ public class Tanhshrink
     /// Creates a Tanhshrink module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Tanhshrink> Process()
     {
         return Observable.Return(Tanhshrink());
     }
@@ -30,7 +30,7 @@ public class Tanhshrink
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Tanhshrink> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Tanhshrink());
     }

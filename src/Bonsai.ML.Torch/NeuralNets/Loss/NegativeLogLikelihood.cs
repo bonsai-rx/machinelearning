@@ -15,6 +15,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// </remarks>
 [Description("Creates a negative log likelihood (NLL) loss module.")]
 [TypeConverter(typeof(TensorOperatorConverter))]
+[DisplayName("NLL")]
 public class NegativeLogLikelihood : IScalarTypeProvider
 {
     /// <summary>
@@ -53,7 +54,7 @@ public class NegativeLogLikelihood : IScalarTypeProvider
     /// Creates a negative log likelihood (NLL) loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.NLLLoss> Process()
     {
         return Observable.Return(NLLLoss(Weight, Reduction));
     }
@@ -64,7 +65,7 @@ public class NegativeLogLikelihood : IScalarTypeProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.NLLLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => NLLLoss(Weight, Reduction));
     }

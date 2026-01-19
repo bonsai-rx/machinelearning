@@ -51,7 +51,7 @@ public class GatedRecurrentUnitCell
     /// Creates a GRUCell module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.GRUCell> Process()
     {
         return Observable.Return(GRUCell(InputSize, HiddenSize, Bias, Device, Type));
     }
@@ -62,7 +62,7 @@ public class GatedRecurrentUnitCell
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.GRUCell> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => GRUCell(InputSize, HiddenSize, Bias, Device, Type));
     }

@@ -25,7 +25,7 @@ public class PixelUnshuffle
     /// Creates a pixel unshuffle module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.PixelUnshuffle> Process()
     {
         return Observable.Return(PixelUnshuffle(DownscaleFactor));
     }
@@ -36,7 +36,7 @@ public class PixelUnshuffle
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.PixelUnshuffle> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => PixelUnshuffle(DownscaleFactor));
     }

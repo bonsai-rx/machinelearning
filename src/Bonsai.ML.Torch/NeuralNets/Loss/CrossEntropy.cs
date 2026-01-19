@@ -59,7 +59,7 @@ public class CrossEntropy : IScalarTypeProvider
     /// Creates a cross entropy loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.CrossEntropyLoss> Process()
     {
         return Observable.Return(CrossEntropyLoss(Weight, IgnoreIndex, Reduction));
     }
@@ -70,7 +70,7 @@ public class CrossEntropy : IScalarTypeProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.CrossEntropyLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => CrossEntropyLoss(Weight, IgnoreIndex, Reduction));
     }

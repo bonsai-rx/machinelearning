@@ -14,6 +14,7 @@ namespace Bonsai.ML.Torch.NeuralNets.ActivationFunction;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.PReLU.html"/> for more information.
 /// </remarks>
 [Description("Creates a parametric rectified linear unit (PReLU) activation function.")]
+[DisplayName("PReLU")]
 public class Prelu
 {
     /// <summary>
@@ -46,7 +47,7 @@ public class Prelu
     /// Creates a parametric rectified linear unit (PReLU) activation function.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.PReLU> Process()
     {
         return Observable.Return(PReLU(NumParameters, InitialValue, Device, Type));
     }
@@ -57,7 +58,7 @@ public class Prelu
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.PReLU> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => PReLU(NumParameters, InitialValue, Device, Type));
     }

@@ -63,7 +63,7 @@ public class BatchNorm1d
     /// Creates a BatchNorm1d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.BatchNorm1d> Process()
     {
         return Observable.Return(BatchNorm1d(Features, Eps, Momentum, Affine, TrackRunningStats, Device, Type));
     }
@@ -74,7 +74,7 @@ public class BatchNorm1d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.BatchNorm1d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => BatchNorm1d(Features, Eps, Momentum, Affine, TrackRunningStats, Device, Type));
     }

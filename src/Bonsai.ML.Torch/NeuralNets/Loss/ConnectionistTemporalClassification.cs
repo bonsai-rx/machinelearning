@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.CTCLoss.html"/> for more information.
 /// </remarks>
 [Description("Creates a connectionist temporal classification (CTC) loss module.")]
+[DisplayName("CTC")]
 public class ConnectionistTemporalClassification
 {
     /// <summary>
@@ -37,7 +38,7 @@ public class ConnectionistTemporalClassification
     /// Creates a connectionist temporal classification (CTC) loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.CTCLoss> Process()
     {
         return Observable.Return(CTCLoss(Blank, ZeroInfinity, Reduction));
     }
@@ -48,7 +49,7 @@ public class ConnectionistTemporalClassification
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.CTCLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => CTCLoss(Blank, ZeroInfinity, Reduction));
     }

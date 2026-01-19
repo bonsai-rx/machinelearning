@@ -1,6 +1,10 @@
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Linq;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using Bonsai.Expressions;
 using static TorchSharp.torch;
 using static TorchSharp.torch.optim.lr_scheduler;
 
@@ -19,7 +23,7 @@ public class OptimizationStep
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<optim.Optimizer> Process(IObservable<optim.Optimizer> source)
+    public IObservable<T> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
         return source.Do(input => input.step());
     }

@@ -29,7 +29,7 @@ public class AdaptiveAvgPool2d
     /// <summary>
     /// Creates an AdaptiveAvgPool2d module.
     /// </summary>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.AdaptiveAvgPool2d> Process()
     {
         return Observable.Return(AdaptiveAvgPool2d(OutputSize));
     }
@@ -40,7 +40,7 @@ public class AdaptiveAvgPool2d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.AdaptiveAvgPool2d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => AdaptiveAvgPool2d(OutputSize));
     }

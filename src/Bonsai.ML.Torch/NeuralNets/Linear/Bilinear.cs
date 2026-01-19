@@ -57,7 +57,7 @@ public class Bilinear
     /// Creates a Bilinear module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Bilinear> Process()
     {
         return Observable.Return(Bilinear(In1Features, In2Features, OutputSize, HasBias, Device, Type));
     }
@@ -68,7 +68,7 @@ public class Bilinear
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Bilinear> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Bilinear(In1Features, In2Features, OutputSize, HasBias, Device, Type));
     }

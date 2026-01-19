@@ -15,6 +15,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Optimizer;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.optim.Rprop.html"/> for more information.
 /// </remarks>
 [Description("Creates a resilient backpropagation (Rprop) optimizer.")]
+[DisplayName("Rprop")]
 public class ResilientBackpropagation
 {
     /// <summary>
@@ -59,7 +60,7 @@ public class ResilientBackpropagation
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<optim.Optimizer> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
+    public IObservable<TorchSharp.Modules.Rprop> Process<T>(IObservable<T> source) where T : IEnumerable<Parameter>
     {
         return source.Select(parameters => Rprop(parameters, LearningRate, EtaMinus, EtaPlus, MinStep, MaxStep, Maximize));
     }

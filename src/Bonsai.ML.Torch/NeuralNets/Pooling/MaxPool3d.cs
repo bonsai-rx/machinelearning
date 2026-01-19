@@ -53,7 +53,7 @@ public class MaxPool3d
     /// Creates a MaxPool3d module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.MaxPool3d> Process()
     {
         return Observable.Return(MaxPool3d(KernelSize, Stride, Padding, Dilation, CeilMode));
     }
@@ -64,7 +64,7 @@ public class MaxPool3d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.MaxPool3d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => MaxPool3d(KernelSize, Stride, Padding, Dilation, CeilMode));
     }

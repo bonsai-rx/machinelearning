@@ -90,7 +90,7 @@ public class EmbeddingFromPretrained : IScalarTypeProvider
     /// Creates an embedding module from pretrained weights.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Embedding> Process()
     {
         return Observable.Return(Embedding_from_pretrained(Embeddings, Freeze, PaddingIdx, MaxNorm, NormType, ScaleGradByFreq, Sparse, Device, Type));
     }
@@ -101,7 +101,7 @@ public class EmbeddingFromPretrained : IScalarTypeProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Embedding> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Embedding_from_pretrained(Embeddings, Freeze, PaddingIdx, MaxNorm, NormType, ScaleGradByFreq, Sparse, Device, Type));
     }

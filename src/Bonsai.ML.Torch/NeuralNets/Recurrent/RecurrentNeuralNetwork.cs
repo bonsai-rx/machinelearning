@@ -81,7 +81,7 @@ public class RecurrentNeuralNetwork
     /// Creates an RNN module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, (Tensor, Tensor)>> Process()
+    public IObservable<TorchSharp.Modules.RNN> Process()
     {
         return Observable.Return(RNN(InputSize, HiddenSize, NumLayers, NonLinearity, Bias, BatchFirst, Dropout, Bidirectional, Device, Type));
     }
@@ -92,7 +92,7 @@ public class RecurrentNeuralNetwork
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, (Tensor, Tensor)>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.RNN> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => RNN(InputSize, HiddenSize, NumLayers, NonLinearity, Bias, BatchFirst, Dropout, Bidirectional, Device, Type));
     }

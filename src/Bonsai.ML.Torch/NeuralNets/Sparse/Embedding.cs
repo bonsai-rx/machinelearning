@@ -75,7 +75,7 @@ public class Embedding
     /// Creates an embedding module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Embedding> Process()
     {
         return Observable.Return(Embedding(NumEmbeddings, EmbeddingDims, PaddingIdx, MaxNorm, NormType, ScaleGradByFreq, Sparse, Device, Type));
     }
@@ -86,7 +86,7 @@ public class Embedding
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Embedding> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Embedding(NumEmbeddings, EmbeddingDims, PaddingIdx, MaxNorm, NormType, ScaleGradByFreq, Sparse, Device, Type));
     }

@@ -26,7 +26,7 @@ public class ReflectionPad3d
     /// Creates a 3D reflection padding module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.ReflectionPad3d> Process()
     {
         return Observable.Return(ReflectionPad3d(PaddingSize));
     }
@@ -37,7 +37,7 @@ public class ReflectionPad3d
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.ReflectionPad3d> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => ReflectionPad3d(PaddingSize));
     }

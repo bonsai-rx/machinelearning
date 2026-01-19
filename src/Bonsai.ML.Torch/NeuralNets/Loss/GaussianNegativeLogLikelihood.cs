@@ -13,6 +13,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// See <see href="https://pytorch.org/docs/stable/generated/torch.nn.GaussianNLLLoss.html"/> for more information.
 /// </remarks>
 [Description("Creates a gaussian negative log likelihood (GaussianNLL) loss module.")]
+[DisplayName("GaussianNLL")]
 public class GaussianNegativeLogLikelihood
 {
     /// <summary>
@@ -37,7 +38,7 @@ public class GaussianNegativeLogLikelihood
     /// Creates a gaussian negative log likelihood (GaussianNLL) loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.GaussianNLLLoss> Process()
     {
         return Observable.Return(GaussianNLLLoss(Full, Eps, Reduction));
     }
@@ -48,7 +49,7 @@ public class GaussianNegativeLogLikelihood
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.GaussianNLLLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => GaussianNLLLoss(Full, Eps, Reduction));
     }

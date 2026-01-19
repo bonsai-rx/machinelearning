@@ -15,6 +15,7 @@ namespace Bonsai.ML.Torch.NeuralNets.Loss;
 /// </remarks>
 [Description("Creates a binary cross entropy (BCE) loss module.")]
 [TypeConverter(typeof(TensorOperatorConverter))]
+[DisplayName("BCE")]
 public class BinaryCrossEntropy : IScalarTypeProvider
 {
     /// <summary>
@@ -53,7 +54,7 @@ public class BinaryCrossEntropy : IScalarTypeProvider
     /// Creates a binary cross entropy (BCE) loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.BCELoss> Process()
     {
         return Observable.Return(BCELoss(Weight, Reduction));
     }
@@ -64,7 +65,7 @@ public class BinaryCrossEntropy : IScalarTypeProvider
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.BCELoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => BCELoss(Weight, Reduction));
     }

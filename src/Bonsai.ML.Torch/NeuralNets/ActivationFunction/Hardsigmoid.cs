@@ -25,7 +25,7 @@ public class Hardsigmoid
     /// Creates a Hardsigmoid module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Hardsigmoid> Process()
     {
         return Observable.Return(Hardsigmoid(Inplace));
     }
@@ -36,7 +36,7 @@ public class Hardsigmoid
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Hardsigmoid> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Hardsigmoid(Inplace));
     }

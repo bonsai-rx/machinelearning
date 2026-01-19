@@ -31,7 +31,7 @@ public class MarginRanking
     /// Creates a margin ranking loss module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.MarginRankingLoss> Process()
     {
         return Observable.Return(MarginRankingLoss(Margin, Reduction));
     }
@@ -42,7 +42,7 @@ public class MarginRanking
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.MarginRankingLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => MarginRankingLoss(Margin, Reduction));
     }

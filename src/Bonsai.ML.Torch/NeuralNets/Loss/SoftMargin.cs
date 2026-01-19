@@ -25,7 +25,7 @@ public class SoftMargin
     /// Creates a soft margin loss (SoftMarginLoss) module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.SoftMarginLoss> Process()
     {
         return Observable.Return(SoftMarginLoss(Reduction));
     }
@@ -36,7 +36,7 @@ public class SoftMargin
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.SoftMarginLoss> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => SoftMarginLoss(Reduction));
     }

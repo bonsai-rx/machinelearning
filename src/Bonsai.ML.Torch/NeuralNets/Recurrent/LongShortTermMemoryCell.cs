@@ -51,7 +51,7 @@ public class LongShortTermMemoryCell
     /// Creates an LSTMCell module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, (Tensor, Tensor)?, (Tensor, Tensor)>> Process()
+    public IObservable<TorchSharp.Modules.LSTMCell> Process()
     {
         return Observable.Return(LSTMCell(InputSize, HiddenSize, Bias, Device, Type));
     }
@@ -62,7 +62,7 @@ public class LongShortTermMemoryCell
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, (Tensor, Tensor)?, (Tensor, Tensor)>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.LSTMCell> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => LSTMCell(InputSize, HiddenSize, Bias, Device, Type));
     }

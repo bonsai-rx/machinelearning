@@ -31,7 +31,7 @@ public class CosineSimilarity
     /// Creates a CosineSimilarity module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.CosineSimilarity> Process()
     {
         return Observable.Return(CosineSimilarity(Dim, Eps));
     }
@@ -42,7 +42,7 @@ public class CosineSimilarity
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.CosineSimilarity> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => CosineSimilarity(Dim, Eps));
     }

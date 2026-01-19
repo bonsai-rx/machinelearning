@@ -31,7 +31,7 @@ public class Softplus
     /// Creates a Softplus module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Softplus> Process()
     {
         return Observable.Return(Softplus(Beta, Threshold));
     }
@@ -42,7 +42,7 @@ public class Softplus
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Softplus> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => Softplus(Beta, Threshold));
     }

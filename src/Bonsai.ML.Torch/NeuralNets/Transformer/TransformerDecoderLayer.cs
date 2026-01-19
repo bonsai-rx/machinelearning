@@ -49,7 +49,7 @@ public class TransformerDecoderLayer
     /// Creates a TransformerDecoderLayer module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.TransformerDecoderLayer> Process()
     {
         return Observable.Return(TransformerDecoderLayer(DimModel, NumHeads, DimFeedforward, Dropout, Activation));
     }
@@ -60,7 +60,7 @@ public class TransformerDecoderLayer
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.TransformerDecoderLayer> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => TransformerDecoderLayer(DimModel, NumHeads, DimFeedforward, Dropout, Activation));
     }

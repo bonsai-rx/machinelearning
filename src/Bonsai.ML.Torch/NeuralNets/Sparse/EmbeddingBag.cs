@@ -88,7 +88,7 @@ public class EmbeddingBag
     /// Creates an embedding bag module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.EmbeddingBag> Process()
     {
         return Observable.Return(EmbeddingBag(NumEmbeddings, EmbeddingDims, MaxNorm, NormType, ScaleGradByFreq, Mode, Sparse, IncludeLastOffset, PaddingIndex, Device, Type));
     }
@@ -99,7 +99,7 @@ public class EmbeddingBag
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.EmbeddingBag> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => EmbeddingBag(NumEmbeddings, EmbeddingDims, MaxNorm, NormType, ScaleGradByFreq, Mode, Sparse, IncludeLastOffset, PaddingIndex, Device, Type));
     }

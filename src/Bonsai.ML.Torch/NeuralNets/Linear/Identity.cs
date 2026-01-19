@@ -19,7 +19,7 @@ public class Identity
     /// Creates an Identity module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.Identity> Process()
     {
         return Observable.Return(nn.Identity());
     }
@@ -30,7 +30,7 @@ public class Identity
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.Identity> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => nn.Identity());
     }

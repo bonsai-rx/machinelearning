@@ -37,7 +37,7 @@ public class PairwiseDistance
     /// Creates a PairwiseDistance module.
     /// </summary>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process()
+    public IObservable<TorchSharp.Modules.PairwiseDistance> Process()
     {
         return Observable.Return(PairwiseDistance(P, Eps, KeepDim));
     }
@@ -48,7 +48,7 @@ public class PairwiseDistance
     /// <typeparam name="T"></typeparam>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<Module<Tensor, Tensor, Tensor>> Process<T>(IObservable<T> source)
+    public IObservable<TorchSharp.Modules.PairwiseDistance> Process<T>(IObservable<T> source)
     {
         return source.Select(_ => PairwiseDistance(P, Eps, KeepDim));
     }
