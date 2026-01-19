@@ -1,0 +1,412 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.9.0"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xmlns:p1="clr-namespace:Bonsai.ML.Torch;assembly=Bonsai.ML.Torch"
+                 xmlns:rx="clr-namespace:Bonsai.Reactive;assembly=Bonsai.Core"
+                 xmlns:p2="clr-namespace:Bonsai.ML.Lds.Torch;assembly=Bonsai.ML.Lds.Torch"
+                 xmlns="https://bonsai-rx.org/2018/workflow">
+  <Workflow>
+    <Nodes>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LoadData</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:LoadTensor">
+                <p1:Path>transformed_binned_spikes.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Clone" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Permute">
+                <p1:Dimensions>
+                  <p1:long>1</p1:long>
+                  <p1:long>0</p1:long>
+                </p1:Dimensions>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>ObservationT</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:LoadTensor">
+                <p1:Path>python_V0_0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Clone" />
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>Covariance</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:LoadTensor">
+                <p1:Path>python_m0_0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Clone" />
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>Mean</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:LoadTensor">
+                <p1:Path>python_Z0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Clone" />
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>MeasurementFunction</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:LoadTensor">
+                <p1:Path>python_R0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Clone" />
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>MeasurementNoiseCovariance</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:LoadTensor">
+                <p1:Path>python_B0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Clone" />
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>TransitionMatrix</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:LoadTensor">
+                <p1:Path>python_Q0.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:Clone" />
+            </Expression>
+            <Expression xsi:type="rx:ReplaySubject">
+              <Name>ProcessNoiseCovariance</Name>
+              <rx:BufferSize xsi:nil="true" />
+            </Expression>
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="10" To="11" Label="Source1" />
+            <Edge From="11" To="12" Label="Source1" />
+            <Edge From="13" To="14" Label="Source1" />
+            <Edge From="14" To="15" Label="Source1" />
+            <Edge From="16" To="17" Label="Source1" />
+            <Edge From="17" To="18" Label="Source1" />
+            <Edge From="19" To="20" Label="Source1" />
+            <Edge From="20" To="21" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LoadModel</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>TransitionMatrix</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>MeasurementFunction</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ProcessNoiseCovariance</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>MeasurementNoiseCovariance</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Mean</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Covariance</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="InputMapping">
+              <PropertyMappings>
+                <Property Name="TransitionMatrix" Selector="Item1" />
+                <Property Name="MeasurementFunction" Selector="Item2" />
+                <Property Name="ProcessNoiseCovariance" Selector="Item3" />
+                <Property Name="MeasurementNoiseCovariance" Selector="Item4" />
+                <Property Name="InitialMean" Selector="Item5" />
+                <Property Name="InitialCovariance" Selector="Item6" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:CreateKalmanFilterParameters">
+                <p2:Type>Float64</p2:Type>
+                <p2:NumStates xsi:nil="true" />
+                <p2:NumObservations xsi:nil="true" />
+                <p2:TransitionMatrix />
+                <p2:MeasurementFunction />
+                <p2:ProcessNoiseCovariance />
+                <p2:MeasurementNoiseCovariance />
+                <p2:InitialMean />
+                <p2:InitialCovariance />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:CreateKalmanFilter">
+                <p2:Type>Float64</p2:Type>
+                <p2:NumStates>2</p2:NumStates>
+                <p2:NumObservations>2</p2:NumObservations>
+                <p2:TransitionMatrix />
+                <p2:MeasurementFunction />
+                <p2:ProcessNoiseVariance />
+                <p2:MeasurementNoiseVariance />
+                <p2:InitialMean />
+                <p2:InitialCovariance />
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="6" Label="Source1" />
+            <Edge From="1" To="6" Label="Source2" />
+            <Edge From="2" To="6" Label="Source3" />
+            <Edge From="3" To="6" Label="Source4" />
+            <Edge From="4" To="6" Label="Source5" />
+            <Edge From="5" To="6" Label="Source6" />
+            <Edge From="6" To="7" Label="Source1" />
+            <Edge From="7" To="8" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="10" Label="Source1" />
+            <Edge From="10" To="11" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>LearnParameters</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ObservationT</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Parameters</Selector>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="ModelParameters" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:ExpectationMaximization">
+                <p2:NumStates xsi:nil="true" />
+                <p2:MaxIterations>1</p2:MaxIterations>
+                <p2:Tolerance>0.0001</p2:Tolerance>
+                <p2:Verbose>true</p2:Verbose>
+                <p2:EstimateTransitionMatrix>true</p2:EstimateTransitionMatrix>
+                <p2:EstimateMeasurementFunction>true</p2:EstimateMeasurementFunction>
+                <p2:EstimateProcessNoiseCovariance>true</p2:EstimateProcessNoiseCovariance>
+                <p2:EstimateMeasurementNoiseCovariance>true</p2:EstimateMeasurementNoiseCovariance>
+                <p2:EstimateInitialMean>true</p2:EstimateInitialMean>
+                <p2:EstimateInitialCovariance>true</p2:EstimateInitialCovariance>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Parameters</Selector>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:UpdateKalmanFilterParameters" />
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>ExpectationMaximizationResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:SubscribeWhen" />
+            </Expression>
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="4" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="4" Label="Source2" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="8" Label="Source1" />
+            <Edge From="6" To="7" Label="Source1" />
+            <Edge From="7" To="8" Label="Source2" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="11" Label="Source1" />
+            <Edge From="10" To="11" Label="Source2" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="GroupWorkflow">
+        <Name>Smoother</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ObservationT</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:Filter" />
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>UpdatedFilteredResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>ExpectationMaximizationResult</Name>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:SubscribeWhen" />
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>UpdatedFilteredResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:Smooth" />
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>UpdatedSmoothedResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>UpdatedSmoothedResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>KalmanFilterModel</Name>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Model" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p2:Orthogonalize" />
+            </Expression>
+            <Expression xsi:type="rx:BehaviorSubject">
+              <Name>OrthogonalizedResult</Name>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>OrthogonalizedResult</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Mean</Selector>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:SaveTensor">
+                <p1:Path>bonsai_means.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>OrthogonalizedResult</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Covariance</Selector>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="p1:SaveTensor">
+                <p1:Path>bonsai_covs.pt</p1:Path>
+                <p1:UseNativeMethod>true</p1:UseNativeMethod>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="rx:Zip" />
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="3" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source2" />
+            <Edge From="3" To="4" Label="Source1" />
+            <Edge From="4" To="6" Label="Source1" />
+            <Edge From="5" To="6" Label="Source2" />
+            <Edge From="7" To="10" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="10" Label="Source2" />
+            <Edge From="10" To="11" Label="Source1" />
+            <Edge From="12" To="15" Label="Source1" />
+            <Edge From="13" To="14" Label="Source1" />
+            <Edge From="14" To="15" Label="Source2" />
+            <Edge From="15" To="16" Label="Source1" />
+            <Edge From="17" To="18" Label="Source1" />
+            <Edge From="18" To="19" Label="Source1" />
+            <Edge From="19" To="23" Label="Source1" />
+            <Edge From="20" To="21" Label="Source1" />
+            <Edge From="21" To="22" Label="Source1" />
+            <Edge From="22" To="23" Label="Source2" />
+            <Edge From="23" To="24" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="Combinator">
+        <Combinator xsi:type="rx:Take">
+          <rx:Count>1</rx:Count>
+        </Combinator>
+      </Expression>
+      <Expression xsi:type="WorkflowOutput" />
+    </Nodes>
+    <Edges>
+      <Edge From="3" To="4" Label="Source1" />
+      <Edge From="4" To="5" Label="Source1" />
+    </Edges>
+  </Workflow>
+</WorkflowBuilder>

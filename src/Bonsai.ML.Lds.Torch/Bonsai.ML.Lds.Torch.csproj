@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>A Bonsai package building on the Bonsai.ML.Torch library that implements Linear Dynamical Systems.</Description>
+    <PackageTags>$(PackageTags) Torch TorchSharp LDS LinearDynamicalSystems</PackageTags>
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.9.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.Torch\Bonsai.ML.Torch.csproj" />
+  </ItemGroup>
+</Project>
