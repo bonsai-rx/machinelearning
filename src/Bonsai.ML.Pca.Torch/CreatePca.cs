@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Reactive.Linq;
@@ -21,7 +21,7 @@ namespace Bonsai.ML.Pca.Torch;
 public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement
 {
     /// <inheritdoc/>
-    public string Name => ModelType.ToString();
+    public string Name => $"CreatePca.{ModelType}";
 
     /// <summary>
     /// The number of principal components to compute.

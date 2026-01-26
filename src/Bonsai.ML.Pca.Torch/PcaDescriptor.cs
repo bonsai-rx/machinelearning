@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Collections.Generic;
@@ -38,4 +38,7 @@ public class PcaDescriptor(ICustomTypeDescriptor parent, object instance) : Cust
     /// <inheritdoc/>
     public override PropertyDescriptorCollection GetProperties()
         => GetProperties([]);
+
+    /// <inheritdoc/>
+    public override object GetPropertyOwner(PropertyDescriptor pd) => _instance;
 }

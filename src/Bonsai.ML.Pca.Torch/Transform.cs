@@ -1,8 +1,5 @@
-using System;
-using System.ComponentModel;
+﻿using System;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
-using Bonsai;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Pca.Torch;
@@ -10,24 +7,11 @@ namespace Bonsai.ML.Pca.Torch;
 /// <summary>
 /// Transforms the input data using a PCA model.
 /// </summary>
-[Combinator]
-[Description("Transforms the input data using a PCA model.")]
-[WorkflowElementCategory(ElementCategory.Transform)]
-public class Transform
+public class Transform : IPcaModelProvider
 {
-    /// <summary>
-    /// The PCA model used to transform the input data.
-    /// </summary>
-    [Description("The PCA model used to transform the input data.")]
-    [XmlIgnore]
-    public IPcaBaseModel? Model { get; set; }
+    /// <inheritdoc/>
+    public IPcaBaseModel? Model { get; set; } = null;
 
-    /// <summary>
-    /// Transforms the input data using the specified PCA model.
-    /// </summary>
-    /// <param name="model"></param>
-    /// <param name="data"></param>
-    /// <returns></returns>
     private static Tensor TransformData(IPcaBaseModel model, Tensor data)
     {
         return model.Transform(data);

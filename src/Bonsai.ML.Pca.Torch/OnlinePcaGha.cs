@@ -1,11 +1,9 @@
-using System;
-using System.ComponentModel;
-using static TorchSharp.torch;
+﻿using static TorchSharp.torch;
 
 namespace Bonsai.ML.Pca.Torch;
 
 /// <summary>
-/// Implements online PCA using the Generalized Hebbian Algorithm (GHA).
+/// Implements streaming/online PCA using the Generalized Hebbian Algorithm (GHA).
 /// </summary>
 /// <param name="numComponents"></param>
 /// <param name="learningRate"></param>
