@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
@@ -9,16 +9,9 @@ namespace Bonsai.ML.Pca.Torch;
 /// <summary>
 /// Fits the PCA model to the input data and transforms it.
 /// </summary>
-[Combinator]
-[Description("Fits the PCA model to the input data and transforms it.")]
-[WorkflowElementCategory(ElementCategory.Transform)]
-public class FitAndTransform
+public class FitAndTransform : IPcaModelProvider
 {
-    /// <summary>
-    /// The PCA model used to fit and transform the input data.
-    /// </summary>
-    [Description("The PCA model used to fit and transform the input data.")]
-    [XmlIgnore]
+    /// <inheritdoc/>
     public IPcaBaseModel? Model { get; set; }
 
     private static void FitModelAndTransformData(IPcaBaseModel model, Tensor data)

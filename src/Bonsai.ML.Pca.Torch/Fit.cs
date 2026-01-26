@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
@@ -7,19 +7,12 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Pca.Torch;
 
 /// <summary>
-/// Fits a PCA model to the input data.
+/// Fits the PCA model to the input data.
 /// </summary>
-[Combinator]
-[Description("Fits a PCA model to the input data.")]
-[WorkflowElementCategory(ElementCategory.Sink)]
-public class Fit
+public class Fit : IPcaModelProvider
 {
-    /// <summary>
-    /// The PCA model used to fit the input data.
-    /// </summary>
-    [Description("The PCA model used to fit the input data.")]
-    [XmlIgnore]
-    public IPcaBaseModel? Model { get; set; }
+    /// <inheritdoc/>
+    public IPcaBaseModel? Model { get; set; } = null;
 
     private void FitModel(IPcaBaseModel model, Tensor data)
     {
@@ -34,7 +27,7 @@ public class Fit
     /// <exception cref="InvalidOperationException"></exception>
     public IObservable<Tensor> Process(IObservable<Tensor> source)
     {
-        if (Model == null)
+        if (Model is null)
         {
             throw new InvalidOperationException("The PCA model has not been specified.");
         }

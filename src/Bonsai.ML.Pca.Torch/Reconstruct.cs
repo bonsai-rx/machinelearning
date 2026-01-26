@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
-using Bonsai;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Pca.Torch;
@@ -10,24 +9,11 @@ namespace Bonsai.ML.Pca.Torch;
 /// <summary>
 /// Reconstructs the input data using a PCA model.
 /// </summary>
-[Combinator]
-[Description("Reconstructs the input data using a PCA model.")]
-[WorkflowElementCategory(ElementCategory.Transform)]
-public class Reconstruct
+public class Reconstruct : IPcaModelProvider
 {
-    /// <summary>
-    /// The PCA model used to reconstruct the input data.
-    /// </summary>
-    [Description("The PCA model used to reconstruct the input data.")]
-    [XmlIgnore]
+    /// <inheritdoc/>
     public IPcaBaseModel? Model { get; set; }
 
-    /// <summary>
-    /// Reconstructs the input data using the specified PCA model.
-    /// </summary>
-    /// <param name="model"></param>
-    /// <param name="data"></param>
-    /// <returns></returns>
     private static Tensor ReconstructData(IPcaBaseModel model, Tensor data)
     {
         return model.Reconstruct(data);
