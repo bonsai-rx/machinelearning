@@ -56,9 +56,9 @@ public class OnlineProbabilisticPca : PcaBaseModel
     public int ReorthogonalizePeriod { get; private set; }
 
     /// <summary>
-    /// Gets the time offset used in the learning rate schedule when Kappa is specified.
+    /// Gets the sample offset used in the learning rate schedule when Kappa is specified.
     /// </summary>
-    public int? TimeOffset { get; private set; }
+    public int SampleOffset { get; private set; }
 
     /// <inheritdoc/>
     public override Tensor Components { get; protected set; } = empty(0);
@@ -78,7 +78,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
     /// <param name="generator"></param>
     /// <param name="rho"></param>
     /// <param name="kappa"></param>
-    /// <param name="timeOffset"></param>
+    /// <param name="sampleOffset"></param>
     /// <param name="reorthogonalizePeriod"></param>
     /// <exception cref="ArgumentException"></exception>
     public OnlineProbabilisticPca(int numComponents,
@@ -88,7 +88,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
         Generator? generator = null,
         double? rho = 0.1,
         double? kappa = null,
-        int? timeOffset = 3000,
+        int? sampleOffset = null,
         int? reorthogonalizePeriod = null
         ) : base(numComponents,
             device,
@@ -120,9 +120,10 @@ public class OnlineProbabilisticPca : PcaBaseModel
         }
         else
         {
-            if (timeOffset is null or <= 0)
+            sampleOffset ??= 0;
+            if (sampleOffset < 0)
             {
-                throw new ArgumentException("Time offset must be a positive integer.", nameof(timeOffset));
+                throw new ArgumentException("Sample offset must be a positive integer.", nameof(sampleOffset));
             }
 
             if (!kappa.HasValue)
@@ -135,7 +136,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
                 throw new ArgumentException("Kappa must be in the range (0.5, 1].", nameof(kappa));
             }
 
-            UpdateSchedule = () => Math.Pow(_stepCount + timeOffset.Value, -kappa.Value);
+            UpdateSchedule = () => Math.Pow(_stepCount + SampleOffset, -kappa.Value);
         }
 
         if (reorthogonalizePeriod.HasValue)
@@ -147,7 +148,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
         Generator = generator;
         Rho = rho;
         Kappa = kappa;
-        TimeOffset = timeOffset;
+        SampleOffset = sampleOffset ?? 0;
         Variance = initialVariance;
     }
 
