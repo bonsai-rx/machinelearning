@@ -79,10 +79,10 @@ public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement
     public double? Kappa { get; set; } = 0.9;
 
     /// <summary>
-    /// The time offset for the online probabilistic PCA model.
+    /// The sample offset for the online probabilistic PCA model.
     /// </summary>
-    [Description("The time offset for the online probabilistic PCA model. If null, decaying learning rate starts from the first sample.")]
-    public int? TimeOffset { get; set; } = null;
+    [Description("The sample offset for the online probabilistic PCA model. If null, decaying learning rate starts from the first sample.")]
+    public int? SampleOffset { get; set; } = null;
 
     /// <summary>
     /// The period for reorthogonalizing the components in the online probabilistic PCA model.
@@ -121,7 +121,7 @@ public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement
             yield return nameof(InitialVariance);
             yield return nameof(Rho);
             yield return nameof(Kappa);
-            yield return nameof(TimeOffset);
+            yield return nameof(SampleOffset);
             yield return nameof(ReorthogonalizePeriod);
             yield return nameof(Generator);
         }
@@ -157,7 +157,7 @@ public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement
                 generator: pcaBuilder.Generator,
                 rho: pcaBuilder.Rho,
                 kappa: pcaBuilder.Kappa,
-                timeOffset: pcaBuilder.TimeOffset,
+                sampleOffset: pcaBuilder.SampleOffset,
                 reorthogonalizePeriod: pcaBuilder.ReorthogonalizePeriod),
             PcaModelType.OnlinePcaGha => new OnlinePcaGha(
                 numComponents: pcaBuilder.NumComponents,
