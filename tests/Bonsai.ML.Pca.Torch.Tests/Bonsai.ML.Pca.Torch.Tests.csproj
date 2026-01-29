@@ -17,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Bonsai.ML.Pca.Torch\Bonsai.ML.Pca.Torch.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Tests.Utilities\Bonsai.ML.Tests.Utilities.csproj" />
   </ItemGroup>
 </Project>
