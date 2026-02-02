@@ -1,15 +1,7 @@
-using System;
-using System.Linq;
+﻿using System;
 using System.ComponentModel;
-using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Xml.Serialization;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.optim;
-using static TorchSharp.torch.optim.lr_scheduler;
-using System.Threading.Tasks;
 
 namespace Bonsai.ML.Torch.NeuralNets;
 
@@ -26,7 +18,7 @@ public class ZeroGradient
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<optim.Optimizer> Process(IObservable<optim.Optimizer> source)
+    public IObservable<T> Process<T>(IObservable<T> source) where T : optim.Optimizer
     {
         return source.Do(input => input.zero_grad());
     }
