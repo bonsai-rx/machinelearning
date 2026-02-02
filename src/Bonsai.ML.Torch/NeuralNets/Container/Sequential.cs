@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.nn;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Bonsai.ML.Torch.NeuralNets.Container;
 
@@ -20,7 +21,7 @@ public class Sequential
     /// Creates a sequential container from the input modules.
     /// </summary>
     /// <returns></returns>
-    public IObservable<TorchSharp.Modules.Sequential> Process<T>(IObservable<T[]> source) where T : Module<Tensor, Tensor>
+    public IObservable<TorchSharp.Modules.Sequential> Process<T>(IObservable<T> source) where T : IEnumerable<Module<Tensor, Tensor>>
     {
         return source.Select(modules => Sequential(modules));
     }
