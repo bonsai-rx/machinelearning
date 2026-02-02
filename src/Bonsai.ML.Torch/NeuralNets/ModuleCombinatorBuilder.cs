@@ -1,4 +1,4 @@
-using Bonsai.Expressions;
+﻿using Bonsai.Expressions;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -19,6 +19,9 @@ public abstract class ModuleCombinatorBuilder : ExpressionBuilder, ICustomTypeDe
     internal abstract string BuilderName { get; }
 
     internal object Module { get; set; }
+
+    /// <inheritdoc/>
+    public override Range<int> ArgumentRange => Range.Create(0, 1);
 
     /// <inheritdoc/>
     public override Expression Build(IEnumerable<Expression> arguments)

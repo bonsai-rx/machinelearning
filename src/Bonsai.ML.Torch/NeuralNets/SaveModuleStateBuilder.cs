@@ -5,11 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
-using TorchSharp;
 using static TorchSharp.torch;
-using static TorchSharp.torch.nn;
-using static TorchSharp.torch.jit;
 using Bonsai.Expressions;
 
 namespace Bonsai.ML.Torch.NeuralNets;

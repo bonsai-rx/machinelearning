@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Bonsai.ML.Torch.NeuralNets;
@@ -22,9 +22,6 @@ namespace Bonsai.ML.Torch.NeuralNets;
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class OptimizerBuilder : ModuleCombinatorBuilder, INamedElement
 {
-    /// <inheritdoc/>
-    public override Range<int> ArgumentRange => Range.Create(0, 1);
-
     internal override string BuilderName => "Optimizer";
 
     /// <summary>

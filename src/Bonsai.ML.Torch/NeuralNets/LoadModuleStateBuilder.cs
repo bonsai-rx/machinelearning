@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.Generic;
@@ -69,9 +69,9 @@ public class LoadModuleStateBuilder : SingleArgumentExpressionBuilder
         List<Expression> moduleLoadArgs =
         [
             Expression.Constant(ModulePath, typeof(string)),
-            Expression.Constant(true),                                  // strict loading
-            Expression.Constant(null, typeof(IList<string>)),           // exclude list
-            Expression.Constant(null, typeof(Dictionary<string, bool>)) // exclude dictionary
+            Expression.Constant(true),
+            Expression.Constant(null, typeof(IList<string>)),
+            Expression.Constant(null, typeof(Dictionary<string, bool>))
         ];
 
         var loadCall = Expression.Call(moduleParameter, moduleLoadMethod, moduleLoadArgs);

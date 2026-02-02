@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace Bonsai.ML.Torch.NeuralNets;
@@ -18,9 +18,6 @@ namespace Bonsai.ML.Torch.NeuralNets;
 [WorkflowElementCategory(ElementCategory.Source)]
 public class DropoutModuleBuilder : ModuleCombinatorBuilder, INamedElement
 {
-    /// <inheritdoc/>
-    public override Range<int> ArgumentRange => Range.Create(0, 1);
-
     internal override string BuilderName => "DropoutModule";
 
     /// <summary>

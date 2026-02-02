@@ -1,6 +1,5 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
-
 namespace Bonsai.ML.Torch.NeuralNets;
 
 /// <summary>
@@ -10,11 +9,11 @@ namespace Bonsai.ML.Torch.NeuralNets;
 [DefaultProperty(nameof(ContainerModule))]
 [Combinator]
 [Description("Creates a sequential container for torch modules.")]
-[WorkflowElementCategory(ElementCategory.Source)]
+[WorkflowElementCategory(ElementCategory.Transform)]
 public class ContainerBuilder : ModuleCombinatorBuilder, INamedElement
 {
     /// <inheritdoc/>
-    public override Range<int> ArgumentRange => Range.Create(0, 1);
+    public override Range<int> ArgumentRange => Range.Create(1, 1);
 
     /// <inheritdoc/>
     internal override string BuilderName => "Container";
