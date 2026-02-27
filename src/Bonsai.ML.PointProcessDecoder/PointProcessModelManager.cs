@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Disposables;
 
@@ -43,13 +43,13 @@ public static class PointProcessModelManager
         double[] minStateSpace,
         double[] maxStateSpace,
         long[] stepsStateSpace,
-        double[] observationBandwidth,
+        double[] covariateBandwidth,
         int stateSpaceDimensions,
         int? markDimensions = null,
-        int? markChannels = null,
+        int? numChannels = null,
         double[]? markBandwidth = null,
         bool ignoreNoSpikes = false,
-        int? nUnits = null,
+        int? numUnits = null,
         double? distanceThreshold = null,
         double? sigmaRandomWalk = null,
         int? kernelLimit = null,
@@ -68,13 +68,13 @@ public static class PointProcessModelManager
             minStateSpace: minStateSpace,
             maxStateSpace: maxStateSpace,
             stepsStateSpace: stepsStateSpace,
-            observationBandwidth: observationBandwidth,
+            covariateBandwidth: covariateBandwidth,
             stateSpaceDimensions: stateSpaceDimensions,
             markDimensions: markDimensions,
-            markChannels: markChannels,
+            numChannels: numChannels,
             markBandwidth: markBandwidth,
             ignoreNoSpikes: ignoreNoSpikes,
-            nUnits: nUnits,
+            numUnits: numUnits,
             distanceThreshold: distanceThreshold,
             sigmaRandomWalk: sigmaRandomWalk,
             kernelLimit: kernelLimit,
@@ -84,10 +84,11 @@ public static class PointProcessModelManager
         );
 
         models.Add(name, model);
-        
+
         return new PointProcessModelDisposable(
-            model, 
-            Disposable.Create(() => {
+            model,
+            Disposable.Create(() =>
+            {
                 models.Remove(name);
             })
         );
@@ -101,10 +102,11 @@ public static class PointProcessModelManager
     {
         var model = PointProcessModel.Load(path, device) as PointProcessModel ?? throw new InvalidOperationException("The model could not be loaded.");
         models.Add(name, model);
-        
+
         return new PointProcessModelDisposable(
-            model, 
-            Disposable.Create(() => {
+            model,
+            Disposable.Create(() =>
+            {
                 models.Remove(name);
             })
         );

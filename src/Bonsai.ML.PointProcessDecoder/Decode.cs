@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Text;
@@ -39,23 +39,23 @@ public class Decode : IPointProcessModelReference
     }
 
     /// <summary>
-    /// Decodes the input neural data into a posterior state estimate using a point process model.
+    /// Decodes the observations into a posterior state estimate using a point process model.
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
     public IObservable<Tensor> Process(IObservable<Tensor> source)
     {
         var modelName = Name;
-        return source.Select(input => 
+        return source.Select(observations =>
         {
             var model = PointProcessModelManager.GetModel(modelName);
-            if (_updateIgnoreNoSpikes) 
+            if (_updateIgnoreNoSpikes)
             {
                 model.Likelihood.IgnoreNoSpikes = _ignoreNoSpikes;
                 _updateIgnoreNoSpikes = false;
             }
-            
-            return model.Decode(input);
+
+            return model.Decode(observations);
         });
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 
@@ -11,7 +11,7 @@ namespace Bonsai.ML.PointProcessDecoder;
 /// </summary>
 [Combinator]
 [WorkflowElementCategory(ElementCategory.Sink)]
-[Description("Encodes the combined state observation data and neural data into a point process model.")]
+[Description("Encodes the combined state observation data and neural data into a point process model. The input should be a tuple of (covariate, observation) tensors. Covariate tensors should have shape (numSamples, covariateDim). Spike observations should have shape (num_samples, num_units). Clusterless marks should have shape (numSamples, markDim, numChannels).")]
 public class Encode : IPointProcessModelReference
 {
     /// <summary>
@@ -32,8 +32,8 @@ public class Encode : IPointProcessModelReference
         return source.Do(input =>
         {
             var model = PointProcessModelManager.GetModel(modelName);
-            var (neuralData, stateObservations) = input;
-            model.Encode(neuralData, stateObservations);
+            var (covariates, observations) = input;
+            model.Encode(covariates, observations);
         });
     }
 }
