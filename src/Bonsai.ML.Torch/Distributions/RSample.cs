@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reactive.Linq;
 using System.ComponentModel;
 using static TorchSharp.torch;
@@ -12,7 +12,7 @@ namespace Bonsai.ML.Torch.Distributions;
 [Combinator]
 [Description("Generates reparameterized samples from the input distribution.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
-public class ReparametrizedSample
+public class RSample
 {
     /// <summary>
     /// The shape of the samples to generate.
