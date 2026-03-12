@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Visualizers for the Bonsai.ML.Lds.Torch library.</Description>
+    <PackageTags>$(PackageTags) Torch LDS Design</PackageTags>
+    <TargetFramework>net472</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Core" Version="2.9.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bonsai.ML.Lds.Torch\Bonsai.ML.Lds.Torch.csproj" />
+    <ProjectReference Include="..\Bonsai.ML.Design\Bonsai.ML.Design.csproj" />
+  </ItemGroup>
+  <PropertyGroup>
+    <!-- This property is needed to avoid repacking the native SkiaSharp libraries, which should already be included with the Bonsai.ML.Torch -->
+    <ShouldIncludeNativeSkiaSharp>false</ShouldIncludeNativeSkiaSharp>
+  </PropertyGroup>
+</Project>
