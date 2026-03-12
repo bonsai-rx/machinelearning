@@ -1,0 +1,92 @@
+using System;
+using System.ComponentModel;
+using System.Reactive.Linq;
+using System.Xml.Serialization;
+using static TorchSharp.torch;
+
+namespace Bonsai.ML.Torch.Random;
+
+/// <summary>
+/// Represents an operator that creates a 1D tensor of a given size with a random permutation of integers in [0, size).
+/// </summary>
+[Combinator]
+[ResetCombinator]
+[Description("Creates a 1D tensor of a given size with a random permutation of integers in [0, size).")]
+[WorkflowElementCategory(ElementCategory.Source)]
+public class Permutation
+{
+    /// <summary>
+    /// The size of the tensor.
+    /// </summary>
+    [Description("The size of the tensor.")]
+    public long Size { get; set; } = 0;
+
+    /// <summary>
+    /// The data type of the tensor elements.
+    /// </summary>
+    [Description("The data type of the tensor elements.")]
+    public ScalarType? Type { get; set; } = null;
+
+    /// <summary>
+    /// The device on which to create the tensor.
+    /// </summary>
+    [Description("The device on which to create the tensor.")]
+    [XmlIgnore]
+    public Device Device { get; set; } = null;
+
+    /// <summary>
+    /// The random number generator to use.
+    /// </summary>
+    [XmlIgnore]
+    [Description("The random number generator to use.")]
+    public Generator Generator { get; set; } = null;
+
+    /// <summary>
+    /// Creates a tensor of a given size with a random permutation of integers from [0, size).
+    /// </summary>
+    public IObservable<Tensor> Process()
+    {
+        return Observable.Return(randperm(Size, dtype: Type, device: Device, generator: Generator));
+    }
+
+    /// <summary>
+    /// Creates a tensor with a random permutation of integers in [0, size) and uses the input generator.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tensor> Process(IObservable<Generator> source)
+    {
+        return source.Select(value =>
+        {
+            Generator = value;
+            return randperm(Size, dtype: Type, device: Device, generator: Generator);
+        });
+    }
+
+    /// <summary>
+    /// Randomly permutates tensors from the input sequence.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tensor> Process(IObservable<Tensor> source)
+    {
+        return source.Select(value =>
+        {
+            var size = value.numel();
+            var shape = value.shape;
+            var idxs = randperm(size, dtype: Type, device: Device, generator: Generator);
+            return value.flatten().index_select(0, idxs).reshape(shape);
+        });
+    }
+
+
+    /// <summary>
+    /// Generates random permutations for each element of the input sequence.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public IObservable<Tensor> Process<T>(IObservable<T> source)
+    {
+        return source.Select(_ => randperm(Size, dtype: Type, device: Device, generator: Generator));
+    }
+}
