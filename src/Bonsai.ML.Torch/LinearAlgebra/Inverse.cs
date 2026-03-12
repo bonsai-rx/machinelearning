@@ -4,24 +4,23 @@ using System.Reactive.Linq;
 using static TorchSharp.torch;
 using static TorchSharp.torch.linalg;
 
-namespace Bonsai.ML.Torch.LinearAlgebra
+namespace Bonsai.ML.Torch.LinearAlgebra;
+
+/// <summary>
+/// Represents an operator that computes the inverse of the input matrix.
+/// </summary>
+[Combinator]
+[Description("Computes the inverse of the input matrix.")]
+[WorkflowElementCategory(ElementCategory.Transform)]
+public class Inverse
 {
     /// <summary>
     /// Computes the inverse of the input matrix.
     /// </summary>
-    [Combinator]
-    [Description("Computes the inverse of the input matrix.")]
-    [WorkflowElementCategory(ElementCategory.Transform)]
-    public class Inverse
+    /// <param name="source">The input matrix to invert.</param>
+    /// <returns>The inverse of the input matrix.</returns>
+    public IObservable<Tensor> Process(IObservable<Tensor> source)
     {
-        /// <summary>
-        /// Computes the inverse of the input matrix.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public IObservable<Tensor> Process(IObservable<Tensor> source)
-        {
-            return source.Select(inv);
-        }
+        return source.Select(inv);
     }
 }
