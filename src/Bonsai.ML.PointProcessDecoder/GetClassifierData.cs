@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
+using PointProcessDecoder.Core;
 using PointProcessDecoder.Core.Decoder;
 using static TorchSharp.torch;
 
@@ -26,13 +27,16 @@ public class GetClassifierData : IPointProcessModelReference
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public IObservable<ClassifierData> Process(IObservable<Tensor> source)
+    public IObservable<ClassifierDataFrame> Process(IObservable<Tensor> source)
     {
         var modelName = Name;
-        return source.Select(input => 
+        return source.Select(input =>
         {
             var model = PointProcessModelManager.GetModel(modelName);
-            return new ClassifierData(model.StateSpace, input);
+            var classifierData = new ClassifierData(model.StateSpace, input);
+            return new ClassifierDataFrame(
+                classifierData,
+                modelName);
         });
     }
 }

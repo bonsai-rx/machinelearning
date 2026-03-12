@@ -18,8 +18,12 @@ using System.Text;
     Target = typeof(Bonsai.ML.PointProcessDecoder.Decode))]
 [assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer), 
     Target = typeof(Bonsai.ML.PointProcessDecoder.GetDecoderData))]
-[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer), 
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer),
     Target = typeof(Bonsai.ML.PointProcessDecoder.GetClassifierData))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer),
+    Target = typeof(Bonsai.ML.PointProcessDecoder.DecoderDataFrame))]
+[assembly: TypeVisualizer(typeof(Bonsai.ML.PointProcessDecoder.Design.PosteriorVisualizer),
+    Target = typeof(Bonsai.ML.PointProcessDecoder.ClassifierDataFrame))]
 
 namespace Bonsai.ML.PointProcessDecoder.Design
 {
@@ -85,7 +89,7 @@ namespace Bonsai.ML.PointProcessDecoder.Design
                 }
             }
 
-            if (node == null)
+            if (node is null)
             {
                 throw new InvalidOperationException("The decode node is invalid.");
             }
@@ -93,8 +97,9 @@ namespace Bonsai.ML.PointProcessDecoder.Design
             _convertInputData = node switch
             {
                 Decode _ => input => (Tensor)input,
-                GetDecoderData _ => input => ((DecoderData)input).Posterior,
-                GetClassifierData _ => input => ((ClassifierData)input).DecoderData.Posterior,
+                GetDecoderData _ => input => ((DecoderDataFrame)input).DecoderData.Posterior,
+                GetClassifierData _ => input => ((ClassifierDataFrame)input).ClassifierData.DecoderData.Posterior,
+                DecoderDataFrame _ => input => ((DecoderDataFrame)input).DecoderData.Posterior,
                 _ => throw new InvalidOperationException("The node is invalid.")
             };
 

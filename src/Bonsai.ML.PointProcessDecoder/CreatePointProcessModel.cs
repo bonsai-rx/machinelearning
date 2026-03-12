@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Linq;
@@ -87,7 +87,7 @@ public class CreatePointProcessModel : IPointProcessModelReference
     /// </summary>
     [Category("Covariate Parameters")]
     [Description("The number of dimensions of the covariate.")]
-    public int Dimensions
+    public int CovariateDimensions
     {
         get
         {
@@ -163,7 +163,7 @@ public class CreatePointProcessModel : IPointProcessModelReference
     [Category("Covariate Parameters")]
     [Description("The kernel bandwidth used to estimate the probability density over the covariate dimensions. Must be the same length as the covariate dimensions.")]
     [TypeConverter(typeof(UnidimensionalArrayConverter))]
-    public double[] Bandwidth
+    public double[] CovariateBandwidth
     {
         get
         {
@@ -195,7 +195,7 @@ public class CreatePointProcessModel : IPointProcessModelReference
 
     private int? kernelLimit = null;
     /// <summary>
-    /// Gets or sets the maximum number of kernels maintained in memory for each probability density estimation made by the encoder. 
+    /// Gets or sets the maximum number of kernels maintained in memory for each probability density estimation made by the encoder.
     /// </summary>
     /// <remarks>
     /// In the case of sorted spikes, there is an estimate for the full covariate distribution and an estimate for each unit. #
@@ -215,22 +215,22 @@ public class CreatePointProcessModel : IPointProcessModelReference
         }
     }
 
-    private int? nUnits = null;
+    private int? numUnits = null;
     /// <summary>
     /// Gets or sets the number of sorted spiking units.
     /// Only used when the encoder type is set to <see cref="EncoderType.SortedSpikes"/>.
     /// </summary>
     [Category("Encoder Parameters")]
     [Description("The number of sorted spiking units. Only used when the encoder type is set to SortedSpikeEncoder.")]
-    public int? NUnits
+    public int? NumUnits
     {
         get
         {
-            return nUnits;
+            return numUnits;
         }
         set
         {
-            nUnits = value;
+            numUnits = value;
         }
     }
 
@@ -253,22 +253,22 @@ public class CreatePointProcessModel : IPointProcessModelReference
         }
     }
 
-    private int? markChannels = null;
+    private int? numChannels = null;
     /// <summary>
     /// Gets or sets the number of mark recording channels.
     /// Only used when the encoder type is set to <see cref="EncoderType.ClusterlessMarks"/>.
     /// </summary>
     [Category("Encoder Parameters")]
     [Description("The number of mark recording channels. Only used when the encoder type is set to ClusterlessMarkEncoder.")]
-    public int? MarkChannels
+    public int? NumChannels
     {
         get
         {
-            return markChannels;
+            return numChannels;
         }
         set
         {
-            markChannels = value;
+            numChannels = value;
         }
     }
 
@@ -352,7 +352,7 @@ public class CreatePointProcessModel : IPointProcessModelReference
     private double? sigmaRandomWalk = null;
     /// <summary>
     /// Gets or sets the standard deviation of the random walk transitions model.
-    /// Only used when the transitions type is set to <see cref="TransitionsType.RandomWalk"/> or when the decoder type is set to <see cref="DecoderType.HybridStateSpaceClassifier"/> 
+    /// Only used when the transitions type is set to <see cref="TransitionsType.RandomWalk"/> or when the decoder type is set to <see cref="DecoderType.HybridStateSpaceClassifier"/>
     /// </summary>
     [Category("Decoder Parameters")]
     [Description("The standard deviation of the random walk transitions model. Only used when the transitions type is set to RandomWalk or when the decoder type is set to HybridStateSpaceClassifier.")]
@@ -433,12 +433,12 @@ public class CreatePointProcessModel : IPointProcessModelReference
                 minStateSpace: minCovariateRange,
                 maxStateSpace: maxCovariateRange,
                 stepsStateSpace: stepsCovariateRange,
-                observationBandwidth: covariateBandwidth,
+                covariateBandwidth: covariateBandwidth,
                 stateSpaceDimensions: covariateDimensions,
                 markDimensions: markDimensions,
-                markChannels: markChannels,
+                numChannels: numChannels,
                 markBandwidth: markBandwidth,
-                nUnits: nUnits,
+                numUnits: numUnits,
                 distanceThreshold: distanceThreshold,
                 sigmaRandomWalk: sigmaRandomWalk,
                 kernelLimit: kernelLimit,
