@@ -116,7 +116,7 @@ public class StandardPcaTests
     }
 
     [TestMethod]
-    public static void TestStandardPca()
+    public void TestStandardPca()
     {
         var pca = new Pca(numComponents: 2);
         TestBasic(pca);
