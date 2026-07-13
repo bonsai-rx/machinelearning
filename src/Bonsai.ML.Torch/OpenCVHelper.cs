@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenCV.Net;
+using TorchSharp;
 using static TorchSharp.torch;
 
 namespace Bonsai.ML.Torch
@@ -32,12 +33,14 @@ namespace Bonsai.ML.Torch
             if (image == null)
                 return empty([ 0, 0, 0 ]);
 
-            int height = image.Height;
-            int channels = image.Channels;
-            var width = image.WidthStep / channels;
-
             var iplDepth = image.Depth;
             var tensorType = bitDepthLookup.FirstOrDefault(x => x.Value.IplDepth == iplDepth).Key;
+
+            int height = image.Height;
+            int channels = image.Channels;
+            int elementSize = tensorType.ElementSize();
+            int stride = image.WidthStep / elementSize;
+            var width = stride / channels;
 
             IntPtr data = image.ImageData;
             ReadOnlySpan<long> dimensions = stackalloc long[] { height, width, channels };
