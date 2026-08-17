@@ -1,0 +1,48 @@
+﻿using System.ComponentModel;
+using System.Xml.Serialization;
+
+namespace Bonsai.ML.Torch.NeuralNets;
+
+/// <summary>
+/// Represents an operator that creates a normalization module.
+/// </summary>
+[XmlInclude(typeof(Normalization.BatchNorm1D))]
+[XmlInclude(typeof(Normalization.BatchNorm2D))]
+[XmlInclude(typeof(Normalization.BatchNorm3D))]
+[XmlInclude(typeof(Normalization.GroupNorm))]
+[XmlInclude(typeof(Normalization.InstanceNorm1D))]
+[XmlInclude(typeof(Normalization.InstanceNorm2D))]
+[XmlInclude(typeof(Normalization.InstanceNorm3D))]
+[XmlInclude(typeof(Normalization.LayerNorm))]
+[XmlInclude(typeof(Normalization.LocalResponseNorm))]
+[DefaultProperty(nameof(NormalizationModule))]
+[Description("Creates a normalization module.")]
+[WorkflowElementCategory(ElementCategory.Source)]
+public class NormalizationModuleBuilder : ModuleCombinatorBuilder, INamedElement
+{
+    internal override string BuilderName => "NormalizationModule";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NormalizationModuleBuilder"/> class.
+    /// </summary>
+    public NormalizationModuleBuilder()
+    {
+        Module = new Normalization.BatchNorm1D();
+    }
+
+    /// <summary>
+    /// Gets or sets the specific normalization module to create.
+    /// </summary>
+    [DesignOnly(true)]
+    [DisplayName("Module")]
+    [Externalizable(false)]
+    [RefreshProperties(RefreshProperties.All)]
+    [Category(nameof(CategoryAttribute.Design))]
+    [Description("The specific normalization module to create.")]
+    [TypeConverter(typeof(ModuleTypeConverter))]
+    public object NormalizationModule
+    {
+        get => Module;
+        set => Module = value;
+    }
+}
