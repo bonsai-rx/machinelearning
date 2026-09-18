@@ -552,7 +552,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
                     parameters.MeasurementFunction.set_(
                         InverseCholesky(
                             statistics.Tyx11 - outer(statistics.Ty1, statistics.Tx1) / timeBins,
-                            sxx11 - outer(statistics.Tx0, statistics.Tx0) / timeBins
+                            sxx11 - outer(statistics.Tx1, statistics.Tx1) / timeBins
                         )
                     );
                 }
