@@ -464,7 +464,6 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         if (parameters.NumObservations != numObservations)
             throw new ArgumentException($"The number of observation dimensions in the parameters ({parameters.NumObservations}) does not match the observations ({numObservations}).");
 
-        var identityStates = eye(parameters.NumStates, dtype: parameters.ScalarType, device: parameters.Device);
 
         // Precompute constant observation terms reused across EM iterations
         var observationT = observation.mT;
@@ -609,10 +608,9 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
                 {
                     var explainedObservationCovariance = parameters.MeasurementFunction.matmul(crossCorrelationObservations.mT);
 
-                    if (parametersToEstimate.MeasurementNoiseCovariance)
-                        parameters.MeasurementNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
-                            EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
-                                + parameters.MeasurementFunction.matmul(sxx11).matmul(parameters.MeasurementFunction.mT)) / timeBins)));
+                    parameters.MeasurementNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
+                        EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
+                            + parameters.MeasurementFunction.matmul(sxx11).matmul(parameters.MeasurementFunction.mT)) / timeBins)));
                 }
             }
 
