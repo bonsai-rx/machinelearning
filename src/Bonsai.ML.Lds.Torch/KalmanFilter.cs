@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TorchSharp.Modules;
 using static TorchSharp.torch;
 
@@ -93,8 +93,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
         // Update step
         var updatedMean = state.Mean + kalmanGain.matmul(innovation);
-        var updatedCovariance = WrappedTensorDisposeScope(() => state.Covariance
-            - kalmanGain.matmul(parameters.MeasurementFunction).matmul(state.Covariance));
+        var updatedCovariance = WrappedTensorDisposeScope(() => EnsureSymmetric(state.Covariance
+            - kalmanGain.matmul(parameters.MeasurementFunction).matmul(state.Covariance)));
 
         var updatedState = new LinearDynamicalSystemState(updatedMean, updatedCovariance);
 
