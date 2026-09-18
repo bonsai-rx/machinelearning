@@ -118,10 +118,16 @@ public class KalmanFilterParameters : nn.Module
         if (numObservations is null)
             throw new ArgumentOutOfRangeException(nameof(numObservations), "Number of observations must be specified or inferred from the parameters.");
 
-        transitionMatrix = transitionMatrix?.clone() ?? eye(numStates.Value);
-        measurementFunction = measurementFunction?.clone() ?? eye(numObservations.Value, numStates.Value);
-        initialMean = initialMean?.clone() ?? zeros(numStates.Value);
-        initialCovariance = initialCovariance?.clone() ?? eye(numStates.Value);
+        // Unless specified, the data type and device follow the first provided tensor so defaults and inputs agree
+        var reference = transitionMatrix ?? measurementFunction ?? initialMean ?? initialCovariance
+            ?? processNoiseCovariance ?? measurementNoiseCovariance ?? stateOffset ?? observationOffset;
+        scalarType ??= reference?.dtype;
+        device ??= reference?.device;
+
+        transitionMatrix = transitionMatrix?.clone() ?? eye(numStates.Value, dtype: scalarType, device: device);
+        measurementFunction = measurementFunction?.clone() ?? eye(numObservations.Value, numStates.Value, dtype: scalarType, device: device);
+        initialMean = initialMean?.clone() ?? zeros(numStates.Value, dtype: scalarType, device: device);
+        initialCovariance = initialCovariance?.clone() ?? eye(numStates.Value, dtype: scalarType, device: device);
 
         processNoiseCovariance = processNoiseCovariance?.NumberOfElements == 1
             ? CreateCovarianceMatrixFromScalar(processNoiseCovariance, numStates.Value, "Process noise variance")
@@ -133,23 +139,21 @@ public class KalmanFilterParameters : nn.Module
             : measurementNoiseCovariance?.clone()
             ?? CreateCovarianceMatrixFromScalar(1.0, numObservations.Value, "Measurement noise variance");
 
+        // Tensors are plain properties rather than registered module parameters, so they are converted here instead of through Module.to
+        Tensor Convert(Tensor tensor) => tensor is null ? null : tensor.to(scalarType ?? tensor.dtype, device ?? tensor.device);
+
         NumStates = numStates.Value;
         NumObservations = numObservations.Value;
-        TransitionMatrix = transitionMatrix;
-        MeasurementFunction = measurementFunction;
-        ProcessNoiseCovariance = processNoiseCovariance;
-        MeasurementNoiseCovariance = measurementNoiseCovariance;
-        InitialMean = initialMean;
-        InitialCovariance = initialCovariance;
-        StateOffset = stateOffset;
-        ObservationOffset = observationOffset;
+        TransitionMatrix = Convert(transitionMatrix);
+        MeasurementFunction = Convert(measurementFunction);
+        ProcessNoiseCovariance = Convert(processNoiseCovariance);
+        MeasurementNoiseCovariance = Convert(measurementNoiseCovariance);
+        InitialMean = Convert(initialMean);
+        InitialCovariance = Convert(initialCovariance);
+        StateOffset = Convert(stateOffset);
+        ObservationOffset = Convert(observationOffset);
 
         Validate();
-
-        if (device is not null)
-            this.to(device);
-        if (scalarType is not null)
-            this.to(scalarType.Value);
 
         _device = TransitionMatrix.device;
         _scalarType = TransitionMatrix.dtype;
