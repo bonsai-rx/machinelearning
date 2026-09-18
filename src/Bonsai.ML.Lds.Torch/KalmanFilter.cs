@@ -376,7 +376,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             if (parameters.OffsetsProvided)
             {
                 tx1 += smoothedState.Mean[time];
-                tx0 += smoothedState.Mean[time + 1];
+                tx0 += smoothedState.Mean[time];
                 ty1 += observations[time];
                 tyx11 += outer(observations[time], smoothedState.Mean[time]);
                 tyy11 += outer(observations[time], observations[time]);
