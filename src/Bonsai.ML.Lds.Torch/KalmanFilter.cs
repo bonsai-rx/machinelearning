@@ -589,8 +589,12 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
                 }
                 else
                 {
+                    // Full form so the update stays valid when the transition matrix is held fixed
                     parameters.ProcessNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
-                        EnsureSymmetric((sxx11 - parameters.TransitionMatrix.matmul(sxx10.mT)) / timeBins)));
+                        EnsureSymmetric((sxx11
+                            - sxx10.matmul(parameters.TransitionMatrix.mT)
+                            - parameters.TransitionMatrix.matmul(sxx10.mT)
+                            + linalg.multi_dot([parameters.TransitionMatrix, sxx00, parameters.TransitionMatrix.mT])) / timeBins)));
                 }
             }
 
