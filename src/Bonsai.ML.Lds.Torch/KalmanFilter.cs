@@ -457,7 +457,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
     {
         var timeBins = observation.size(0);
         var numObservations = (int)observation.size(1);
-        var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: parameters.Device);
+        var logLikelihood = zeros(maxIterations, dtype: ScalarType.Float32, device: parameters.Device);
+        var iterations = 0;
         var previousLogLikelihood = double.NegativeInfinity;
         var logLikelihoodConst = -0.5 * timeBins * numObservations * Math.Log(2.0 * Math.PI);
 
@@ -473,6 +474,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
         for (int iteration = 0; iteration < maxIterations; iteration++)
         {
+            iterations = iteration + 1;
+
             // Filter observations
             var filteredState = Filter(
                 timeBins: timeBins,
@@ -625,7 +628,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
                 parameters.InitialCovariance.set_(state.SmoothedInitialCovariance);
         }
 
-        return new ExpectationMaximizationResult(logLikelihood, parameters);
+        return new ExpectationMaximizationResult(logLikelihood[TensorIndex.Slice(0, iterations)], parameters);
     }
 
     public static StochasticSubspaceIdentificationResult StochasticSubspaceIdentification(
