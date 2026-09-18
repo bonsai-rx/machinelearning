@@ -647,8 +647,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         var pastView = centered.as_strided([maxLag, numCols, numObservations], [stride[0], stride[0], stride[1]]);
         var past = pastView.permute(0, 2, 1).reshape(maxLag * numObservations, numCols);
 
-        var futureView = centered.narrow(0, maxLag, timeBins - maxLag)
-            .as_strided([maxLag, numCols, numObservations], [stride[0], stride[0], stride[1]]);
+        // as_strided takes an explicit storage offset (default 0), so the future block must be offset by maxLag rows here rather than through a narrowed view
+        var futureView = centered.as_strided([maxLag, numCols, numObservations], [stride[0], stride[0], stride[1]], maxLag * stride[0]);
         var future = futureView.permute(0, 2, 1).reshape(maxLag * numObservations, numCols);
 
         // Compute the projection
