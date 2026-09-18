@@ -465,6 +465,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         if (parameters.NumObservations != numObservations)
             throw new ArgumentException($"The number of observation dimensions in the parameters ({parameters.NumObservations}) does not match the observations ({numObservations}).");
 
+        if ((parametersToEstimate.StateOffset || parametersToEstimate.ObservationOffset) && !parameters.OffsetsProvided)
+            throw new ArgumentException("Estimating offsets requires the parameters to include an initial state offset or observation offset.");
 
         // Precompute constant observation terms reused across EM iterations
         var observationT = observation.mT;
@@ -642,7 +644,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
         var timeBins = observations.size(0);
         var numObservations = observations.size(1);
-        var centered = observations - observations.mean([0], keepdim: true);
+        var observationMean = observations.mean([0]);
+        var centered = observations - observationMean;
 
         // Build Hankel matrices from observations
         var numCols = (int)(timeBins - 2 * maxLag + 1);
@@ -713,7 +716,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             processNoiseCovariance: parametersToEstimate.ProcessNoiseCovariance ? processNoiseCovariance : null,
             measurementNoiseCovariance: parametersToEstimate.MeasurementNoiseCovariance ? measurementNoiseCovariance : null,
             initialMean: parametersToEstimate.InitialMean ? initialMean : null,
-            initialCovariance: parametersToEstimate.InitialCovariance ? initialCovariance : null
+            initialCovariance: parametersToEstimate.InitialCovariance ? initialCovariance : null,
+            observationOffset: parametersToEstimate.ObservationOffset ? observationMean : null
         );
 
         return new StochasticSubspaceIdentificationResult(

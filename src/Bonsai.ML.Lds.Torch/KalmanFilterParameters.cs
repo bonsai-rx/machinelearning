@@ -65,7 +65,7 @@ public class KalmanFilterParameters : nn.Module
     public Tensor ObservationOffset { get; private set; }
 
     /// <summary>
-    /// Indicates whether any offsets have been provided.
+    /// Indicates whether offsets are part of the model. When either offset is provided, the other defaults to zero, so both are non-null whenever this is true.
     /// </summary>
     public bool OffsetsProvided => StateOffset is not null || ObservationOffset is not null;
 
@@ -138,6 +138,13 @@ public class KalmanFilterParameters : nn.Module
             ? CreateCovarianceMatrixFromScalar(measurementNoiseCovariance, numObservations.Value, "Measurement noise variance")
             : measurementNoiseCovariance?.clone()
             ?? CreateCovarianceMatrixFromScalar(1.0, numObservations.Value, "Measurement noise variance");
+
+        // The filter and EM updates read both offsets whenever either is present, so a missing one defaults to zero
+        if (stateOffset is not null || observationOffset is not null)
+        {
+            stateOffset = stateOffset?.clone() ?? zeros(numStates.Value, dtype: scalarType, device: device);
+            observationOffset = observationOffset?.clone() ?? zeros(numObservations.Value, dtype: scalarType, device: device);
+        }
 
         // Tensors are plain properties rather than registered module parameters, so they are converted here instead of through Module.to
         Tensor Convert(Tensor tensor) => tensor is null ? null : tensor.to(scalarType ?? tensor.dtype, device ?? tensor.device);
