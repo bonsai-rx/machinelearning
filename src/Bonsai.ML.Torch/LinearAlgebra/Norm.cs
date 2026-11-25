@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
+using static TorchSharp.torch.linalg;
 
 namespace Bonsai.ML.Torch.LinearAlgebra;
 
@@ -34,6 +35,6 @@ public class Norm
     /// </summary>
     public IObservable<Tensor> Process(IObservable<Tensor> source)
     {
-        return source.Select(tensor => linalg.norm(tensor, dims: Dimensions, keepdim: Keepdim));
+        return source.Select(tensor => norm(tensor, dims: Dimensions, keepdim: Keepdim));
     }
 }

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Reactive.Linq;
 using static TorchSharp.torch;
+using static TorchSharp.torch.linalg;
 
 namespace Bonsai.ML.Torch.LinearAlgebra;
 
@@ -29,6 +30,6 @@ public class SingularValueDecomposition
     /// </summary>
     public IObservable<SingularValueDecompositionResult> Process(IObservable<Tensor> source)
     {
-        return source.Select(tensor => new SingularValueDecompositionResult(linalg.svd(tensor, fullMatrices: FullMatrices)));
+        return source.Select(tensor => new SingularValueDecompositionResult(svd(tensor, fullMatrices: FullMatrices)));
     }
 }
