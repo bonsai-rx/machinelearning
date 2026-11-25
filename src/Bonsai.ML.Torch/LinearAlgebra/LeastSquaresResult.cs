@@ -13,22 +13,22 @@ public readonly struct LeastSquaresResult((
 ) result)
 {
     /// <summary>
-    /// The solution to the system of equations.
+    /// Gets the solution to the system of equations.
     /// </summary>
     public Tensor Solution => result.solution;
 
     /// <summary>
-    /// The residual error.
+    /// Gets the residual error.
     /// </summary>
     public Tensor Residuals => result.residuals;
 
     /// <summary>
-    /// The effective rank of the solution.
+    /// Gets the effective rank of the solution.
     /// </summary>
     public Tensor Rank => result.rank;
 
     /// <summary>
-    /// The singular values of the solution.
+    /// Gets the singular values of the solution.
     /// </summary>
     public Tensor SingularValues => result.singularValues;
 }

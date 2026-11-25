@@ -12,17 +12,17 @@ public readonly struct SingularValueDecompositionResult((
 ) result)
 {
     /// <summary>
-    /// The unitary matrix with left singular vectors as columns.
+    /// Gets the unitary matrix with left singular vectors as columns.
     /// </summary>
     public Tensor U => result.u;
 
     /// <summary>
-    /// The singular values.
+    /// Gets the singular values.
     /// </summary>
     public Tensor S => result.s;
 
     /// <summary>
-    /// The unitary matrix with right singular vectors as rows.
+    /// Gets the unitary matrix with right singular vectors as rows.
     /// </summary>
     public Tensor Vh => result.vh;
 }
