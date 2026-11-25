@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Linq;
@@ -78,10 +77,11 @@ public class MultiDot
     {
         return source.Select(value =>
         {
-            if (value.Count() < 2)
-                return value.FirstOrDefault();
+            Tensor[] tensors = [.. value];
+            if (tensors.Length < 2)
+                throw new ArgumentException("At least two tensors are required for matrix multiplication.");
 
-            return multi_dot([.. value]);
+            return multi_dot(tensors);
         });
     }
 }

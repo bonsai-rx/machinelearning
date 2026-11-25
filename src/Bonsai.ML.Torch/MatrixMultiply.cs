@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Linq;
@@ -70,10 +69,14 @@ public class MatrixMultiply
     {
         return source.Select(value =>
         {
-            var result = value.FirstOrDefault();
-            foreach (var tensor in value.Skip(1))
+            Tensor[] tensors = [.. value];
+            if (tensors.Length < 2)
+                throw new ArgumentException("At least two tensors are required for matrix multiplication.");
+
+            var result = tensors[0];
+            for (int i = 1; i < tensors.Length; i++)
             {
-                result = result.matmul(tensor);
+                result = result.matmul(tensors[i]);
             }
             return result;
         });
