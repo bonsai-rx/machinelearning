@@ -25,9 +25,6 @@ public class CrossProduct
     /// </summary>
     public IObservable<Tensor> Process(IObservable<Tuple<Tensor, Tensor>> source)
     {
-        return source.Select(value =>
-        {
-            return cross(value.Item1, value.Item2, Dimension);
-        });
+        return source.Select(value => cross(value.Item1, value.Item2, Dimension));
     }
 }
