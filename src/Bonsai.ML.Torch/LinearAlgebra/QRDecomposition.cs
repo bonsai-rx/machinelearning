@@ -18,7 +18,7 @@ public class QRDecomposition
     /// Gets or sets the mode of the QR decomposition.
     /// </summary>
     [Description("The mode of the QR decomposition.")]
-    public QRMode Mode { get; set; } = QRMode.Reduced;
+    public QRMode Mode { get; set; }
 
     /// <summary>
     /// Computes the QR decomposition of a matrix.
