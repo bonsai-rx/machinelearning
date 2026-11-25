@@ -22,10 +22,12 @@ public class Norm
     public long[]? Dimensions { get; set; } = null;
 
     /// <summary>
-    /// Gets or sets whether the reduced dimensions are retained in the result as dimensions with size one.
+    /// Gets or sets whether the reduced dimensions are retained in the result as dimensions with
+    /// size one.
     /// </summary>
     /// <remarks>
-    /// True indicates that the reduced dimensions are retained in the result as dimensions with size one; otherwise, the reduced dimensions are removed from the result.
+    /// True indicates that the reduced dimensions are retained in the result as dimensions with
+    /// size one; otherwise, the reduced dimensions are removed from the result.
     /// </remarks>
     [Description("True indicates that the reduced dimensions are retained in the result as dimensions with size one; otherwise, the reduced dimensions are removed from the result.")]
     public bool Keepdim { get; set; }

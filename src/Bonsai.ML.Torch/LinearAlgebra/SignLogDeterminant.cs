@@ -6,8 +6,8 @@ using static TorchSharp.torch;
 namespace Bonsai.ML.Torch.LinearAlgebra;
 
 /// <summary>
-/// Represents an operator that computes the sign and natural logarithm of the absolute value of the determinant of a
-/// square matrix.
+/// Represents an operator that computes the sign and natural logarithm of the absolute value of the
+/// determinant of a square matrix.
 /// </summary>
 [Combinator]
 [Description("Computes the sign and natural logarithm of the absolute value of the determinant of a square matrix.")]
@@ -15,7 +15,8 @@ namespace Bonsai.ML.Torch.LinearAlgebra;
 public class SignLogDeterminant
 {
     /// <summary>
-    /// Computes the sign and natural logarithm of the absolute value of the determinant of a square matrix.
+    /// Computes the sign and natural logarithm of the absolute value of the determinant of a square
+    /// matrix.
     /// </summary>
     public IObservable<SignLogDeterminantResult> Process(IObservable<Tensor> source)
     {

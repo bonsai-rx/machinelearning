@@ -3,7 +3,8 @@
 namespace Bonsai.ML.Torch.LinearAlgebra;
 
 /// <summary>
-/// Represents the result of computing the sign and natural logarithm of the absolute value of the determinant.
+/// Represents the result of computing the sign and natural logarithm of the absolute value of the
+/// determinant.
 /// </summary>
 public readonly struct SignLogDeterminantResult((Tensor sign, Tensor logabsdet) result)
 {

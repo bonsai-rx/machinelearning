@@ -7,7 +7,8 @@ using static TorchSharp.torch.linalg;
 namespace Bonsai.ML.Torch.LinearAlgebra;
 
 /// <summary>
-/// Represents an operator that computes the eigenvalue decomposition of a square matrix if it exists.
+/// Represents an operator that computes the eigenvalue decomposition of a square matrix if it
+/// exists.
 /// </summary>
 [Combinator]
 [Description("Computes the eigenvalue decomposition of a square matrix if it exists.")]

@@ -27,11 +27,12 @@ public class MatrixRank
     public double? RelativeTolerance { get; set; }
 
     /// <summary>
-    /// Gets or sets whether to treat the input matrix as Hermitian if input is complex or symmetric if real.
+    /// Gets or sets whether to treat the input matrix as Hermitian if input is complex or symmetric
+    /// if real.
     /// </summary>
     /// <remarks>
-    /// True indicates that the input matrix is Hermitian if complex or symmetric if real; otherwise, the input matrix
-    /// is treated as a generic matrix.
+    /// True indicates that the input matrix is Hermitian if complex or symmetric if real;
+    /// otherwise, the input matrix is treated as a generic matrix.
     /// </remarks>
     [Description("True indicates that the input matrix is Hermitian if complex or symmetric if real; otherwise, the input matrix is treated as a generic matrix.")]
     public bool Hermitian { get; set; }

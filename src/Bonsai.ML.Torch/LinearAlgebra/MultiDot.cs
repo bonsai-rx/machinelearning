@@ -9,13 +9,14 @@ using static TorchSharp.torch.linalg;
 namespace Bonsai.ML.Torch.LinearAlgebra;
 
 /// <summary>
-/// Represents an operator that performs optimized matrix multiplication of 2 or more tensors so that the fewest number
-/// of operations are performed.
+/// Represents an operator that performs optimized matrix multiplication of 2 or more tensors so
+/// that the fewest number of operations are performed.
 /// </summary>
 /// <remarks>
-/// Every tensor in the input sequence must be 2D, except for the first or last tensor which may be 1D. If the first
-/// tensor is 1D, it is treated as a row vector and if the last tensor is 1D, it is treated as a column vector. The
-/// output will be 2D if both the first and last tensors are 2D, otherwise the output will be 1D.
+/// Every tensor in the input sequence must be 2D, except for the first or last tensor which may be
+/// 1D. If the first tensor is 1D, it is treated as a row vector and if the last tensor is 1D, it is
+/// treated as a column vector. The output will be 2D if both the first and last tensors are 2D,
+/// otherwise the output will be 1D.
 /// </remarks>
 [Combinator]
 [Description("Performs optimized matrix multiplication of 2 or more tensors using the multi_dot function.")]
