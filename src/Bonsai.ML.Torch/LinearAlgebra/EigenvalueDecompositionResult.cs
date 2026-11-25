@@ -5,7 +5,6 @@ namespace Bonsai.ML.Torch.LinearAlgebra;
 /// <summary>
 /// Represents the result of an eigenvalue decomposition.
 /// </summary>
-/// <param name="result">The tuple containing the eigenvalues and eigenvectors.</param>
 public readonly struct EigenvalueDecompositionResult((Tensor eigenvalues, Tensor eigenvectors) result)
 {
     /// <summary>
