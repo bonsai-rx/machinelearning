@@ -10,7 +10,7 @@ namespace Bonsai.ML.Torch.LinearAlgebra;
 /// Represents an operator that computes the solution X to the system tensordot(A, X) = B.
 /// </summary>
 [Combinator]
-[Description("Computes the solution to the system tensordot(A, X) = B.")]
+[Description("Computes the solution X to the system tensordot(A, X) = B.")]
 [WorkflowElementCategory(ElementCategory.Transform)]
 public class TensorSolve
 {
