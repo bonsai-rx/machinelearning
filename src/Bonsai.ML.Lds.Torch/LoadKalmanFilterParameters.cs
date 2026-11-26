@@ -20,20 +20,20 @@ public class LoadKalmanFilterParameters
     /// </summary>
     [Editor("Bonsai.Design.FolderNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
     [Description("The path to the folder where the Kalman filter model parameters were saved.")]
-    public string Path { get; set; } = string.Empty;
+    public string Path { get; set; }
 
     /// <summary>
     /// Gets or sets the data type of the tensors.
     /// </summary>
     [Description("Gets or sets the data type of the tensors.")]
-    public ScalarType? Type { get; set; } = null;
+    public ScalarType? Type { get; set; }
 
     /// <summary>
     /// Gets or sets the device to use for tensor operations.
     /// </summary>
     [XmlIgnore]
     [Description("Gets or sets the device to use for tensor operations.")]
-    public Device Device { get; set; } = null;
+    public Device Device { get; set; }
 
     private static Tensor LoadTensorFromFile(string basePath, string filePath)
     {

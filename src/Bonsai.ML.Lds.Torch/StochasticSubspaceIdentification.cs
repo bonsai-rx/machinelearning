@@ -77,13 +77,13 @@ public class StochasticSubspaceIdentification
     /// If true, the state offset will be estimated during the SSI algorithm.
     /// </summary>
     [Description("If true, the state offset will be estimated during the SSI algorithm.")]
-    public bool EstimateStateOffset { get; set; } = false;
+    public bool EstimateStateOffset { get; set; }
 
     /// <summary>
     /// If true, the observation offset will be estimated during the SSI algorithm.
     /// </summary>
     [Description("If true, the observation offset will be estimated during the SSI algorithm.")]
-    public bool EstimateObservationOffset { get; set; } = false;
+    public bool EstimateObservationOffset { get; set; }
 
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Stochastic Subspace Identification algorithm to learn the parameters of a Kalman filter model.

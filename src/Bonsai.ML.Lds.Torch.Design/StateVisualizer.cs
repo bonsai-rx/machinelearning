@@ -37,7 +37,7 @@ public class StateVisualizer : BufferedVisualizer
     /// <summary>
     /// Gets or sets a boolean value that determines whether to buffer the data beyond the capacity.
     /// </summary>
-    public bool BufferData { get; set; } = false;
+    public bool BufferData { get; set; }
 
     /// <summary>
     /// Gets the underlying plot control.

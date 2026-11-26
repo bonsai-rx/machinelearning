@@ -41,12 +41,12 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// <summary>
     /// The number of states in the Kalman filter model.
     /// </summary>
-    public int? NumStates { get; set; } = null;
+    public int? NumStates { get; set; }
 
     /// <summary>
     /// The number of observations in the Kalman filter model.
     /// </summary>
-    public int? NumObservations { get; set; } = null;
+    public int? NumObservations { get; set; }
 
     /// <summary>
     /// The state transition matrix.

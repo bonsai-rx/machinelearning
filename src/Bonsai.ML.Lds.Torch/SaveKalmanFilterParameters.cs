@@ -19,13 +19,13 @@ public class SaveKalmanFilterParameters
     /// </summary>
     [Editor("Bonsai.Design.FolderNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
     [Description("The path to the folder where the Kalman filter model parameters will be saved.")]
-    public string Path { get; set; } = string.Empty;
+    public string Path { get; set; }
 
     /// <summary>
     /// If true, the contents of the folder will be overwritten if it already exists.
     /// </summary>
     [Description("If true, the contents of the folder will be overwritten if it already exists.")]
-    public bool Overwrite { get; set; } = false;
+    public bool Overwrite { get; set; }
 
     /// <summary>
     /// Specifies the type of suffix to add to the save path.
@@ -34,7 +34,7 @@ public class SaveKalmanFilterParameters
     /// If Guid is used, a suffix with a unique 128-bit identifier is added to the save path in the format, '[Path]/[128-bit identifier]/...'.
     /// </summary>
     [Description("Specifies the type of suffix to add to the save path.")]
-    public SuffixType AddSuffix { get; set; } = SuffixType.None;
+    public SuffixType AddSuffix { get; set; }
 
     private void SaveKalmanFilterParametersToDisk(KalmanFilterParameters parameters)
     {

@@ -17,8 +17,8 @@ namespace Bonsai.ML.Lds.Torch;
 [TypeConverter(typeof(TensorOperatorConverter))]
 public class CreateLinearDynamicalSystemState : IScalarTypeProvider
 {
-    private Tensor _mean = null;
-    private Tensor _covariance = null;
+    private Tensor _mean;
+    private Tensor _covariance;
 
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]

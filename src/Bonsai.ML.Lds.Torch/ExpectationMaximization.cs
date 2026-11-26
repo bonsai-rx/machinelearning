@@ -25,14 +25,14 @@ public class ExpectationMaximization
     /// The number of states in the Kalman filter model.
     /// </summary>
     [Description("The number of states in the Kalman filter model.")]
-    public int? NumStates { get; set; } = null;
+    public int? NumStates { get; set; }
 
     /// <summary>
     /// The Kalman filter parameters used to initialize the model.
     /// </summary>
     [Description("The Kalman filter parameters used to initialize the model.")]
     [XmlIgnore]
-    public KalmanFilterParameters? ModelParameters { get; set; } = null;
+    public KalmanFilterParameters ModelParameters { get; set; }
 
     /// <summary>
     /// The maximum number of EM iterations to perform.
@@ -98,13 +98,13 @@ public class ExpectationMaximization
     /// If true, the state offset will be estimated during the EM algorithm.
     /// </summary>
     [Description("If true, the state offset will be estimated during the EM algorithm.")]
-    public bool EstimateStateOffset { get; set; } = false;
+    public bool EstimateStateOffset { get; set; }
 
     /// <summary>
     /// If true, the observation offset will be estimated during the EM algorithm.
     /// </summary>
     [Description("If true, the observation offset will be estimated during the EM algorithm.")]
-    public bool EstimateObservationOffset { get; set; } = false;
+    public bool EstimateObservationOffset { get; set; }
 
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Expectation-Maximization algorithm to learn the parameters of a Kalman filter model.

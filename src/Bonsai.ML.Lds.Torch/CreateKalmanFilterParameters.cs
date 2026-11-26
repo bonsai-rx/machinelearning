@@ -18,14 +18,14 @@ namespace Bonsai.ML.Lds.Torch;
 [TypeConverter(typeof(TensorOperatorConverter))]
 public class CreateKalmanFilterParameters : IScalarTypeProvider
 {
-    private Tensor _transitionMatrix = null;
-    private Tensor _measurementFunction = null;
-    private Tensor _processNoiseCovariance = null;
-    private Tensor _measurementNoiseCovariance = null;
-    private Tensor _initialMean = null;
-    private Tensor _initialCovariance = null;
-    private Tensor _stateOffset = null;
-    private Tensor _observationOffset = null;
+    private Tensor _transitionMatrix;
+    private Tensor _measurementFunction;
+    private Tensor _processNoiseCovariance;
+    private Tensor _measurementNoiseCovariance;
+    private Tensor _initialMean;
+    private Tensor _initialCovariance;
+    private Tensor _stateOffset;
+    private Tensor _observationOffset;
 
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
@@ -42,12 +42,12 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     /// <summary>
     /// The number of states in the Kalman filter model.
     /// </summary>
-    public int? NumStates { get; set; } = null;
+    public int? NumStates { get; set; }
 
     /// <summary>
     /// The number of observations in the Kalman filter model.
     /// </summary>
-    public int? NumObservations { get; set; } = null;
+    public int? NumObservations { get; set; }
 
     /// <summary>
     /// The state transition matrix.
