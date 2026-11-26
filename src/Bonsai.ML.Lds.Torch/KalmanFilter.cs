@@ -497,7 +497,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             // Check for convergence
             if (filteredLogLikelihoodSum <= previousLogLikelihood)
             {
-                Console.WriteLine($"Warning: Log likelihood decreased! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
+                Console.WriteLine($"Warning: Log likelihood did not increase! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
                 break;
             }
 
