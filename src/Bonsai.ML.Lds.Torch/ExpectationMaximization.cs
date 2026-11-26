@@ -193,9 +193,10 @@ public class ExpectationMaximization
                     {
                         previousLogLikelihood = logLikelihoodSum;
 
+                        // The parameters keep being updated in place by the next iteration, so each intermediate result gets its own copy
                         observer.OnNext(new ExpectationMaximizationResult(
                             logLikelihood: logLikelihood[TensorIndex.Slice(0, i + 1)],
-                            parameters: parameters,
+                            parameters: parameters.Copy(),
                             finished: false));
                     }
                 }
