@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.IO;
@@ -38,16 +38,13 @@ public class SaveKalmanFilterParameters
 
     private void SaveKalmanFilterParametersToDisk(KalmanFilterParameters parameters)
     {
-        if (string.IsNullOrEmpty(Path))
-        {
-            Path = Directory.GetCurrentDirectory();
-        }
+        var basePath = string.IsNullOrEmpty(Path) ? Directory.GetCurrentDirectory() : Path;
 
         var path = AddSuffix switch
         {
-            SuffixType.DateTime => System.IO.Path.Combine(Path, $"{HighResolutionScheduler.Now:yyyyMMddHHmmss}"),
-            SuffixType.Guid => System.IO.Path.Combine(Path, $"{Guid.NewGuid()}"),
-            _ => Path
+            SuffixType.DateTime => System.IO.Path.Combine(basePath, $"{HighResolutionScheduler.Now:yyyyMMddHHmmss}"),
+            SuffixType.Guid => System.IO.Path.Combine(basePath, $"{Guid.NewGuid()}"),
+            _ => basePath
         };
 
         var transitionMatrixPath = System.IO.Path.Combine(path, "TransitionMatrix.bin");
