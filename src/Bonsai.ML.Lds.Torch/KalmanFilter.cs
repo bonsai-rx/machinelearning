@@ -756,7 +756,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
     public LinearDynamicalSystemState OrthogonalizeMeanAndCovariance(LinearDynamicalSystemState state)
     {
-        var (_, S, Vt) = linalg.svd(Parameters.MeasurementFunction);
+        var (_, S, Vt) = linalg.svd(Parameters.MeasurementFunction, fullMatrices: false);
         var SVt = diag(S).matmul(Vt);
 
         Tensor orthogonalizedMean = null;
