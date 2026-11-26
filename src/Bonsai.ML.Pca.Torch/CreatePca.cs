@@ -75,10 +75,7 @@ public class CreatePca : ZeroArgumentExpressionBuilder, INamedElement, ICustomTy
     {
         return Observable.Using(
             () => model,
-            m => Observable.Return(m)
-                .Concat(Observable.Never(m))
-                .Finally(() => m.Dispose())
-        );
+            m => Observable.Return(m).Concat(Observable.Never(m)));
     }
 
     PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[]? attributes)
