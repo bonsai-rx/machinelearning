@@ -46,13 +46,4 @@ internal static class Utils
             data = data.to(device);
         return data;
     }
-
-    // Replaces a tensor owned by a model, releasing the previous one
-    internal static void Assign(ref Tensor field, Tensor value)
-    {
-        if (ReferenceEquals(field, value))
-            return;
-        field.Dispose();
-        field = value.DetachFromDisposeScope();
-    }
 }

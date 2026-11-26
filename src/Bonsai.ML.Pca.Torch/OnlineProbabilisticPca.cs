@@ -146,18 +146,27 @@ public class OnlineProbabilisticPca : PcaBaseModel
 
         var basis = qr(randn(numFeatures, NumComponents, dtype: type, device: device, generator: Generator), mode: QRMode.Reduced).Q;
         var weights = basis * Math.Sqrt(InitialVariance);
-        var mean = data.mean([0]);
+        var mean = data.mean([0], keepdim: true);
 
         Variance = InitialVariance;
         Components = weights.DetachFromDisposeScope();
         Mean = mean.DetachFromDisposeScope();
 
         // Expected statistics under the initial model
-        Utils.Assign(ref _identityComponents, eye(NumComponents, dtype: type, device: device)); // q x q
-        Utils.Assign(ref _Cxz, weights.clone()); // d x q
-        Utils.Assign(ref _mz, zeros(NumComponents, dtype: type, device: device)); // q
-        Utils.Assign(ref _Czz, eye(NumComponents, dtype: type, device: device)); // q x q
-        Utils.Assign(ref _sxx, mean.dot(mean) + weights.pow(2).sum() + numFeatures * Variance); // scalar
+        _identityComponents.Dispose();
+        _identityComponents = eye(NumComponents, dtype: type, device: device).DetachFromDisposeScope(); // q x q
+
+        _Cxz.Dispose();
+        _Cxz = weights.clone().DetachFromDisposeScope(); // d x q
+
+        _mz.Dispose();
+        _mz = zeros(NumComponents, dtype: type, device: device).DetachFromDisposeScope(); // q
+
+        _Czz.Dispose();
+        _Czz = eye(NumComponents, dtype: type, device: device).DetachFromDisposeScope(); // q x q
+
+        _sxx.Dispose();
+        _sxx = (mean.pow(2).sum() + weights.pow(2).sum() + numFeatures * Variance).DetachFromDisposeScope(); // scalar
     }
 
     /// <inheritdoc/>
@@ -182,7 +191,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
         var Ez = EzT.T;
 
         // Batch statistics
-        var mxBatch = data.mean([0]);
+        var mxBatch = data.mean([0], keepdim: true);
         var sxxBatch = data.pow(2).sum(dim: 1).mean();
         var CxzBatch = data.T.matmul(Ez) / numSamples;
         var mzBatch = Ez.mean([0]);
@@ -197,7 +206,7 @@ public class OnlineProbabilisticPca : PcaBaseModel
         var Czz = rhoFactor * _Czz + rho * CzzBatch;
 
         // M-step
-        var Sxz = Cxz - outer(mean, mz);
+        var Sxz = Cxz - mean.T * mz;
         var weightsUpdated = Utils.SolveSpd(Czz, Sxz.T).T;
 
         if (ReorthogonalizePeriod.HasValue &&
@@ -220,8 +229,8 @@ public class OnlineProbabilisticPca : PcaBaseModel
         Czz = Czz.index_select(0, indices).index_select(1, indices);
 
         // Centered statistics
-        Sxz = Cxz - outer(mean, mz);
-        var Sxx = sxx - mean.dot(mean);
+        Sxz = Cxz - mean.T * mz;
+        var Sxx = sxx - mean.pow(2).sum();
 
         // Update variance
         Variance = ((Sxx - 2 * trace(weights.T.matmul(Sxz)) + trace(weights.T.matmul(weights).matmul(Czz))) / (double)numFeatures)
@@ -231,10 +240,18 @@ public class OnlineProbabilisticPca : PcaBaseModel
 
         Components = weights.DetachFromDisposeScope();
         Mean = mean.DetachFromDisposeScope();
-        Utils.Assign(ref _Cxz, Cxz);
-        Utils.Assign(ref _mz, mz);
-        Utils.Assign(ref _Czz, Czz);
-        Utils.Assign(ref _sxx, sxx);
+
+        _Cxz.Dispose();
+        _Cxz = Cxz.DetachFromDisposeScope();
+
+        _mz.Dispose();
+        _mz = mz.DetachFromDisposeScope();
+
+        _Czz.Dispose();
+        _Czz = Czz.DetachFromDisposeScope();
+
+        _sxx.Dispose();
+        _sxx = sxx.DetachFromDisposeScope();
     }
 
     /// <inheritdoc/>
@@ -259,10 +276,20 @@ public class OnlineProbabilisticPca : PcaBaseModel
         Variance = 0.0;
 
         _stepCount = 0;
-        Utils.Assign(ref _identityComponents, empty(0));
-        Utils.Assign(ref _Cxz, empty(0));
-        Utils.Assign(ref _mz, empty(0));
-        Utils.Assign(ref _Czz, empty(0));
-        Utils.Assign(ref _sxx, empty(0));
+
+        _identityComponents.Dispose();
+        _identityComponents = empty(0);
+
+        _Cxz.Dispose();
+        _Cxz = empty(0);
+
+        _mz.Dispose();
+        _mz = empty(0);
+
+        _Czz.Dispose();
+        _Czz = empty(0);
+
+        _sxx.Dispose();
+        _sxx = empty(0);
     }
 }
