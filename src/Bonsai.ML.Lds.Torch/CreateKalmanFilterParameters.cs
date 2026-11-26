@@ -238,7 +238,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
     /// </summary>
     public IObservable<KalmanFilterParameters> Process()
     {
-        return Observable.Return(new KalmanFilterParameters(
+        return Observable.Defer(() => Observable.Return(new KalmanFilterParameters(
             numStates: NumStates,
             numObservations: NumObservations,
             transitionMatrix: _transitionMatrix,
@@ -251,7 +251,7 @@ public class CreateKalmanFilterParameters : IScalarTypeProvider
             observationOffset: _observationOffset,
             scalarType: Type,
             device: Device
-        ));
+        )));
     }
 
     /// <summary>

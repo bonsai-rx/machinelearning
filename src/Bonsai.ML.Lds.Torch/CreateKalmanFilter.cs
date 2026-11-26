@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
@@ -238,7 +238,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// </summary>
     public IObservable<KalmanFilter> Process()
     {
-        return Observable.Return(new KalmanFilter(
+        return Observable.Defer(() => Observable.Return(new KalmanFilter(
             numStates: NumStates,
             numObservations: NumObservations,
             transitionMatrix: TransitionMatrix,
@@ -251,7 +251,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
             observationOffset: ObservationOffset,
             device: Device,
             scalarType: Type
-        ));
+        )));
     }
 
     /// <summary>

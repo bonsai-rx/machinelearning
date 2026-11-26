@@ -54,37 +54,36 @@ public class LoadKalmanFilterParameters
     /// </summary>
     public IObservable<KalmanFilterParameters> Process()
     {
-        if (string.IsNullOrEmpty(Path))
+        return Observable.Defer(() =>
         {
-            throw new InvalidOperationException("The save path is not specified.");
-        }
+            if (string.IsNullOrEmpty(Path))
+                throw new InvalidOperationException("The save path is not specified.");
 
-        if (!Directory.Exists(Path))
-        {
-            throw new InvalidOperationException("The save path does not exist.");
-        }
+            if (!Directory.Exists(Path))
+                throw new InvalidOperationException("The save path does not exist.");
 
-        var transitionMatrix = LoadTensorFromFile(Path, "TransitionMatrix.bin");
-        var measurementFunction = LoadTensorFromFile(Path, "MeasurementFunction.bin");
-        var processNoiseCovariance = LoadTensorFromFile(Path, "ProcessNoiseCovariance.bin");
-        var measurementNoiseCovariance = LoadTensorFromFile(Path, "MeasurementNoiseCovariance.bin");
-        var initialMean = LoadTensorFromFile(Path, "InitialMean.bin");
-        var initialCovariance = LoadTensorFromFile(Path, "InitialCovariance.bin");
-        var stateOffset = LoadTensorFromFile(Path, "StateOffset.bin");
-        var observationOffset = LoadTensorFromFile(Path, "ObservationOffset.bin");
+            var transitionMatrix = LoadTensorFromFile(Path, "TransitionMatrix.bin");
+            var measurementFunction = LoadTensorFromFile(Path, "MeasurementFunction.bin");
+            var processNoiseCovariance = LoadTensorFromFile(Path, "ProcessNoiseCovariance.bin");
+            var measurementNoiseCovariance = LoadTensorFromFile(Path, "MeasurementNoiseCovariance.bin");
+            var initialMean = LoadTensorFromFile(Path, "InitialMean.bin");
+            var initialCovariance = LoadTensorFromFile(Path, "InitialCovariance.bin");
+            var stateOffset = LoadTensorFromFile(Path, "StateOffset.bin");
+            var observationOffset = LoadTensorFromFile(Path, "ObservationOffset.bin");
 
-        var parameters = new KalmanFilterParameters(
-            transitionMatrix: transitionMatrix,
-            measurementFunction: measurementFunction,
-            processNoiseCovariance: processNoiseCovariance,
-            measurementNoiseCovariance: measurementNoiseCovariance,
-            initialMean: initialMean,
-            initialCovariance: initialCovariance,
-            stateOffset: stateOffset,
-            observationOffset: observationOffset,
-            device: Device,
-            scalarType: Type);
+            var parameters = new KalmanFilterParameters(
+                transitionMatrix: transitionMatrix,
+                measurementFunction: measurementFunction,
+                processNoiseCovariance: processNoiseCovariance,
+                measurementNoiseCovariance: measurementNoiseCovariance,
+                initialMean: initialMean,
+                initialCovariance: initialCovariance,
+                stateOffset: stateOffset,
+                observationOffset: observationOffset,
+                device: Device,
+                scalarType: Type);
 
-        return Observable.Return(parameters);
+            return Observable.Return(parameters);
+        });
     }
 }
