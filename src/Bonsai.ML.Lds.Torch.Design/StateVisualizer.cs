@@ -47,6 +47,10 @@ public class StateVisualizer : BufferedVisualizer
     /// <inheritdoc/>
     public override void Load(IServiceProvider provider)
     {
+        // Series belong to the plot they were added to, so they are created again for each new plot
+        _lineSeries = null;
+        _areaSeries = null;
+
         _plot = new TimeSeriesOxyPlotBase()
         {
             Capacity = Capacity,
