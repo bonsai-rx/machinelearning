@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive;
 using System.Xml.Serialization;
@@ -123,10 +123,12 @@ public class ExpectationMaximization
                 if (Tolerance < 0)
                     throw new InvalidOperationException("The tolerance must be greater than or equal to zero.");
 
+                var maxIterations = MaxIterations;
+                var tolerance = Tolerance;
+
                 var numObservations = (int)input.size(1);
                 var previousLogLikelihood = double.NegativeInfinity;
-                var logLikelihood = zeros([MaxIterations], device: input.device);
-                var maxIterationsReached = false;
+                var logLikelihood = zeros([maxIterations], device: input.device);
 
                 var parametersToEstimate = new ParametersToEstimate(
                     transitionMatrix: EstimateTransitionMatrix,
@@ -144,7 +146,7 @@ public class ExpectationMaximization
                         scalarType: input.dtype,
                         device: input.device);
 
-                for (int i = 0; i < MaxIterations; i++)
+                for (int i = 0; i < maxIterations; i++)
                 {
                     // Check for cancellation before each iteration
                     if (cancellationToken.IsCancellationRequested)
@@ -157,7 +159,7 @@ public class ExpectationMaximization
                         observation: input,
                         parameters: parameters,
                         maxIterations: 1,
-                        tolerance: Tolerance,
+                        tolerance: tolerance,
                         parametersToEstimate: parametersToEstimate);
 
                     var logLikelihoodSum = result.LogLikelihood
@@ -166,17 +168,16 @@ public class ExpectationMaximization
 
                     logLikelihood[i] = logLikelihoodSum;
 
+                    var lastIteration = i == maxIterations - 1;
+
                     if (Verbose)
                     {
                         Console.WriteLine("Iteration " + (i + 1) + ", Log Likelihood: " + logLikelihoodSum);
-                        if (i == MaxIterations - 1)
-                        {
+                        if (lastIteration)
                             Console.WriteLine("EM reached the maximum number of iterations.");
-                            maxIterationsReached = true;
-                        }
                     }
 
-                    if (logLikelihoodSum - previousLogLikelihood < Tolerance)
+                    if (logLikelihoodSum - previousLogLikelihood < tolerance)
                     {
                         if (Verbose)
                         {
@@ -188,7 +189,7 @@ public class ExpectationMaximization
 
                     parameters = result.Parameters;
 
-                    if (!maxIterationsReached)
+                    if (!lastIteration)
                     {
                         previousLogLikelihood = logLikelihoodSum;
 
