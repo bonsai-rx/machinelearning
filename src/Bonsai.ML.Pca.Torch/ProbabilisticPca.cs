@@ -7,8 +7,14 @@ using static TorchSharp.torch.linalg;
 namespace Bonsai.ML.Pca.Torch;
 
 /// <summary>
-/// A probabilistic PCA model.
+/// A probabilistic PCA model fitted with the expectation-maximization algorithm.
 /// </summary>
+/// <remarks>
+/// The components are the maximum likelihood weights rotated to the principal axes, so that
+/// they are mutually orthogonal and ordered by decreasing strength. Transforming data returns
+/// the posterior mean of the latent variables, and reconstructing from those returns the
+/// projection of the data onto the principal subspace.
+/// </remarks>
 public class ProbabilisticPca : PcaBaseModel
 {
     /// <summary>
@@ -101,7 +107,7 @@ public class ProbabilisticPca : PcaBaseModel
         var logLikelihoodConstant = numFeatures * Math.Log(2 * Math.PI);
 
         var weights = randn(numFeatures, NumComponents, dtype: type, device: device, generator: Generator);
-        var variance = NumFeatures < 0 ? InitialVariance : Variance;
+        var variance = InitialVariance;
         var iterations = 0;
 
         // Repeat until convergence
@@ -145,8 +151,11 @@ public class ProbabilisticPca : PcaBaseModel
                 break;
         }
 
+        // Rotate the weights to the principal axes
+        var (U, S, _) = svd(weights, fullMatrices: false);
+
         // Finalize model parameters
-        Components = weights.DetachFromDisposeScope();
+        Components = U.matmul(diag(S)).DetachFromDisposeScope();
         Mean = mean.DetachFromDisposeScope();
         Variance = variance;
         LogLikelihood = logLikelihood.slice(0, 0, iterations, 1).clone().DetachFromDisposeScope();
@@ -161,7 +170,7 @@ public class ProbabilisticPca : PcaBaseModel
     /// <inheritdoc/>
     protected override Tensor ReconstructCore(Tensor data)
     {
-        return data.matmul(Components.T) + Mean;
+        return Utils.Project(data, Components, Variance) + Mean;
     }
 
     /// <inheritdoc/>
