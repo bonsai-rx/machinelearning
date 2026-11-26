@@ -19,8 +19,6 @@ namespace Bonsai.ML.Lds.Torch;
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class ExpectationMaximization
 {
-    private int _maxIterations = 10;
-    private double _tolerance = 1e-4;
     private bool _verbose = true;
 
     /// <summary>
@@ -39,22 +37,16 @@ public class ExpectationMaximization
     /// <summary>
     /// The maximum number of EM iterations to perform.
     /// </summary>
+    [Range(1, int.MaxValue)]
+    [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
     [Description("The maximum number of EM iterations to perform.")]
-    public int MaxIterations
-    {
-        get => _maxIterations;
-        set => _maxIterations = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(MaxIterations), "Must be greater than zero.");
-    }
+    public int MaxIterations { get; set; } = 10;
 
     /// <summary>
     /// The convergence tolerance for the EM algorithm.
     /// </summary>
     [Description("The convergence tolerance for the EM algorithm.")]
-    public double Tolerance
-    {
-        get => _tolerance;
-        set => _tolerance = value >= 0 ? value : throw new ArgumentOutOfRangeException(nameof(Tolerance), "Must be greater than or equal to zero.");
-    }
+    public double Tolerance { get; set; } = 1e-4;
 
     /// <summary>
     /// If true, prints progress messages to the console.
@@ -125,6 +117,12 @@ public class ExpectationMaximization
         {
             return Task.Run(() =>
             {
+                if (MaxIterations <= 0)
+                    throw new InvalidOperationException("The maximum number of iterations must be greater than zero.");
+
+                if (Tolerance < 0)
+                    throw new InvalidOperationException("The tolerance must be greater than or equal to zero.");
+
                 var numObservations = (int)input.size(1);
                 var previousLogLikelihood = double.NegativeInfinity;
                 var logLikelihood = zeros([MaxIterations], device: input.device);

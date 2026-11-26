@@ -16,39 +16,26 @@ namespace Bonsai.ML.Lds.Torch;
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class StochasticSubspaceIdentification
 {
-    private int? _targetNumStates = 2;
-    private int _maxLag = 20;
-    private double _threshold = 1e-4;
-
     /// <summary>
     /// The target number of states in the Kalman filter model.
     /// </summary>
     [Description("The target number of states in the Kalman filter model.")]
-    public int? TargetNumStates
-    {
-        get => _targetNumStates;
-        set => _targetNumStates = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(value), "Number of states must be greater than zero.");
-    }
+    public int? TargetNumStates { get; set; } = 2;
 
     /// <summary>
     /// The maximum lag to consider for the subspace identification.
     /// </summary>
+    [Range(1, int.MaxValue)]
+    [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
     [Description("The maximum lag to consider for the subspace identification.")]
-    public int MaxLag
-    {
-        get => _maxLag;
-        set => _maxLag = value > 0 ? value : throw new ArgumentOutOfRangeException(nameof(MaxLag), "Must be greater than zero.");
-    }
+    public int MaxLag { get; set; } = 20;
 
     /// <summary>
     /// The threshold for the singular values to determine the effective number of states.
     /// </summary>
+    [Range(0, 1)]
     [Description("The threshold for the singular values to determine the effective number of states.")]
-    public double Threshold
-    {
-        get => _threshold;
-        set => _threshold = value >= 0 && value < 1 ? value : throw new ArgumentOutOfRangeException(nameof(Threshold), "Must be greater than or equal to zero and less than one.");
-    }
+    public double Threshold { get; set; } = 1e-4;
 
     /// <summary>
     /// If true, the transition matrix will be estimated during the SSI algorithm.
@@ -109,6 +96,15 @@ public class StochasticSubspaceIdentification
         {
             return Task.Run(() =>
             {
+                if (TargetNumStates <= 0)
+                    throw new InvalidOperationException("The target number of states must be greater than zero.");
+
+                if (MaxLag <= 0)
+                    throw new InvalidOperationException("The maximum lag must be greater than zero.");
+
+                if (Threshold < 0 || Threshold >= 1)
+                    throw new InvalidOperationException("The threshold must be greater than or equal to zero and less than one.");
+
                 var parametersToEstimate = new ParametersToEstimate(
                     transitionMatrix: EstimateTransitionMatrix,
                     measurementFunction: EstimateMeasurementFunction,
