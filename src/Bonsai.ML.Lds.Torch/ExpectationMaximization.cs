@@ -11,31 +11,31 @@ using System.Threading.Tasks;
 namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
-/// Learn the parameters of a kalman filter using the batch EM update algorithm.
+/// Learns the parameters of a Kalman filter using the expectation maximization algorithm.
 /// </summary>
 [Combinator]
 [ResetCombinator]
-[Description("Learn the parameters of a kalman filter using the batch EM update algorithm.")]
+[Description("Learns the parameters of a Kalman filter using the expectation maximization algorithm.")]
 [WorkflowElementCategory(ElementCategory.Combinator)]
 public class ExpectationMaximization
 {
     private bool _verbose = true;
 
     /// <summary>
-    /// The number of states in the Kalman filter model.
+    /// Gets or sets the number of states in the Kalman filter model.
     /// </summary>
     [Description("The number of states in the Kalman filter model.")]
     public int? NumStates { get; set; }
 
     /// <summary>
-    /// The Kalman filter parameters used to initialize the model.
+    /// Gets or sets the Kalman filter parameters used to initialize the model.
     /// </summary>
     [Description("The Kalman filter parameters used to initialize the model.")]
     [XmlIgnore]
     public KalmanFilterParameters ModelParameters { get; set; }
 
     /// <summary>
-    /// The maximum number of EM iterations to perform.
+    /// Gets or sets the maximum number of EM iterations to perform.
     /// </summary>
     [Range(1, int.MaxValue)]
     [Editor(DesignTypes.NumericUpDownEditor, DesignTypes.UITypeEditor)]
@@ -43,13 +43,13 @@ public class ExpectationMaximization
     public int MaxIterations { get; set; } = 10;
 
     /// <summary>
-    /// The convergence tolerance for the EM algorithm.
+    /// Gets or sets the convergence tolerance for the EM algorithm.
     /// </summary>
     [Description("The convergence tolerance for the EM algorithm.")]
     public double Tolerance { get; set; } = 1e-4;
 
     /// <summary>
-    /// If true, prints progress messages to the console.
+    /// Gets or sets a value indicating whether to print progress messages to the console.
     /// </summary>
     [Description("If true, prints progress messages to the console.")]
     public bool Verbose
@@ -59,49 +59,49 @@ public class ExpectationMaximization
     }
 
     /// <summary>
-    /// If true, the transition matrix will be estimated during the EM algorithm.
+    /// Gets or sets a value indicating whether to estimate the transition matrix.
     /// </summary>
     [Description("If true, the transition matrix will be estimated during the EM algorithm.")]
     public bool EstimateTransitionMatrix { get; set; } = true;
 
     /// <summary>
-    /// If true, the measurement function will be estimated during the EM algorithm.
+    /// Gets or sets a value indicating whether to estimate the measurement function.
     /// </summary>
     [Description("If true, the measurement function will be estimated during the EM algorithm.")]
     public bool EstimateMeasurementFunction { get; set; } = true;
 
     /// <summary>
-    /// If true, the process noise covariance will be estimated during the EM algorithm.
+    /// Gets or sets a value indicating whether to estimate the process noise covariance.
     /// </summary>
     [Description("If true, the process noise covariance will be estimated during the EM algorithm.")]
     public bool EstimateProcessNoiseCovariance { get; set; } = true;
 
     /// <summary>
-    /// If true, the measurement noise covariance will be estimated during the EM algorithm.
+    /// Gets or sets a value indicating whether to estimate the measurement noise covariance.
     /// </summary>
     [Description("If true, the measurement noise covariance will be estimated during the EM algorithm.")]
     public bool EstimateMeasurementNoiseCovariance { get; set; } = true;
 
     /// <summary>
-    /// If true, the initial mean will be estimated during the EM algorithm.
+    /// Gets or sets a value indicating whether to estimate the initial mean.
     /// </summary>
     [Description("If true, the initial mean will be estimated during the EM algorithm.")]
     public bool EstimateInitialMean { get; set; } = true;
 
     /// <summary>
-    /// If true, the initial covariance will be estimated during the EM algorithm.
+    /// Gets or sets a value indicating whether to estimate the initial covariance.
     /// </summary>
     [Description("If true, the initial covariance will be estimated during the EM algorithm.")]
     public bool EstimateInitialCovariance { get; set; } = true;
 
     /// <summary>
-    /// If true, the state offset will be estimated during the EM algorithm.
+    /// Gets or sets a value indicating whether to estimate the state offset.
     /// </summary>
     [Description("If true, the state offset will be estimated during the EM algorithm.")]
     public bool EstimateStateOffset { get; set; }
 
     /// <summary>
-    /// If true, the observation offset will be estimated during the EM algorithm.
+    /// Gets or sets a value indicating whether to estimate the observation offset.
     /// </summary>
     [Description("If true, the observation offset will be estimated during the EM algorithm.")]
     public bool EstimateObservationOffset { get; set; }
@@ -109,8 +109,8 @@ public class ExpectationMaximization
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Expectation-Maximization algorithm to learn the parameters of a Kalman filter model.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <param name="source">The sequence of observations, each a tensor with time along the first dimension and observations along the second.</param>
+    /// <returns>A sequence of results containing the log likelihood and the parameters after each iteration.</returns>
     public IObservable<ExpectationMaximizationResult> Process(IObservable<Tensor> source)
     {
         return source.Select(input => Observable.Create<ExpectationMaximizationResult>((observer, cancellationToken) =>

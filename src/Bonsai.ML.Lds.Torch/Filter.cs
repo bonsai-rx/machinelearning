@@ -16,7 +16,7 @@ namespace Bonsai.ML.Lds.Torch;
 public class Filter
 {
     /// <summary>
-    /// The Kalman filter model.
+    /// Gets or sets the Kalman filter model.
     /// </summary>
     [Description("The Kalman filter model.")]
     [XmlIgnore]
@@ -25,6 +25,8 @@ public class Filter
     /// <summary>
     /// Processes an observable sequence of input tensors, applying the Kalman filter to each tensor.
     /// </summary>
+    /// <param name="source">The sequence of observations.</param>
+    /// <returns>A sequence of filtered states, one for each observation.</returns>
     public IObservable<FilteredState> Process(IObservable<Tensor> source)
     {
         return source.Select(Model.Filter);

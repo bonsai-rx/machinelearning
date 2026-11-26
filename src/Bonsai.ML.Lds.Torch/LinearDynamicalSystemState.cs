@@ -5,8 +5,8 @@ namespace Bonsai.ML.Lds.Torch;
 /// <summary>
 /// Represents the state of a linear gaussian dynamical system.
 /// </summary>
-/// <param name="mean"></param>
-/// <param name="covariance"></param>
+/// <param name="mean">The mean of the state.</param>
+/// <param name="covariance">The covariance of the state.</param>
 public readonly struct LinearDynamicalSystemState(Tensor mean, Tensor covariance) : ILinearDynamicalSystemState
 {
     /// <inheritdoc/>

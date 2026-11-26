@@ -15,20 +15,20 @@ namespace Bonsai.ML.Lds.Torch;
 public class SaveKalmanFilterParameters
 {
     /// <summary>
-    /// The path to the folder where the Kalman filter model parameters will be saved.
+    /// Gets or sets the path to the folder where the Kalman filter model parameters will be saved.
     /// </summary>
     [Editor("Bonsai.Design.FolderNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
     [Description("The path to the folder where the Kalman filter model parameters will be saved.")]
     public string Path { get; set; }
 
     /// <summary>
-    /// If true, the contents of the folder will be overwritten if it already exists.
+    /// Gets or sets a value indicating whether to overwrite the contents of the folder if it already exists.
     /// </summary>
     [Description("If true, the contents of the folder will be overwritten if it already exists.")]
     public bool Overwrite { get; set; }
 
     /// <summary>
-    /// Specifies the type of suffix to add to the save path.
+    /// Gets or sets the type of suffix to add to the save path.
     /// The suffix is added as a subfolder to the save path.
     /// If DateTime is used, a suffix with the current date and time is added to the save path in the format, '[Path]/yyyyMMddHHmmss/...'.
     /// If Guid is used, a suffix with a unique 128-bit identifier is added to the save path in the format, '[Path]/[128-bit identifier]/...'.
@@ -110,6 +110,8 @@ public class SaveKalmanFilterParameters
     /// <summary>
     /// Processes an observable sequence of Kalman filter parameters, saving to files.
     /// </summary>
+    /// <param name="source">The sequence of parameters to save.</param>
+    /// <returns>A sequence that is identical to the source sequence, emitted after the parameters have been saved.</returns>
     public IObservable<KalmanFilterParameters> Process(IObservable<KalmanFilterParameters> source)
     {
         return source.Do(SaveKalmanFilterParametersToDisk);
@@ -118,6 +120,8 @@ public class SaveKalmanFilterParameters
     /// <summary>
     /// Processes an observable sequence of Kalman filter models, saving their parameters to files.
     /// </summary>
+    /// <param name="source">The sequence of models whose parameters are saved.</param>
+    /// <returns>A sequence that is identical to the source sequence, emitted after the parameters have been saved.</returns>
     public IObservable<KalmanFilter> Process(IObservable<KalmanFilter> source)
     {
         return source.Do(model => SaveKalmanFilterParametersToDisk(model.Parameters));

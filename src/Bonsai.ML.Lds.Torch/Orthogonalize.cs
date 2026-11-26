@@ -16,7 +16,7 @@ namespace Bonsai.ML.Lds.Torch;
 public class Orthogonalize
 {
     /// <summary>
-    /// The Kalman filter model.
+    /// Gets or sets the Kalman filter model.
     /// </summary>
     [Description("The Kalman filter model.")]
     [XmlIgnore]
@@ -25,8 +25,8 @@ public class Orthogonalize
     /// <summary>
     /// Processes an observable sequence of smoothed results, orthogonalizing the mean and covariance estimates.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <param name="source">The sequence of states to orthogonalize.</param>
+    /// <returns>A sequence of orthogonalized states.</returns>
     public IObservable<LinearDynamicalSystemState> Process(IObservable<LinearDynamicalSystemState> source)
     {
         return source.Select(Model.OrthogonalizeMeanAndCovariance);
@@ -35,8 +35,8 @@ public class Orthogonalize
     /// <summary>
     /// Processes an observable sequence of filtered results, orthogonalizing the mean and covariance estimates.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <param name="source">The sequence of filtered states to orthogonalize.</param>
+    /// <returns>A sequence of orthogonalized states.</returns>
     public IObservable<LinearDynamicalSystemState> Process(IObservable<FilteredState> source)
     {
         return source.Select(input =>
@@ -48,8 +48,8 @@ public class Orthogonalize
     /// <summary>
     /// Processes an observable sequence of mean and covariance tuples, orthogonalizing the mean and covariance estimates.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <param name="source">The sequence of mean and covariance pairs to orthogonalize.</param>
+    /// <returns>A sequence of orthogonalized states.</returns>
     public IObservable<LinearDynamicalSystemState> Process(IObservable<Tuple<Tensor, Tensor>> source)
     {
         return source.Select(input =>

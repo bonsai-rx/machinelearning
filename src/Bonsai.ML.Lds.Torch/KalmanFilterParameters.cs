@@ -80,19 +80,19 @@ public class KalmanFilterParameters : nn.Module
     /// <summary>
     /// Initializes a new instance of the <see cref="KalmanFilterParameters"/> class with the specified parameters.
     /// </summary>
-    /// <param name="numStates"></param>
-    /// <param name="numObservations"></param>
-    /// <param name="transitionMatrix"></param>
-    /// <param name="measurementFunction"></param>
-    /// <param name="processNoiseCovariance"></param>
-    /// <param name="measurementNoiseCovariance"></param>
-    /// <param name="initialMean"></param>
-    /// <param name="initialCovariance"></param>
-    /// <param name="stateOffset"></param>
-    /// <param name="observationOffset"></param>
-    /// <param name="device"></param>
-    /// <param name="scalarType"></param>
-    /// <param name="requiresGrad"></param>
+    /// <param name="numStates">The number of states. If not specified, it is inferred from the parameters.</param>
+    /// <param name="numObservations">The number of observations. If not specified, it is inferred from the parameters.</param>
+    /// <param name="transitionMatrix">The state transition matrix. If not specified, the identity matrix is used.</param>
+    /// <param name="measurementFunction">The measurement function that maps states to observations. If not specified, the identity matrix is used.</param>
+    /// <param name="processNoiseCovariance">The process noise covariance, given as a matrix or as a scalar variance of every state. If not specified, a variance of 1 is used.</param>
+    /// <param name="measurementNoiseCovariance">The measurement noise covariance, given as a matrix or as a scalar variance of every observation. If not specified, a variance of 1 is used.</param>
+    /// <param name="initialMean">The mean of the initial state. If not specified, it is zero.</param>
+    /// <param name="initialCovariance">The covariance of the initial state. If not specified, the identity matrix is used.</param>
+    /// <param name="stateOffset">The constant offset added to the state at each time step. If not specified while the observation offset is, it is zero.</param>
+    /// <param name="observationOffset">The constant offset added to each observation. If not specified while the state offset is, it is zero.</param>
+    /// <param name="device">The device of the parameters. If not specified, the device of the first tensor provided is used.</param>
+    /// <param name="scalarType">The data type of the parameters. If not specified, the data type of the first tensor provided is used.</param>
+    /// <param name="requiresGrad">Whether gradients are tracked for the parameters.</param>
     public KalmanFilterParameters(
         int? numStates = null,
         int? numObservations = null,
@@ -199,7 +199,7 @@ public class KalmanFilterParameters : nn.Module
     /// <summary>
     /// Creates a copy of the current Kalman filter parameters.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A copy of the parameters with cloned tensors.</returns>
     public KalmanFilterParameters Copy() => new(
         NumStates,
         NumObservations,
@@ -216,7 +216,7 @@ public class KalmanFilterParameters : nn.Module
     /// <summary>
     /// Sets the requires_grad flag for all tensors in the Kalman filter parameters.
     /// </summary>
-    /// <param name="requiresGrad"></param>
+    /// <param name="requiresGrad">Whether gradients are tracked for the parameters.</param>
     public void SetGrad(bool requiresGrad)
     {
         TransitionMatrix = TransitionMatrix?.requires_grad_(requiresGrad);

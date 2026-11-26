@@ -15,7 +15,7 @@ namespace Bonsai.ML.Lds.Torch;
 public class UpdateKalmanFilterParameters
 {
     /// <summary>
-    /// The Kalman filter model.
+    /// Gets or sets the Kalman filter model.
     /// </summary>
     [XmlIgnore]
     [Description("The Kalman filter model.")]
@@ -24,8 +24,8 @@ public class UpdateKalmanFilterParameters
     /// <summary>
     /// Updates the parameters of a Kalman filter model using elements from the input sequence.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <param name="source">The sequence of parameters to copy into the model.</param>
+    /// <returns>A sequence that is identical to the source sequence, emitted after the model has been updated.</returns>
     public IObservable<KalmanFilterParameters> Process(IObservable<KalmanFilterParameters> source)
     {
         return source.Do(Model.UpdateParameters);

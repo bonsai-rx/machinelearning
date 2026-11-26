@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
@@ -16,7 +16,7 @@ namespace Bonsai.ML.Lds.Torch;
 public class LoadKalmanFilterParameters
 {
     /// <summary>
-    /// The path to the folder where the Kalman filter model parameters were saved.
+    /// Gets or sets the path to the folder where the Kalman filter model parameters were saved.
     /// </summary>
     [Editor("Bonsai.Design.FolderNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
     [Description("The path to the folder where the Kalman filter model parameters were saved.")]
@@ -25,14 +25,14 @@ public class LoadKalmanFilterParameters
     /// <summary>
     /// Gets or sets the data type of the tensors.
     /// </summary>
-    [Description("Gets or sets the data type of the tensors.")]
+    [Description("The data type of the tensors.")]
     public ScalarType? Type { get; set; }
 
     /// <summary>
     /// Gets or sets the device to use for tensor operations.
     /// </summary>
     [XmlIgnore]
-    [Description("Gets or sets the device to use for tensor operations.")]
+    [Description("The device to use for tensor operations.")]
     public Device Device { get; set; }
 
     private static Tensor LoadTensorFromFile(string basePath, string filePath)
@@ -52,6 +52,7 @@ public class LoadKalmanFilterParameters
     /// <summary>
     /// Creates parameters for a Kalman filter model using the properties of this class.
     /// </summary>
+    /// <returns>A sequence containing the loaded Kalman filter parameters.</returns>
     public IObservable<KalmanFilterParameters> Process()
     {
         return Observable.Defer(() =>
