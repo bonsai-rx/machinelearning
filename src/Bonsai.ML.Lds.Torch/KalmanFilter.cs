@@ -111,8 +111,9 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
     {
         using var g = no_grad();
 
-        var obs = observation.atleast_2d();
-        var timeBins = obs.size(0);
+        // A null observation advances the state by one prediction step without an update (e.g. during forecasting)
+        var obs = observation?.atleast_2d();
+        var timeBins = obs?.size(0) ?? 1;
 
         // We get the scalar type and device from the parameters in the event that the observations are null (e.g. during forecasting)
         var scalarType = Parameters.ScalarType;
@@ -132,7 +133,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             var prediction = FilterPredict(_state, Parameters);
 
             // Update
-            var update = FilterUpdate(obs[time], prediction, Parameters);
+            var update = FilterUpdate(obs?[time], prediction, Parameters);
 
             predictedState.Mean[time] = prediction.Mean;
             predictedState.Covariance[time] = prediction.Covariance;
