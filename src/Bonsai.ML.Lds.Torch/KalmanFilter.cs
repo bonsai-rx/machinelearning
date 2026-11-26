@@ -453,8 +453,10 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         KalmanFilterParameters parameters,
         int maxIterations = 100,
         double tolerance = 1e-4,
-        ParametersToEstimate parametersToEstimate = new())
+        ParametersToEstimate parametersToEstimate = null)
     {
+        parametersToEstimate ??= new ParametersToEstimate();
+
         var timeBins = observation.size(0);
         var numObservations = (int)observation.size(1);
         var logLikelihood = zeros(maxIterations, dtype: ScalarType.Float32, device: parameters.Device);
@@ -638,8 +640,10 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         int? targetNumStates = null,
         int maxLag = 20,
         double threshold = 0.01,
-        ParametersToEstimate parametersToEstimate = new())
+        ParametersToEstimate parametersToEstimate = null)
     {
+        parametersToEstimate ??= new ParametersToEstimate();
+
         using var g = no_grad();
 
         var timeBins = observations.size(0);

@@ -1,20 +1,23 @@
-namespace Bonsai.ML.Lds.Torch;
+﻿namespace Bonsai.ML.Lds.Torch;
 
 /// <summary>
-/// Represents the parameters to estimate for a Kalman filter model.
+/// Represents which parameters of a Kalman filter model to estimate.
 /// </summary>
 /// <remarks>
-/// Initializes a new instance of the <see cref="KalmanFilterParameters"/> struct with the specified parameters.
+/// Initializes a new instance of the <see cref="ParametersToEstimate"/> class. Every parameter
+/// except the offsets is estimated unless specified otherwise.
 /// </remarks>
-/// <param name="transitionMatrix"></param>
-/// <param name="measurementFunction"></param>
-/// <param name="processNoiseCovariance"></param>
-/// <param name="measurementNoiseCovariance"></param>
-/// <param name="initialMean"></param>
-/// <param name="initialCovariance"></param>
-/// <param name="stateOffset"></param>
-/// <param name="observationOffset"></param>
-public struct ParametersToEstimate(
+/// <param name="transitionMatrix">Whether to estimate the state transition matrix.</param>
+/// <param name="measurementFunction">Whether to estimate the measurement function.</param>
+/// <param name="processNoiseCovariance">Whether to estimate the process noise covariance.</param>
+/// <param name="measurementNoiseCovariance">
+/// Whether to estimate the measurement noise covariance.
+/// </param>
+/// <param name="initialMean">Whether to estimate the initial mean.</param>
+/// <param name="initialCovariance">Whether to estimate the initial covariance.</param>
+/// <param name="stateOffset">Whether to estimate the state offset.</param>
+/// <param name="observationOffset">Whether to estimate the observation offset.</param>
+public class ParametersToEstimate(
     bool transitionMatrix = true,
     bool measurementFunction = true,
     bool processNoiseCovariance = true,
@@ -25,42 +28,42 @@ public struct ParametersToEstimate(
     bool observationOffset = false)
 {
     /// <summary>
-    /// The state transition matrix.
+    /// Gets a value indicating whether to estimate the state transition matrix.
     /// </summary>
-    public bool TransitionMatrix = transitionMatrix;
+    public bool TransitionMatrix { get; } = transitionMatrix;
 
     /// <summary>
-    /// The measurement function.
+    /// Gets a value indicating whether to estimate the measurement function.
     /// </summary>
-    public bool MeasurementFunction = measurementFunction;
+    public bool MeasurementFunction { get; } = measurementFunction;
 
     /// <summary>
-    /// The process noise covariance.
+    /// Gets a value indicating whether to estimate the process noise covariance.
     /// </summary>
-    public bool ProcessNoiseCovariance = processNoiseCovariance;
+    public bool ProcessNoiseCovariance { get; } = processNoiseCovariance;
 
     /// <summary>
-    /// The measurement noise covariance.
+    /// Gets a value indicating whether to estimate the measurement noise covariance.
     /// </summary>
-    public bool MeasurementNoiseCovariance = measurementNoiseCovariance;
+    public bool MeasurementNoiseCovariance { get; } = measurementNoiseCovariance;
 
     /// <summary>
-    /// The initial mean.
+    /// Gets a value indicating whether to estimate the initial mean.
     /// </summary>
-    public bool InitialMean = initialMean;
+    public bool InitialMean { get; } = initialMean;
 
     /// <summary>
-    /// The initial covariance.
+    /// Gets a value indicating whether to estimate the initial covariance.
     /// </summary>
-    public bool InitialCovariance = initialCovariance;
+    public bool InitialCovariance { get; } = initialCovariance;
 
     /// <summary>
-    /// The state offset.
+    /// Gets a value indicating whether to estimate the state offset.
     /// </summary>
-    public bool StateOffset = stateOffset;
+    public bool StateOffset { get; } = stateOffset;
 
     /// <summary>
-    /// The observation offset.
+    /// Gets a value indicating whether to estimate the observation offset.
     /// </summary>
-    public bool ObservationOffset = observationOffset;
+    public bool ObservationOffset { get; } = observationOffset;
 }
