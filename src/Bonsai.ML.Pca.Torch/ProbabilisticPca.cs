@@ -11,8 +11,6 @@ namespace Bonsai.ML.Pca.Torch;
 /// </summary>
 public class ProbabilisticPca : PcaBaseModel
 {
-    private Tensor _logConst = log(2 * Math.PI);
-
     /// <summary>
     /// Gets the mean of the fitted data.
     /// </summary>
@@ -26,7 +24,7 @@ public class ProbabilisticPca : PcaBaseModel
     public double Variance { get; private set; } = 0.0;
 
     /// <summary>
-    /// Gets the log likelihood of the fitted model.
+    /// Gets the log likelihood of the fitted model at each iteration.
     /// </summary>
     [XmlIgnore]
     public Tensor LogLikelihood { get; private set; } = empty(0);
@@ -59,8 +57,11 @@ public class ProbabilisticPca : PcaBaseModel
     [Description("The random number generator used for initializing the model.")]
     public Generator? Generator { get; set; }
 
-    private void CheckParameters()
+    /// <inheritdoc/>
+    protected override void ValidateParameters()
     {
+        base.ValidateParameters();
+
         if (InitialVariance < 0)
         {
             throw new InvalidOperationException("Initial variance must be greater than or equal to zero.");
@@ -78,126 +79,99 @@ public class ProbabilisticPca : PcaBaseModel
     }
 
     /// <inheritdoc/>
-    public override void Fit(Tensor data)
+    protected override void FitCore(Tensor data)
     {
-        CheckParameters();
-        if (NumFeatures < 0)
+        var numSamples = data.size(0);
+        var numFeatures = data.size(1);
+        var type = data.dtype;
+        var device = data.device;
+
+        var identityComponents = eye(NumComponents, dtype: type, device: device);
+        var identityFeatures = eye(numFeatures, dtype: type, device: device);
+        var logLikelihood = ones(Iterations, dtype: type, device: device) * double.NegativeInfinity;
+
+        var mean = data.mean([0], keepdim: true);
+        var dataCentered = data - mean;
+
+        // Calculate the sample covariance
+        var scatter = dataCentered.T.matmul(dataCentered);
+        var sampleCovariance = scatter / numSamples;
+        var totalScatter = trace(scatter);
+
+        var logLikelihoodConstant = numFeatures * Math.Log(2 * Math.PI);
+
+        var weights = randn(numFeatures, NumComponents, dtype: type, device: device, generator: Generator);
+        var variance = NumFeatures < 0 ? InitialVariance : Variance;
+        var iterations = 0;
+
+        // Repeat until convergence
+        for (int i = 0; i < Iterations; i++)
         {
-            Variance = InitialVariance;
+            using var iteration = NewDisposeScope();
+
+            // E-step: Compute the posterior distribution of the latent variables
+            var M = weights.T.matmul(weights) + identityComponents * variance;
+            var MInv = inv(M);
+            var mu = dataCentered.matmul(weights).matmul(MInv);
+            var cov = mu.T.matmul(mu) + numSamples * MInv * variance;
+
+            // M-step: Compute new weights and new variance
+            var dataMu = dataCentered.T.matmul(mu);
+            var weightsNew = dataMu.matmul(inv(cov));
+
+            var term2 = 2 * dataMu.mul(weightsNew).sum();
+            var term3 = trace(weightsNew.T.matmul(weightsNew).matmul(cov));
+            var varianceNew = Math.Max(0, ((totalScatter - term2 + term3) / (numSamples * numFeatures))
+                .to_type(ScalarType.Float64)
+                .item<double>());
+
+            // Compute the log likelihood
+            var modelCovariance = weightsNew.matmul(weightsNew.T) + identityFeatures * varianceNew;
+            var fit = logdet(modelCovariance) + trace(inv(modelCovariance).matmul(sampleCovariance));
+            logLikelihood[i] = (fit + logLikelihoodConstant) * (-0.5 * numSamples);
+
+            // Compare previous and new parameters for convergence
+            var diffWeights = linalg.norm(weightsNew - weights).to_type(ScalarType.Float64).item<double>();
+            var diffVariance = Math.Abs(varianceNew - variance);
+
+            // Update weights and variance
+            weights.Dispose();
+            weights = weightsNew.MoveToOuterDisposeScope();
+            variance = varianceNew;
+            iterations = i + 1;
+
+            // Check for convergence
+            if (diffWeights < Tolerance && diffVariance < Tolerance)
+                break;
         }
 
-        base.Fit(data);
-
-        using (no_grad())
-        using (NewDisposeScope())
-        {
-            var numSamples = data.size(0);
-
-            // Initialize log likelihood
-            LogLikelihood = ones(Iterations, device: Device, dtype: Type) * double.NegativeInfinity;
-
-            var weights = randn(NumFeatures, NumComponents, generator: Generator, device: Device, dtype: Type);
-            var identityComponents = eye(NumComponents, device: Device, dtype: Type);
-            var identityFeatures = eye(NumFeatures, device: Device, dtype: Type);
-
-            var mean = data.mean([0], keepdim: true);
-            var dataCentered = data - mean;
-
-            // Calculate the sample covariance
-            var covarianceTerm = dataCentered.T.matmul(dataCentered);
-            var sampleCov = covarianceTerm / numSamples;
-
-            // Calculate term 1 for variance update
-            var term1 = trace(covarianceTerm);
-
-            if (Device is not null)
-                _logConst = _logConst.to(Device);
-
-            // Compute log likelihood constant
-            var logLikelihoodConst = NumFeatures * _logConst;
-
-            double diffWeights;
-            double diffVariance;
-
-            // Repeat until convergence
-            for (int i = 0; i < Iterations; i++)
-            {
-                // E-step: Compute the posterior distribution of the latent variables
-                var M = weights.T.matmul(weights) + identityComponents * Variance;
-                var MInv = inv(M);
-                var mu = MInv.matmul(weights.T).matmul(dataCentered.T).T;
-                var SSum = numSamples * MInv * Variance;
-                var cov = mu.T.matmul(mu) + SSum;
-
-                // M-step: Compute new weights and new variance
-                var dataMu = dataCentered.T.matmul(mu);
-                var weightsNew = dataMu.matmul(inv(cov));
-
-                var term2 = 2 * dataMu.mul(weightsNew).sum();
-                var mu2 = mu.T.matmul(mu);
-                var weightsNew2 = weightsNew.T.matmul(weightsNew);
-                var term3 = trace(weightsNew2.matmul(mu2 + SSum));
-                var varianceNew = (term1 - term2 + term3) / (numSamples * NumFeatures);
-
-                // Compute the log likelihood
-                var logLikelihoodTerm = weightsNew.matmul(weightsNew.T) + eye(NumFeatures) * varianceNew;
-                var logLikelihoodTermInv = inv(logLikelihoodTerm);
-                var logLikelihood = -0.5 * numSamples * (logLikelihoodConst + logdet(logLikelihoodTerm) + trace(logLikelihoodTermInv.matmul(sampleCov)));
-
-                // Compare previous and new parameters for convergence
-                diffWeights = linalg.norm(weightsNew - weights).to_type(ScalarType.Float64).item<double>();
-                diffVariance = abs(varianceNew - Variance).to_type(ScalarType.Float64).item<double>();
-
-                // Update loglikelihood, weights and variance
-                LogLikelihood[i] = logLikelihood;
-                weights = weightsNew;
-                Variance = varianceNew.to_type(ScalarType.Float64).item<double>();
-
-                // Check for convergence
-                if (diffWeights < Tolerance && diffVariance < Tolerance)
-                {
-                    LogLikelihood = LogLikelihood.slice(0, 0, i + 1, 1);
-                    break;
-                }
-            }
-
-            // Finalize model parameters
-            LogLikelihood = LogLikelihood.MoveToOuterDisposeScope();
-            Components = weights.MoveToOuterDisposeScope();
-            Mean = mean.MoveToOuterDisposeScope();
-        }
+        // Finalize model parameters
+        Components = weights.DetachFromDisposeScope();
+        Mean = mean.DetachFromDisposeScope();
+        Variance = variance;
+        LogLikelihood = logLikelihood.slice(0, 0, iterations, 1).clone().DetachFromDisposeScope();
     }
 
     /// <inheritdoc/>
-    public override Tensor Transform(Tensor data)
+    protected override Tensor TransformCore(Tensor data)
     {
-        base.Transform(data);
-        var dataCentered = data - Mean;
-        var M = Components.T.matmul(Components) + eye(NumComponents) * Variance;
-        var MInv = Utils.InvertSPD(M, eye(NumComponents));
-        return dataCentered.matmul(Components).matmul(MInv);
+        return Utils.PosteriorMean(data - Mean, Components, Variance);
     }
 
     /// <inheritdoc/>
-    public override Tensor Reconstruct(Tensor data)
+    protected override Tensor ReconstructCore(Tensor data)
     {
-        base.Reconstruct(data);
         return data.matmul(Components.T) + Mean;
-    }
-
-    /// <inheritdoc/>
-    public override Tensor FitAndTransform(Tensor data)
-    {
-        Fit(data);
-        return Transform(data);
     }
 
     /// <inheritdoc/>
     public override void Dispose()
     {
         base.Dispose();
-        Mean = Utils.DisposeAndReset(Mean);
+        Mean.Dispose();
+        Mean = empty(0);
         Variance = 0.0;
-        LogLikelihood = Utils.DisposeAndReset(LogLikelihood);
+        LogLikelihood.Dispose();
+        LogLikelihood = empty(0);
     }
 }

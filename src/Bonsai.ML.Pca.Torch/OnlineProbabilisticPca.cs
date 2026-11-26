@@ -85,8 +85,14 @@ public class OnlineProbabilisticPca : PcaBaseModel
     [Description("The random number generator used for initializing the model.")]
     public Generator? Generator { get; set; }
 
-    private void CheckParameters()
+    /// <inheritdoc/>
+    protected override bool IsIncremental => true;
+
+    /// <inheritdoc/>
+    protected override void ValidateParameters()
     {
+        base.ValidateParameters();
+
         if (InitialVariance <= 0)
         {
             throw new InvalidOperationException("Initial variance must be greater than zero.");
@@ -124,127 +130,110 @@ public class OnlineProbabilisticPca : PcaBaseModel
     }
 
     /// <inheritdoc/>
-    public override void Fit(Tensor data)
+    protected override void FitCore(Tensor data)
     {
-        CheckParameters();
-        base.Fit(data);
+        _stepCount++;
+        var rho = GetUpdateRate();
 
-        using (no_grad())
-        using (NewDisposeScope())
+        // Initialize dimensions
+        var numSamples = data.size(0);
+        var numFeatures = data.size(1);
+        var type = data.dtype;
+        var device = data.device;
+
+        // Initialize parameters
+        if (Means.numel() == 0)
         {
-
-            _stepCount++;
-            var rho = GetUpdateRate();
-
-            // Initialize dimensions
-            var numSamples = data.size(0);
-
-            // Initialize parameters
-            if (Means.numel() == 0)
-            {
-                Variance = InitialVariance;
-                Means = zeros(NumFeatures, device: Device, dtype: Type).MoveToOuterDisposeScope();
-                var weights = qr(randn(NumFeatures, NumComponents, generator: Generator, device: Device, dtype: Type), mode: QRMode.Reduced).Q;
-                Components = (weights * Variance).MoveToOuterDisposeScope();
-                _identityComponents = eye(NumComponents, device: Device, dtype: Type).MoveToOuterDisposeScope();
-                _mx = zeros(NumFeatures, device: Device, dtype: Type).MoveToOuterDisposeScope(); // d
-                _Cxz = zeros(NumFeatures, NumComponents, device: Device, dtype: Type).MoveToOuterDisposeScope(); // d x q
-                _mz = zeros(NumComponents, device: Device, dtype: Type).MoveToOuterDisposeScope(); // q
-                _Czz = zeros(NumComponents, NumComponents, device: Device, dtype: Type).MoveToOuterDisposeScope(); // q x q
-                _sxx = zeros(1, device: Device, dtype: Type).MoveToOuterDisposeScope(); // scalar
-            }
-
-            // Covariance matrix
-            var cov = _identityComponents * Variance;
-
-            // Center data using current mean
-            var dataCentered = data - Means;
-
-            // E-step
-            var M = Components.T.matmul(Components) + cov;
-            var MInv = Utils.InvertSPD(M, _identityComponents);
-            var projection = dataCentered.matmul(Components);
-            var EzT = Utils.InvertSPD(M, projection.T);
-            var Ez = EzT.T;
-
-            // Update statistics
-            var mx = data.mean([0]);
-            var sxx = data.pow(2).sum(dim: 1).mean();
-            var Cxz = data.T.matmul(Ez) / numSamples;
-            var mz = Ez.mean([0]);
-            var Czz = EzT.matmul(Ez) / numSamples + Variance * MInv;
-
-            // Update parameters
-            var rhoFactor = 1 - rho;
-            _mx = (rhoFactor * _mx + rho * mx).MoveToOuterDisposeScope();
-            _Cxz = (rhoFactor * _Cxz + rho * Cxz).MoveToOuterDisposeScope();
-            _mz = (rhoFactor * _mz + rho * mz).MoveToOuterDisposeScope();
-            _sxx = (rhoFactor * _sxx + rho * sxx).MoveToOuterDisposeScope();
-            _Czz = (rhoFactor * _Czz + rho * Czz).MoveToOuterDisposeScope();
-
-            // Update mean
-            Means = _mx.MoveToOuterDisposeScope();
-
-            // Centered statistics
-            var Sxz = _Cxz - outer(Means, _mz);
-            var Szz = _Czz;
-            var Sxx = _sxx - Means.dot(Means);
-
-            // M-step
-            var weightsUpdated = Utils.InvertSPD(Szz, Sxz.T).T;
-
-            if (ReorthogonalizePeriod.HasValue &&
-                _stepCount % ReorthogonalizePeriod.Value == 0)
-            {
-                var (U, S, Vh) = svd(weightsUpdated, fullMatrices: false);
-                var R = Vh.T;
-                weightsUpdated = U.matmul(diag(S));
-                _Cxz = _Cxz.matmul(R);
-                _Czz = R.T.matmul(_Czz).matmul(R);
-                _mz = R.T.matmul(_mz);
-            }
-
-            // Reorder components based on the strength of the components
-            var strength = sum(weightsUpdated * weightsUpdated, dim: 0);
-            var indices = argsort(strength, descending: true);
-            Components = weightsUpdated.index_select(1, indices).MoveToOuterDisposeScope();
-            _Cxz = _Cxz.index_select(1, indices).MoveToOuterDisposeScope();
-            _mz = _mz.index_select(0, indices).MoveToOuterDisposeScope();
-            _Czz = _Czz.index_select(0, indices).index_select(1, indices).MoveToOuterDisposeScope();
-
-            Sxz = _Cxz - outer(Means, _mz);
-            Szz = _Czz;
-
-            // Update variance
-            Variance = ((Sxx - 2 * trace(Components.T.matmul(Sxz)) + trace(Components.T.matmul(Components).matmul(Szz))) / (double)NumFeatures)
-                .clamp_min(0.0)
-                .to_type(ScalarType.Float64)
-                .item<double>();
+            Variance = InitialVariance;
+            Means = zeros(numFeatures, dtype: type, device: device).DetachFromDisposeScope();
+            var weights = qr(randn(numFeatures, NumComponents, dtype: type, device: device, generator: Generator), mode: QRMode.Reduced).Q;
+            Components = (weights * Variance).DetachFromDisposeScope();
+            _identityComponents = eye(NumComponents, dtype: type, device: device).DetachFromDisposeScope();
+            _mx = zeros(numFeatures, dtype: type, device: device).DetachFromDisposeScope(); // d
+            _Cxz = zeros(numFeatures, NumComponents, dtype: type, device: device).DetachFromDisposeScope(); // d x q
+            _mz = zeros(NumComponents, dtype: type, device: device).DetachFromDisposeScope(); // q
+            _Czz = zeros(NumComponents, NumComponents, dtype: type, device: device).DetachFromDisposeScope(); // q x q
+            _sxx = zeros(1, dtype: type, device: device).DetachFromDisposeScope(); // scalar
         }
-    }
 
-    /// <inheritdoc/>
-    public override Tensor Transform(Tensor data)
-    {
-        base.Transform(data);
+        // Covariance matrix
+        var cov = _identityComponents * Variance;
+
+        // Center data using current mean
         var dataCentered = data - Means;
-        var M = Components.T.matmul(Components) + _identityComponents * Variance;
+
+        // E-step
+        var M = Components.T.matmul(Components) + cov;
+        var MInv = Utils.SolveSpd(M, _identityComponents);
         var projection = dataCentered.matmul(Components);
-        return Utils.InvertSPD(M, projection.T).T;
+        var EzT = Utils.SolveSpd(M, projection.T);
+        var Ez = EzT.T;
+
+        // Update statistics
+        var mx = data.mean([0]);
+        var sxx = data.pow(2).sum(dim: 1).mean();
+        var Cxz = data.T.matmul(Ez) / numSamples;
+        var mz = Ez.mean([0]);
+        var Czz = EzT.matmul(Ez) / numSamples + Variance * MInv;
+
+        // Update parameters
+        var rhoFactor = 1 - rho;
+        _mx = (rhoFactor * _mx + rho * mx).DetachFromDisposeScope();
+        _Cxz = (rhoFactor * _Cxz + rho * Cxz).DetachFromDisposeScope();
+        _mz = (rhoFactor * _mz + rho * mz).DetachFromDisposeScope();
+        _sxx = (rhoFactor * _sxx + rho * sxx).DetachFromDisposeScope();
+        _Czz = (rhoFactor * _Czz + rho * Czz).DetachFromDisposeScope();
+
+        // Update mean
+        Means = _mx;
+
+        // Centered statistics
+        var Sxz = _Cxz - outer(Means, _mz);
+        var Szz = _Czz;
+        var Sxx = _sxx - Means.dot(Means);
+
+        // M-step
+        var weightsUpdated = Utils.SolveSpd(Szz, Sxz.T).T;
+
+        if (ReorthogonalizePeriod.HasValue &&
+            _stepCount % ReorthogonalizePeriod.Value == 0)
+        {
+            var (U, S, Vh) = svd(weightsUpdated, fullMatrices: false);
+            var R = Vh.T;
+            weightsUpdated = U.matmul(diag(S));
+            _Cxz = _Cxz.matmul(R);
+            _Czz = R.T.matmul(_Czz).matmul(R);
+            _mz = R.T.matmul(_mz);
+        }
+
+        // Reorder components based on the strength of the components
+        var strength = sum(weightsUpdated * weightsUpdated, dim: 0);
+        var indices = argsort(strength, descending: true);
+        Components = weightsUpdated.index_select(1, indices).DetachFromDisposeScope();
+        _Cxz = _Cxz.index_select(1, indices).DetachFromDisposeScope();
+        _mz = _mz.index_select(0, indices).DetachFromDisposeScope();
+        _Czz = _Czz.index_select(0, indices).index_select(1, indices).DetachFromDisposeScope();
+
+        Sxz = _Cxz - outer(Means, _mz);
+        Szz = _Czz;
+
+        // Update variance
+        Variance = ((Sxx - 2 * trace(Components.T.matmul(Sxz)) + trace(Components.T.matmul(Components).matmul(Szz))) / (double)numFeatures)
+            .clamp_min(0.0)
+            .to_type(ScalarType.Float64)
+            .item<double>();
     }
 
     /// <inheritdoc/>
-    public override Tensor Reconstruct(Tensor data)
+    protected override Tensor TransformCore(Tensor data)
     {
-        base.Reconstruct(data);
+        return Utils.PosteriorMean(data - Means, Components, Variance);
+    }
+
+    /// <inheritdoc/>
+    protected override Tensor ReconstructCore(Tensor data)
+    {
         return data.matmul(Components.T) + Means;
-    }
-
-    /// <inheritdoc/>
-    public override Tensor FitAndTransform(Tensor data)
-    {
-        Fit(data);
-        return Transform(data);
     }
 
     /// <inheritdoc/>
@@ -252,15 +241,15 @@ public class OnlineProbabilisticPca : PcaBaseModel
     {
         base.Dispose();
 
-        Means = Utils.DisposeAndReset(Means);
+        Means = empty(0);
         Variance = 0.0;
 
         _stepCount = 0;
-        _identityComponents = Utils.DisposeAndReset(_identityComponents);
-        _mx = Utils.DisposeAndReset(_mx);
-        _Cxz = Utils.DisposeAndReset(_Cxz);
-        _mz = Utils.DisposeAndReset(_mz);
-        _Czz = Utils.DisposeAndReset(_Czz);
-        _sxx = Utils.DisposeAndReset(_sxx);
+        Utils.Assign(ref _identityComponents, empty(0));
+        Utils.Assign(ref _mx, empty(0));
+        Utils.Assign(ref _Cxz, empty(0));
+        Utils.Assign(ref _mz, empty(0));
+        Utils.Assign(ref _Czz, empty(0));
+        Utils.Assign(ref _sxx, empty(0));
     }
 }

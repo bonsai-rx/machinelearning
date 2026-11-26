@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using System;
 using System.Xml.Serialization;
 using static TorchSharp.torch;
 using static TorchSharp.torch.linalg;
@@ -23,59 +23,38 @@ public class Pca : PcaBaseModel
     public Tensor SingularValues { get; private set; } = empty(0);
 
     /// <inheritdoc/>
-    public override void Fit(Tensor data)
+    protected override void FitCore(Tensor data)
     {
-        base.Fit(data);
+        if (NumComponents > data.size(0))
+            throw new ArgumentException($"Number of components cannot be greater than the number of samples. Number of components: {NumComponents}, number of samples: {data.size(0)}.", nameof(data));
 
-        using (no_grad())
-        using (NewDisposeScope())
-        {
-            var mean = data.mean([0], keepdim: true);
-            var dataCentered = data - mean;
-            var (U, S, Vh) = svd(dataCentered, fullMatrices: false);
-            var components = Vh.slice(0, 0, NumComponents, 1).T;
-            var singularValues = S.slice(0, 0, NumComponents, 1);
+        var mean = data.mean([0], keepdim: true);
+        var (_, singularValues, vh) = svd(data - mean, fullMatrices: false);
 
-            if (Type != data.dtype)
-            {
-                mean = mean.to(Type);
-                components = components.to(Type);
-                singularValues = singularValues.to(Type);
-            }
-
-            Mean = mean.MoveToOuterDisposeScope();
-            Components = components.MoveToOuterDisposeScope();
-            SingularValues = singularValues.MoveToOuterDisposeScope();
-        }
+        Mean = mean.DetachFromDisposeScope();
+        Components = vh.slice(0, 0, NumComponents, 1).T.contiguous().DetachFromDisposeScope();
+        SingularValues = singularValues.slice(0, 0, NumComponents, 1).clone().DetachFromDisposeScope();
     }
 
     /// <inheritdoc/>
-    public override Tensor Transform(Tensor data)
+    protected override Tensor TransformCore(Tensor data)
     {
-        base.Transform(data);
-        var dataCentered = data - Mean;
-        return dataCentered.matmul(Components);
+        return (data - Mean).matmul(Components);
     }
 
     /// <inheritdoc/>
-    public override Tensor Reconstruct(Tensor data)
+    protected override Tensor ReconstructCore(Tensor data)
     {
-        base.Reconstruct(data);
         return data.matmul(Components.T) + Mean;
-    }
-
-    /// <inheritdoc/>
-    public override Tensor FitAndTransform(Tensor data)
-    {
-        Fit(data);
-        return Transform(data);
     }
 
     /// <inheritdoc/>
     public override void Dispose()
     {
         base.Dispose();
-        Mean = Utils.DisposeAndReset(Mean);
-        SingularValues = Utils.DisposeAndReset(SingularValues);
+        Mean.Dispose();
+        Mean = empty(0);
+        SingularValues.Dispose();
+        SingularValues = empty(0);
     }
 }

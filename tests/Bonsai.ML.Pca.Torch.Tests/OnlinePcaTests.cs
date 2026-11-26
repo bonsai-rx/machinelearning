@@ -227,6 +227,14 @@ public class OnlinePcaGhaTests
         Debug.WriteLine($"Reconstruction error: {reconstructionError}, discarded variance: {discardedVariance}");
         Assert.IsTrue(reconstructionError < 3 * discardedVariance, $"Reconstruction error was {reconstructionError}");
     }
+
+    [TestMethod]
+    public void TestFitRejectsChangedNumberOfFeatures()
+    {
+        var model = CreateModel();
+        model.Fit(randn(50, 3));
+        Assert.ThrowsException<ArgumentException>(() => model.Fit(randn(50, 4)));
+    }
 }
 
 /// <summary>

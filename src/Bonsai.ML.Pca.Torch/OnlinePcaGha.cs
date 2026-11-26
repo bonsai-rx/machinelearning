@@ -36,71 +36,56 @@ public class OnlinePcaGha : PcaBaseModel
     public Generator? Generator { get; set; }
 
     /// <inheritdoc/>
-    public override void Fit(Tensor data)
-    {
-        base.Fit(data);
+    protected override bool IsIncremental => true;
 
+    /// <inheritdoc/>
+    protected override void FitCore(Tensor data)
+    {
         var numSamples = data.size(0);
+        var numFeatures = data.size(1);
+        var totalSamples = SampleCount + numSamples;
+        var fraction = (double)numSamples / totalSamples;
 
-        using (no_grad())
-        using (NewDisposeScope())
-        {
-            // Initialize components randomly
-            if (Components.numel() == 0)
-                Components = randn([NumFeatures, NumComponents], dtype: Type, device: Device, generator: Generator);
+        // Initialize components randomly
+        var components = SampleCount == 0
+            ? randn(numFeatures, NumComponents, dtype: data.dtype, device: data.device, generator: Generator)
+            : Components;
 
-            if (Mean.numel() == 0)
-                Mean = data.mean([0], keepdim: true);
-            else
-            {
-                Mean *= (double)SampleCount / (SampleCount + numSamples);
-                Mean += data.mean([0], keepdim: true) * numSamples / (SampleCount + numSamples);
-            }
+        // Update the running mean
+        var batchMean = data.mean([0], keepdim: true);
+        var mean = SampleCount == 0 ? batchMean : Mean + (batchMean - Mean) * fraction;
+        var dataCentered = data - mean;
 
-            SampleCount += (int)numSamples;
-            var dataCentered = data - Mean;
+        var projection = dataCentered.matmul(components);
+        var hebbianTerm = dataCentered.T.matmul(projection);
+        var crossTerm = projection.T.matmul(projection);
+        var correlation = components.matmul(crossTerm.triu(0));
+        var weights = components + (hebbianTerm - correlation) * (LearningRate / numSamples);
+        var norms = weights.norm(dim: 0, keepdim: true, p: 2).clamp_min(1e-12);
 
-            var projection = dataCentered.matmul(Components);
-            var hebbianTerm = dataCentered.T.matmul(projection);
-            var crossTerm = projection.T.matmul(projection);
-            var upperTriangular = crossTerm.triu(0);
-            var correlation = Components.matmul(upperTriangular);
-            var componentsUpdate = (hebbianTerm - correlation) * (LearningRate / numSamples);
-            var weights = Components + componentsUpdate;
-            var norms = weights.norm(dim: 0, keepdim: true, p: 2).clamp_min(1e-12);
-
-            Components = linalg.qr(weights / norms, mode: linalg.QRMode.Reduced).Q.MoveToOuterDisposeScope();
-            Mean = Mean.MoveToOuterDisposeScope();
-        }
+        Components = linalg.qr(weights / norms, mode: linalg.QRMode.Reduced).Q.DetachFromDisposeScope();
+        Mean = mean.DetachFromDisposeScope();
+        SampleCount = (int)totalSamples;
     }
 
     /// <inheritdoc/>
-    public override Tensor Transform(Tensor data)
+    protected override Tensor TransformCore(Tensor data)
     {
-        base.Transform(data);
-        var dataCentered = data - Mean;
-        return dataCentered.matmul(Components);
+        return (data - Mean).matmul(Components);
     }
 
     /// <inheritdoc/>
-    public override Tensor Reconstruct(Tensor data)
+    protected override Tensor ReconstructCore(Tensor data)
     {
-        base.Reconstruct(data);
         return data.matmul(Components.T) + Mean;
-    }
-
-    /// <inheritdoc/>
-    public override Tensor FitAndTransform(Tensor data)
-    {
-        Fit(data);
-        return Transform(data);
     }
 
     /// <inheritdoc/>
     public override void Dispose()
     {
         base.Dispose();
-        Mean = Utils.DisposeAndReset(Mean);
+        Mean.Dispose();
+        Mean = empty(0);
         SampleCount = 0;
     }
 }
