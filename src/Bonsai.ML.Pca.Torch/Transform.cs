@@ -21,8 +21,14 @@ public class Transform
     /// <summary>
     /// Transforms input data using a PCA model.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of the PCA model.</typeparam>
+    /// <param name="source">
+    /// A sequence of pairs of a PCA model and the data to transform, a 2D tensor with shape
+    /// (samples x features).
+    /// </param>
+    /// <returns>
+    /// A sequence of the transformed data, 2D tensors with shape (samples x components).
+    /// </returns>
     public IObservable<Tensor> Process<T>(IObservable<Tuple<T, Tensor>> source) where T : PcaBaseModel
     {
         return source.Select(value =>
@@ -34,8 +40,14 @@ public class Transform
     /// <summary>
     /// Transforms input data using a PCA model.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of the PCA model.</typeparam>
+    /// <param name="source">
+    /// A sequence of pairs of a PCA model and the data to transform, a 2D tensor with shape
+    /// (samples x features).
+    /// </param>
+    /// <returns>
+    /// A sequence of the transformed data, 2D tensors with shape (samples x components).
+    /// </returns>
     public IObservable<Tensor> Process<T>(IObservable<Tuple<Tensor, T>> source) where T : PcaBaseModel
     {
         return source.Select(value =>

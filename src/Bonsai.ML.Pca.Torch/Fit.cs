@@ -21,8 +21,14 @@ public class Fit
     /// <summary>
     /// Fits a PCA model to the input data.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of the PCA model.</typeparam>
+    /// <param name="source">
+    /// A sequence of pairs of a PCA model and the data to fit, a 2D tensor with shape
+    /// (samples x features).
+    /// </param>
+    /// <returns>
+    /// A sequence of the input pairs, each emitted once the model has been fitted to the data.
+    /// </returns>
     public IObservable<Tuple<T, Tensor>> Process<T>(IObservable<Tuple<T, Tensor>> source) where T : PcaBaseModel
     {
         return source.Do((value) =>
@@ -34,8 +40,14 @@ public class Fit
     /// <summary>
     /// Fits a PCA model to the input data.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of the PCA model.</typeparam>
+    /// <param name="source">
+    /// A sequence of pairs of a PCA model and the data to fit, a 2D tensor with shape
+    /// (samples x features).
+    /// </param>
+    /// <returns>
+    /// A sequence of the input pairs, each emitted once the model has been fitted to the data.
+    /// </returns>
     public IObservable<Tuple<Tensor, T>> Process<T>(IObservable<Tuple<Tensor, T>> source) where T : PcaBaseModel
     {
         return source.Do((value) =>

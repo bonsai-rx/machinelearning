@@ -21,8 +21,15 @@ public class FitAndTransform
     /// <summary>
     /// Fits a PCA model to the input data and transforms it.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of the PCA model.</typeparam>
+    /// <param name="source">
+    /// A sequence of pairs of a PCA model and the data to fit and transform, a 2D tensor with
+    /// shape (samples x features).
+    /// </param>
+    /// <returns>
+    /// A sequence of pairs of the PCA model and the transformed data, a 2D tensor with shape
+    /// (samples x components).
+    /// </returns>
     public IObservable<Tuple<T, Tensor>> Process<T>(IObservable<Tuple<T, Tensor>> source) where T : PcaBaseModel
     {
         return source.Select((value) =>
@@ -35,8 +42,15 @@ public class FitAndTransform
     /// <summary>
     /// Fits a PCA model to the input data and transforms it.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of the PCA model.</typeparam>
+    /// <param name="source">
+    /// A sequence of pairs of a PCA model and the data to fit and transform, a 2D tensor with
+    /// shape (samples x features).
+    /// </param>
+    /// <returns>
+    /// A sequence of pairs of the PCA model and the transformed data, a 2D tensor with shape
+    /// (samples x components).
+    /// </returns>
     public IObservable<Tuple<Tensor, T>> Process<T>(IObservable<Tuple<Tensor, T>> source) where T : PcaBaseModel
     {
         return source.Select((value) =>

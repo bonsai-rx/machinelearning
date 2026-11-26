@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Bonsai.ML.Pca.Torch Bonsai library.</Description>
+    <Description>A Bonsai package building on the Bonsai.ML.Torch library that implements batch, probabilistic and online Principal Component Analysis.</Description>
     <PackageTags>$(PackageTags) PCA Principal Component Analysis</PackageTags>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
     <Nullable>enable</Nullable>
