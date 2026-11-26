@@ -336,8 +336,8 @@ public class OnlineProbabilisticPcaTests
         var model = CreateModel(kappa: 0.7);
         OnlinePcaTestHelpers.FitStreaming(model, data, batchSize: 50);
 
-        var meanError = (model.Means - trueMean).abs().max().item<float>();
-        Debug.WriteLine($"Estimated mean: {model.Means.str()}, error: {meanError}");
+        var meanError = (model.Mean - trueMean).abs().max().item<float>();
+        Debug.WriteLine($"Estimated mean: {model.Mean.str()}, error: {meanError}");
         Assert.IsTrue(meanError < 0.2, $"Mean estimate error was {meanError}");
 
         var similarity = OnlinePcaTestHelpers.CosineSimilarity(model.Components.select(1, 0), trueComponents.select(1, 0));
@@ -395,6 +395,55 @@ public class OnlineProbabilisticPcaTests
     }
 
     [TestMethod]
+    public void TestConstantRhoTracksMeanFromFirstBatch()
+    {
+        var (data, _, trueMean) = OnlinePcaTestHelpers.GenerateDataset(2000, [3f, 0.1f], offsets: [50f, -30f]);
+        var model = CreateModel(rho: 0.1);
+        var batches = data.split(50);
+
+        model.Fit(batches[0]);
+        var firstError = (model.Mean - trueMean).abs().max().item<float>();
+        Debug.WriteLine($"Mean after the first batch: {model.Mean.str()}, error: {firstError}");
+        Assert.IsTrue(firstError < 2, $"Mean estimate error after the first batch was {firstError}");
+
+        var maxVariance = model.Variance;
+        for (int i = 1; i < batches.Length; i++)
+        {
+            model.Fit(batches[i]);
+            maxVariance = Math.Max(maxVariance, model.Variance);
+        }
+
+        Debug.WriteLine($"Largest variance estimate: {maxVariance}");
+        Assert.IsTrue(maxVariance < 10, $"Largest variance estimate was {maxVariance}");
+    }
+
+    [TestMethod]
+    public void TestSingleSampleStreaming()
+    {
+        var (data, trueComponents, _) = OnlinePcaTestHelpers.GenerateDataset(5000, [4f, 2f, 0.5f, 0.2f, 0.1f]);
+        foreach (var model in new[] { CreateModel(numComponents: 2, rho: 0.01), CreateModel(numComponents: 2, kappa: 0.7) })
+        {
+            OnlinePcaTestHelpers.FitStreaming(model, data, batchSize: 1);
+            var similarity = OnlinePcaTestHelpers.SubspaceSimilarity(model.Components, trueComponents.slice(1, 0, 2, 1));
+            Debug.WriteLine($"Subspace similarity with single sample updates: {similarity}");
+            Assert.IsTrue(similarity > 0.98, $"Subspace similarity was {similarity}");
+        }
+    }
+
+    [TestMethod]
+    public void TestReconstructionProjectsOntoSubspace()
+    {
+        var (data, _, _) = OnlinePcaTestHelpers.GenerateDataset(10000, [4f, 2f, 0.5f, 0.2f, 0.1f]);
+        var model = CreateModel(numComponents: 2, kappa: 0.7);
+        OnlinePcaTestHelpers.FitStreaming(model, data, batchSize: 50);
+
+        var reconstructionError = mean((data - model.Reconstruct(model.Transform(data))).pow(2)).item<float>();
+        var discardedVariance = (0.5f * 0.5f + 0.2f * 0.2f + 0.1f * 0.1f) / 5f;
+        Debug.WriteLine($"Reconstruction error: {reconstructionError}, discarded variance: {discardedVariance}");
+        Assert.IsTrue(reconstructionError < 1.2 * discardedVariance, $"Reconstruction error was {reconstructionError}");
+    }
+
+    [TestMethod]
     public void TestParameterValidation()
     {
         var data = randn(50, 2);
@@ -413,5 +462,8 @@ public class OnlineProbabilisticPcaTests
 
         var invalidVariance = new OnlineProbabilisticPca { NumComponents = 1, InitialVariance = 0 };
         Assert.ThrowsException<InvalidOperationException>(() => invalidVariance.Fit(data));
+
+        var invalidPeriod = new OnlineProbabilisticPca { NumComponents = 1, ReorthogonalizePeriod = 0 };
+        Assert.ThrowsException<InvalidOperationException>(() => invalidPeriod.Fit(data));
     }
 }
