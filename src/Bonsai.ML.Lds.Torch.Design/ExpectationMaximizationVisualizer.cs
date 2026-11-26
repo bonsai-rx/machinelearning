@@ -56,12 +56,15 @@ public class ExpectationMaximizationVisualizer : BufferedVisualizer
     /// <inheritdoc/>
     protected override void Show(DateTime time, object value)
     {
-        if (value is null) return;
+        if (value is null)
+            return;
 
-        if (value is not ExpectationMaximizationResult result) return;
+        if (value is not ExpectationMaximizationResult result)
+            return;
 
         var logLikelihood = result.LogLikelihood;
-        if (logLikelihood is null) return;
+        if (logLikelihood is null)
+            return;
 
         var ll = logLikelihood[-1].to_type(ScalarType.Float64).item<double>();
 
@@ -77,14 +80,13 @@ public class ExpectationMaximizationVisualizer : BufferedVisualizer
     {
         base.ShowBuffer(values);
         if (values.Count > 0)
-        {
             _plot.UpdatePlot();
-        }
     }
 
     /// <inheritdoc/>
     public override void Unload()
     {
-        if (!_plot.IsDisposed) _plot.Dispose();
+        if (!_plot.IsDisposed)
+            _plot.Dispose();
     }
 }

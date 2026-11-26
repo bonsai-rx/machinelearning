@@ -180,9 +180,8 @@ public class ExpectationMaximization
                     if (logLikelihoodSum - previousLogLikelihood < tolerance)
                     {
                         if (Verbose)
-                        {
                             Console.WriteLine("EM converged after " + (i + 1) + " iterations.");
-                        }
+
                         logLikelihood = logLikelihood[TensorIndex.Slice(0, i + 1)];
                         break;
                     }

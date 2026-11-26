@@ -261,10 +261,8 @@ public class KalmanFilterParameters : nn.Module
             ValidateVector(stateOffset, "State offset");
             return (int)stateOffset.size(0);
         }
-        else
-        {
-            throw new ArgumentException("At least one of the parameters must be provided to infer the number of states.");
-        }
+
+        throw new ArgumentException("At least one of the parameters must be provided to infer the number of states.");
     }
 
     private static int InferNumObservations(Tensor measurementFunction, Tensor measurementNoiseCovariance, Tensor observationOffset)
@@ -284,10 +282,8 @@ public class KalmanFilterParameters : nn.Module
             ValidateVector(observationOffset, "Observation offset");
             return (int)observationOffset.size(0);
         }
-        else
-        {
-            throw new ArgumentException("At least one of the measurement function or measurement noise covariance must be provided to infer the number of observations.");
-        }
+
+        throw new ArgumentException("At least one of the measurement function or measurement noise covariance must be provided to infer the number of observations.");
     }
 
     private static void ValidateMatrix(Tensor matrix, string name, bool isSquare = false, int? expectedDimension1 = null, int? expectedDimension2 = null)

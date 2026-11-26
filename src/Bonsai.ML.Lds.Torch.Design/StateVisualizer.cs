@@ -117,7 +117,8 @@ public class StateVisualizer : BufferedVisualizer
     /// <inheritdoc/>
     protected override void Show(DateTime time, object value)
     {
-        if (value is null) return;
+        if (value is null)
+            return;
 
         if (value is not ILinearDynamicalSystemState state)
             throw new ArgumentException($"Expected value to be a type of {nameof(ILinearDynamicalSystemState)}.", nameof(value));
@@ -125,7 +126,8 @@ public class StateVisualizer : BufferedVisualizer
         var mean = state.Mean;
         var covariance = state.Covariance;
 
-        if (mean is null || covariance is null) return;
+        if (mean is null || covariance is null)
+            return;
 
         if (mean.Dimensions == 1)
         {
@@ -201,6 +203,7 @@ public class StateVisualizer : BufferedVisualizer
     /// <inheritdoc/>
     public override void Unload()
     {
-        if (!_plot.IsDisposed) _plot.Dispose();
+        if (!_plot.IsDisposed)
+            _plot.Dispose();
     }
 }

@@ -37,14 +37,13 @@ public class LoadKalmanFilterParameters
 
     private static Tensor LoadTensorFromFile(string basePath, string filePath)
     {
-        if (filePath == null) return null;
+        if (filePath == null)
+            return null;
 
         filePath = System.IO.Path.Combine(basePath, filePath);
 
         if (File.Exists(filePath))
-        {
             return Tensor.Load(filePath);
-        }
 
         return null;
     }
