@@ -778,6 +778,10 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
     public void UpdateParameters(KalmanFilterParameters updatedParameters)
     {
+        // Offsets are updated in place, so they can only be updated in a model that already has them
+        if (updatedParameters.OffsetsProvided && !Parameters.OffsetsProvided)
+            throw new InvalidOperationException("The updated parameters include offsets, but the model was created without offsets.");
+
         if (updatedParameters.TransitionMatrix is not null)
             Parameters.TransitionMatrix.set_(updatedParameters.TransitionMatrix);
         if (updatedParameters.MeasurementFunction is not null)
