@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using TorchSharp;
 using static TorchSharp.torch;
 
@@ -10,7 +9,6 @@ namespace Bonsai.ML.Lds.Torch;
 /// </summary>
 public class KalmanFilterParameters : nn.Module
 {
-    private readonly static StringBuilder _sb = new();
     private readonly ScalarType _scalarType;
     private readonly Device _device;
 
@@ -336,14 +334,29 @@ public class KalmanFilterParameters : nn.Module
     }
 
     /// <inheritdoc/>
-    public override string ToString() => _sb.Length == 0 ? _sb.Append(
-        $"KalmanFilterParameters(NumStates={NumStates}, NumObservations={NumObservations}, TransitionMatrix={TransitionMatrix}, MeasurementFunction={MeasurementFunction}, ProcessNoiseCovariance={ProcessNoiseCovariance}, MeasurementNoiseCovariance={MeasurementNoiseCovariance}, InitialMean={InitialMean}, InitialCovariance={InitialCovariance})" + (StateOffset is not null ? $", StateOffset={StateOffset}" : "") + (ObservationOffset is not null ? $", ObservationOffset={ObservationOffset}" : "")).ToString() : _sb.ToString();
+    public override string ToString() => ToString(TorchSharp.TensorStringStyle.Metadata);
 
     /// <summary>
     /// Returns a string representation of the Kalman filter parameters with the specified tensor string style.
     /// </summary>
-    /// <param name="tensorStringStyle"></param>
-    /// <returns></returns>
-    public string ToString(TensorStringStyle tensorStringStyle) => _sb.Length == 0 ? _sb.Append(
-        $"KalmanFilterParameters(NumStates={NumStates}, NumObservations={NumObservations}, TransitionMatrix={TransitionMatrix.ToString(tensorStringStyle)}, MeasurementFunction={MeasurementFunction.ToString(tensorStringStyle)}, ProcessNoiseCovariance={ProcessNoiseCovariance.ToString(tensorStringStyle)}, MeasurementNoiseCovariance={MeasurementNoiseCovariance.ToString(tensorStringStyle)}, InitialMean={InitialMean.ToString(tensorStringStyle)}, InitialCovariance={InitialCovariance.ToString(tensorStringStyle)})" + (StateOffset is not null ? $", StateOffset={StateOffset.ToString(tensorStringStyle)}" : "") + (ObservationOffset is not null ? $", ObservationOffset={ObservationOffset.ToString(tensorStringStyle)}" : "")).ToString() : _sb.ToString();
+    /// <param name="tensorStringStyle">The style used to format each tensor.</param>
+    /// <returns>A string representation of the Kalman filter parameters.</returns>
+    public string ToString(TensorStringStyle tensorStringStyle)
+    {
+        var text = $"KalmanFilterParameters(NumStates={NumStates}, NumObservations={NumObservations}, " +
+            $"TransitionMatrix={TransitionMatrix.ToString(tensorStringStyle)}, " +
+            $"MeasurementFunction={MeasurementFunction.ToString(tensorStringStyle)}, " +
+            $"ProcessNoiseCovariance={ProcessNoiseCovariance.ToString(tensorStringStyle)}, " +
+            $"MeasurementNoiseCovariance={MeasurementNoiseCovariance.ToString(tensorStringStyle)}, " +
+            $"InitialMean={InitialMean.ToString(tensorStringStyle)}, " +
+            $"InitialCovariance={InitialCovariance.ToString(tensorStringStyle)}";
+
+        if (StateOffset is not null)
+            text += $", StateOffset={StateOffset.ToString(tensorStringStyle)}";
+
+        if (ObservationOffset is not null)
+            text += $", ObservationOffset={ObservationOffset.ToString(tensorStringStyle)}";
+
+        return text + ")";
+    }
 }
