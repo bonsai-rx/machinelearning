@@ -15,7 +15,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
     public KalmanFilter(
         KalmanFilterParameters parameters) : base("KalmanFilter")
     {
-        Parameters = parameters;
+        Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
         _state = new LinearDynamicalSystemState(
             Parameters.InitialMean,
@@ -778,6 +778,9 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
     public void UpdateParameters(KalmanFilterParameters updatedParameters)
     {
+        if (updatedParameters is null)
+            throw new ArgumentNullException(nameof(updatedParameters));
+
         // Offsets are updated in place, so they can only be updated in a model that already has them
         if (updatedParameters.OffsetsProvided && !Parameters.OffsetsProvided)
             throw new InvalidOperationException("The updated parameters include offsets, but the model was created without offsets.");

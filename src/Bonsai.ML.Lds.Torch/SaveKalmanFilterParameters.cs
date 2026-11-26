@@ -38,6 +38,9 @@ public class SaveKalmanFilterParameters
 
     private void SaveKalmanFilterParametersToDisk(KalmanFilterParameters parameters)
     {
+        if (parameters is null)
+            throw new ArgumentNullException(nameof(parameters));
+
         var basePath = string.IsNullOrEmpty(Path) ? Directory.GetCurrentDirectory() : Path;
 
         var path = AddSuffix switch
