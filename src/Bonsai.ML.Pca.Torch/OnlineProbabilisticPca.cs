@@ -199,9 +199,9 @@ public class OnlineProbabilisticPca : PcaBaseModel
                 var (U, S, Vh) = svd(weightsUpdated, fullMatrices: false);
                 var R = Vh.T;
                 weightsUpdated = U.matmul(diag(S));
-                _Cxz = _Cxz.matmul(R.T);
-                _Czz = R.matmul(_Czz).matmul(R.T);
-                _mz = R.matmul(_mz);
+                _Cxz = _Cxz.matmul(R);
+                _Czz = R.T.matmul(_Czz).matmul(R);
+                _mz = R.T.matmul(_mz);
             }
 
             // Reorder components based on the strength of the components

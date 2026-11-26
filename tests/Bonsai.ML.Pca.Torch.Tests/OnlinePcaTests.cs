@@ -331,6 +331,30 @@ public class OnlineProbabilisticPcaTests
     }
 
     [TestMethod]
+    public void TestReorthogonalizationPreservesFit()
+    {
+        var (data, _, _) = OnlinePcaTestHelpers.GenerateDataset(10000, [4f, 2f, 0.5f, 0.2f, 0.1f]);
+        var plain = CreateModel(numComponents: 2, rho: 0.05);
+        var reorthogonalized = CreateModel(numComponents: 2, rho: 0.05, reorthogonalizePeriod: 1);
+        OnlinePcaTestHelpers.FitStreaming(plain, data, batchSize: 50);
+        OnlinePcaTestHelpers.FitStreaming(reorthogonalized, data, batchSize: 50);
+
+        Debug.WriteLine($"Variance: {plain.Variance}, with reorthogonalization: {reorthogonalized.Variance}");
+        Assert.AreEqual(plain.Variance, reorthogonalized.Variance, 0.05 * plain.Variance);
+
+        var plainError = mean((data - plain.Reconstruct(plain.Transform(data))).pow(2)).item<float>();
+        var reorthogonalizedError = mean((data - reorthogonalized.Reconstruct(reorthogonalized.Transform(data))).pow(2)).item<float>();
+        Debug.WriteLine($"Reconstruction error: {plainError}, with reorthogonalization: {reorthogonalizedError}");
+        Assert.AreEqual(plainError, reorthogonalizedError, 0.05 * plainError);
+
+        var gram = reorthogonalized.Components.T.matmul(reorthogonalized.Components);
+        var offDiagonal = gram[0, 1].abs().item<float>();
+        Debug.WriteLine($"Gram matrix: {gram.str()}");
+        Assert.IsTrue(offDiagonal < 1e-3 * gram[1, 1].item<float>(), $"Off-diagonal term was {offDiagonal}");
+        Assert.IsTrue(gram[0, 0].item<float>() >= gram[1, 1].item<float>());
+    }
+
+    [TestMethod]
     public void TestParameterValidation()
     {
         var data = randn(50, 2);
