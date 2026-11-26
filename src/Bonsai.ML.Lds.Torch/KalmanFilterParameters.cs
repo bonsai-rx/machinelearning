@@ -330,7 +330,7 @@ public class KalmanFilterParameters : nn.Module
     {
         ValidateScalar(variance, name);
         var scalar = variance.clone().squeeze();
-        return scalar * eye(dimension);
+        return scalar * eye(dimension, dtype: scalar.dtype, device: scalar.device);
     }
 
     /// <inheritdoc/>
