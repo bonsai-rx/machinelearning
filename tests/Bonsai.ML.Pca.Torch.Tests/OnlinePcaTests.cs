@@ -100,7 +100,7 @@ public class OnlinePcaGhaTests
         Debug.WriteLine($"Orthonormality error: {orthonormalityError}");
         Assert.IsTrue(orthonormalityError < 1e-5);
 
-        Assert.AreEqual(10000, model.SampleCount);
+        Assert.AreEqual(10000L, model.SampleCount);
     }
 
     [TestMethod]
@@ -226,6 +226,38 @@ public class OnlinePcaGhaTests
         var discardedVariance = (0.5f * 0.5f + 0.2f * 0.2f + 0.1f * 0.1f) / 5f;
         Debug.WriteLine($"Reconstruction error: {reconstructionError}, discarded variance: {discardedVariance}");
         Assert.IsTrue(reconstructionError < 3 * discardedVariance, $"Reconstruction error was {reconstructionError}");
+    }
+
+    [TestMethod]
+    public void TestConvergenceDoesNotDependOnDataScale()
+    {
+        var (data, trueComponents, _) = OnlinePcaTestHelpers.GenerateDataset(10000, [3f, 0.1f], rotationAngle2d: 30.0);
+        var model = CreateModel();
+        OnlinePcaTestHelpers.FitStreaming(model, data * 100, batchSize: 50);
+
+        var similarity = OnlinePcaTestHelpers.CosineSimilarity(model.Components.select(1, 0), trueComponents.select(1, 0));
+        Debug.WriteLine($"Similarity with first component on scaled data: {similarity}");
+        Assert.IsTrue(similarity > 0.99, $"Similarity was {similarity}");
+    }
+
+    [TestMethod]
+    public void TestComponentsKeepDirectionBetweenUpdates()
+    {
+        var (data, _, _) = OnlinePcaTestHelpers.GenerateDataset(5000, [4f, 2f, 0.5f, 0.2f, 0.1f]);
+        var model = CreateModel();
+
+        var previous = empty(0);
+        var minAlignment = float.MaxValue;
+        foreach (var batch in data.split(50))
+        {
+            model.Fit(batch);
+            if (previous.numel() > 0)
+                minAlignment = Math.Min(minAlignment, (model.Components * previous).sum(dim: 0).min().item<float>());
+            previous = model.Components;
+        }
+
+        Debug.WriteLine($"Minimum alignment between consecutive updates: {minAlignment}");
+        Assert.IsTrue(minAlignment > 0, $"Minimum alignment was {minAlignment}");
     }
 
     [TestMethod]
