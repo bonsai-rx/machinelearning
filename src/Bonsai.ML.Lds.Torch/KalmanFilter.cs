@@ -523,12 +523,23 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             // Update parameters
             if (parametersToEstimate.TransitionMatrix)
             {
-                if (parameters.OffsetsProvided)
+                if (parameters.OffsetsProvided && parametersToEstimate.StateOffset)
                 {
+                    // Joint solution with the state offset, which is updated next
                     parameters.TransitionMatrix.set_(
                         InverseCholesky(
                             sxx10 - outer(statistics.Tx1, statistics.Tx0) / timeBins,
                             sxx00 - outer(statistics.Tx0, statistics.Tx0) / timeBins
+                        )
+                    );
+                }
+                else if (parameters.OffsetsProvided)
+                {
+                    // The state offset is held fixed
+                    parameters.TransitionMatrix.set_(
+                        InverseCholesky(
+                            sxx10 - outer(parameters.StateOffset, statistics.Tx0),
+                            sxx00
                         )
                     );
                 }
@@ -555,12 +566,23 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
             if (parametersToEstimate.MeasurementFunction)
             {
-                if (parameters.OffsetsProvided)
+                if (parameters.OffsetsProvided && parametersToEstimate.ObservationOffset)
                 {
+                    // Joint solution with the observation offset, which is updated next
                     parameters.MeasurementFunction.set_(
                         InverseCholesky(
                             statistics.Tyx11 - outer(statistics.Ty1, statistics.Tx1) / timeBins,
                             sxx11 - outer(statistics.Tx1, statistics.Tx1) / timeBins
+                        )
+                    );
+                }
+                else if (parameters.OffsetsProvided)
+                {
+                    // The observation offset is held fixed
+                    parameters.MeasurementFunction.set_(
+                        InverseCholesky(
+                            statistics.Tyx11 - outer(parameters.ObservationOffset, statistics.Tx1),
+                            sxx11
                         )
                     );
                 }
