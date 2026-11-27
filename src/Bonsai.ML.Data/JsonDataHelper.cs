@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -264,7 +265,7 @@ namespace Bonsai.ML.Data
                 case ulong:
                 case sbyte:
                 case decimal:
-                    sb.Append(obj);
+                    sb.Append(Convert.ToString(obj, CultureInfo.InvariantCulture));
                     break;
                 case Array:
                     FormatArray(obj, sb, depth);
