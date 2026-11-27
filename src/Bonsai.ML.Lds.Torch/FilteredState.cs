@@ -5,12 +5,12 @@ namespace Bonsai.ML.Lds.Torch;
 /// <summary>
 /// Represents the state of a Kalman filter.
 /// </summary>
-/// <param name="predictedState"></param>
-/// <param name="updatedState"></param>
-/// <param name="innovation"></param>
-/// <param name="innovationCovariance"></param>
-/// <param name="kalmanGain"></param>
-/// <param name="logLikelihood"></param>
+/// <param name="predictedState">The state following the prediction step.</param>
+/// <param name="updatedState">The state following the update step.</param>
+/// <param name="innovation">The difference between the observation and its prediction.</param>
+/// <param name="innovationCovariance">The covariance of the innovation.</param>
+/// <param name="kalmanGain">The Kalman gain used in the update step.</param>
+/// <param name="logLikelihood">The log likelihood of the observation.</param>
 public readonly struct FilteredState(
     LinearDynamicalSystemState predictedState,
     LinearDynamicalSystemState updatedState,

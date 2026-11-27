@@ -16,7 +16,7 @@ namespace Bonsai.ML.Lds.Torch;
 public class Smooth
 {
     /// <summary>
-    /// The Kalman filter model.
+    /// Gets or sets the Kalman filter model.
     /// </summary>
     [Description("The Kalman filter model.")]
     [XmlIgnore]
@@ -25,8 +25,8 @@ public class Smooth
     /// <summary>
     /// Processes an observable sequence of filtered results, applying the Kalman smoother to each result.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <param name="source">The sequence of filtered states, in time order.</param>
+    /// <returns>A sequence of smoothed states.</returns>
     public IObservable<LinearDynamicalSystemState> Process(IObservable<FilteredState> source)
     {
         return source.Select(Model.Smooth);
@@ -35,8 +35,8 @@ public class Smooth
     /// <summary>
     /// Processes an observable sequence of tuples containing the components of a filtered result (predictedMean, predictedCovariance, updatedMean, updatedCovariance), applying the Kalman smoother to each result.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <param name="source">The sequence of predicted mean, predicted covariance, updated mean and updated covariance tuples, in time order.</param>
+    /// <returns>A sequence of smoothed states.</returns>
     public IObservable<LinearDynamicalSystemState> Process(IObservable<Tuple<Tensor, Tensor, Tensor, Tensor>> source)
     {
         return source.Select((input) =>

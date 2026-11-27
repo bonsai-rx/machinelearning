@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Xml.Serialization;
@@ -32,27 +32,30 @@ public class CreateKalmanFilter : IScalarTypeProvider
     public ScalarType Type { get; set; } = ScalarType.Float32;
 
     /// <summary>
-    /// The device on which to create the tensor.
+    /// Gets or sets the device on which to create the tensor.
     /// </summary>
     [Description("The device on which to create the tensor.")]
     [XmlIgnore]
     public Device Device { get; set; }
 
     /// <summary>
-    /// The number of states in the Kalman filter model.
+    /// Gets or sets the number of states in the Kalman filter model.
     /// </summary>
-    public int? NumStates { get; set; } = null;
+    [Description("The number of states in the model. If not specified, it is inferred from the parameters.")]
+    public int? NumStates { get; set; }
 
     /// <summary>
-    /// The number of observations in the Kalman filter model.
+    /// Gets or sets the number of observations in the Kalman filter model.
     /// </summary>
-    public int? NumObservations { get; set; } = null;
+    [Description("The number of observations in the model. If not specified, it is inferred from the parameters.")]
+    public int? NumObservations { get; set; }
 
     /// <summary>
-    /// The state transition matrix.
+    /// Gets or sets the state transition matrix.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The state transition matrix. If not specified, the identity matrix is used.")]
     public Tensor TransitionMatrix
     {
         get => _transitionMatrix;
@@ -72,10 +75,11 @@ public class CreateKalmanFilter : IScalarTypeProvider
     }
 
     /// <summary>
-    /// The measurement function.
+    /// Gets or sets the measurement function.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The measurement function that maps states to observations. If not specified, the identity matrix is used.")]
     public Tensor MeasurementFunction
     {
         get => _measurementFunction;
@@ -95,10 +99,11 @@ public class CreateKalmanFilter : IScalarTypeProvider
     }
 
     /// <summary>
-    /// The process noise variance.
+    /// Gets or sets the process noise variance.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The process noise covariance, given as a matrix or as a scalar variance of every state. If not specified, a variance of 1 is used.")]
     public Tensor ProcessNoiseVariance
     {
         get => _processNoiseVariance;
@@ -118,10 +123,11 @@ public class CreateKalmanFilter : IScalarTypeProvider
     }
 
     /// <summary>
-    /// The measurement noise variance.
+    /// Gets or sets the measurement noise variance.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The measurement noise covariance, given as a matrix or as a scalar variance of every observation. If not specified, a variance of 1 is used.")]
     public Tensor MeasurementNoiseVariance
     {
         get => _measurementNoiseVariance;
@@ -141,10 +147,11 @@ public class CreateKalmanFilter : IScalarTypeProvider
     }
 
     /// <summary>
-    /// The initial mean.
+    /// Gets or sets the initial mean.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The mean of the initial state. If not specified, it is zero.")]
     public Tensor InitialMean
     {
         get => _initialMean;
@@ -164,10 +171,11 @@ public class CreateKalmanFilter : IScalarTypeProvider
     }
 
     /// <summary>
-    /// The initial covariance.
+    /// Gets or sets the initial covariance.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The covariance of the initial state. If not specified, the identity matrix is used.")]
     public Tensor InitialCovariance
     {
         get => _initialCovariance;
@@ -187,10 +195,11 @@ public class CreateKalmanFilter : IScalarTypeProvider
     }
 
     /// <summary>
-    /// The state offset.
+    /// Gets or sets the state offset.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The constant offset added to the state at each time step. If not specified while the observation offset is, it is zero.")]
     public Tensor StateOffset
     {
         get => _stateOffset;
@@ -210,10 +219,11 @@ public class CreateKalmanFilter : IScalarTypeProvider
     }
 
     /// <summary>
-    /// The observation offset.
+    /// Gets or sets the observation offset.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The constant offset added to each observation. If not specified while the state offset is, it is zero.")]
     public Tensor ObservationOffset
     {
         get => _observationOffset;
@@ -236,9 +246,10 @@ public class CreateKalmanFilter : IScalarTypeProvider
     /// <summary>
     /// Creates a Kalman filter model using the properties of this class.
     /// </summary>
+    /// <returns>A sequence containing the Kalman filter model.</returns>
     public IObservable<KalmanFilter> Process()
     {
-        return Observable.Return(new KalmanFilter(
+        return Observable.Defer(() => Observable.Return(new KalmanFilter(
             numStates: NumStates,
             numObservations: NumObservations,
             transitionMatrix: TransitionMatrix,
@@ -251,18 +262,20 @@ public class CreateKalmanFilter : IScalarTypeProvider
             observationOffset: ObservationOffset,
             device: Device,
             scalarType: Type
-        ));
+        )));
     }
 
     /// <summary>
     /// Creates a Kalman filter model using the parameters provided in the input sequence.
     /// </summary>
+    /// <param name="source">The sequence of parameters used to create each model.</param>
+    /// <returns>A sequence of Kalman filter models created from the parameters.</returns>
     public IObservable<KalmanFilter> Process(IObservable<KalmanFilterParameters> source)
     {
         return source.Select(parameters =>
         {
             return new KalmanFilter(
-                parameters: parameters
+                parameters: parameters.Copy()
             );
         });
     }

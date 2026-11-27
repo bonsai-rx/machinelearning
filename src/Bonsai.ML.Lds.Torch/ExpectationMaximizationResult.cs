@@ -5,9 +5,9 @@ namespace Bonsai.ML.Lds.Torch;
 /// <summary>
 /// Represents the result of an expectation-maximization step for a Kalman filter model.
 /// </summary>
-/// <param name="logLikelihood"></param>
-/// <param name="parameters"></param>
-/// <param name="finished"></param>
+/// <param name="logLikelihood">The log likelihood after each iteration.</param>
+/// <param name="parameters">The parameters after the latest iteration.</param>
+/// <param name="finished">Whether the algorithm has finished.</param>
 public struct ExpectationMaximizationResult(
     Tensor logLikelihood,
     KalmanFilterParameters parameters,

@@ -37,7 +37,7 @@ public class StateVisualizer : BufferedVisualizer
     /// <summary>
     /// Gets or sets a boolean value that determines whether to buffer the data beyond the capacity.
     /// </summary>
-    public bool BufferData { get; set; } = false;
+    public bool BufferData { get; set; }
 
     /// <summary>
     /// Gets the underlying plot control.
@@ -47,6 +47,10 @@ public class StateVisualizer : BufferedVisualizer
     /// <inheritdoc/>
     public override void Load(IServiceProvider provider)
     {
+        // Series belong to the plot they were added to, so they are created again for each new plot
+        _lineSeries = null;
+        _areaSeries = null;
+
         _plot = new TimeSeriesOxyPlotBase()
         {
             Capacity = Capacity,
@@ -113,7 +117,8 @@ public class StateVisualizer : BufferedVisualizer
     /// <inheritdoc/>
     protected override void Show(DateTime time, object value)
     {
-        if (value is null) return;
+        if (value is null)
+            return;
 
         if (value is not ILinearDynamicalSystemState state)
             throw new ArgumentException($"Expected value to be a type of {nameof(ILinearDynamicalSystemState)}.", nameof(value));
@@ -121,7 +126,8 @@ public class StateVisualizer : BufferedVisualizer
         var mean = state.Mean;
         var covariance = state.Covariance;
 
-        if (mean is null || covariance is null) return;
+        if (mean is null || covariance is null)
+            return;
 
         if (mean.Dimensions == 1)
         {
@@ -197,6 +203,7 @@ public class StateVisualizer : BufferedVisualizer
     /// <inheritdoc/>
     public override void Unload()
     {
-        if (!_plot.IsDisposed) _plot.Dispose();
+        if (!_plot.IsDisposed)
+            _plot.Dispose();
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TorchSharp.Modules;
 using static TorchSharp.torch;
 
@@ -15,7 +15,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
     public KalmanFilter(
         KalmanFilterParameters parameters) : base("KalmanFilter")
     {
-        Parameters = parameters;
+        Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
         _state = new LinearDynamicalSystemState(
             Parameters.InitialMean,
@@ -93,8 +93,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
         // Update step
         var updatedMean = state.Mean + kalmanGain.matmul(innovation);
-        var updatedCovariance = WrappedTensorDisposeScope(() => state.Covariance
-            - kalmanGain.matmul(parameters.MeasurementFunction).matmul(state.Covariance));
+        var updatedCovariance = WrappedTensorDisposeScope(() => EnsureSymmetric(state.Covariance
+            - kalmanGain.matmul(parameters.MeasurementFunction).matmul(state.Covariance)));
 
         var updatedState = new LinearDynamicalSystemState(updatedMean, updatedCovariance);
 
@@ -111,8 +111,9 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
     {
         using var g = no_grad();
 
-        var obs = observation.atleast_2d();
-        var timeBins = obs.size(0);
+        // A null observation advances the state by one prediction step without an update (e.g. during forecasting)
+        var obs = observation?.atleast_2d();
+        var timeBins = obs?.size(0) ?? 1;
 
         // We get the scalar type and device from the parameters in the event that the observations are null (e.g. during forecasting)
         var scalarType = Parameters.ScalarType;
@@ -132,7 +133,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             var prediction = FilterPredict(_state, Parameters);
 
             // Update
-            var update = FilterUpdate(obs[time], prediction, Parameters);
+            var update = FilterUpdate(obs?[time], prediction, Parameters);
 
             predictedState.Mean[time] = prediction.Mean;
             predictedState.Covariance[time] = prediction.Covariance;
@@ -376,7 +377,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             if (parameters.OffsetsProvided)
             {
                 tx1 += smoothedState.Mean[time];
-                tx0 += smoothedState.Mean[time + 1];
+                tx0 += smoothedState.Mean[time];
                 ty1 += observations[time];
                 tyx11 += outer(observations[time], smoothedState.Mean[time]);
                 tyy11 += outer(observations[time], observations[time]);
@@ -453,18 +454,24 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         KalmanFilterParameters parameters,
         int maxIterations = 100,
         double tolerance = 1e-4,
-        ParametersToEstimate parametersToEstimate = new())
+        ParametersToEstimate parametersToEstimate = null)
     {
+        parametersToEstimate ??= new ParametersToEstimate();
+
         var timeBins = observation.size(0);
         var numObservations = (int)observation.size(1);
-        var logLikelihood = empty(maxIterations, dtype: ScalarType.Float32, device: parameters.Device);
+        var logLikelihood = zeros(maxIterations, dtype: ScalarType.Float32, device: parameters.Device);
+        var iterations = 0;
         var previousLogLikelihood = double.NegativeInfinity;
         var logLikelihoodConst = -0.5 * timeBins * numObservations * Math.Log(2.0 * Math.PI);
 
         if (parameters.NumObservations != numObservations)
             throw new ArgumentException($"The number of observation dimensions in the parameters ({parameters.NumObservations}) does not match the observations ({numObservations}).");
 
-        var identityStates = eye(parameters.NumStates, dtype: parameters.ScalarType, device: parameters.Device);
+        // An offset can only be estimated in a model that has offsets. A model without them starts from a state offset of zero and,
+        // when the observation offset is estimated, from the mean of the observations, since EM moves a mean held by the states into the offset very slowly
+        if (parametersToEstimate.StateOffset || parametersToEstimate.ObservationOffset)
+            parameters.EnsureOffsets(parametersToEstimate.ObservationOffset ? observation.mean([0]) : null);
 
         // Precompute constant observation terms reused across EM iterations
         var observationT = observation.mT;
@@ -474,6 +481,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
         for (int iteration = 0; iteration < maxIterations; iteration++)
         {
+            iterations = iteration + 1;
+
             // Filter observations
             var filteredState = Filter(
                 timeBins: timeBins,
@@ -490,7 +499,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             // Check for convergence
             if (filteredLogLikelihoodSum <= previousLogLikelihood)
             {
-                Console.WriteLine($"Warning: Log likelihood decreased! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
+                Console.WriteLine($"Warning: Log likelihood did not increase! New: {filteredLogLikelihoodSum}, Previous: {previousLogLikelihood}");
                 break;
             }
 
@@ -516,12 +525,23 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             // Update parameters
             if (parametersToEstimate.TransitionMatrix)
             {
-                if (parameters.OffsetsProvided)
+                if (parameters.OffsetsProvided && parametersToEstimate.StateOffset)
                 {
+                    // Joint solution with the state offset, which is updated next
                     parameters.TransitionMatrix.set_(
                         InverseCholesky(
                             sxx10 - outer(statistics.Tx1, statistics.Tx0) / timeBins,
                             sxx00 - outer(statistics.Tx0, statistics.Tx0) / timeBins
+                        )
+                    );
+                }
+                else if (parameters.OffsetsProvided)
+                {
+                    // The state offset is held fixed
+                    parameters.TransitionMatrix.set_(
+                        InverseCholesky(
+                            sxx10 - outer(parameters.StateOffset, statistics.Tx0),
+                            sxx00
                         )
                     );
                 }
@@ -548,12 +568,23 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
             if (parametersToEstimate.MeasurementFunction)
             {
-                if (parameters.OffsetsProvided)
+                if (parameters.OffsetsProvided && parametersToEstimate.ObservationOffset)
                 {
+                    // Joint solution with the observation offset, which is updated next
                     parameters.MeasurementFunction.set_(
                         InverseCholesky(
                             statistics.Tyx11 - outer(statistics.Ty1, statistics.Tx1) / timeBins,
-                            sxx11 - outer(statistics.Tx0, statistics.Tx0) / timeBins
+                            sxx11 - outer(statistics.Tx1, statistics.Tx1) / timeBins
+                        )
+                    );
+                }
+                else if (parameters.OffsetsProvided)
+                {
+                    // The observation offset is held fixed
+                    parameters.MeasurementFunction.set_(
+                        InverseCholesky(
+                            statistics.Tyx11 - outer(parameters.ObservationOffset, statistics.Tx1),
+                            sxx11
                         )
                     );
                 }
@@ -590,8 +621,12 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
                 }
                 else
                 {
+                    // Full form so the update stays valid when the transition matrix is held fixed
                     parameters.ProcessNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
-                        EnsureSymmetric((sxx11 - parameters.TransitionMatrix.matmul(sxx10.mT)) / timeBins)));
+                        EnsureSymmetric((sxx11
+                            - sxx10.matmul(parameters.TransitionMatrix.mT)
+                            - parameters.TransitionMatrix.matmul(sxx10.mT)
+                            + linalg.multi_dot([parameters.TransitionMatrix, sxx00, parameters.TransitionMatrix.mT])) / timeBins)));
                 }
             }
 
@@ -609,10 +644,9 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
                 {
                     var explainedObservationCovariance = parameters.MeasurementFunction.matmul(crossCorrelationObservations.mT);
 
-                    if (parametersToEstimate.MeasurementNoiseCovariance)
-                        parameters.MeasurementNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
-                            EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
-                                + parameters.MeasurementFunction.matmul(sxx11).matmul(parameters.MeasurementFunction.mT)) / timeBins)));
+                    parameters.MeasurementNoiseCovariance.set_(WrappedTensorDisposeScope(() =>
+                        EnsureSymmetric((autoCorrelationObservations - explainedObservationCovariance - explainedObservationCovariance.mT
+                            + parameters.MeasurementFunction.matmul(sxx11).matmul(parameters.MeasurementFunction.mT)) / timeBins)));
                 }
             }
 
@@ -623,7 +657,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
                 parameters.InitialCovariance.set_(state.SmoothedInitialCovariance);
         }
 
-        return new ExpectationMaximizationResult(logLikelihood, parameters);
+        return new ExpectationMaximizationResult(logLikelihood[TensorIndex.Slice(0, iterations)], parameters);
     }
 
     public static StochasticSubspaceIdentificationResult StochasticSubspaceIdentification(
@@ -631,13 +665,16 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         int? targetNumStates = null,
         int maxLag = 20,
         double threshold = 0.01,
-        ParametersToEstimate parametersToEstimate = new())
+        ParametersToEstimate parametersToEstimate = null)
     {
+        parametersToEstimate ??= new ParametersToEstimate();
+
         using var g = no_grad();
 
         var timeBins = observations.size(0);
         var numObservations = observations.size(1);
-        var centered = observations - observations.mean([0], keepdim: true);
+        var observationMean = observations.mean([0]);
+        var centered = observations - observationMean;
 
         // Build Hankel matrices from observations
         var numCols = (int)(timeBins - 2 * maxLag + 1);
@@ -649,8 +686,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         var pastView = centered.as_strided([maxLag, numCols, numObservations], [stride[0], stride[0], stride[1]]);
         var past = pastView.permute(0, 2, 1).reshape(maxLag * numObservations, numCols);
 
-        var futureView = centered.narrow(0, maxLag, timeBins - maxLag)
-            .as_strided([maxLag, numCols, numObservations], [stride[0], stride[0], stride[1]]);
+        // as_strided takes an explicit storage offset (default 0), so the future block must be offset by maxLag rows here rather than through a narrowed view
+        var futureView = centered.as_strided([maxLag, numCols, numObservations], [stride[0], stride[0], stride[1]], maxLag * stride[0]);
         var future = futureView.permute(0, 2, 1).reshape(maxLag * numObservations, numCols);
 
         // Compute the projection
@@ -708,7 +745,8 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
             processNoiseCovariance: parametersToEstimate.ProcessNoiseCovariance ? processNoiseCovariance : null,
             measurementNoiseCovariance: parametersToEstimate.MeasurementNoiseCovariance ? measurementNoiseCovariance : null,
             initialMean: parametersToEstimate.InitialMean ? initialMean : null,
-            initialCovariance: parametersToEstimate.InitialCovariance ? initialCovariance : null
+            initialCovariance: parametersToEstimate.InitialCovariance ? initialCovariance : null,
+            observationOffset: parametersToEstimate.ObservationOffset ? observationMean : null
         );
 
         return new StochasticSubspaceIdentificationResult(
@@ -720,7 +758,7 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
     public LinearDynamicalSystemState OrthogonalizeMeanAndCovariance(LinearDynamicalSystemState state)
     {
-        var (_, S, Vt) = linalg.svd(Parameters.MeasurementFunction);
+        var (_, S, Vt) = linalg.svd(Parameters.MeasurementFunction, fullMatrices: false);
         var SVt = diag(S).matmul(Vt);
 
         Tensor orthogonalizedMean = null;
@@ -742,6 +780,13 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
 
     public void UpdateParameters(KalmanFilterParameters updatedParameters)
     {
+        if (updatedParameters is null)
+            throw new ArgumentNullException(nameof(updatedParameters));
+
+        // Offsets are updated in place, so they can only be updated in a model that already has them
+        if (updatedParameters.OffsetsProvided && !Parameters.OffsetsProvided)
+            throw new InvalidOperationException("The updated parameters include offsets, but the model was created without offsets.");
+
         if (updatedParameters.TransitionMatrix is not null)
             Parameters.TransitionMatrix.set_(updatedParameters.TransitionMatrix);
         if (updatedParameters.MeasurementFunction is not null)

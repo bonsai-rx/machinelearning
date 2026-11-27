@@ -17,8 +17,8 @@ namespace Bonsai.ML.Lds.Torch;
 [TypeConverter(typeof(TensorOperatorConverter))]
 public class CreateLinearDynamicalSystemState : IScalarTypeProvider
 {
-    private Tensor _mean = null;
-    private Tensor _covariance = null;
+    private Tensor _mean;
+    private Tensor _covariance;
 
     /// <inheritdoc/>
     [Description("The data type of the tensor elements.")]
@@ -26,17 +26,18 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     public ScalarType Type { get; set; } = ScalarType.Float32;
 
     /// <summary>
-    /// The device on which to create the tensor.
+    /// Gets or sets the device on which to create the tensor.
     /// </summary>
     [Description("The device on which to create the tensor.")]
     [XmlIgnore]
     public Device Device { get; set; }
 
     /// <summary>
-    /// The mean of the state.
+    /// Gets or sets the mean of the state.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The mean of the state.")]
     public Tensor Mean
     {
         get => _mean;
@@ -56,10 +57,11 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     }
 
     /// <summary>
-    /// The covariance of the state.
+    /// Gets or sets the covariance of the state.
     /// </summary>
     [XmlIgnore]
     [TypeConverter(typeof(TensorConverter))]
+    [Description("The covariance of the state.")]
     public Tensor Covariance
     {
         get => _covariance;
@@ -81,7 +83,7 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     /// <summary>
     /// Creates an observable sequence and emits the state for a linear gaussian dynamical system.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A sequence containing the state.</returns>
     public IObservable<LinearDynamicalSystemState> Process()
     {
         return Observable.Defer(() =>
@@ -96,10 +98,10 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     /// <summary>
     /// Processes an observable sequence and emits new states for a linear gaussian dynamical system.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="source"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <typeparam name="T">The type of the elements in the source sequence.</typeparam>
+    /// <param name="source">The sequence of notifications used to create new states.</param>
+    /// <returns>A sequence of states, one for each element in the source sequence.</returns>
+    /// <exception cref="InvalidOperationException">The mean or covariance of the state is not specified.</exception>
     public IObservable<LinearDynamicalSystemState> Process<T>(IObservable<T> source)
     {
         return source.Select(_ =>
@@ -114,8 +116,8 @@ public class CreateLinearDynamicalSystemState : IScalarTypeProvider
     /// <summary>
     /// Processes an observable sequence of a tuple of tensors (mean and covariance) and emits a state for a linear gaussian dynamical system.
     /// </summary>
-    /// <param name="source"></param>
-    /// <returns></returns>
+    /// <param name="source">The sequence of mean and covariance pairs.</param>
+    /// <returns>A sequence of states created from each pair.</returns>
     public IObservable<LinearDynamicalSystemState> Process(IObservable<Tuple<Tensor, Tensor>> source)
     {
         return source.Select(input =>

@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using TorchSharp;
 using static TorchSharp.torch;
 
@@ -10,7 +9,6 @@ namespace Bonsai.ML.Lds.Torch;
 /// </summary>
 public class KalmanFilterParameters : nn.Module
 {
-    private readonly static StringBuilder _sb = new();
     private readonly ScalarType _scalarType;
     private readonly Device _device;
 
@@ -65,7 +63,7 @@ public class KalmanFilterParameters : nn.Module
     public Tensor ObservationOffset { get; private set; }
 
     /// <summary>
-    /// Indicates whether any offsets have been provided.
+    /// Indicates whether offsets are part of the model. When either offset is provided, the other defaults to zero, so both are non-null whenever this is true.
     /// </summary>
     public bool OffsetsProvided => StateOffset is not null || ObservationOffset is not null;
 
@@ -82,19 +80,19 @@ public class KalmanFilterParameters : nn.Module
     /// <summary>
     /// Initializes a new instance of the <see cref="KalmanFilterParameters"/> class with the specified parameters.
     /// </summary>
-    /// <param name="numStates"></param>
-    /// <param name="numObservations"></param>
-    /// <param name="transitionMatrix"></param>
-    /// <param name="measurementFunction"></param>
-    /// <param name="processNoiseCovariance"></param>
-    /// <param name="measurementNoiseCovariance"></param>
-    /// <param name="initialMean"></param>
-    /// <param name="initialCovariance"></param>
-    /// <param name="stateOffset"></param>
-    /// <param name="observationOffset"></param>
-    /// <param name="device"></param>
-    /// <param name="scalarType"></param>
-    /// <param name="requiresGrad"></param>
+    /// <param name="numStates">The number of states. If not specified, it is inferred from the parameters.</param>
+    /// <param name="numObservations">The number of observations. If not specified, it is inferred from the parameters.</param>
+    /// <param name="transitionMatrix">The state transition matrix. If not specified, the identity matrix is used.</param>
+    /// <param name="measurementFunction">The measurement function that maps states to observations. If not specified, the identity matrix is used.</param>
+    /// <param name="processNoiseCovariance">The process noise covariance, given as a matrix or as a scalar variance of every state. If not specified, a variance of 1 is used.</param>
+    /// <param name="measurementNoiseCovariance">The measurement noise covariance, given as a matrix or as a scalar variance of every observation. If not specified, a variance of 1 is used.</param>
+    /// <param name="initialMean">The mean of the initial state. If not specified, it is zero.</param>
+    /// <param name="initialCovariance">The covariance of the initial state. If not specified, the identity matrix is used.</param>
+    /// <param name="stateOffset">The constant offset added to the state at each time step. If not specified while the observation offset is, it is zero.</param>
+    /// <param name="observationOffset">The constant offset added to each observation. If not specified while the state offset is, it is zero.</param>
+    /// <param name="device">The device of the parameters. If not specified, the device of the first tensor provided is used.</param>
+    /// <param name="scalarType">The data type of the parameters. If not specified, the data type of the first tensor provided is used.</param>
+    /// <param name="requiresGrad">Whether gradients are tracked for the parameters.</param>
     public KalmanFilterParameters(
         int? numStates = null,
         int? numObservations = null,
@@ -118,10 +116,16 @@ public class KalmanFilterParameters : nn.Module
         if (numObservations is null)
             throw new ArgumentOutOfRangeException(nameof(numObservations), "Number of observations must be specified or inferred from the parameters.");
 
-        transitionMatrix = transitionMatrix?.clone() ?? eye(numStates.Value);
-        measurementFunction = measurementFunction?.clone() ?? eye(numObservations.Value, numStates.Value);
-        initialMean = initialMean?.clone() ?? zeros(numStates.Value);
-        initialCovariance = initialCovariance?.clone() ?? eye(numStates.Value);
+        // Unless specified, the data type and device follow the first provided tensor so defaults and inputs agree
+        var reference = transitionMatrix ?? measurementFunction ?? initialMean ?? initialCovariance
+            ?? processNoiseCovariance ?? measurementNoiseCovariance ?? stateOffset ?? observationOffset;
+        scalarType ??= reference?.dtype;
+        device ??= reference?.device;
+
+        transitionMatrix = transitionMatrix?.clone() ?? eye(numStates.Value, dtype: scalarType, device: device);
+        measurementFunction = measurementFunction?.clone() ?? eye(numObservations.Value, numStates.Value, dtype: scalarType, device: device);
+        initialMean = initialMean?.clone() ?? zeros(numStates.Value, dtype: scalarType, device: device);
+        initialCovariance = initialCovariance?.clone() ?? eye(numStates.Value, dtype: scalarType, device: device);
 
         processNoiseCovariance = processNoiseCovariance?.NumberOfElements == 1
             ? CreateCovarianceMatrixFromScalar(processNoiseCovariance, numStates.Value, "Process noise variance")
@@ -133,23 +137,28 @@ public class KalmanFilterParameters : nn.Module
             : measurementNoiseCovariance?.clone()
             ?? CreateCovarianceMatrixFromScalar(1.0, numObservations.Value, "Measurement noise variance");
 
+        // The filter and EM updates read both offsets whenever either is present, so a missing one defaults to zero
+        if (stateOffset is not null || observationOffset is not null)
+        {
+            stateOffset = stateOffset?.clone() ?? zeros(numStates.Value, dtype: scalarType, device: device);
+            observationOffset = observationOffset?.clone() ?? zeros(numObservations.Value, dtype: scalarType, device: device);
+        }
+
+        // Tensors are plain properties rather than registered module parameters, so they are converted here instead of through Module.to
+        Tensor Convert(Tensor tensor) => tensor is null ? null : tensor.to(scalarType ?? tensor.dtype, device ?? tensor.device);
+
         NumStates = numStates.Value;
         NumObservations = numObservations.Value;
-        TransitionMatrix = transitionMatrix;
-        MeasurementFunction = measurementFunction;
-        ProcessNoiseCovariance = processNoiseCovariance;
-        MeasurementNoiseCovariance = measurementNoiseCovariance;
-        InitialMean = initialMean;
-        InitialCovariance = initialCovariance;
-        StateOffset = stateOffset;
-        ObservationOffset = observationOffset;
+        TransitionMatrix = Convert(transitionMatrix);
+        MeasurementFunction = Convert(measurementFunction);
+        ProcessNoiseCovariance = Convert(processNoiseCovariance);
+        MeasurementNoiseCovariance = Convert(measurementNoiseCovariance);
+        InitialMean = Convert(initialMean);
+        InitialCovariance = Convert(initialCovariance);
+        StateOffset = Convert(stateOffset);
+        ObservationOffset = Convert(observationOffset);
 
         Validate();
-
-        if (device is not null)
-            this.to(device);
-        if (scalarType is not null)
-            this.to(scalarType.Value);
 
         _device = TransitionMatrix.device;
         _scalarType = TransitionMatrix.dtype;
@@ -190,7 +199,7 @@ public class KalmanFilterParameters : nn.Module
     /// <summary>
     /// Creates a copy of the current Kalman filter parameters.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A copy of the parameters with cloned tensors.</returns>
     public KalmanFilterParameters Copy() => new(
         NumStates,
         NumObservations,
@@ -207,7 +216,7 @@ public class KalmanFilterParameters : nn.Module
     /// <summary>
     /// Sets the requires_grad flag for all tensors in the Kalman filter parameters.
     /// </summary>
-    /// <param name="requiresGrad"></param>
+    /// <param name="requiresGrad">Whether gradients are tracked for the parameters.</param>
     public void SetGrad(bool requiresGrad)
     {
         TransitionMatrix = TransitionMatrix?.requires_grad_(requiresGrad);
@@ -218,6 +227,22 @@ public class KalmanFilterParameters : nn.Module
         InitialCovariance = InitialCovariance?.requires_grad_(requiresGrad);
         StateOffset = StateOffset?.requires_grad_(requiresGrad);
         ObservationOffset = ObservationOffset?.requires_grad_(requiresGrad);
+    }
+
+    /// <summary>
+    /// Adds offsets to parameters that have none. The state offset is zero, and the observation offset is the value
+    /// provided or zero.
+    /// </summary>
+    /// <param name="observationOffset">The observation offset to start from. If not specified, it is zero.</param>
+    internal void EnsureOffsets(Tensor observationOffset = null)
+    {
+        if (OffsetsProvided)
+            return;
+
+        var requiresGrad = TransitionMatrix.requires_grad;
+        StateOffset = zeros(NumStates, dtype: _scalarType, device: _device).requires_grad_(requiresGrad);
+        ObservationOffset = (observationOffset?.detach().clone().to(_scalarType, _device)
+            ?? zeros(NumObservations, dtype: _scalarType, device: _device)).requires_grad_(requiresGrad);
     }
 
     private static int InferNumStates(Tensor transitionMatrix, Tensor measurementFunction, Tensor initialMean, Tensor initialCovariance, Tensor processNoiseCovariance, Tensor stateOffset)
@@ -252,10 +277,8 @@ public class KalmanFilterParameters : nn.Module
             ValidateVector(stateOffset, "State offset");
             return (int)stateOffset.size(0);
         }
-        else
-        {
-            throw new ArgumentException("At least one of the parameters must be provided to infer the number of states.");
-        }
+
+        throw new ArgumentException("At least one of the parameters must be provided to infer the number of states.");
     }
 
     private static int InferNumObservations(Tensor measurementFunction, Tensor measurementNoiseCovariance, Tensor observationOffset)
@@ -275,10 +298,8 @@ public class KalmanFilterParameters : nn.Module
             ValidateVector(observationOffset, "Observation offset");
             return (int)observationOffset.size(0);
         }
-        else
-        {
-            throw new ArgumentException("At least one of the measurement function or measurement noise covariance must be provided to infer the number of observations.");
-        }
+
+        throw new ArgumentException("At least one of the measurement function or measurement noise covariance must be provided to infer the number of observations.");
     }
 
     private static void ValidateMatrix(Tensor matrix, string name, bool isSquare = false, int? expectedDimension1 = null, int? expectedDimension2 = null)
@@ -321,18 +342,33 @@ public class KalmanFilterParameters : nn.Module
     {
         ValidateScalar(variance, name);
         var scalar = variance.clone().squeeze();
-        return scalar * eye(dimension);
+        return scalar * eye(dimension, dtype: scalar.dtype, device: scalar.device);
     }
 
     /// <inheritdoc/>
-    public override string ToString() => _sb.Length == 0 ? _sb.Append(
-        $"KalmanFilterParameters(NumStates={NumStates}, NumObservations={NumObservations}, TransitionMatrix={TransitionMatrix}, MeasurementFunction={MeasurementFunction}, ProcessNoiseCovariance={ProcessNoiseCovariance}, MeasurementNoiseCovariance={MeasurementNoiseCovariance}, InitialMean={InitialMean}, InitialCovariance={InitialCovariance})" + (StateOffset is not null ? $", StateOffset={StateOffset}" : "") + (ObservationOffset is not null ? $", ObservationOffset={ObservationOffset}" : "")).ToString() : _sb.ToString();
+    public override string ToString() => ToString(TorchSharp.TensorStringStyle.Metadata);
 
     /// <summary>
     /// Returns a string representation of the Kalman filter parameters with the specified tensor string style.
     /// </summary>
-    /// <param name="tensorStringStyle"></param>
-    /// <returns></returns>
-    public string ToString(TensorStringStyle tensorStringStyle) => _sb.Length == 0 ? _sb.Append(
-        $"KalmanFilterParameters(NumStates={NumStates}, NumObservations={NumObservations}, TransitionMatrix={TransitionMatrix.ToString(tensorStringStyle)}, MeasurementFunction={MeasurementFunction.ToString(tensorStringStyle)}, ProcessNoiseCovariance={ProcessNoiseCovariance.ToString(tensorStringStyle)}, MeasurementNoiseCovariance={MeasurementNoiseCovariance.ToString(tensorStringStyle)}, InitialMean={InitialMean.ToString(tensorStringStyle)}, InitialCovariance={InitialCovariance.ToString(tensorStringStyle)})" + (StateOffset is not null ? $", StateOffset={StateOffset.ToString(tensorStringStyle)}" : "") + (ObservationOffset is not null ? $", ObservationOffset={ObservationOffset.ToString(tensorStringStyle)}" : "")).ToString() : _sb.ToString();
+    /// <param name="tensorStringStyle">The style used to format each tensor.</param>
+    /// <returns>A string representation of the Kalman filter parameters.</returns>
+    public string ToString(TensorStringStyle tensorStringStyle)
+    {
+        var text = $"KalmanFilterParameters(NumStates={NumStates}, NumObservations={NumObservations}, " +
+            $"TransitionMatrix={TransitionMatrix.ToString(tensorStringStyle)}, " +
+            $"MeasurementFunction={MeasurementFunction.ToString(tensorStringStyle)}, " +
+            $"ProcessNoiseCovariance={ProcessNoiseCovariance.ToString(tensorStringStyle)}, " +
+            $"MeasurementNoiseCovariance={MeasurementNoiseCovariance.ToString(tensorStringStyle)}, " +
+            $"InitialMean={InitialMean.ToString(tensorStringStyle)}, " +
+            $"InitialCovariance={InitialCovariance.ToString(tensorStringStyle)}";
+
+        if (StateOffset is not null)
+            text += $", StateOffset={StateOffset.ToString(tensorStringStyle)}";
+
+        if (ObservationOffset is not null)
+            text += $", ObservationOffset={ObservationOffset.ToString(tensorStringStyle)}";
+
+        return text + ")";
+    }
 }
