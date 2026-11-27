@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -84,7 +85,7 @@ namespace Bonsai.ML.Python
 
             if (type == typeof(int) || type == typeof(double) || type == typeof(float) || type == typeof(long) || type == typeof(short) || type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong) || type == typeof(sbyte) || type == typeof(decimal))
             {
-                return (obj, sb, _) => sb.Append(obj);
+                return (obj, sb, _) => sb.Append(Convert.ToString(obj, CultureInfo.InvariantCulture));
             }
 
             if (type.IsArray)
