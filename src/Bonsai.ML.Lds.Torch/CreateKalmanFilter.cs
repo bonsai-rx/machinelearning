@@ -275,7 +275,7 @@ public class CreateKalmanFilter : IScalarTypeProvider
         return source.Select(parameters =>
         {
             return new KalmanFilter(
-                parameters: parameters
+                parameters: parameters.Copy()
             );
         });
     }
