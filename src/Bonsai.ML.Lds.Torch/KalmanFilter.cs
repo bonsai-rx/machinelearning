@@ -468,8 +468,10 @@ public class KalmanFilter : nn.Module<Tensor, LinearDynamicalSystemState>
         if (parameters.NumObservations != numObservations)
             throw new ArgumentException($"The number of observation dimensions in the parameters ({parameters.NumObservations}) does not match the observations ({numObservations}).");
 
-        if ((parametersToEstimate.StateOffset || parametersToEstimate.ObservationOffset) && !parameters.OffsetsProvided)
-            throw new ArgumentException("Estimating offsets requires the parameters to include an initial state offset or observation offset.");
+        // An offset can only be estimated in a model that has offsets. A model without them starts from a state offset of zero and,
+        // when the observation offset is estimated, from the mean of the observations, since EM moves a mean held by the states into the offset very slowly
+        if (parametersToEstimate.StateOffset || parametersToEstimate.ObservationOffset)
+            parameters.EnsureOffsets(parametersToEstimate.ObservationOffset ? observation.mean([0]) : null);
 
         // Precompute constant observation terms reused across EM iterations
         var observationT = observation.mT;

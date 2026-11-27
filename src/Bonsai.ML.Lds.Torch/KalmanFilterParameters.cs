@@ -229,6 +229,22 @@ public class KalmanFilterParameters : nn.Module
         ObservationOffset = ObservationOffset?.requires_grad_(requiresGrad);
     }
 
+    /// <summary>
+    /// Adds offsets to parameters that have none. The state offset is zero, and the observation offset is the value
+    /// provided or zero.
+    /// </summary>
+    /// <param name="observationOffset">The observation offset to start from. If not specified, it is zero.</param>
+    internal void EnsureOffsets(Tensor observationOffset = null)
+    {
+        if (OffsetsProvided)
+            return;
+
+        var requiresGrad = TransitionMatrix.requires_grad;
+        StateOffset = zeros(NumStates, dtype: _scalarType, device: _device).requires_grad_(requiresGrad);
+        ObservationOffset = (observationOffset?.detach().clone().to(_scalarType, _device)
+            ?? zeros(NumObservations, dtype: _scalarType, device: _device)).requires_grad_(requiresGrad);
+    }
+
     private static int InferNumStates(Tensor transitionMatrix, Tensor measurementFunction, Tensor initialMean, Tensor initialCovariance, Tensor processNoiseCovariance, Tensor stateOffset)
     {
         if (transitionMatrix is not null)
